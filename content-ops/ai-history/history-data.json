@@ -1,0 +1,3619 @@
+{
+ "meta": {
+  "title": "How AI developed, 1950–2026 / AI Development Index — research dataset",
+  "compiled": "2026-11-12",
+  "compiled_by": "Report AI research (read-only; nothing written to WordPress)",
+  "conventions": {
+   "x": "Decimal year for charting (year + (month−1)/12); integer year for annual series.",
+   "value": "Numeric value in 'unit'; null where undisclosed.",
+   "confidence": "HIGH = verified at source; MEDIUM = sourced but not opened at source (most rows: epoch.ai, ourworldindata.org and iea.org were blocked from this session, so figures come from search-result summaries or from Report AI's own data); DERIVED = Report AI calculation, formula in note. Rows our site rates CONTESTED are MEDIUM here with 'CONTESTED' in the note.",
+   "report_ai_reuse": "Notes beginning '[Report AI State of AI data: file#metric]' reuse our own 2022–2026 figures for consistency with the State of AI pages.",
+   "series_a_filter": "Series a mixes FLOP points with growth-rate rows; chart only unit=='FLOP' on the log axis."
+  },
+  "blocked_hosts": [
+   "epoch.ai",
+   "ourworldindata.org"
+  ]
+ },
+ "eras": [
+  {
+   "name": "Foundations (birth of AI)",
+   "start": 1943,
+   "end": 1956,
+   "start_event": "McCulloch & Pitts publish 'A logical calculus of the ideas immanent in nervous activity' (1943), the first formal model of a neural network.",
+   "end_event": "Dartmouth Summer Research Project on Artificial Intelligence (summer 1956), proposed in a document dated 31 Aug 1955 that introduced the term 'artificial intelligence'.",
+   "justification": "1943 is the standard start because the McCulloch–Pitts neuron is the first mathematical model of networked computation in the brain; Turing's 1950 paper supplies the test framing. 1956 closes the era because Dartmouth is the conventional founding of AI as a named research field.",
+   "quant_marker": "Rosenblatt's Mark I Perceptron (1957–60) is estimated by Epoch AI at ~6.9×10^5 FLOP of training compute — the first point on the compute curve.",
+   "sources": [
+    "https://doi.org/10.1007/BF02478259",
+    "https://doi.org/10.1093/mind/LIX.236.433",
+    "https://ojs.aaai.org/index.php/aimagazine/article/view/1904"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Boundary years are historiographical conventions, not measured breaks. Primary documents not opened in this session (web fetch blocked); details confirmed via search summaries."
+  },
+  {
+   "name": "Early optimism (the 'golden years')",
+   "start": 1956,
+   "end": 1974,
+   "start_event": "Dartmouth workshop (about 18 Jun–17 Aug 1956 per Solomonoff's notes).",
+   "end_event": "DARPA cuts back undirected AI research in 1973–74 (e.g. cancelling ~$3M a year of Speech Understanding Research grants at CMU), following the 1969 Mansfield Amendment and the UK Lighthill report (published early 1973).",
+   "justification": "Era of symbolic programs, the perceptron (1958), ELIZA (1966) and Shakey (late 1960s) and of public predictions of near-term human-level AI. It ends when the two largest funders (DARPA in the US, the Science Research Council in the UK) withdrew support for basic AI research.",
+   "quant_marker": "Perceptron (1960 configuration) ~7.2×10^8 FLOP (Epoch, 'Speculative').",
+   "sources": [
+    "https://www.holloway.com/g/making-things-think/sections/the-golden-years-of-ai-19561974",
+    "https://www.holloway.com/g/making-things-think/sections/the-first-ai-winter-19741980"
+   ],
+   "confidence": "MEDIUM",
+   "note": "End date varies by source (1973 for the UK, 1974 for DARPA). Sources do not establish that Lighthill caused the DARPA cuts; treat them as parallel events."
+  },
+  {
+   "name": "First AI winter",
+   "start": 1974,
+   "end": 1980,
+   "start_event": "DARPA and UK funding cuts (1973–74).",
+   "end_event": "Commercial expert systems arrive: McDermott's R1/XCON paper (AAAI 1980) and deployment at Digital Equipment Corporation (in production by about 1980–81).",
+   "justification": "Funding scarcity and diminished expectations. 1980 is used as the end because rule-based expert systems began earning money for companies, reviving investment.",
+   "quant_marker": "No compute series point; Epoch's database is sparse for 1974–1980.",
+   "sources": [
+    "https://www.holloway.com/g/making-things-think/sections/the-first-ai-winter-19741980",
+    "https://en.wikipedia.org/wiki/AI_winter"
+   ],
+   "confidence": "MEDIUM",
+   "note": "'1974–1980' is a convention; some accounts start the winter in 1973 (UK)."
+  },
+  {
+   "name": "Expert-systems boom",
+   "start": 1980,
+   "end": 1987,
+   "start_event": "R1/XCON at DEC (1980); Japan's Fifth Generation Computer Systems project (ICOT) launched 1982 with a ~¥54 billion ten-year budget.",
+   "end_event": "Collapse of the market for specialised Lisp machines (1987) as general-purpose workstations and PCs became powerful enough to run the same software.",
+   "justification": "Commercial and government money flowed into knowledge-based systems and dedicated AI hardware; backpropagation was popularised (Nature, 9 Oct 1986). The era ends with the AI-hardware market collapse.",
+   "quant_marker": "NETtalk (1987) ~2.8×10^10 FLOP (Epoch, 'Confident').",
+   "sources": [
+    "https://en.wikipedia.org/wiki/Fifth_Generation_Computer_Systems",
+    "https://www.holloway.com/g/making-things-think/sections/the-second-ai-winter-19871993"
+   ],
+   "confidence": "MEDIUM",
+   "note": "XCON savings are reported as ~$25M a year in most accounts; DEC's $40M claim covered related systems too."
+  },
+  {
+   "name": "Second AI winter",
+   "start": 1987,
+   "end": 1993,
+   "start_event": "Lisp-machine market collapse (1987).",
+   "end_event": "Convention: early-1990s end of the expert-systems retrenchment and of Japan's FGCS project (ten-year term to 1992); statistical and machine-learning methods move centre-stage.",
+   "justification": "Funding and corporate interest in 'AI' branding fell. 1993 is a convention used by several histories; there is no single event.",
+   "quant_marker": "LeNet-5 (1998, next era) ~2.8×10^12 FLOP.",
+   "sources": [
+    "https://www.holloway.com/g/making-things-think/sections/the-second-ai-winter-19871993",
+    "https://en.wikipedia.org/wiki/AI_winter"
+   ],
+   "confidence": "MEDIUM",
+   "note": "JUDGEMENT CALL: Wikipedia's AI-winter article dates the second winter 1987–2000; Holloway's history uses 1987–1993. We use 1993 as requested but the page should say the end date is disputed."
+  },
+  {
+   "name": "Statistical machine learning",
+   "start": 1993,
+   "end": 2011,
+   "start_event": "Convention (see above).",
+   "end_event": "IBM Watson wins Jeopardy! (Feb 2011) and Siri ships (Oct 2011) — the last major milestones before deep learning took over.",
+   "justification": "Probabilistic and kernel methods, plus game-tree search: Deep Blue (1997), LeNet-5 (1998), the DARPA Grand Challenge (2005), deep belief nets (2006), ImageNet's first challenge (2010). Training compute still roughly followed Moore's law (doubling ~every 20 months before 2010, Sevilla et al. 2022).",
+   "quant_marker": "ILSVRC 2010 winner top-5 error 28.2%.",
+   "sources": [
+    "https://arxiv.org/abs/2202.05924",
+    "https://www.ibm.com/history/watson-jeopardy"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Some histories end this era at 2009–2010 (pre-ImageNet deep nets) — we keep 2011 so AlexNet (Sep 2012) opens the next one."
+  },
+  {
+   "name": "Deep learning",
+   "start": 2012,
+   "end": 2017,
+   "start_event": "AlexNet wins ILSVRC 2012 (results 30 Sep 2012) with 15.3% top-5 error vs 26.2% for the runner-up.",
+   "end_event": "'Attention Is All You Need' (arXiv 12 Jun 2017) introduces the Transformer.",
+   "justification": "GPU-trained deep networks win in vision, speech and games (AlphaGo 2016). Sevilla et al. measure a ~6-month compute doubling time from the early 2010s.",
+   "quant_marker": "AlexNet 4.7×10^17 FLOP (2012) → AlphaGo Zero ~3×10^23 FLOP (2017).",
+   "sources": [
+    "https://image-net.org/static_files/files/ilsvrc2012.pdf",
+    "https://arxiv.org/abs/1706.03762",
+    "https://arxiv.org/abs/2202.05924"
+   ],
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "name": "Transformers and scale",
+   "start": 2017,
+   "end": 2022,
+   "start_event": "Transformer paper (12 Jun 2017).",
+   "end_event": "ChatGPT launches (30 Nov 2022).",
+   "justification": "Pre-trained language models scale by orders of magnitude (BERT 2018, GPT-2 2019, GPT-3 2020, PaLM 2022) while remaining research/developer products.",
+   "quant_marker": "Transformer 7.4×10^18 FLOP (2017) → PaLM 2.5×10^24 FLOP (2022): ~340,000× in five years (DERIVED: 2.5e24 / 7.4e18).",
+   "sources": [
+    "https://arxiv.org/abs/1706.03762",
+    "https://epoch.ai/data-insights/training-length-trend"
+   ],
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "name": "Generative AI goes mainstream",
+   "start": 2022,
+   "end": 2024,
+   "start_event": "ChatGPT (30 Nov 2022); UBS estimated 100M monthly users by January 2023.",
+   "end_event": "OpenAI o1-preview (12 Sep 2024) opens the reasoning-model era; Anthropic's computer use (22 Oct 2024) opens the agent era.",
+   "justification": "Consumer chatbots, image generators and enterprise pilots; GPT-4 (Mar 2023) sets the frontier. McKinsey's adoption measure jumps from 55% (2023) to 72% (early 2024).",
+   "quant_marker": "GPT-4 2.1×10^25 FLOP and ~$78M estimated training cost (2023).",
+   "sources": [
+    "https://news.yahoo.com/chatgpt-fastest-growing-app-history-142338104.html",
+    "https://openai.com/index/introducing-openai-o1-preview/",
+    "https://www.anthropic.com/news/3-5-models-and-computer-use"
+   ],
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "name": "Reasoning models and agents",
+   "start": 2024,
+   "end": null,
+   "start_event": "o1-preview (Sep 2024), computer use (Oct 2024), o3 announcement (Dec 2024).",
+   "end_event": "Ongoing as of 12 Nov 2026.",
+   "justification": "Gains come increasingly from post-training and inference-time compute rather than only pre-training scale (Epoch estimates GPT-5 used ~5×10^25 FLOP, less than GPT-4.5). Agents dominate traffic on some platforms: OpenRouter reported 76% of October 2026 tokens from agentic keys.",
+   "quant_marker": "Largest estimated training run: GPT-6 Astra ~9.4×10^26 FLOP (Sep 2026, Epoch via secondary source); SWE-bench Verified saturated at ~97% (Sep 2026).",
+   "sources": [
+    "https://epoch.ai/gradient-updates/why-gpt5-used-less-training-compute-than-gpt45-but-gpt6-probably-wont",
+    "https://openrouter.ai/data/october-2026",
+    "https://projectaipulse.com/compute-behind-notable-models/"
+   ],
+   "confidence": "MEDIUM",
+   "note": "[Report AI data: tokens.json#openrouter_agent_token_share; models.json#swe_bench_verified_top]. 'Ongoing' — set end=null in charts."
+  }
+ ],
+ "milestones": [
+  {
+   "date": "1943",
+   "year": 1943,
+   "title": "McCulloch–Pitts neuron",
+   "significance": "First mathematical model of a network of simplified neurons computing logical functions.",
+   "quant_hook": null,
+   "source": "McCulloch & Pitts, Bulletin of Mathematical Biophysics 5",
+   "url": "https://doi.org/10.1007/BF02478259",
+   "confidence": "MEDIUM",
+   "note": "Paper not opened; confirmed via search summaries."
+  },
+  {
+   "date": "1950-10",
+   "year": 1950,
+   "title": "Turing's 'Computing Machinery and Intelligence'",
+   "significance": "Replaces 'Can machines think?' with the imitation game (Turing test).",
+   "quant_hook": "Turing predicted that in about 50 years machines with ~10^9 storage would leave an average interrogator no more than a 70% chance of a correct identification after five minutes.",
+   "source": "Turing, Mind 59(236)",
+   "url": "https://doi.org/10.1093/mind/LIX.236.433",
+   "confidence": "MEDIUM",
+   "note": "70%/5-minute wording from the paper as widely quoted; the search summary did not show the passage, so MEDIUM."
+  },
+  {
+   "date": "1955-08-31",
+   "year": 1955,
+   "title": "Dartmouth proposal coins 'artificial intelligence'",
+   "significance": "McCarthy, Minsky, Rochester and Shannon propose a summer study; the document introduces the term.",
+   "quant_hook": "Proposed as a '2 month, 10 man study'.",
+   "source": "AI Magazine reprint of the proposal",
+   "url": "https://ojs.aaai.org/index.php/aimagazine/article/view/1904",
+   "confidence": "MEDIUM",
+   "note": "Some sources date the formal submission 2 Sep 1955."
+  },
+  {
+   "date": "1956-06-18",
+   "year": 1956,
+   "title": "Dartmouth Summer Research Project",
+   "significance": "Conventional founding event of AI as a field.",
+   "quant_hook": "Ran roughly 18 Jun–17 Aug 1956 (about eight weeks) per Solomonoff's notes; other accounts say six weeks.",
+   "source": "Wikipedia, Dartmouth workshop (citing Solomonoff)",
+   "url": "https://en.wikipedia.org/wiki/Dartmouth_workshop",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "1958-07",
+   "year": 1958,
+   "title": "Rosenblatt's perceptron unveiled",
+   "significance": "First learning machine to attract mass publicity; the US Navy's ONR demonstrated it in July 1958 (a simulation on an IBM 704).",
+   "quant_hook": "Mark I Perceptron used a 400-sensor 'retina'; Epoch estimates its training compute at ~6.9×10^5 FLOP.",
+   "source": "Rosenblatt, Psychological Review 65(6) 1958; Wikipedia Mark I Perceptron",
+   "url": "https://en.wikipedia.org/wiki/Mark_I_Perceptron",
+   "confidence": "MEDIUM",
+   "note": "Hardware build date given as 1957 or 1960 by different sources."
+  },
+  {
+   "date": "1966-01",
+   "year": 1966,
+   "title": "ELIZA",
+   "significance": "Weizenbaum's pattern-matching 'therapist' program; first widely known chatbot and first demonstration of people over-attributing understanding to software.",
+   "quant_hook": null,
+   "source": "Weizenbaum, Communications of the ACM 9(1), 1966",
+   "url": "https://doi.org/10.1145/365153.365168",
+   "confidence": "MEDIUM",
+   "note": "Developed 1964–66 at MIT."
+  },
+  {
+   "date": "1966",
+   "year": 1966,
+   "title": "Shakey the robot (SRI)",
+   "significance": "First mobile robot to reason about its own actions; its STRIPS planner became the basis for later automated planners.",
+   "quant_hook": null,
+   "source": "Holloway, Making Things Think",
+   "url": "https://www.holloway.com/g/making-things-think/sections/the-golden-years-of-ai-19561974",
+   "confidence": "MEDIUM",
+   "note": "Project usually dated 1966–1972; dates not confirmed in this session."
+  },
+  {
+   "date": "1969",
+   "year": 1969,
+   "title": "Mansfield Amendment and 'Perceptrons'",
+   "significance": "US law pushes DARPA toward mission-oriented research; Minsky & Papert's book highlights single-layer perceptron limits.",
+   "quant_hook": null,
+   "source": "Wikipedia, AI winter",
+   "url": "https://en.wikipedia.org/wiki/AI_winter",
+   "confidence": "MEDIUM",
+   "note": "Both are commonly cited contributors to the first winter; causation is debated."
+  },
+  {
+   "date": "1973",
+   "year": 1973,
+   "title": "Lighthill report",
+   "significance": "UK Science Research Council review concludes AI had failed its grand promises; UK funding is sharply curtailed. Debated on BBC TV in June 1973.",
+   "quant_hook": null,
+   "source": "Holloway / Wikipedia AI winter",
+   "url": "https://www.holloway.com/g/making-things-think/sections/the-first-ai-winter-19741980",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "1974",
+   "year": 1974,
+   "title": "DARPA cuts AI funding",
+   "significance": "Marks the start of the first AI winter in the US.",
+   "quant_hook": "DARPA cancelled ~$3M a year of Speech Understanding Research grants at Carnegie Mellon.",
+   "source": "Wikipedia, AI winter",
+   "url": "https://en.wikipedia.org/wiki/AI_winter",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "1980",
+   "year": 1980,
+   "title": "R1/XCON at Digital Equipment Corporation",
+   "significance": "First commercially significant expert system; starts the expert-systems boom.",
+   "quant_hook": "Most sources put savings at ~$25M a year; by 1986 it had processed 80,000 orders at 95–98% accuracy.",
+   "source": "McDermott (AAAI 1980); secondary histories",
+   "url": "https://www.Wikipedia.org/wiki/Xcon",
+   "confidence": "MEDIUM",
+   "note": "DEC's often-quoted $40M figure covered XCON and related systems."
+  },
+  {
+   "date": "1982",
+   "year": 1982,
+   "title": "Japan's Fifth Generation project (ICOT)",
+   "significance": "Ten-year MITI programme for logic-programming computers; spurred Western counter-programmes.",
+   "quant_hook": "Initial budget ~¥54 billion over ten years; total spending a little under ¥57 billion (~$320M) by the end.",
+   "source": "Wikipedia, Fifth Generation Computer Systems",
+   "url": "https://en.wikipedia.org/wiki/Fifth_Generation_Computer_Systems",
+   "confidence": "MEDIUM",
+   "note": "Dollar equivalents vary with the exchange-rate year used; quote yen."
+  },
+  {
+   "date": "1986-10-09",
+   "year": 1986,
+   "title": "Backpropagation popularised",
+   "significance": "Rumelhart, Hinton & Williams show multi-layer networks learn useful internal representations.",
+   "quant_hook": "Nature 323:533–536.",
+   "source": "Nature",
+   "url": "https://doi.org/10.1038/323533a0",
+   "confidence": "MEDIUM",
+   "note": "Method itself predates it: Linnainmaa (1970), Werbos (1974 thesis), Parker (1985)."
+  },
+  {
+   "date": "1987",
+   "year": 1987,
+   "title": "Lisp-machine market collapses; NETtalk",
+   "significance": "End of dedicated AI hardware boom marks the second AI winter; same year NETtalk shows a neural net learning to pronounce text.",
+   "quant_hook": "NETtalk training compute ~2.8×10^10 FLOP (Epoch).",
+   "source": "Holloway; Epoch AI via search",
+   "url": "https://www.holloway.com/g/making-things-think/sections/the-second-ai-winter-19871993",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "1997-05-11",
+   "year": 1997,
+   "title": "Deep Blue beats Kasparov",
+   "significance": "First defeat of a reigning world chess champion by a computer in a match under tournament conditions.",
+   "quant_hook": "Won the rematch 3½–2½ (two wins, one loss, three draws); evaluated ~200 million positions per second. Kasparov had won the 1996 match 4–2.",
+   "source": "IBM / History.com, via search",
+   "url": "https://www.history.com/this-day-in-history/kasparov-defeats-chess-playing-computer",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "1997-11",
+   "year": 1997,
+   "title": "LSTM",
+   "significance": "Hochreiter & Schmidhuber's long short-term memory, the recurrent architecture behind most sequence models until the Transformer.",
+   "quant_hook": null,
+   "source": "Neural Computation 9(8)",
+   "url": "https://doi.org/10.1162/neco.1997.9.8.1735",
+   "confidence": "MEDIUM",
+   "note": "Not re-checked in this session."
+  },
+  {
+   "date": "1998-11",
+   "year": 1998,
+   "title": "LeNet-5",
+   "significance": "LeCun et al.'s convolutional network for handwriting recognition, deployed for cheque reading.",
+   "quant_hook": "Training compute ~2.8×10^12 FLOP (Epoch, 'Confident').",
+   "source": "Epoch AI via search summary",
+   "url": "https://epoch.ai/data/notable-ai-models",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2005-10",
+   "year": 2005,
+   "title": "DARPA Grand Challenge won",
+   "significance": "Stanford's Stanley completes a 132-mile desert course autonomously, a year after no vehicle finished.",
+   "quant_hook": "6 h 53 min 58 s; in 2004 the best vehicle managed ~7.4 miles.",
+   "source": "DARPA / Stanford Racing Team",
+   "url": "https://www.darpa.mil/about/innovation-timeline/grand-challenge",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2006-07",
+   "year": 2006,
+   "title": "Deep belief nets",
+   "significance": "Hinton, Osindero & Teh show deep networks can be trained layer by layer, reviving neural-network research.",
+   "quant_hook": null,
+   "source": "Neural Computation 18(7):1527–1554",
+   "url": "https://doi.org/10.1162/neco.2006.18.7.1527",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2010",
+   "year": 2010,
+   "title": "First ImageNet challenge (ILSVRC)",
+   "significance": "Establishes the benchmark that later showcased deep learning.",
+   "quant_hook": "Winning top-5 error 28.2% (NEC-UIUC).",
+   "source": "ILSVRC results via search",
+   "url": "https://image-net.org/challenges/LSVRC/2010/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2011-02-16",
+   "year": 2011,
+   "title": "IBM Watson wins Jeopardy!",
+   "significance": "Open-domain question answering beats the show's two best champions on TV.",
+   "quant_hook": "Two-game totals: Watson $77,147; Ken Jennings $24,000; Brad Rutter $21,600.",
+   "source": "IBM",
+   "url": "https://www.ibm.com/history/watson-jeopardy",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2011-10",
+   "year": 2011,
+   "title": "Siri ships on iPhone 4S",
+   "significance": "First voice assistant in mainstream consumer use.",
+   "quant_hook": null,
+   "source": "Search summary",
+   "url": null,
+   "confidence": "MEDIUM",
+   "note": "Exact launch day not confirmed in this session."
+  },
+  {
+   "date": "2012-09-30",
+   "year": 2012,
+   "title": "AlexNet wins ImageNet",
+   "significance": "GPU-trained deep convolutional net wins by a wide margin, triggering the deep-learning era.",
+   "quant_hook": "Top-5 error 15.3% vs 26.2% for the second-best entry; ~60M parameters; trained on two GTX 580 GPUs; ~4.7×10^17 FLOP (Epoch).",
+   "source": "Krizhevsky, Sutskever & Hinton, NIPS 2012; Epoch AI",
+   "url": "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2014-01-26",
+   "year": 2014,
+   "title": "Google acquires DeepMind",
+   "significance": "Big Tech begins buying frontier AI labs.",
+   "quant_hook": "Price undisclosed; reported at $400M (Re/code) to more than $500M (The Information).",
+   "source": "TechCrunch",
+   "url": "https://techcrunch.com/2014/01/26/google-deepmind/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2014-06-10",
+   "year": 2014,
+   "title": "Generative adversarial networks",
+   "significance": "Goodfellow et al. introduce GANs, the main image-generation method until diffusion models.",
+   "quant_hook": null,
+   "source": "arXiv 1406.2661",
+   "url": "https://arxiv.org/abs/1406.2661",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2014-09",
+   "year": 2014,
+   "title": "Sequence-to-sequence learning",
+   "significance": "Sutskever, Vinyals & Le show end-to-end neural machine translation with LSTMs.",
+   "quant_hook": "Training compute ~5.6×10^19 FLOP (Epoch).",
+   "source": "Epoch AI via search",
+   "url": "https://epoch.ai/data-insights/training-length-trend",
+   "confidence": "MEDIUM",
+   "note": "Paper date not re-checked."
+  },
+  {
+   "date": "2015-12",
+   "year": 2015,
+   "title": "ResNet beats human-level ImageNet error",
+   "significance": "Residual networks win ILSVRC 2015.",
+   "quant_hook": "Top-5 error 3.57%, below the 5.1% single-annotator human estimate.",
+   "source": "He et al., arXiv 1512.03385",
+   "url": "https://arxiv.org/abs/1512.03385",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2016-03-15",
+   "year": 2016,
+   "title": "AlphaGo defeats Lee Sedol",
+   "significance": "First defeat of a 9-dan Go professional without handicap, a decade earlier than many expected.",
+   "quant_hook": "4–1 in Seoul, 9–15 Mar 2016; AlphaGo had beaten Fan Hui 5–0 in Oct 2015 (Nature, 27 Jan 2016).",
+   "source": "Nature / press",
+   "url": "https://www.nature.com/articles/529445a",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2017-06-12",
+   "year": 2017,
+   "title": "The Transformer",
+   "significance": "'Attention Is All You Need' introduces the architecture behind every frontier language model since.",
+   "quant_hook": "28.4 BLEU on WMT14 English–German; ~7.4×10^18 FLOP training compute (Epoch).",
+   "source": "arXiv 1706.03762",
+   "url": "https://arxiv.org/abs/1706.03762",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2017-10",
+   "year": 2017,
+   "title": "AlphaGo Zero",
+   "significance": "Learns Go from self-play alone, without human games; among the first models trained on >10^23 FLOP.",
+   "quant_hook": "~3×10^23 FLOP (Epoch, via Wikipedia).",
+   "source": "Epoch AI via Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/AlphaGo_Zero",
+   "confidence": "MEDIUM",
+   "note": "Epoch treats AlphaGo Master/Zero as outliers in trend fits."
+  },
+  {
+   "date": "2018-05",
+   "year": 2018,
+   "title": "OpenAI 'AI and Compute'",
+   "significance": "First widely cited measurement of exploding training compute.",
+   "quant_hook": "More than 300,000× growth from AlexNet to AlphaGo Zero; 3.4-month doubling time (2012–2018).",
+   "source": "OpenAI",
+   "url": "https://openai.com/index/ai-and-compute/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2018-10",
+   "year": 2018,
+   "title": "BERT",
+   "significance": "Pre-trained bidirectional Transformer resets most language-understanding benchmarks.",
+   "quant_hook": "BERT-Large ~340M parameters; ~2.8×10^20 FLOP (Epoch).",
+   "source": "Google; Epoch AI",
+   "url": "https://epoch.ai/data-insights/training-length-trend",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2019-02-14",
+   "year": 2019,
+   "title": "GPT-2 and staged release",
+   "significance": "OpenAI withholds the full model at first over misuse concerns, starting the release-norms debate.",
+   "quant_hook": "1.5B parameters; ~1.9×10^21 FLOP (Epoch).",
+   "source": "OpenAI; Epoch AI",
+   "url": "https://openai.com/index/better-language-models/",
+   "confidence": "MEDIUM",
+   "note": "Exact date not re-checked in this session."
+  },
+  {
+   "date": "2020-05-28",
+   "year": 2020,
+   "title": "GPT-3",
+   "significance": "Shows few-shot learning emerges from scale.",
+   "quant_hook": "175B parameters; 3.14×10^23 FLOP; 43.9% on MMLU (few-shot); ~$4.3M estimated training cost (AI Index 2024).",
+   "source": "Brown et al., arXiv 2005.14165",
+   "url": "https://arxiv.org/abs/2005.14165",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2020-11-30",
+   "year": 2020,
+   "title": "AlphaFold 2 at CASP14",
+   "significance": "Effectively solves single-chain protein structure prediction, a 50-year-old problem.",
+   "quant_hook": "Median 92.4 GDT across all targets (≈90 is considered competitive with experiment).",
+   "source": "Google DeepMind",
+   "url": "https://deepmind.google/discover/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2022-04",
+   "year": 2022,
+   "title": "PaLM",
+   "significance": "Largest dense model of its time; strong reasoning results.",
+   "quant_hook": "540B parameters; ~2.5×10^24 FLOP (Epoch).",
+   "source": "Google; Epoch AI",
+   "url": "https://epoch.ai/data-insights/training-length-trend",
+   "confidence": "MEDIUM",
+   "note": "Release month from secondary source."
+  },
+  {
+   "date": "2022-08-22",
+   "year": 2022,
+   "title": "Stable Diffusion released with open weights",
+   "significance": "High-quality image generation runs on consumer hardware.",
+   "quant_hook": null,
+   "source": "Stability AI via secondary timelines",
+   "url": null,
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2022-11-30",
+   "year": 2022,
+   "title": "ChatGPT launches",
+   "significance": "Generative AI becomes a mass consumer product.",
+   "quant_hook": "1M users in five days (OpenAI); UBS estimated 100M monthly users by January 2023 from Similarweb data.",
+   "source": "OpenAI; UBS via Reuters",
+   "url": "https://news.yahoo.com/chatgpt-fastest-growing-app-history-142338104.html",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2023-02-24",
+   "year": 2023,
+   "title": "Meta releases LLaMA",
+   "significance": "Capable model weights spread beyond big labs (leaked publicly in early March), seeding the open-weight ecosystem.",
+   "quant_hook": "7B–65B parameters.",
+   "source": "Meta; secondary timelines",
+   "url": null,
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2023-03-14",
+   "year": 2023,
+   "title": "GPT-4",
+   "significance": "Frontier model with strong exam performance; sets the 'GPT-4 class' bar.",
+   "quant_hook": "86.4% MMLU; ~2.1×10^25 FLOP and ~$78M training compute cost (Epoch/AI Index); OpenAI's 'top 10% of bar takers' claim was later disputed.",
+   "source": "OpenAI technical report",
+   "url": "https://arxiv.org/abs/2303.08774",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2023-03-22",
+   "year": 2023,
+   "title": "FLI 'pause' letter",
+   "significance": "Open letter calls for a six-month pause on training systems more powerful than GPT-4.",
+   "quant_hook": null,
+   "source": "Future of Life Institute",
+   "url": "https://futureoflife.org/open-letter/pause-giant-ai-experiments/",
+   "confidence": "MEDIUM",
+   "note": "Date and content not re-checked in this session."
+  },
+  {
+   "date": "2023-11-01",
+   "year": 2023,
+   "title": "Bletchley Park AI Safety Summit",
+   "significance": "First intergovernmental summit on frontier-AI risk; Bletchley Declaration.",
+   "quant_hook": null,
+   "source": "UK Government",
+   "url": "https://www.gov.uk/government/publications/ai-safety-summit-2023-the-bletchley-declaration",
+   "confidence": "MEDIUM",
+   "note": "Signatory count (often given as 28 countries plus the EU) not re-checked."
+  },
+  {
+   "date": "2023-11-06",
+   "year": 2023,
+   "title": "ChatGPT reaches 100M weekly users",
+   "significance": "OpenAI's first own disclosure of the 100M mark (weekly users).",
+   "quant_hook": "100M weekly active users at OpenAI's first DevDay.",
+   "source": "OpenAI DevDay via TechCrunch",
+   "url": "https://techcrunch.com/2025/03/06/chatgpt-doubled-its-weekly-active-users-in-under-6-months-thanks-to-new-releases",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2023-12",
+   "year": 2023,
+   "title": "Gemini 1.0 Ultra",
+   "significance": "Google's first frontier multimodal model; most expensive training run estimated at the time.",
+   "quant_hook": "~5.0×10^25 FLOP and ~$191M training compute cost (Epoch/AI Index 2024).",
+   "source": "Epoch AI; Stanford AI Index 2024",
+   "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2024-07",
+   "year": 2024,
+   "title": "Llama 3.1 405B",
+   "significance": "Open-weight model at near-frontier scale.",
+   "quant_hook": "~3.8×10^25 FLOP (6 × 405B params × 15.6T tokens); ~$170M estimated cost (AI Index 2025).",
+   "source": "Epoch AI; Stanford AI Index 2025",
+   "url": "https://epoch.ai/data/large-scale-ai-models",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#largest_training_compute, frontier_training_cost]"
+  },
+  {
+   "date": "2024-08-01",
+   "year": 2024,
+   "title": "EU AI Act enters into force",
+   "significance": "First comprehensive AI statute in a major economy; obligations phase in from Feb 2025.",
+   "quant_hook": "Maximum fines €35M or 7% of worldwide turnover.",
+   "source": "European Commission",
+   "url": "https://commission.europa.eu/news/ai-act-enters-force-2024-08-01_en",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: regulation.json#eu_ai_act_max_fine]. Annex III high-risk date later moved to 2 Dec 2027 by the 2026 Omnibus."
+  },
+  {
+   "date": "2024-09-12",
+   "year": 2024,
+   "title": "OpenAI o1-preview: reasoning models",
+   "significance": "Models trained to 'think' before answering; inference-time compute becomes a scaling axis.",
+   "quant_hook": "OpenAI reported o1 solved 83% of AIME (the US IMO qualifier) problems with 64-sample consensus vs 13% for GPT-4o; o1-preview ~57%.",
+   "source": "OpenAI",
+   "url": "https://openai.com/index/introducing-openai-o1-preview/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2024-10-08",
+   "year": 2024,
+   "title": "Nobel Prizes for AI research",
+   "significance": "Physics to Hopfield and Hinton (8 Oct); half of Chemistry to Hassabis and Jumper for AlphaFold (9 Oct).",
+   "quant_hook": null,
+   "source": "Nobel announcements via press",
+   "url": "https://aihub.org/2024/10/10/nobel-prizes-in-physics-and-chemistry-awarded-for-machine-learning-research/",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2024-10-22",
+   "year": 2024,
+   "title": "Computer use (Anthropic)",
+   "significance": "First frontier model offered with the ability to operate a desktop GUI; start of the agent era.",
+   "quant_hook": null,
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/3-5-models-and-computer-use",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2024-12-20",
+   "year": 2024,
+   "title": "o3 announced",
+   "significance": "Large jumps on hard reasoning benchmarks.",
+   "quant_hook": "ARC-AGI-1 75.7% within the $10k limit (87.5% high-compute); FrontierMath 25.2% (OpenAI-run; Epoch's own later run ~10%); SWE-bench Verified 71.7%.",
+   "source": "ARC Prize; OpenAI via press",
+   "url": "https://arcprize.org/blog/oai-o3-pub-breakthrough",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#arc_agi_top, swe_bench_verified_top]"
+  },
+  {
+   "date": "2025-01-20",
+   "year": 2025,
+   "title": "DeepSeek-R1",
+   "significance": "Chinese open-weight reasoning model near the frontier at far lower prices.",
+   "quant_hook": "Nvidia lost ~$589B of market value on 27 Jan 2025 (Bloomberg; Reuters says ~$593B), a record one-day loss.",
+   "source": "Bloomberg; DeepSeek",
+   "url": "https://www.bloomberg.com/news/articles/2025-01-27/asml-sinks-as-china-ai-startup-triggers-panic-in-tech-stocks",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2025-01",
+   "year": 2025,
+   "title": "Stargate announced",
+   "significance": "Private US AI-infrastructure commitment marks the gigawatt-scale data-centre era.",
+   "quant_hook": "$500B over four years, $100B immediately.",
+   "source": "OpenAI",
+   "url": "https://openai.com/index/announcing-the-stargate-project/",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: infrastructure.json#openai_contracted_gw]"
+  },
+  {
+   "date": "2025-02",
+   "year": 2025,
+   "title": "Grok 3: first model above 10^26 FLOP",
+   "significance": "Epoch's first estimate of a training run above 10^26 FLOP.",
+   "quant_hook": "~3.5×10^26 FLOP (Epoch figure via secondary aggregator).",
+   "source": "Epoch AI",
+   "url": "https://epoch.ai/tools/model-counts",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2025-07",
+   "year": 2025,
+   "title": "AI wins IMO gold (certified)",
+   "significance": "Natural-language maths at olympiad gold level within contest time.",
+   "quant_hook": "35/42 (5 of 6 problems), Gemini Deep Think, certified by the IMO.",
+   "source": "Google DeepMind",
+   "url": "https://deepmind.google/discover/blog/advanced-version-of-gemini-with-deep-think-officially-achieves-gold-medal-standard-at-the-international-mathematical-olympiad/",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#imo_ai_result]"
+  },
+  {
+   "date": "2025-07",
+   "year": 2025,
+   "title": "Grok 4: largest known 2025 training run",
+   "significance": "Largest estimated run of 2025.",
+   "quant_hook": "~5×10^26 FLOP and ~$490M (Epoch median: 246M H100-hours).",
+   "source": "Epoch AI",
+   "url": "https://epoch.ai/data-insights/grok-4-training-resources",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#largest_training_compute, frontier_training_cost]"
+  },
+  {
+   "date": "2025-08-07",
+   "year": 2025,
+   "title": "GPT-5",
+   "significance": "Flagship launched at lower price than predecessors; Epoch estimates it used less training compute than GPT-4.5.",
+   "quant_hook": "~5×10^25 FLOP median estimate; $1.25 / $10 per million input/output tokens.",
+   "source": "Epoch AI; OpenAI",
+   "url": "https://epoch.ai/gradient-updates/why-gpt5-used-less-training-compute-than-gpt45-but-gpt6-probably-wont",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#openai_flagship_launch_price]"
+  },
+  {
+   "date": "2025-10-06",
+   "year": 2025,
+   "title": "ChatGPT at 800M weekly users",
+   "significance": "Consumer AI reaches roughly a tenth of humanity weekly.",
+   "quant_hook": "800M weekly active users.",
+   "source": "OpenAI DevDay via TechCrunch",
+   "url": "https://techcrunch.com/2025/10/06/sam-altman-says-chatgpt-has-hit-800m-weekly-active-users/",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: usage.json#chatgpt_wau]"
+  },
+  {
+   "date": "2025-11-24",
+   "year": 2025,
+   "title": "Claude Opus 4.5 passes 80% on SWE-bench Verified",
+   "significance": "Autonomous software-engineering benchmark crosses 80%.",
+   "quant_hook": "80.9% (vendor-reported).",
+   "source": "Anthropic",
+   "url": "https://www.anthropic.com/news/claude-opus-4-5",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#swe_bench_verified_top]"
+  },
+  {
+   "date": "2026-02",
+   "year": 2026,
+   "title": "ARC-AGI-2 above 80%",
+   "significance": "The benchmark launched in Mar 2025 to replace near-solved ARC-AGI-1 is largely solved within a year.",
+   "quant_hook": "84.6% (Gemini 3 Deep Think upgrade, ARC Prize-verified, ~$13.62 per task).",
+   "source": "ARC Prize via OfficeChai",
+   "url": "https://officechai.com/ai/gemini-3-deep-think-benchmarks-arc-agi",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#arc_agi_top]"
+  },
+  {
+   "date": "2026-03-31",
+   "year": 2026,
+   "title": "OpenAI raises $122B at $852B",
+   "significance": "Largest private funding round on record.",
+   "quant_hook": "$122B at $852B post-money.",
+   "source": "OpenAI; Bloomberg",
+   "url": "https://finance.yahoo.com/sectors/technology/article/openai-valued-at-852-billion-in-latest-funding-round-ahead-of-ipo-213943098.html",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: finance.json#largest_ai_round]"
+  },
+  {
+   "date": "2026-04-13",
+   "year": 2026,
+   "title": "AI Index 2026: corporate AI investment more than doubles",
+   "significance": "Stanford HAI measures the 2025 investment surge.",
+   "quant_hook": "Global corporate AI investment $581.7B in 2025 (+130%); private investment $344.7B.",
+   "source": "Stanford HAI AI Index 2026",
+   "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+   "confidence": "MEDIUM",
+   "note": ""
+  },
+  {
+   "date": "2026-06-09",
+   "year": 2026,
+   "title": "Claude Fable 5 launched and withdrawn",
+   "significance": "First frontier model withdrawn within a week under US export controls.",
+   "quant_hook": null,
+   "source": "Report AI pages",
+   "url": null,
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#frontier_releases, stop_quoting]. Vendor page not opened."
+  },
+  {
+   "date": "2026-07",
+   "year": 2026,
+   "title": "Perfect scores at IMO 2026",
+   "significance": "Several AI systems reported 42/42 at the Shanghai olympiad, saturating the contest as a benchmark.",
+   "quant_hook": "42/42 reported for multiple systems (trade press).",
+   "source": "Trade press via Digital Applied",
+   "url": "https://www.digitalapplied.com/blog/imo-2026-perfect-scores-ai-benchmark-saturation",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#imo_ai_result]"
+  },
+  {
+   "date": "2026-08-31",
+   "year": 2026,
+   "title": "ChatGPT passes 1 billion weekly users",
+   "significance": "First AI product above one billion weekly users.",
+   "quant_hook": "1B+ weekly active users (OpenAI).",
+   "source": "OpenAI",
+   "url": null,
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: usage.json#chatgpt_wau]; OpenAI statement URL not recorded in our data."
+  },
+  {
+   "date": "2026-09-01",
+   "year": 2026,
+   "title": "SWE-bench Verified saturated",
+   "significance": "Independent leaderboard stops running the benchmark on new releases.",
+   "quant_hook": "97.0% (Claude Opus 5, Vals.ai harness).",
+   "source": "Vals.ai",
+   "url": "https://www.vals.ai/benchmarks/swebench",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: models.json#swe_bench_verified_top]"
+  },
+  {
+   "date": "2026-09-03",
+   "year": 2026,
+   "title": "GPT-6 Astra: largest estimated training run",
+   "significance": "Epoch's largest training-compute estimate to date.",
+   "quant_hook": "~9.4×10^26 FLOP (Epoch, 'Likely'), ~45× GPT-4; at least 100,000 GB200 chips, ~233 MW.",
+   "source": "Epoch AI via AI Pulse aggregator",
+   "url": "https://projectaipulse.com/compute-behind-notable-models/",
+   "confidence": "MEDIUM",
+   "note": "NEW vs our data: models.json says no public 2026 compute estimate exists — update that page."
+  },
+  {
+   "date": "2026-10-26",
+   "year": 2026,
+   "title": "Anthropic files S-1",
+   "significance": "First frontier lab to file publicly for an IPO.",
+   "quant_hook": "H1 2026 revenue $16.3B; Q2 2026 first operating profit ($974M).",
+   "source": "Anthropic S-1 as reported",
+   "url": "https://ppc.land/anthropic-files-for-nasdaq-ipo-with-16-3bn-in-first-half-revenue/",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: finance.json#anthropic_revenue]"
+  },
+  {
+   "date": "2026-11-06",
+   "year": 2026,
+   "title": "OpenAI valued at $1.25 trillion",
+   "significance": "First private AI lab valued above $1 trillion.",
+   "quant_hook": "First close of ~$11B at a reported $1.25T.",
+   "source": "Bloomberg, Reuters as reported",
+   "url": "https://siliconangle.com/2026/11/06/openai-reportedly-raises-11b-in-new-funding-at-1-25t-valuation/",
+   "confidence": "MEDIUM",
+   "note": "[Report AI State of AI data: finance.json#openai_valuation]. Pre/post-money not stated."
+  }
+ ],
+ "series": {
+  "a": [
+   {
+    "label": "Perceptron Mark I",
+    "x": 1957,
+    "value": 690000.0,
+    "unit": "FLOP",
+    "date": "1957",
+    "source": "Epoch AI, Notable AI Models (via search summary; epoch.ai blocked from this session)",
+    "url": "https://epoch.ai/data/notable-ai-models",
+    "confidence": "MEDIUM",
+    "note": "Epoch rates 'Likely'. Mark I hardware dated 1957 or 1960 by different sources; the 1958 public demo was an IBM 704 simulation."
+   },
+   {
+    "label": "Perceptron (1960)",
+    "x": 1960,
+    "value": 720000000.0,
+    "unit": "FLOP",
+    "date": "1960",
+    "source": "Epoch AI, Notable AI Models (via search summary; epoch.ai blocked from this session)",
+    "url": "https://epoch.ai/data/notable-ai-models",
+    "confidence": "MEDIUM",
+    "note": "Epoch rates 'Speculative' — least certain point in the series."
+   },
+   {
+    "label": "NETtalk",
+    "x": 1987,
+    "value": 28000000000.0,
+    "unit": "FLOP",
+    "date": "1987",
+    "source": "Epoch AI, Notable AI Models (via search summary; epoch.ai blocked from this session)",
+    "url": "https://epoch.ai/data/notable-ai-models",
+    "confidence": "MEDIUM",
+    "note": "Epoch rates 'Confident'."
+   },
+   {
+    "label": "LeNet-5",
+    "x": 1998.833,
+    "value": 2800000000000.0,
+    "unit": "FLOP",
+    "date": "Nov 1998",
+    "source": "Epoch AI, Notable AI Models (via search summary; epoch.ai blocked from this session)",
+    "url": "https://epoch.ai/data/notable-ai-models",
+    "confidence": "MEDIUM",
+    "note": "Epoch rates 'Confident'."
+   },
+   {
+    "label": "AlexNet",
+    "x": 2012.746,
+    "value": 4.7e+17,
+    "unit": "FLOP",
+    "date": "30 Sep 2012",
+    "source": "Epoch AI data insight",
+    "url": "https://epoch.ai/data-insights/compute-trend-post-2010",
+    "confidence": "MEDIUM",
+    "note": "Also in Epoch's compute-trend post."
+   },
+   {
+    "label": "Seq2Seq LSTM",
+    "x": 2014.667,
+    "value": 5.6e+19,
+    "unit": "FLOP",
+    "date": "Sep 2014",
+    "source": "Epoch AI data insight (training-length trend)",
+    "url": "https://epoch.ai/data-insights/training-length-trend",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Transformer",
+    "x": 2017.447,
+    "value": 7.4e+18,
+    "unit": "FLOP",
+    "date": "12 Jun 2017",
+    "source": "Epoch AI data insight (training-length trend)",
+    "url": "https://epoch.ai/data-insights/training-length-trend",
+    "confidence": "MEDIUM",
+    "note": "Lower than Seq2Seq: the Transformer was efficient, not big."
+   },
+   {
+    "label": "AlphaGo Zero",
+    "x": 2017.75,
+    "value": 3e+23,
+    "unit": "FLOP",
+    "date": "Oct 2017",
+    "source": "Epoch AI, as cited by Wikipedia",
+    "url": "https://en.wikipedia.org/wiki/AlphaGo_Zero",
+    "confidence": "MEDIUM",
+    "note": "CONTESTED: OpenAI's 2018 figure was ~3.4×10^23 (widely quoted as 3.41e23); one Epoch page snippet gave 6.5×10^20, which may be a different accounting. Epoch excludes AlphaGo Master/Zero from trend fits as outliers (compute spent on self-play data generation). Do not use as a trend point."
+   },
+   {
+    "label": "BERT-Large",
+    "x": 2018.75,
+    "value": 2.8e+20,
+    "unit": "FLOP",
+    "date": "Oct 2018",
+    "source": "Epoch AI data insight (training-length trend)",
+    "url": "https://epoch.ai/data-insights/training-length-trend",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "GPT-2 (1.5B)",
+    "x": 2019.083,
+    "value": 1.9e+21,
+    "unit": "FLOP",
+    "date": "Feb 2019",
+    "source": "Epoch AI data insight (dataset-size trend)",
+    "url": "https://epoch.ai/data-insights/dataset-size-trend",
+    "confidence": "MEDIUM",
+    "note": "Epoch log value 21.28."
+   },
+   {
+    "label": "GPT-3 175B",
+    "x": 2020.407,
+    "value": 3.14e+23,
+    "unit": "FLOP",
+    "date": "28 May 2020",
+    "source": "Brown et al. 2020 (paper appendix); Epoch AI",
+    "url": "https://arxiv.org/abs/2005.14165",
+    "confidence": "MEDIUM",
+    "note": "Paper's own figure; Epoch ~3.1e23."
+   },
+   {
+    "label": "PaLM 540B",
+    "x": 2022.25,
+    "value": 2.5e+24,
+    "unit": "FLOP",
+    "date": "Apr 2022",
+    "source": "Epoch AI data insight (training-length trend)",
+    "url": "https://epoch.ai/data-insights/training-length-trend",
+    "confidence": "MEDIUM",
+    "note": "Epoch log value 24.40."
+   },
+   {
+    "label": "GPT-4",
+    "x": 2023.202,
+    "value": 2.1e+25,
+    "unit": "FLOP",
+    "date": "14 Mar 2023",
+    "source": "Epoch AI (models over 1e25 FLOP)",
+    "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+    "confidence": "MEDIUM",
+    "note": "Not disclosed by OpenAI; Epoch low-precision estimate from hardware and duration."
+   },
+   {
+    "label": "Gemini 1.0 Ultra",
+    "x": 2023.917,
+    "value": 5e+25,
+    "unit": "FLOP",
+    "date": "Dec 2023",
+    "source": "Epoch AI (models over 1e25 FLOP)",
+    "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+    "confidence": "MEDIUM",
+    "note": "Low precision; benchmark imputation plus hardware estimates."
+   },
+   {
+    "label": "Grok-2",
+    "x": 2024.583,
+    "value": 3e+25,
+    "unit": "FLOP",
+    "date": "Aug 2024",
+    "source": "Epoch AI (models over 1e25 FLOP)",
+    "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+    "confidence": "MEDIUM",
+    "note": "From training time, hardware and xAI/Musk statements."
+   },
+   {
+    "label": "Llama 3.1 405B",
+    "x": 2024.5,
+    "value": 3.8e+25,
+    "unit": "FLOP",
+    "date": "Jul 2024",
+    "source": "Epoch AI; Meta paper",
+    "url": "https://epoch.ai/data/large-scale-ai-models",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#largest_training_compute 2024]. 6 × 405B × 15.6T tokens; Epoch rates high precision."
+   },
+   {
+    "label": "Grok 3",
+    "x": 2025.083,
+    "value": 3.5e+26,
+    "unit": "FLOP",
+    "date": "Feb 2025",
+    "source": "Epoch AI figure via aiwiki.ai aggregator",
+    "url": "https://aiwiki.ai/wiki/training_compute",
+    "confidence": "MEDIUM",
+    "note": "Epoch's own pages confirm Grok 3 was the first model it estimated above 10^26 FLOP; the 3.5e26 value is second-hand. A Manifold market cited 4.6e26."
+   },
+   {
+    "label": "GPT-4.5",
+    "x": 2025.083,
+    "value": 6.4e+25,
+    "unit": "FLOP",
+    "date": "Feb 2025",
+    "source": "Epoch AI (models over 1e25 FLOP)",
+    "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+    "confidence": "MEDIUM",
+    "note": "CONTESTED: an aggregator citing Epoch lists 3.8e26. Epoch says GPT-4.5 very likely used more compute than GPT-5. Treat as uncertain by ~6×; exclude from the headline chart."
+   },
+   {
+    "label": "Grok 4",
+    "x": 2025.5,
+    "value": 5e+26,
+    "unit": "FLOP",
+    "date": "Jul 2025",
+    "source": "Epoch AI, Grok 4 training resources",
+    "url": "https://epoch.ai/data-insights/grok-4-training-resources",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#largest_training_compute 2025]. Based largely on vague xAI statements."
+   },
+   {
+    "label": "GPT-5",
+    "x": 2025.6,
+    "value": 5e+25,
+    "unit": "FLOP",
+    "date": "7 Aug 2025",
+    "source": "Epoch AI, notes on GPT-5 training compute",
+    "url": "https://epoch.ai/gradient-updates/why-gpt5-used-less-training-compute-than-gpt45-but-gpt6-probably-wont",
+    "confidence": "MEDIUM",
+    "note": "Median estimate assuming final RL = 10–200% of pre-training; 'likely less than 1e26'. Breaks the ~100× per GPT generation pattern."
+   },
+   {
+    "label": "GPT-6 Astra",
+    "x": 2026.672,
+    "value": 9.4e+26,
+    "unit": "FLOP",
+    "date": "3 Sep 2026",
+    "source": "Epoch AI estimate via AI Pulse aggregator (retrieved 7 Nov 2026)",
+    "url": "https://projectaipulse.com/compute-behind-notable-models/",
+    "confidence": "MEDIUM",
+    "note": "Epoch rates 'Likely'; range ~5e26–2e27. Largest estimate in Epoch's dataset. NEW vs models.json, which says no 2026 estimate exists."
+   },
+   {
+    "label": "Growth rate: pre-2010 (doubling time)",
+    "x": 1985,
+    "value": 20,
+    "unit": "months per doubling",
+    "date": "pre-2010",
+    "source": "Sevilla et al. 2022, Compute Trends Across Three Eras",
+    "url": "https://arxiv.org/abs/2202.05924",
+    "confidence": "MEDIUM",
+    "note": "Roughly Moore's law."
+   },
+   {
+    "label": "Growth rate: deep-learning era (doubling time)",
+    "x": 2016,
+    "value": 6,
+    "unit": "months per doubling",
+    "date": "2010–2022",
+    "source": "Sevilla et al. 2022",
+    "url": "https://arxiv.org/abs/2202.05924",
+    "confidence": "MEDIUM",
+    "note": "Epoch summaries say 5–6 months. A large-scale-era ~9.9-month figure appears only in a third-party summary (not used)."
+   },
+   {
+    "label": "Growth rate: OpenAI 2012–2018 (doubling time)",
+    "x": 2015,
+    "value": 3.4,
+    "unit": "months per doubling",
+    "date": "2012–2018",
+    "source": "OpenAI, AI and Compute (May 2018)",
+    "url": "https://openai.com/index/ai-and-compute/",
+    "confidence": "MEDIUM",
+    "note": "Superseded; >300,000× AlexNet→AlphaGo Zero."
+   },
+   {
+    "label": "Growth rate: notable models 2010–May 2024",
+    "x": 2017,
+    "value": 4.1,
+    "unit": "× per year",
+    "date": "2010–May 2024",
+    "source": "Epoch AI",
+    "url": "https://epoch.ai/blog/training-compute-of-frontier-ai-models-grows-by-4-5x-per-year",
+    "confidence": "MEDIUM",
+    "note": "90% CI 3.7×–4.6×."
+   },
+   {
+    "label": "Growth rate: frontier language models since 2020",
+    "x": 2023,
+    "value": 5,
+    "unit": "× per year",
+    "date": "2020–Feb 2026",
+    "source": "Epoch AI trends page (updated 5 Feb 2026)",
+    "url": "https://epoch.ai/trends",
+    "confidence": "MEDIUM",
+    "note": "90% CI 4×–6×; ~5.2-month doubling; top-5 models up ~10,000× since 2020."
+   },
+   {
+    "label": "Doubling time implied by 4.1×/yr",
+    "x": 2017,
+    "value": 5.9,
+    "unit": "months per doubling",
+    "date": "2010–2024",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "12 × ln2 / ln4.1"
+   },
+   {
+    "label": "Perceptron Mark I → GPT-6 Astra",
+    "x": 2026,
+    "value": 1.362e+21,
+    "unit": "× (multiple)",
+    "date": "1957–2026",
+    "source": "Report AI calculation from Epoch figures",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "9.4e26 / 6.9e5 ≈ 1.4×10^21 — about 21 orders of magnitude."
+   },
+   {
+    "label": "AlexNet → GPT-4",
+    "x": 2023,
+    "value": 44700000.0,
+    "unit": "× (multiple)",
+    "date": "2012–2023",
+    "source": "Report AI calculation from Epoch figures",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "2.1e25 / 4.7e17 ≈ 4.5×10^7."
+   },
+   {
+    "label": "GPT-4 → GPT-6 Astra",
+    "x": 2026,
+    "value": 44.8,
+    "unit": "× (multiple)",
+    "date": "2023–2026",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "9.4e26 / 2.1e25 = 44.8 (AI Pulse says ~45×)."
+   }
+  ],
+  "b": [
+   {
+    "label": "Transformer",
+    "x": 2017.417,
+    "value": 930,
+    "unit": "USD",
+    "date": "2017",
+    "source": "Stanford HAI AI Index 2024 (Epoch AI estimates, cloud-rental basis)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": "Compute cost of the final training run only."
+   },
+   {
+    "label": "GPT-3 175B",
+    "x": 2020.333,
+    "value": 4324883,
+    "unit": "USD",
+    "date": "2020",
+    "source": "Stanford HAI AI Index 2024 (Epoch AI estimates, cloud-rental basis)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": "Figure from AI Index cost table as relayed by secondary coverage."
+   },
+   {
+    "label": "GPT-4",
+    "x": 2023.167,
+    "value": 78352034,
+    "unit": "USD",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024 (Epoch AI estimates, cloud-rental basis)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": "Epoch's amortised-hardware method (Cottier et al.) gives ~$40M — method matters."
+   },
+   {
+    "label": "Gemini 1.0 Ultra",
+    "x": 2023.917,
+    "value": 191400000,
+    "unit": "USD",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024 (Epoch AI estimates, cloud-rental basis)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": "Amortised-hardware method gives ~$30M (Cottier et al.)."
+   },
+   {
+    "label": "Llama 3.1 405B",
+    "x": 2024.5,
+    "value": 170000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025 (Epoch)",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#frontier_training_cost 2024]. Other estimates $30–60M under different scopes."
+   },
+   {
+    "label": "Grok-2",
+    "x": 2024.583,
+    "value": 107000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025 (Epoch), via secondary coverage",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Grok 4",
+    "x": 2025.5,
+    "value": 490000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "Epoch AI, Grok 4 training resources",
+    "url": "https://epoch.ai/data-insights/grok-4-training-resources",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#frontier_training_cost 2025]. 246M H100-hours at $1.90–2.20/hr."
+   },
+   {
+    "label": "DeepSeek-V3 (stated final-run GPU rental)",
+    "x": 2024.917,
+    "value": 5580000.0,
+    "unit": "USD",
+    "date": "Dec 2024",
+    "source": "DeepSeek technical report",
+    "url": "https://arxiv.org/abs/2412.19437",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#stop_quoting]. Final pre-training run only; excludes research, earlier runs, staff, hardware. NOT comparable with the other rows."
+   },
+   {
+    "label": "Largest training run, mid-2025 (AI Index 2026 claim)",
+    "x": 2025.417,
+    "value": 120000000.0,
+    "unit": "USD",
+    "date": "mid-2025",
+    "source": "Stanford HAI AI Index 2026, via remio.ai (single secondary source)",
+    "url": "https://www.remio.ai/post/stanford-ai-index-shows-cheaper-models-fiercer-competition",
+    "confidence": "MEDIUM",
+    "note": "CONTESTED and unverified: conflicts with Epoch's ~$490M for Grok 4; the same source says costs fell ~30% y/y. Do not chart until checked against the report."
+   },
+   {
+    "label": "Growth rate: frontier training cost since 2016",
+    "x": 2020,
+    "value": 2.4,
+    "unit": "× per year",
+    "date": "2016–2024",
+    "source": "Cottier et al. (Epoch AI), The rising costs of training frontier AI models",
+    "url": "https://arxiv.org/abs/2405.21015",
+    "confidence": "MEDIUM",
+    "note": "Amortised hardware + energy. 95% CI 2.0–3.1× (blog) or 90% CI 2.0–2.9× (arXiv v2). Cloud-price method: 2.6×/yr. Projects >$1B runs by 2027."
+   },
+   {
+    "label": "Transformer → Grok 4 cost multiple",
+    "x": 2025,
+    "value": 526882,
+    "unit": "× (multiple)",
+    "date": "2017–2025",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "490e6 / 930 ≈ 527,000×. Mixes AI Index (cloud) and Epoch (amortised) methods — illustrative only."
+   }
+  ],
+  "c": [
+   {
+    "label": "LeNet-5",
+    "x": 1998.833,
+    "value": 60000.0,
+    "unit": "parameters",
+    "date": "1998",
+    "source": "LeCun et al. 1998 (as commonly cited)",
+    "url": "https://doi.org/10.1109/5.726791",
+    "confidence": "MEDIUM",
+    "note": "~60,000; not re-checked in this session."
+   },
+   {
+    "label": "AlexNet",
+    "x": 2012.667,
+    "value": 60000000.0,
+    "unit": "parameters",
+    "date": "2012",
+    "source": "Krizhevsky et al. 2012, via secondary summaries",
+    "url": "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks",
+    "confidence": "MEDIUM",
+    "note": "~60 million."
+   },
+   {
+    "label": "Transformer (big)",
+    "x": 2017.417,
+    "value": 213000000.0,
+    "unit": "parameters",
+    "date": "2017",
+    "source": "Vaswani et al. 2017",
+    "url": "https://arxiv.org/abs/1706.03762",
+    "confidence": "MEDIUM",
+    "note": "Base 65M, big 213M per the paper's table; not re-checked this session."
+   },
+   {
+    "label": "BERT-Large",
+    "x": 2018.75,
+    "value": 340000000.0,
+    "unit": "parameters",
+    "date": "2018",
+    "source": "Devlin et al. 2018, via secondary sources",
+    "url": "https://arxiv.org/abs/1810.04805",
+    "confidence": "MEDIUM",
+    "note": "Some sources say 355M (counting differences)."
+   },
+   {
+    "label": "GPT-2",
+    "x": 2019.083,
+    "value": 1500000000.0,
+    "unit": "parameters",
+    "date": "2019",
+    "source": "OpenAI, via secondary sources",
+    "url": "https://openai.com/index/better-language-models/",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "GPT-3",
+    "x": 2020.333,
+    "value": 175000000000.0,
+    "unit": "parameters",
+    "date": "2020",
+    "source": "Brown et al. 2020",
+    "url": "https://arxiv.org/abs/2005.14165",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Gopher",
+    "x": 2021.917,
+    "value": 280000000000.0,
+    "unit": "parameters",
+    "date": "2021",
+    "source": "Rae et al. 2021 (MMLU leaderboard entry)",
+    "url": "https://github.com/hendrycks/test",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Chinchilla",
+    "x": 2022.167,
+    "value": 70000000000.0,
+    "unit": "parameters",
+    "date": "2022",
+    "source": "Hoffmann et al. 2022 (MMLU leaderboard entry)",
+    "url": "https://github.com/hendrycks/test",
+    "confidence": "MEDIUM",
+    "note": "Smaller than Gopher yet better — compute-optimal scaling."
+   },
+   {
+    "label": "PaLM",
+    "x": 2022.25,
+    "value": 540000000000.0,
+    "unit": "parameters",
+    "date": "2022",
+    "source": "Google, via secondary source",
+    "url": "https://epoch.ai/data-insights/training-length-trend",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "LLaMA (largest)",
+    "x": 2023.083,
+    "value": 65000000000.0,
+    "unit": "parameters",
+    "date": "Feb 2023",
+    "source": "Meta, via secondary timelines",
+    "url": "https://arxiv.org/abs/2302.13971",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "GPT-4",
+    "x": 2023.167,
+    "value": null,
+    "unit": "parameters",
+    "date": "2023",
+    "source": "OpenAI (not disclosed)",
+    "url": "https://arxiv.org/abs/2303.08774",
+    "confidence": "MEDIUM",
+    "note": "UNDISCLOSED. Rumours: ~1T (Semafor), 1.76T (Hotz), ~1.8T (SemiAnalysis). Do not chart."
+   },
+   {
+    "label": "Llama 3.1 405B",
+    "x": 2024.5,
+    "value": 405000000000.0,
+    "unit": "parameters",
+    "date": "2024",
+    "source": "Meta",
+    "url": "https://epoch.ai/data/large-scale-ai-models",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "DeepSeek-V3 (total; 37B active)",
+    "x": 2024.917,
+    "value": 671000000000.0,
+    "unit": "parameters",
+    "date": "Dec 2024",
+    "source": "DeepSeek technical report / Hugging Face card",
+    "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "confidence": "MEDIUM",
+    "note": "Mixture-of-experts: 37B activated per token."
+   },
+   {
+    "label": "DeepSeek V4-Pro (total)",
+    "x": 2026.313,
+    "value": 1600000000000.0,
+    "unit": "parameters",
+    "date": "24 Apr 2026",
+    "source": "DeepSeek, as cited on Report AI",
+    "url": "https://api-docs.deepseek.com/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#deepseek_flagship_price note]. MoE; active count not in our data."
+   },
+   {
+    "label": "Frontier parameter counts (AI Index 2026 summary)",
+    "x": 2026,
+    "value": 1000000000000.0,
+    "unit": "parameters (approx.)",
+    "date": "2023–2025",
+    "source": "Stanford HAI AI Index 2026, via secondary summaries",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/technical-performance",
+    "confidence": "MEDIUM",
+    "note": "Report says counts stayed near 1 trillion for three years while frontier labs stopped disclosing them; compute kept rising."
+   }
+  ],
+  "d": [
+   {
+    "label": "ImageNet top-5 error — 2010 winner (NEC-UIUC)",
+    "x": 2010,
+    "value": 28.2,
+    "unit": "% error",
+    "date": "2010",
+    "source": "ILSVRC results (via search summaries)",
+    "url": "https://image-net.org/challenges/LSVRC/2010/",
+    "confidence": "MEDIUM",
+    "note": "28.19%."
+   },
+   {
+    "label": "ImageNet top-5 error — 2011 winner (XRCE)",
+    "x": 2011,
+    "value": 25.8,
+    "unit": "% error",
+    "date": "2011",
+    "source": "ILSVRC results (via search summaries)",
+    "url": "https://image-net.org/challenges/LSVRC/2011/",
+    "confidence": "MEDIUM",
+    "note": "Not confirmed directly from a 2011 results page."
+   },
+   {
+    "label": "ImageNet top-5 error — 2012 AlexNet",
+    "x": 2012,
+    "value": 15.3,
+    "unit": "% error",
+    "date": "Sep 2012",
+    "source": "Krizhevsky et al. 2012; ILSVRC 2012",
+    "url": "https://image-net.org/static_files/files/ilsvrc2012.pdf",
+    "confidence": "MEDIUM",
+    "note": "Runner-up 26.2%; one source says 15.4%."
+   },
+   {
+    "label": "ImageNet top-5 error — 2013 winner (Clarifai)",
+    "x": 2013,
+    "value": 11.2,
+    "unit": "% error",
+    "date": "2013",
+    "source": "ILSVRC results (via search summaries)",
+    "url": "https://image-net.org/challenges/LSVRC/2013/",
+    "confidence": "MEDIUM",
+    "note": "Often misquoted as ZFNet 11.7% (ZFNet's single-model result); most sources give the winning entry as 11.2%."
+   },
+   {
+    "label": "ImageNet top-5 error — 2014 GoogLeNet",
+    "x": 2014,
+    "value": 6.67,
+    "unit": "% error",
+    "date": "2014",
+    "source": "ILSVRC results (via search summaries)",
+    "url": "https://arxiv.org/abs/1409.4842",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "ImageNet top-5 error — 2015 ResNet",
+    "x": 2015,
+    "value": 3.57,
+    "unit": "% error",
+    "date": "Dec 2015",
+    "source": "He et al. 2015",
+    "url": "https://arxiv.org/abs/1512.03385",
+    "confidence": "MEDIUM",
+    "note": "Ensemble on test set."
+   },
+   {
+    "label": "ImageNet top-5 error — 2016 winner (Trimps-Soushen)",
+    "x": 2016,
+    "value": 2.99,
+    "unit": "% error",
+    "date": "2016",
+    "source": "ILSVRC results (via search summaries)",
+    "url": "https://image-net.org/challenges/LSVRC/2016/",
+    "confidence": "MEDIUM",
+    "note": "Not confirmed directly; consistent with SENet's ~25% relative improvement."
+   },
+   {
+    "label": "ImageNet top-5 error — 2017 SENet",
+    "x": 2017,
+    "value": 2.25,
+    "unit": "% error",
+    "date": "2017",
+    "source": "Hu et al. (SENet)",
+    "url": "https://arxiv.org/abs/1709.01507",
+    "confidence": "MEDIUM",
+    "note": "2.251%; ILSVRC ended after 2017."
+   },
+   {
+    "label": "ImageNet human baseline (one annotator)",
+    "x": 2014.669,
+    "value": 5.1,
+    "unit": "% error",
+    "date": "2 Sep 2014",
+    "source": "Karpathy blog",
+    "url": "https://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/",
+    "confidence": "MEDIUM",
+    "note": "One trained person on a sample; GoogLeNet scored 6.8% on the same sample. Plot as a reference line labelled 'one expert annotator'."
+   },
+   {
+    "label": "MMLU — GPT-3 175B (few-shot)",
+    "x": 2020.333,
+    "value": 43.9,
+    "unit": "% correct",
+    "date": "2020",
+    "source": "Hendrycks et al. MMLU leaderboard",
+    "url": "https://github.com/hendrycks/test",
+    "confidence": "MEDIUM",
+    "note": "Random chance 25%. Fine-tuned GPT-3: 53.9%."
+   },
+   {
+    "label": "MMLU — Gopher 280B",
+    "x": 2021.917,
+    "value": 60.0,
+    "unit": "% correct",
+    "date": "Dec 2021",
+    "source": "MMLU leaderboard",
+    "url": "https://github.com/hendrycks/test",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "MMLU — Chinchilla 70B",
+    "x": 2022.167,
+    "value": 67.5,
+    "unit": "% correct",
+    "date": "Mar 2022",
+    "source": "MMLU leaderboard",
+    "url": "https://github.com/hendrycks/test",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "MMLU — GPT-4",
+    "x": 2023.167,
+    "value": 86.4,
+    "unit": "% correct",
+    "date": "Mar 2023",
+    "source": "OpenAI GPT-4 technical report (via aggregator)",
+    "url": "https://arxiv.org/abs/2303.08774",
+    "confidence": "MEDIUM",
+    "note": "5-shot."
+   },
+   {
+    "label": "MMLU — o1",
+    "x": 2024.667,
+    "value": 92.3,
+    "unit": "% correct",
+    "date": "Sep 2024",
+    "source": "OpenAI (o1 announcement)",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#mmlu_saturation]. Practical ceiling ~95% (label errors); saturated from 2025."
+   },
+   {
+    "label": "GPQA — GPT-4 baseline (main set)",
+    "x": 2023.833,
+    "value": 39,
+    "unit": "% correct",
+    "date": "Nov 2023",
+    "source": "Rein et al. 2023",
+    "url": "https://arxiv.org/abs/2311.12022",
+    "confidence": "MEDIUM",
+    "note": "Few-shot CoT on the main set (not Diamond). Experts 65% (74% discounting clear mistakes); skilled non-experts with web 34%; chance 25%."
+   },
+   {
+    "label": "GPQA Diamond — Claude 3.5 Sonnet",
+    "x": 2024.417,
+    "value": 59.4,
+    "unit": "% correct",
+    "date": "Jun 2024",
+    "source": "GPQA leaderboard snapshot (via search)",
+    "url": "https://klu.ai/glossary/gpqa-eval",
+    "confidence": "MEDIUM",
+    "note": "Zero-shot CoT; Claude 3 Opus 50.4%."
+   },
+   {
+    "label": "GPQA Diamond — o3 (preview)",
+    "x": 2024.917,
+    "value": 87.7,
+    "unit": "% correct",
+    "date": "Dec 2024",
+    "source": "OpenAI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#gpqa_diamond_top 2024]"
+   },
+   {
+    "label": "GPQA Diamond — Gemini 3 Deep Think",
+    "x": 2025.917,
+    "value": 93.8,
+    "unit": "% correct",
+    "date": "Dec 2025",
+    "source": "Google (vendor)",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#gpqa_diamond_top 2025]"
+   },
+   {
+    "label": "GPQA Diamond — Gemini 3.1 Pro",
+    "x": 2026.083,
+    "value": 94.3,
+    "unit": "% correct",
+    "date": "Feb 2026",
+    "source": "Google DeepMind model card",
+    "url": "https://deepmind.google/models/model-cards/gemini-3-1-pro/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#gpqa_diamond_top 2026]. Saturated (~90–95% of questions valid)."
+   },
+   {
+    "label": "SWE-bench (original) — best 2023",
+    "x": 2023,
+    "value": 4.4,
+    "unit": "% resolved",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#swe_bench_verified_top note]. Full SWE-bench, not Verified — different test."
+   },
+   {
+    "label": "SWE-bench Verified — Claude 3.5 Sonnet (best GA)",
+    "x": 2024.75,
+    "value": 49,
+    "unit": "% resolved",
+    "date": "Oct 2024",
+    "source": "Anthropic, as cited on Report AI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json note]"
+   },
+   {
+    "label": "SWE-bench Verified — o3 preview",
+    "x": 2024.917,
+    "value": 71.7,
+    "unit": "% resolved",
+    "date": "Dec 2024",
+    "source": "OpenAI via Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. Preview model."
+   },
+   {
+    "label": "SWE-bench Verified — Claude Opus 4.5",
+    "x": 2025.896,
+    "value": 80.9,
+    "unit": "% resolved",
+    "date": "24 Nov 2025",
+    "source": "Anthropic (vendor)",
+    "url": "https://www.anthropic.com/news/claude-opus-4-5",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "SWE-bench Verified — Claude Opus 5 (Vals.ai)",
+    "x": 2026.667,
+    "value": 97.0,
+    "unit": "% resolved",
+    "date": "1 Sep 2026",
+    "source": "Vals.ai leaderboard",
+    "url": "https://www.vals.ai/benchmarks/swebench",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. Independent harness; saturated."
+   },
+   {
+    "label": "ARC-AGI-1 — 2020 Kaggle top",
+    "x": 2020,
+    "value": 20,
+    "unit": "% tasks",
+    "date": "2020",
+    "source": "ARC Prize 2024 technical report",
+    "url": "https://arxiv.org/abs/2412.04604",
+    "confidence": "MEDIUM",
+    "note": "No deep-learning entry scored above 1%."
+   },
+   {
+    "label": "ARC-AGI-1 — top score mid-2024",
+    "x": 2024.417,
+    "value": 33,
+    "unit": "% tasks",
+    "date": "mid-2024",
+    "source": "ARC Prize 2024 technical report",
+    "url": "https://arxiv.org/abs/2412.04604",
+    "confidence": "MEDIUM",
+    "note": "Four years after 2020."
+   },
+   {
+    "label": "ARC-AGI-1 — GPT-4o",
+    "x": 2024,
+    "value": 5,
+    "unit": "% tasks (semi-private)",
+    "date": "2024",
+    "source": "ARC Prize public leaderboard",
+    "url": "https://arxiv.org/abs/2412.04604",
+    "confidence": "MEDIUM",
+    "note": "9% on public set."
+   },
+   {
+    "label": "ARC-AGI-1 — MindsAI (ARC Prize 2024)",
+    "x": 2024.833,
+    "value": 55.5,
+    "unit": "% tasks (private)",
+    "date": "Nov 2024",
+    "source": "ARC Prize 2024 technical report",
+    "url": "https://arxiv.org/abs/2412.04604",
+    "confidence": "MEDIUM",
+    "note": "Prize-ineligible (not open-sourced)."
+   },
+   {
+    "label": "ARC-AGI-1 — o3 preview ($10k limit)",
+    "x": 2024.969,
+    "value": 75.7,
+    "unit": "% tasks (semi-private)",
+    "date": "20 Dec 2024",
+    "source": "ARC Prize Foundation",
+    "url": "https://arcprize.org/blog/oai-o3-pub-breakthrough",
+    "confidence": "MEDIUM",
+    "note": "87.5% at ~172× compute. Released o3 later ~41%."
+   },
+   {
+    "label": "ARC-AGI-2 — Poetiq on Gemini 3 Pro",
+    "x": 2025.928,
+    "value": 54,
+    "unit": "% tasks",
+    "date": "5 Dec 2025",
+    "source": "ARC Prize verification via BD Tech Talks",
+    "url": "https://bdtechtalks.com/2025/12/09/poetiq-arc-agi-2-solution/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#arc_agi_top]. Different benchmark from ARC-AGI-1."
+   },
+   {
+    "label": "ARC-AGI-2 — Gemini 3 Deep Think",
+    "x": 2026.083,
+    "value": 84.6,
+    "unit": "% tasks",
+    "date": "Feb 2026",
+    "source": "ARC Prize verification via OfficeChai",
+    "url": "https://officechai.com/ai/gemini-3-deep-think-benchmarks-arc-agi",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "Humanity's Last Exam — launch (o1 / R1)",
+    "x": 2025.0,
+    "value": 9,
+    "unit": "% correct",
+    "date": "Jan 2025",
+    "source": "CAIS / Scale AI",
+    "url": "https://agi.safe.ai/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#hle_top]"
+   },
+   {
+    "label": "Humanity's Last Exam — Gemini 3 Deep Think (no tools)",
+    "x": 2025.917,
+    "value": 41.0,
+    "unit": "% correct",
+    "date": "Dec 2025",
+    "source": "R&D World tabulation",
+    "url": "https://www.rdworldonline.com/how-gpt-5-2-stacks-up-against-gemini-3-0-and-claude-opus-4-5/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data] Site rates CONTESTED (another source 45.1%)."
+   },
+   {
+    "label": "Humanity's Last Exam — GPT-6 Astra",
+    "x": 2026.794,
+    "value": 54.8,
+    "unit": "% correct",
+    "date": "17 Oct 2026",
+    "source": "Scale Labs leaderboard via BenchLM mirror",
+    "url": "https://labs.scale.com/leaderboard/humanitys_last_exam",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data] Site rates CONTESTED (mirror snapshot shows 60.6%)."
+   },
+   {
+    "label": "FrontierMath — best model at launch",
+    "x": 2024.833,
+    "value": 2,
+    "unit": "% solved",
+    "date": "Nov 2024",
+    "source": "Epoch AI launch, as reported",
+    "url": "https://gigazine.net/gsc_news/en/20241225-ai-frontiermath",
+    "confidence": "MEDIUM",
+    "note": "Reported as 'about 2%' / 'no more than 2%'."
+   },
+   {
+    "label": "FrontierMath — o3 (OpenAI-reported)",
+    "x": 2024.969,
+    "value": 25.2,
+    "unit": "% solved",
+    "date": "20 Dec 2024",
+    "source": "OpenAI, as reported",
+    "url": "https://techcrunch.com/2025/04/20/openais-o3-ai-model-scores-lower-on-a-benchmark-than-the-company-initially-implied",
+    "confidence": "MEDIUM",
+    "note": "Epoch's independent run (Apr 2025) found ~10% for released o3. OpenAI funded the benchmark and had access to many problems."
+   },
+   {
+    "label": "FrontierMath — Epoch independent run of o3",
+    "x": 2025.25,
+    "value": 10,
+    "unit": "% solved",
+    "date": "Apr 2025",
+    "source": "Epoch AI via TechCrunch",
+    "url": "https://techcrunch.com/2025/04/20/openais-o3-ai-model-scores-lower-on-a-benchmark-than-the-company-initially-implied",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "FrontierMath tiers 1–3 — Claude Fable 5 (Epoch)",
+    "x": 2026.5,
+    "value": 87,
+    "unit": "% solved",
+    "date": "2026",
+    "source": "Epoch AI, as reported by The Decoder",
+    "url": "https://the-decoder.com/claude-fable-5-outpaces-gpt-5-5-by-13-points-on-frontiermaths-toughest-problems/",
+    "confidence": "MEDIUM",
+    "note": "CONTESTED: aggregators disagree (one lists 52.4% top score on 30 Sep 2026; another shows 100% on tier 4 for GPT-6.1 Sol). Exact date not captured. Check epoch.ai/benchmarks before use."
+   },
+   {
+    "label": "IMO — AlphaProof + AlphaGeometry 2",
+    "x": 2024.5,
+    "value": 28,
+    "unit": "points of 42",
+    "date": "Jul 2024",
+    "source": "Google DeepMind",
+    "url": "https://deepmind.google/discover/blog/ai-solves-imo-problems-at-silver-medal-level/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#imo_ai_result]. Human-formalised problems."
+   },
+   {
+    "label": "IMO — Gemini Deep Think (certified gold)",
+    "x": 2025.5,
+    "value": 35,
+    "unit": "points of 42",
+    "date": "Jul 2025",
+    "source": "Google DeepMind / IMO",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "IMO — multiple systems (perfect)",
+    "x": 2026.5,
+    "value": 42,
+    "unit": "points of 42",
+    "date": "Jul 2026",
+    "source": "Trade press",
+    "url": "https://www.digitalapplied.com/blog/imo-2026-perfect-scores-ai-benchmark-saturation",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "ImageNet: error cut 2010→2017",
+    "x": 2017,
+    "value": 12.5,
+    "unit": "× reduction",
+    "date": "2010–2017",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "28.2 / 2.25 = 12.5×."
+   }
+  ],
+  "e": [
+   {
+    "label": "GPT-3.5-level (MMLU 64.8) cheapest price",
+    "x": 2022.833,
+    "value": 20.0,
+    "unit": "USD per million tokens",
+    "date": "Nov 2022",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#gpt35_class_inference_cost]"
+   },
+   {
+    "label": "GPT-3.5-level (MMLU 64.8) cheapest price",
+    "x": 2024.75,
+    "value": 0.07,
+    "unit": "USD per million tokens",
+    "date": "Oct 2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. 'More than 280-fold' decline."
+   },
+   {
+    "label": "GPT-3.5-level decline Nov 2022→Oct 2024",
+    "x": 2024,
+    "value": 286,
+    "unit": "× cheaper",
+    "date": "Nov 2022–Oct 2024",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "20 / 0.07 = 286 (Stanford: '>280×')."
+   },
+   {
+    "label": "GPT-4-level cheapest blended price (GPT-4 launch)",
+    "x": 2023.202,
+    "value": 37.5,
+    "unit": "USD per million tokens (3:1 blend)",
+    "date": "Mar 2023",
+    "source": "OpenAI list price $30/$60; Report AI blend",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data: tokens.json#gpt4_bar_tokens_per_dollar]. (3×30+60)/4."
+   },
+   {
+    "label": "GPT-4-level cheapest blended price (GPT-4 Turbo)",
+    "x": 2023.847,
+    "value": 15.0,
+    "unit": "USD per million tokens (3:1 blend)",
+    "date": "Nov 2023",
+    "source": "OpenAI DevDay pricing; Report AI blend",
+    "url": "https://openai.com/index/new-models-and-developer-products-announced-at-devday/",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data] (3×10+30)/4."
+   },
+   {
+    "label": "GPT-4-level cheapest blended price (DeepSeek-V3)",
+    "x": 2024.917,
+    "value": 0.4775,
+    "unit": "USD per million tokens (3:1 blend)",
+    "date": "Dec 2024",
+    "source": "DeepSeek API; Report AI blend",
+    "url": "https://api-docs.deepseek.com/quick_start/pricing",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data] (3×0.27+1.10)/4; bar = MMLU ≥ 86.4."
+   },
+   {
+    "label": "GPT-4-level cheapest blended price (DeepSeek-V3.2-Exp)",
+    "x": 2025.667,
+    "value": 0.315,
+    "unit": "USD per million tokens (3:1 blend)",
+    "date": "Sep 2025",
+    "source": "DeepSeek API; Report AI blend",
+    "url": "https://api-docs.deepseek.com/quick_start/pricing",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "GPT-4-level cheapest blended price (GPT-6 Luna / Haiku 5.5)",
+    "x": 2026.75,
+    "value": 0.2,
+    "unit": "USD per million tokens (3:1 blend)",
+    "date": "Oct 2026",
+    "source": "Vendor prices as reported; Report AI blend",
+    "url": "https://www.techrepublic.com/article/news-anthropic-claude-haiku-5-5-api-pricing/",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data] (3×0.10+0.50)/4; tokenizer differences overstate the fall."
+   },
+   {
+    "label": "GPT-4-level decline Mar 2023→Oct 2026",
+    "x": 2026,
+    "value": 187.5,
+    "unit": "× cheaper",
+    "date": "Mar 2023–Oct 2026",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "37.50 / 0.20 = 187.5×."
+   },
+   {
+    "label": "Price decline at fixed capability (a16z)",
+    "x": 2024.833,
+    "value": 10,
+    "unit": "× per year",
+    "date": "Nov 2021–Nov 2024",
+    "source": "a16z, LLMflation",
+    "url": "https://a16z.com/llmflation-llm-inference-cost/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: tokens.json#fixed_capability_price_decline]. GPT-3-level $60 → $0.06 per M."
+   },
+   {
+    "label": "Price decline at fixed capability (Epoch median)",
+    "x": 2025.167,
+    "value": 50,
+    "unit": "× per year",
+    "date": "to Mar 2025",
+    "source": "Epoch AI, LLM inference price trends",
+    "url": "https://epoch.ai/data-insights/llm-inference-price-trends",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. Range 9–900×/yr; GPT-4 level on GPQA ~40×/yr."
+   },
+   {
+    "label": "Price decline at fixed capability (Epoch 2026)",
+    "x": 2026,
+    "value": 12.7,
+    "unit": "× per year",
+    "date": "three years to 2026",
+    "source": "Epoch AI, The plunging price of thought",
+    "url": "https://epoch.ai/publications/the-plunging-price-of-thought",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data]. 47%/quarter → 1/(1−0.47)^4."
+   },
+   {
+    "label": "Usage-weighted market price (Silicon Data index)",
+    "x": 2026.667,
+    "value": 0.97,
+    "unit": "USD per million tokens",
+    "date": "1 Sep 2026",
+    "source": "Silicon Data via CNBC",
+    "url": "https://www.cnbc.com/2026/09/01/ai-token-prices-lows.html",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#silicon_data_token_index]. Not fixed-capability; do not mix with the series above."
+   }
+  ],
+  "f": [
+   {
+    "label": "Global corporate AI investment (AI Index 2023 ed.)",
+    "x": 2018,
+    "value": 79600000000.0,
+    "unit": "USD",
+    "date": "2018",
+    "source": "Stanford HAI AI Index 2023",
+    "url": "https://hai.stanford.edu/ai-index/2023-ai-index-report/the-economy",
+    "confidence": "MEDIUM",
+    "note": "Corporate = private investment + M&A + minority stakes + public offerings. Editions restate the series."
+   },
+   {
+    "label": "Global corporate AI investment (AI Index 2023 ed.)",
+    "x": 2021,
+    "value": 276100000000.0,
+    "unit": "USD",
+    "date": "2021",
+    "source": "Stanford HAI AI Index 2023",
+    "url": "https://hai.stanford.edu/ai-index/2023-ai-index-report/the-economy",
+    "confidence": "MEDIUM",
+    "note": "RESTATED: a later secondary source calls 2021 'the prior record of $360B' — edition not identified. Keep both; label edition."
+   },
+   {
+    "label": "Global corporate AI investment (AI Index 2023 ed.)",
+    "x": 2022,
+    "value": 189600000000.0,
+    "unit": "USD",
+    "date": "2022",
+    "source": "Stanford HAI AI Index 2023 via IEEE Spectrum",
+    "url": "https://spectrum.ieee.org/state-of-ai-2023",
+    "confidence": "MEDIUM",
+    "note": "IEEE calls it private investment; it matches the broader corporate total. Check report."
+   },
+   {
+    "label": "Global corporate AI investment (AI Index 2025 ed.)",
+    "x": 2024,
+    "value": 252300000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "RESTATED to $253.0B in the 2026 edition."
+   },
+   {
+    "label": "Global corporate AI investment (AI Index 2026 ed.)",
+    "x": 2025,
+    "value": 581700000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "+130% y/y; M&A $214.4B."
+   },
+   {
+    "label": "Corporate AI investment a decade before 2024 (implied)",
+    "x": 2014,
+    "value": 19400000000.0,
+    "unit": "USD",
+    "date": "~2014",
+    "source": "Report AI calculation from Stanford HAI '13 times greater than a decade ago'",
+    "url": "https://hai.stanford.edu/news/annual-corporate-investment-ai-13-times-greater-decade-ago",
+    "confidence": "DERIVED",
+    "note": "252.3B / 13 ≈ $19.4B. Approximate; the 13× is rounded."
+   },
+   {
+    "label": "Global private AI investment (AI Index 2022 ed.)",
+    "x": 2020,
+    "value": 46000000000.0,
+    "unit": "USD",
+    "date": "2020",
+    "source": "Stanford HAI AI Index 2022 via IEEE Spectrum",
+    "url": "https://hai.stanford.edu/ai-index/2022-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Global private AI investment (AI Index 2022 ed.)",
+    "x": 2021,
+    "value": 93500000000.0,
+    "unit": "USD",
+    "date": "2021",
+    "source": "Stanford HAI AI Index 2022",
+    "url": "https://hai.stanford.edu/ai-index/2022-ai-index-report",
+    "confidence": "MEDIUM",
+    "note": "RESTATED to $125.4B in the 2023 edition (data-provider revision). Both kept."
+   },
+   {
+    "label": "Global private AI investment (AI Index 2023 ed.)",
+    "x": 2021,
+    "value": 125400000000.0,
+    "unit": "USD",
+    "date": "2021",
+    "source": "Stanford HAI AI Index 2023",
+    "url": "https://hai.stanford.edu/ai-index/2023-ai-index-report/the-economy",
+    "confidence": "MEDIUM",
+    "note": "RESTATED value for 2021."
+   },
+   {
+    "label": "Global private AI investment (AI Index 2023 ed.)",
+    "x": 2022,
+    "value": 91900000000.0,
+    "unit": "USD",
+    "date": "2022",
+    "source": "Stanford HAI AI Index 2023",
+    "url": "https://hai.stanford.edu/news/corporate-investment-ai-down-first-time-decade",
+    "confidence": "MEDIUM",
+    "note": "First y/y fall in a decade (−26.7%); 18× 2013."
+   },
+   {
+    "label": "Global private AI investment 2013 (implied)",
+    "x": 2013,
+    "value": 5100000000.0,
+    "unit": "USD",
+    "date": "2013",
+    "source": "Report AI calculation from AI Index 2023 ('18 times greater than 2013')",
+    "url": "https://hai.stanford.edu/news/corporate-investment-ai-down-first-time-decade",
+    "confidence": "DERIVED",
+    "note": "91.9B / 18 ≈ $5.1B. Rounded multiple — approximate."
+   },
+   {
+    "label": "Global private AI investment (AI Index 2026 ed., implied 2024 base)",
+    "x": 2024,
+    "value": 151500000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Report AI calculation from AI Index 2026 (+127.5% to $344.66B)",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+    "confidence": "DERIVED",
+    "note": "344.66 / 2.275 = $151.5B; consistent with ~$150B in IEEE's coverage of the 2025 edition."
+   },
+   {
+    "label": "Global private AI investment (AI Index 2026 ed.)",
+    "x": 2025,
+    "value": 344700000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "60% of corporate total; US $285.9B, China $12.4B."
+   },
+   {
+    "label": "US private AI investment",
+    "x": 2024,
+    "value": 109100000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "China $9.3B, UK $4.5B."
+   },
+   {
+    "label": "US private AI investment",
+    "x": 2025,
+    "value": 285900000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: geography.json#private_ai_investment_us]"
+   },
+   {
+    "label": "Generative-AI private investment",
+    "x": 2019,
+    "value": 840000000.0,
+    "unit": "USD",
+    "date": "2019",
+    "source": "AI Index 2024 via Forklog",
+    "url": "https://forklog.com/en/stanford-researchers-release-ai-index-on-global-trends/",
+    "confidence": "MEDIUM",
+    "note": "Single secondary source."
+   },
+   {
+    "label": "Generative-AI private investment",
+    "x": 2022,
+    "value": 3000000000.0,
+    "unit": "USD",
+    "date": "2022",
+    "source": "Stanford HAI (AI Index 2024 summary)",
+    "url": "https://hai.stanford.edu/news/ai-index-state-ai-13-charts",
+    "confidence": "MEDIUM",
+    "note": "Forklog gives $2.85B."
+   },
+   {
+    "label": "Generative-AI private investment",
+    "x": 2023,
+    "value": 25200000000.0,
+    "unit": "USD",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "Nearly 8× 2022."
+   },
+   {
+    "label": "Generative-AI private investment",
+    "x": 2024,
+    "value": 33900000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "+18.7%; 8.5× 2022."
+   },
+   {
+    "label": "Generative-AI private investment",
+    "x": 2025,
+    "value": 170900000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "AI Index 2026 via single secondary summary",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "CONTESTED: report text says 'more than 200%' growth and 'close to half' of private AI investment (~$170B of $344.7B fits 'half'; +200% on $33.9B would be ~$102B). Verify in the chapter PDF."
+   },
+   {
+    "label": "Global AI venture funding (Crunchbase)",
+    "x": 2024,
+    "value": 100000000000.0,
+    "unit": "USD",
+    "date": "2024",
+    "source": "Crunchbase News",
+    "url": "https://news.crunchbase.com/venture/global-funding-data-analysis-ai-eoy-2024",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: finance.json#ai_vc_global_crunchbase]. RESTATED $114B later."
+   },
+   {
+    "label": "Global AI venture funding (Crunchbase)",
+    "x": 2025,
+    "value": 202300000000.0,
+    "unit": "USD",
+    "date": "2025",
+    "source": "Crunchbase News",
+    "url": "https://news.crunchbase.com/ai/big-funding-trends-charts-eoy-2025/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. RESTATED $211B later."
+   },
+   {
+    "label": "Global AI venture funding (Crunchbase), Jan–Sep",
+    "x": 2026,
+    "value": 488000000000.0,
+    "unit": "USD",
+    "date": "Jan–Sep 2026",
+    "source": "Crunchbase quarterly reports; Report AI sum",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data]. Q1 $242B + Q2 ≥$143.5B + Q3 $102B. Nine months only."
+   }
+  ],
+  "g": [
+   {
+    "label": "Notable models — industry",
+    "x": 2023,
+    "value": 51,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024 (Epoch data)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "Academia 15; industry–academia collaborations 21 (record)."
+   },
+   {
+    "label": "Notable models — academia",
+    "x": 2023,
+    "value": 15,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Notable models — industry–academia collaboration",
+    "x": 2023,
+    "value": 21,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Industry share of notable models",
+    "x": 2023,
+    "value": 60,
+    "unit": "%",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "2025 edition's restated share."
+   },
+   {
+    "label": "Industry share of notable models",
+    "x": 2024,
+    "value": 90,
+    "unit": "% (approx.)",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "'Nearly 90%'. Academia led until ~2014."
+   },
+   {
+    "label": "Notable models — United States",
+    "x": 2023,
+    "value": 61,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "RESTATED to 70 in the AI Index 2025. Keep both."
+   },
+   {
+    "label": "Notable models — United States (restated)",
+    "x": 2023,
+    "value": 70,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "RESTATED."
+   },
+   {
+    "label": "Notable models — China",
+    "x": 2023,
+    "value": 15,
+    "unit": "models",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Notable models — EU (and UK?)",
+    "x": 2023,
+    "value": 21,
+    "unit": "models",
+    "date": "2023",
+    "source": "AI Index 2024 via secondary source",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "Scope (EU vs Europe) unconfirmed."
+   },
+   {
+    "label": "Notable models — United States",
+    "x": 2024,
+    "value": 40,
+    "unit": "models",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: models.json#notable_models_us]"
+   },
+   {
+    "label": "Notable models — China",
+    "x": 2024,
+    "value": 15,
+    "unit": "models",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "Notable models — Europe",
+    "x": 2024,
+    "value": 3,
+    "unit": "models",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "Notable models — United States",
+    "x": 2025,
+    "value": 50,
+    "unit": "models",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026 (chapter PDF)",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data] Site rates CONTESTED: web page says 59."
+   },
+   {
+    "label": "Notable models — China",
+    "x": 2025,
+    "value": 30,
+    "unit": "models",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026 (chapter PDF)",
+    "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data] Site rates CONTESTED: web page says 35."
+   },
+   {
+    "label": "Epoch notable-models database size",
+    "x": 2024,
+    "value": 800,
+    "unit": "models (approx.)",
+    "date": "2024",
+    "source": "Epoch AI",
+    "url": "https://epoch.ai/data/notable-ai-models",
+    "confidence": "MEDIUM",
+    "note": "'Over 800' notable models, 400+ with compute estimates — the denominator behind series a."
+   }
+  ],
+  "h": [
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2017,
+    "value": 20,
+    "unit": "% of respondents",
+    "date": "2017",
+    "source": "McKinsey Global Survey on AI (via AI Index 2024 / McKinsey 2024 chart)",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024",
+    "confidence": "MEDIUM",
+    "note": "AI in at least one business function."
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2018,
+    "value": 47,
+    "unit": "% of respondents",
+    "date": "2018",
+    "source": "McKinsey Global Survey on AI (via McKinsey 2024 chart)",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2019,
+    "value": 58,
+    "unit": "% of respondents",
+    "date": "2019",
+    "source": "McKinsey Global Survey on AI (via McKinsey 2024 chart)",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2020,
+    "value": 50,
+    "unit": "% of respondents",
+    "date": "2020",
+    "source": "McKinsey Global Survey on AI, The state of AI in 2020",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2022-and-a-half-decade-in-review",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2021,
+    "value": 56,
+    "unit": "% of respondents",
+    "date": "2021",
+    "source": "McKinsey Global Survey on AI, The state of AI in 2021",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2022-and-a-half-decade-in-review",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2022,
+    "value": 50,
+    "unit": "% of respondents",
+    "date": "2022",
+    "source": "McKinsey Global Survey on AI (via Stanford AI Index 2024)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "From AI Index summary; McKinsey PDF not checked."
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2023,
+    "value": 55,
+    "unit": "% of respondents",
+    "date": "2023",
+    "source": "McKinsey Global Survey on AI (via Stanford AI Index 2024)",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/economy",
+    "confidence": "MEDIUM",
+    "note": "1,684 respondents."
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2024.167,
+    "value": 72,
+    "unit": "% of respondents",
+    "date": "Feb–Mar 2024 survey",
+    "source": "McKinsey Global Survey on AI, early 2024",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024",
+    "confidence": "MEDIUM",
+    "note": "Two surveys in 2024; chart both or pick one."
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2024.5,
+    "value": 78,
+    "unit": "% of respondents",
+    "date": "Jul 2024 survey",
+    "source": "McKinsey Global Survey on AI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: usage.json#org_ai_adoption]"
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2025.5,
+    "value": 88,
+    "unit": "% of respondents",
+    "date": "Jun–Jul 2025 survey",
+    "source": "McKinsey Global Survey on AI, State of AI 2025",
+    "url": "https://www.mckinsey.com/featured-insights/artificial-intelligence/the-state-of-ai-2025",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "Organisations using AI in ≥1 function (McKinsey)",
+    "x": 2026.417,
+    "value": 89,
+    "unit": "% of respondents",
+    "date": "May–Jun 2026 survey",
+    "source": "McKinsey Global Survey on AI, State of AI 2026",
+    "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "ChatGPT monthly users (UBS estimate)",
+    "x": 2023.0,
+    "value": 100000000.0,
+    "unit": "users (monthly)",
+    "date": "Jan 2023",
+    "source": "UBS analyst note using Similarweb data, via Reuters",
+    "url": "https://news.yahoo.com/chatgpt-fastest-growing-app-history-142338104.html",
+    "confidence": "MEDIUM",
+    "note": "Third-party web-traffic estimate, not an OpenAI figure; monthly not weekly."
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2023.847,
+    "value": 100000000.0,
+    "unit": "users (weekly)",
+    "date": "6 Nov 2023",
+    "source": "OpenAI DevDay",
+    "url": "https://techcrunch.com/2025/03/06/chatgpt-doubled-its-weekly-active-users-in-under-6-months-thanks-to-new-releases",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2024.583,
+    "value": 200000000.0,
+    "unit": "users (weekly)",
+    "date": "Aug 2024",
+    "source": "OpenAI via Axios",
+    "url": "https://tomsguide.com/ai/chatgpt/openai-says-more-than-200-million-people-use-chatgpt-every-week-doubling-in-a-year",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2024.917,
+    "value": 300000000.0,
+    "unit": "users (weekly)",
+    "date": "Dec 2024",
+    "source": "OpenAI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: usage.json#chatgpt_wau]"
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2025.083,
+    "value": 400000000.0,
+    "unit": "users (weekly)",
+    "date": "Feb 2025",
+    "source": "OpenAI via Reuters/TechCrunch",
+    "url": "https://techcrunch.com/2025/03/06/chatgpt-doubled-its-weekly-active-users-in-under-6-months-thanks-to-new-releases",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2025.167,
+    "value": 500000000.0,
+    "unit": "users (weekly)",
+    "date": "end Mar 2025",
+    "source": "Business Insider via AOL",
+    "url": "https://www.aol.com/articles/sam-altman-touts-chatgpts-800-091502060.html",
+    "confidence": "MEDIUM",
+    "note": "No primary OpenAI statement found; one source dates it Feb 2025."
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2025.5,
+    "value": 700000000.0,
+    "unit": "users (weekly)",
+    "date": "Jul 2025",
+    "source": "OpenAI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2025.764,
+    "value": 800000000.0,
+    "unit": "users (weekly)",
+    "date": "6 Oct 2025",
+    "source": "OpenAI DevDay via TechCrunch",
+    "url": "https://techcrunch.com/2025/10/06/sam-altman-says-chatgpt-has-hit-800m-weekly-active-users/",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2026.155,
+    "value": 900000000.0,
+    "unit": "users (weekly)",
+    "date": "27 Feb 2026",
+    "source": "OpenAI via TechCrunch",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]"
+   },
+   {
+    "label": "ChatGPT weekly active users",
+    "x": 2026.666,
+    "value": 1000000000.0,
+    "unit": "users (weekly)",
+    "date": "31 Aug 2026",
+    "source": "OpenAI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. '1B+'."
+   },
+   {
+    "label": "ChatGPT weekly users: 100M → 1B",
+    "x": 2026,
+    "value": 2.83,
+    "unit": "years",
+    "date": "Nov 2023–Aug 2026",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "Aug 2026 − Nov 2023 ≈ 2.8 years for a 10× rise."
+   }
+  ],
+  "i": [
+   {
+    "label": "AI incidents reported (AI Incident Database)",
+    "x": 2012,
+    "value": 10,
+    "unit": "incidents (upper bound)",
+    "date": "2012",
+    "source": "Stanford HAI AI Index 2026 (AIID data)",
+    "url": "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf",
+    "confidence": "MEDIUM",
+    "note": "'Fewer than 10'. Plot as <10."
+   },
+   {
+    "label": "AI incidents reported (AI Incident Database)",
+    "x": 2023,
+    "value": 149,
+    "unit": "incidents",
+    "date": "2023",
+    "source": "Report AI calculation from AI Index 2025 (+56.4% to 233)",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "233 / 1.564 ≈ 149. AIID back-fills past years, so later downloads differ."
+   },
+   {
+    "label": "AI incidents reported (AI Incident Database)",
+    "x": 2024,
+    "value": 233,
+    "unit": "incidents",
+    "date": "2024",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "Record at the time; +56.4%."
+   },
+   {
+    "label": "AI incidents reported (AI Incident Database)",
+    "x": 2025,
+    "value": 362,
+    "unit": "incidents",
+    "date": "2025",
+    "source": "Stanford HAI AI Index 2026",
+    "url": "https://hai.stanford.edu/assets/files/ai_index_report_2026_chapter_3_responsible_ai.pdf",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: risk.json#aiid_incidents]. +55%. Media-report based; undercounts."
+   },
+   {
+    "label": "New AIID entries, Aug–Oct",
+    "x": 2026,
+    "value": 179,
+    "unit": "entries",
+    "date": "Aug–Oct 2026",
+    "source": "Report AI count of AIID IDs",
+    "url": "https://incidentdatabase.ai",
+    "confidence": "DERIVED",
+    "note": "[Report AI State of AI data: risk.json#aiid_ids_aug_oct]. 101 in Aug–Oct 2025. Entry IDs ≠ incident-year counts."
+   }
+  ],
+  "j": [
+   {
+    "label": "US data-centre electricity (LBNL)",
+    "x": 2023,
+    "value": 176,
+    "unit": "TWh",
+    "date": "2023",
+    "source": "LBNL (Dec 2024), as cited on Report AI",
+    "url": null,
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: infrastructure.json#us_dc_electricity]. 4.4% of US electricity."
+   },
+   {
+    "label": "Global data-centre electricity (IEA)",
+    "x": 2024,
+    "value": 415,
+    "unit": "TWh",
+    "date": "2024",
+    "source": "IEA, Energy and AI (Apr 2025)",
+    "url": "https://www.iea.org/reports/energy-and-ai/executive-summary",
+    "confidence": "MEDIUM",
+    "note": "~1.5% of global electricity; US 45%, China 25%, Europe 15%. iea.org not opened."
+   },
+   {
+    "label": "Global data-centre electricity (IEA)",
+    "x": 2025,
+    "value": 485,
+    "unit": "TWh",
+    "date": "2025",
+    "source": "IEA, Key Questions on Energy and AI (Apr 2026)",
+    "url": "https://www.iea.org/reports/key-questions-on-energy-and-ai/executive-summary",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: infrastructure.json#global_dc_electricity_iea] Site rates CONTESTED on growth rate (+17% vs ~20%)."
+   },
+   {
+    "label": "Global data-centre electricity (IEA projection)",
+    "x": 2030,
+    "value": 945,
+    "unit": "TWh",
+    "date": "projection to 2030",
+    "source": "IEA, Energy and AI (Apr 2025)",
+    "url": "https://datacenterdynamics.com/en/news/iea-data-center-energy-consumption-set-to-double-by-2030-to-945twh",
+    "confidence": "MEDIUM",
+    "note": "PROJECTION. 'More than double'."
+   },
+   {
+    "label": "Global data-centre electricity (IEA Base Case)",
+    "x": 2035,
+    "value": 1200,
+    "unit": "TWh",
+    "date": "projection to 2035",
+    "source": "IEA, Energy and AI",
+    "url": "https://www.iea.org/reports/energy-and-ai/executive-summary",
+    "confidence": "MEDIUM",
+    "note": "PROJECTION; range across cases 700–1,700 TWh."
+   },
+   {
+    "label": "Global data-centre electricity (Gartner)",
+    "x": 2025,
+    "value": 447,
+    "unit": "TWh",
+    "date": "2025",
+    "source": "Gartner (10 Jun 2026)",
+    "url": "https://www.gartner.com/en/newsroom/press-releases/2026-06-10-gartner-says-data-center-electricity-demand-to-grow-26-percent-in-2026",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: infrastructure.json#gartner_dc_electricity]"
+   },
+   {
+    "label": "Global data-centre electricity (Gartner forecast)",
+    "x": 2026,
+    "value": 565,
+    "unit": "TWh",
+    "date": "2026 forecast",
+    "source": "Gartner (10 Jun 2026)",
+    "url": "https://www.gartner.com/en/newsroom/press-releases/2026-06-10-gartner-says-data-center-electricity-demand-to-grow-26-percent-in-2026",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data]. FORECAST."
+   },
+   {
+    "label": "AI-optimised server electricity (Gartner)",
+    "x": 2025,
+    "value": 95,
+    "unit": "TWh",
+    "date": "2025",
+    "source": "Gartner via Network World",
+    "url": "https://www.networkworld.com/article/4193996/gartner-data-center-electricity-consumption-to-grow-26-in-2026.html",
+    "confidence": "MEDIUM",
+    "note": "[Report AI State of AI data: infrastructure.json#ai_server_electricity]"
+   },
+   {
+    "label": "IEA 2024→2030 growth",
+    "x": 2030,
+    "value": 0.147,
+    "unit": "CAGR (fraction)",
+    "date": "2024–2030",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "(945/415)^(1/6) − 1 ≈ 14.7% a year."
+   }
+  ],
+  "k": [
+   {
+    "label": "AI publications (all venues)",
+    "x": 2013,
+    "value": 102000,
+    "unit": "publications",
+    "date": "2013",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "~102,000; 21.6% of CS publications."
+   },
+   {
+    "label": "AI publications (all venues)",
+    "x": 2023,
+    "value": 242000,
+    "unit": "publications",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "'Over 242,000'; 41.8% of CS publications."
+   },
+   {
+    "label": "AI patents (AI Index 2025 series)",
+    "x": 2010,
+    "value": 3833,
+    "unit": "patents",
+    "date": "2010",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": ""
+   },
+   {
+    "label": "AI patents (AI Index 2025 series)",
+    "x": 2023,
+    "value": 122511,
+    "unit": "patents",
+    "date": "2023",
+    "source": "Stanford HAI AI Index 2025",
+    "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "+29.6% y/y; China 69.7% of grants."
+   },
+   {
+    "label": "AI patents granted (AI Index 2024 series)",
+    "x": 2022,
+    "value": 62264,
+    "unit": "patents",
+    "date": "2022",
+    "source": "Stanford HAI AI Index 2024",
+    "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report/research-and-development",
+    "confidence": "MEDIUM",
+    "note": "Different measure from the 2025 series; do not join the two lines. +62.7% y/y; 128,952 ungranted."
+   },
+   {
+    "label": "AI publications growth 2013→2023",
+    "x": 2023,
+    "value": 2.37,
+    "unit": "× (multiple)",
+    "date": "2013–2023",
+    "source": "Report AI calculation",
+    "url": null,
+    "confidence": "DERIVED",
+    "note": "242,000 / 102,000 = 2.37×."
+   }
+  ]
+ },
+ "stop_quoting": [
+  {
+   "claim": "The term 'artificial intelligence' was coined at the 1956 Dartmouth conference.",
+   "fact": "It first appears in the Dartmouth proposal dated 31 August 1955 (McCarthy, Minsky, Rochester, Shannon). The workshop itself ran in summer 1956 — about 18 June to 17 August per Solomonoff's notes, six weeks in other accounts — and attendance varied; the proposal asked for a '2 month, 10 man study'.",
+   "source": "AI Magazine reprint of the proposal; Wikipedia (Dartmouth workshop)",
+   "url": "https://ojs.aaai.org/index.php/aimagazine/article/view/1904",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "The AI winters were 1974–1980 and 1987–1993.",
+   "fact": "These are conventions. UK cuts followed the Lighthill report in 1973; DARPA's cuts came in 1973–74. For the second winter Wikipedia gives 1987–2000 while other histories use 1987–1993. Say 'roughly' and name the defining events (DARPA cuts; Lisp-machine collapse).",
+   "source": "Wikipedia AI winter; Holloway",
+   "url": "https://en.wikipedia.org/wiki/AI_winter",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Hinton invented backpropagation in 1986.",
+   "fact": "Rumelhart, Hinton and Williams popularised it for neural networks (Nature, 9 Oct 1986). The method appeared earlier: Linnainmaa's 1970 master's thesis (reverse-mode differentiation), Werbos's 1974 Harvard thesis, Parker (1985).",
+   "source": "Nature 323:533; secondary histories",
+   "url": "https://doi.org/10.1038/323533a0",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Minsky and Papert's 'Perceptrons' (1969) killed neural-network research and caused the AI winter.",
+   "fact": "It was one factor among several. The 1969 Mansfield Amendment redirected DARPA money to mission-oriented work, and the Lighthill report (1973) hit UK funding. Sources do not establish a single cause.",
+   "source": "Wikipedia AI winter",
+   "url": "https://en.wikipedia.org/wiki/AI_winter",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Deep Blue beat Kasparov in 1996.",
+   "fact": "Kasparov won the February 1996 match 4–2 (Deep Blue won one game, on 10 Feb 1996). Deep Blue won the May 1997 rematch 3½–2½, with the decisive game on 11 May 1997.",
+   "source": "History.com; IBM",
+   "url": "https://www.history.com/this-day-in-history/kasparov-defeats-chess-playing-computer",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "A chatbot passed the Turing test in 2014 (Eugene Goostman).",
+   "fact": "At a University of Reading event on 7 June 2014, 33% of 30 judges were fooled in five-minute chats by a bot posing as a 13-year-old Ukrainian boy. That clears an organiser-chosen 30% bar, not a standard Turing set: his 1950 paper made a prediction (no more than a 70% chance of correct identification after five minutes by about 2000), not a pass criterion.",
+   "source": "Press coverage 2014; Turing 1950",
+   "url": "https://doi.org/10.1093/mind/LIX.236.433",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Humans make 5.1% errors on ImageNet, so AI beat humans in 2015.",
+   "fact": "5.1% is one trained annotator (Andrej Karpathy) on a sample of validation images in 2014; two-thirds of his errors came from not knowing the 1,000 classes. ResNet's 3.57% (Dec 2015) beat that single estimate, not 'humans'.",
+   "source": "Karpathy blog, 2 Sep 2014",
+   "url": "https://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "ChatGPT reached 100 million users in two months — the fastest-growing app ever.",
+   "fact": "The 100M figure was a UBS estimate of monthly users in January 2023 from Similarweb web-traffic data, not an OpenAI disclosure; OpenAI's own first 100M figure was weekly users in November 2023. Threads passed 100 million sign-ups in five days in July 2023 — sign-ups, not active users, so the two records are not comparable.",
+   "source": "UBS via Reuters; Al Jazeera (Threads)",
+   "url": "https://news.yahoo.com/chatgpt-fastest-growing-app-history-142338104.html",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "GPT-4 has 1.76 trillion parameters.",
+   "fact": "OpenAI has never disclosed it. 1.76T traces to George Hotz's speculation; Semafor reported ~1T and SemiAnalysis ~1.8T. The mixture-of-experts design is also unconfirmed. Stanford's AI Index 2026 notes frontier labs have stopped reporting parameter counts.",
+   "source": "Secondary reporting",
+   "url": "https://arxiv.org/abs/2303.08774",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "GPT-4 scored in the top 10% on the bar exam.",
+   "fact": "OpenAI's percentile compared GPT-4 with February Illinois bar takers, a group skewed towards repeat takers. A 2024 re-evaluation (Artificial Intelligence and Law) found a much lower percentile against first-time or all July takers — Live Science summarised it as not breaking the 70th percentile.",
+   "source": "Live Science; law-ai.org",
+   "url": "https://law-ai.org/re-evaluating-gpt-4s-bar-exam-performance/",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "AI training compute doubles every 3.4 months.",
+   "fact": "That was OpenAI's 2018 estimate for 2012–2018. Epoch's longer series gives ~5.7–6 months for the deep-learning era, about 4–5× a year for notable models since 2010 and ~5× a year for frontier language models since 2020. Before 2010 the doubling time was about 20 months.",
+   "source": "OpenAI 2018; Sevilla et al. 2022; Epoch AI",
+   "url": "https://epoch.ai/trends",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "OpenAI's o3 solved 25% of FrontierMath.",
+   "fact": "25.2% was OpenAI's own December 2024 run, probably with more compute or scaffolding. Epoch's independent test of the released o3 in April 2025 found about 10%. OpenAI had funded the benchmark and had access to many problems, which Epoch disclosed only later.",
+   "source": "TechCrunch, 20 Apr 2025",
+   "url": "https://techcrunch.com/2025/04/20/openais-o3-ai-model-scores-lower-on-a-benchmark-than-the-company-initially-implied",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "AlphaGo Zero used 3.41×10^23 FLOP and proves compute grows 10× a year.",
+   "fact": "3.41e23 is OpenAI's 2018 estimate; Wikipedia cites Epoch at ~3e23. Epoch excludes AlphaGo Master and Zero from its trend fits as outliers because most compute went into self-play data generation.",
+   "source": "Epoch AI; Wikipedia",
+   "url": "https://en.wikipedia.org/wiki/AlphaGo_Zero",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Google paid $500 million for DeepMind.",
+   "fact": "Terms were not disclosed. Reports ranged from $400 million (Re/code) to 'more than $500 million' (The Information).",
+   "source": "TechCrunch, 26 Jan 2014",
+   "url": "https://techcrunch.com/2014/01/26/google-deepmind/",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "XCON saved DEC $40 million a year.",
+   "fact": "Most accounts put R1/XCON's savings at about $25 million a year; $40 million was DEC's figure for XCON plus related expert systems.",
+   "source": "Secondary histories",
+   "url": "https://www.Wikipedia.org/wiki/Xcon",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "Training frontier models is getting cheaper (AI Index 2026: −30%, ~$120M).",
+   "fact": "That figure comes from one secondary summary and could not be checked in the report. Epoch estimates final-run costs have grown about 2.4× a year since 2016 and puts Grok 4 (Jul 2025) at ~$490M. Quote Epoch's trend until the AI Index text is verified.",
+   "source": "Epoch AI; remio.ai",
+   "url": "https://epoch.ai/blog/how-much-does-it-cost-to-train-frontier-ai-models",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "The US produced 61 notable AI models in 2023.",
+   "fact": "61 is the AI Index 2024 count; the AI Index 2025 restated 2023 as 70. Quote the edition. (2024: 40; 2025: 50 or 59 depending on the 2026 PDF vs web page.)",
+   "source": "Stanford HAI AI Index 2024 and 2025",
+   "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  },
+  {
+   "claim": "AI inference costs have fallen 280-fold.",
+   "fact": "Stanford's figure covers GPT-3.5-level capability from $20 (Nov 2022) to $0.07 (Oct 2024) per million tokens; it is not the price of frontier AI.",
+   "source": "Stanford HAI AI Index 2025",
+   "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/technical-performance",
+   "confidence": "MEDIUM",
+   "report_ai_link": "/indexes/ai-economics/llm-token-price-index/"
+  },
+  {
+   "claim": "DeepSeek trained a frontier model for $5.6 million.",
+   "fact": "$5.58M was DeepSeek's stated GPU-rental cost for V3's final pre-training run only — excluding research, earlier runs, staff and hardware — and is not comparable with Epoch's ~$490M estimate for Grok 4.",
+   "source": "DeepSeek V3 technical report; Report AI",
+   "url": "https://arxiv.org/abs/2412.19437",
+   "confidence": "MEDIUM",
+   "report_ai_link": null
+  }
+ ],
+ "sources": [
+  {
+   "name": "Report AI State of AI data (local JSON: models, tokens, finance, usage, infrastructure, spending, regulation, risk, geography)",
+   "url": "file:///home/user/test/content-ops/state-of-ai/data/",
+   "accessed": "2026-11-12",
+   "how": "local-file"
+  },
+  {
+   "name": "Epoch AI — Notable AI Models database",
+   "url": "https://epoch.ai/data/notable-ai-models",
+   "accessed": "2026-11-12",
+   "how": "search-summary (epoch.ai blocked)"
+  },
+  {
+   "name": "Epoch AI — Training compute of frontier AI models grows 4–5x per year",
+   "url": "https://epoch.ai/blog/training-compute-of-frontier-ai-models-grows-by-4-5x-per-year",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Trends (updated 5 Feb 2026)",
+   "url": "https://epoch.ai/trends",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Training compute doubling every six months (post-2010)",
+   "url": "https://epoch.ai/data-insights/compute-trend-post-2010",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Training-length trend (compute figures for Seq2Seq, Transformer, BERT, PaLM)",
+   "url": "https://epoch.ai/data-insights/training-length-trend",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Dataset-size trend (GPT-2 compute)",
+   "url": "https://epoch.ai/data-insights/dataset-size-trend",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Models over 1e25 FLOP",
+   "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Model counts (first model >1e26: Grok 3)",
+   "url": "https://epoch.ai/tools/model-counts",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Grok 4 training resources",
+   "url": "https://epoch.ai/data-insights/grok-4-training-resources",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — Why GPT-5 used less training compute than GPT-4.5",
+   "url": "https://epoch.ai/gradient-updates/why-gpt5-used-less-training-compute-than-gpt45-but-gpt6-probably-wont",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Epoch AI — How much does it cost to train frontier AI models",
+   "url": "https://epoch.ai/blog/how-much-does-it-cost-to-train-frontier-ai-models",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Cottier et al. — The rising costs of training frontier AI models (arXiv 2405.21015)",
+   "url": "https://arxiv.org/abs/2405.21015",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Sevilla et al. — Compute Trends Across Three Eras of Machine Learning (arXiv 2202.05924)",
+   "url": "https://arxiv.org/abs/2202.05924",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "OpenAI — AI and Compute (2018)",
+   "url": "https://openai.com/index/ai-and-compute/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "AI Pulse — Compute behind notable models (Epoch data mirror)",
+   "url": "https://projectaipulse.com/compute-behind-notable-models/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "aiwiki.ai — Training compute (Epoch data mirror)",
+   "url": "https://aiwiki.ai/wiki/training_compute",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI — AI Index 2022",
+   "url": "https://hai.stanford.edu/ai-index/2022-ai-index-report",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI — AI Index 2023, Economy",
+   "url": "https://hai.stanford.edu/ai-index/2023-ai-index-report/the-economy",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI — AI Index 2024",
+   "url": "https://hai.stanford.edu/ai-index/2024-ai-index-report",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI — AI Index 2025, R&D / Economy / Technical performance",
+   "url": "https://hai.stanford.edu/ai-index/2025-ai-index-report/research-and-development",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI — AI Index 2026, Economy / R&D / Responsible AI",
+   "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI news — corporate investment 13× a decade ago",
+   "url": "https://hai.stanford.edu/news/annual-corporate-investment-ai-13-times-greater-decade-ago",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Stanford HAI news — corporate investment down for first time in a decade",
+   "url": "https://hai.stanford.edu/news/corporate-investment-ai-down-first-time-decade",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Brown et al. — Language Models are Few-Shot Learners (GPT-3)",
+   "url": "https://arxiv.org/abs/2005.14165",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "OpenAI — GPT-4 Technical Report",
+   "url": "https://arxiv.org/abs/2303.08774",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Vaswani et al. — Attention Is All You Need",
+   "url": "https://arxiv.org/abs/1706.03762",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Krizhevsky et al. — ImageNet Classification with Deep CNNs (NIPS 2012)",
+   "url": "https://papers.nips.cc/paper/4824-imagenet-classification-with-deep-convolutional-neural-networks",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "ILSVRC 2012 results",
+   "url": "https://image-net.org/static_files/files/ilsvrc2012.pdf",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "He et al. — Deep Residual Learning (ResNet)",
+   "url": "https://arxiv.org/abs/1512.03385",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Karpathy — What I learned from competing against a ConvNet on ImageNet",
+   "url": "https://karpathy.github.io/2014/09/02/what-i-learned-from-competing-against-a-convnet-on-imagenet/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Hendrycks et al. — MMLU leaderboard (GitHub)",
+   "url": "https://github.com/hendrycks/test",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Rein et al. — GPQA (arXiv 2311.12022)",
+   "url": "https://arxiv.org/abs/2311.12022",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "ARC Prize 2024 technical report",
+   "url": "https://arxiv.org/abs/2412.04604",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "ARC Prize — o3 breakthrough",
+   "url": "https://arcprize.org/blog/oai-o3-pub-breakthrough",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "TechCrunch — o3 scores lower on FrontierMath than implied",
+   "url": "https://techcrunch.com/2025/04/20/openais-o3-ai-model-scores-lower-on-a-benchmark-than-the-company-initially-implied",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "The Decoder — Claude Fable 5 on FrontierMath",
+   "url": "https://the-decoder.com/claude-fable-5-outpaces-gpt-5-5-by-13-points-on-frontiermaths-toughest-problems/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "McKinsey — The state of AI in early 2024",
+   "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-2024",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "McKinsey — The state of AI in 2022 and a half decade in review",
+   "url": "https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai-in-2022-and-a-half-decade-in-review",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Reuters/Yahoo — UBS: ChatGPT fastest-growing app",
+   "url": "https://news.yahoo.com/chatgpt-fastest-growing-app-history-142338104.html",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "TechCrunch — ChatGPT doubled weekly users in under 6 months",
+   "url": "https://techcrunch.com/2025/03/06/chatgpt-doubled-its-weekly-active-users-in-under-6-months-thanks-to-new-releases",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "TechCrunch — ChatGPT 800M weekly users",
+   "url": "https://techcrunch.com/2025/10/06/sam-altman-says-chatgpt-has-hit-800m-weekly-active-users/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "IEA — Energy and AI, executive summary",
+   "url": "https://www.iea.org/reports/energy-and-ai/executive-summary",
+   "accessed": "2026-11-12",
+   "how": "search-summary (iea.org not fetched)"
+  },
+  {
+   "name": "DatacenterDynamics — IEA 945 TWh by 2030",
+   "url": "https://datacenterdynamics.com/en/news/iea-data-center-energy-consumption-set-to-double-by-2030-to-945twh",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Gartner — data-centre electricity press release (10 Jun 2026)",
+   "url": "https://www.gartner.com/en/newsroom/press-releases/2026-06-10-gartner-says-data-center-electricity-demand-to-grow-26-percent-in-2026",
+   "accessed": "2026-11-12",
+   "how": "via Report AI data"
+  },
+  {
+   "name": "AI Incident Database",
+   "url": "https://incidentdatabase.ai",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "AI Magazine — Dartmouth proposal reprint (31 Aug 1955)",
+   "url": "https://ojs.aaai.org/index.php/aimagazine/article/view/1904",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Wikipedia — Dartmouth workshop",
+   "url": "https://en.wikipedia.org/wiki/Dartmouth_workshop",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Wikipedia — AI winter",
+   "url": "https://en.wikipedia.org/wiki/AI_winter",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Holloway — Making Things Think (AI history chapters)",
+   "url": "https://www.holloway.com/g/making-things-think/sections/the-second-ai-winter-19871993",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Wikipedia — Fifth Generation Computer Systems",
+   "url": "https://en.wikipedia.org/wiki/Fifth_Generation_Computer_Systems",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Wikipedia — Mark I Perceptron",
+   "url": "https://en.wikipedia.org/wiki/Mark_I_Perceptron",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Wikipedia — AlphaGo Zero",
+   "url": "https://en.wikipedia.org/wiki/AlphaGo_Zero",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Nature — Rumelhart, Hinton & Williams 1986",
+   "url": "https://doi.org/10.1038/323533a0",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "History.com — Deep Blue / Kasparov",
+   "url": "https://www.history.com/this-day-in-history/kasparov-defeats-chess-playing-computer",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "IBM — Watson Jeopardy! history page",
+   "url": "https://www.ibm.com/history/watson-jeopardy",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "DARPA — Grand Challenge",
+   "url": "https://www.darpa.mil/about/innovation-timeline/grand-challenge",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Nature — AlphaGo news (529, 445)",
+   "url": "https://www.nature.com/articles/529445a",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Google DeepMind — AlphaFold CASP14",
+   "url": "https://deepmind.google/discover/blog/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "TechCrunch — Google acquires DeepMind",
+   "url": "https://techcrunch.com/2014/01/26/google-deepmind/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "arXiv — Goodfellow et al. GANs",
+   "url": "https://arxiv.org/abs/1406.2661",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "OpenAI — Introducing o1-preview",
+   "url": "https://openai.com/index/introducing-openai-o1-preview/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Anthropic — Claude 3.5 models and computer use",
+   "url": "https://www.anthropic.com/news/3-5-models-and-computer-use",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "European Commission — AI Act enters into force",
+   "url": "https://commission.europa.eu/news/ai-act-enters-force-2024-08-01_en",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Bloomberg — Nvidia $589B DeepSeek rout",
+   "url": "https://www.bloomberg.com/news/articles/2025-01-27/asml-sinks-as-china-ai-startup-triggers-panic-in-tech-stocks",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "AIhub — 2024 Nobel prizes for machine learning",
+   "url": "https://aihub.org/2024/10/10/nobel-prizes-in-physics-and-chemistry-awarded-for-machine-learning-research/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Hugging Face — DeepSeek-V3 model card",
+   "url": "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "law-ai.org — Re-evaluating GPT-4's bar exam performance",
+   "url": "https://law-ai.org/re-evaluating-gpt-4s-bar-exam-performance/",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  },
+  {
+   "name": "Al Jazeera — Threads 100M users in five days",
+   "url": "https://www.aljazeera.com/news/2023/7/10/threads-hits-100-million-users-in-five-days-in-record-surge",
+   "accessed": "2026-11-12",
+   "how": "search-summary"
+  }
+ ]
+}

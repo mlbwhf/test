@@ -25,6 +25,8 @@ YEARS = ['2024', '2025', '2026']
 ALL_YEARS = ['2022', '2023', '2024', '2025', '2026']
 
 NS = {}
+# CSVs re-issued under a new name after the first upload (media has no trash; never overwrite)
+CSV_REV = {'state-of-ai-models-prices': 'report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv'}
 ON = ' class="on"'
 NOBR = ' style="border-right:none;"'
 def detail(link):
@@ -379,7 +381,7 @@ def first_chart(t, C):
 def theme_report_long(t, d, n, published, published_h, outdir):
     """McKinsey-style long-form theme report (data + narrative)."""
     slug = SLUG[t]; url = BASE + slug + '/'; title = f'State of AI {NAME[t]} 2026'
-    csv_name = f'report-ai-data-{slug}-2026.csv'
+    csv_name = CSV_REV.get(slug, f'report-ai-data-{slug}-2026.csv')
     ms = d['metrics']; C = Counter()
     TY = [y for y in ALL_YEARS if any((m['values'].get(y) or {}).get('value') for m in ms)]
     if TY == YEARS:
