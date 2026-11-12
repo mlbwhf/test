@@ -11,10 +11,11 @@ envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E "s/^[[:space:
 pin_env() { local var=$1 val=$2; if grep -qE "^$var=" .env; then sed -i -E "s|^$var=.*|$var=$val|" .env; else printf '\n%s=%s\n' "$var" "$val" >> .env; fi; }
 # The canonical hosts and aliases can come from CI (the repository variables), so moving the
 # site to a new domain is a change of variables and a deploy, not an edit on the server.
-for pair in TRAINYARD_WEB_HOST:TRAINYARD_CI_WEB_HOST TRAINYARD_API_HOST:TRAINYARD_CI_API_HOST TRAINYARD_WEB_ALIASES:TRAINYARD_CI_WEB_ALIASES TRAINYARD_API_ALIASES:TRAINYARD_CI_API_ALIASES STRIPE_TRIAL_DAYS:TRAINYARD_CI_TRIAL_DAYS; do
+for pair in TRAINYARD_WEB_HOST:TRAINYARD_CI_WEB_HOST TRAINYARD_API_HOST:TRAINYARD_CI_API_HOST TRAINYARD_WEB_ALIASES:TRAINYARD_CI_WEB_ALIASES TRAINYARD_API_ALIASES:TRAINYARD_CI_API_ALIASES STRIPE_TRIAL_DAYS:TRAINYARD_CI_TRIAL_DAYS TRAINYARD_PLATFORM_ADMINS:TRAINYARD_CI_PLATFORM_ADMINS; do
   var=${pair%%:*}; src=${pair##*:}; val=${!src:-}
   [ -n "$val" ] || continue
-  [ "$(envval "$var")" = "$val" ] || { echo "== .env $var: '$(envval "$var")' -> '$val'"; pin_env "$var" "$val"; }
+  shown=$val; [ "$var" = TRAINYARD_PLATFORM_ADMINS ] && shown="(hidden)"
+  [ "$(envval "$var")" = "$val" ] || { echo "== .env $var -> $shown"; pin_env "$var" "$val"; }
 done
 TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
 BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)

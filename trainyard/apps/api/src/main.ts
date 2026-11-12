@@ -10,6 +10,7 @@ import { Store, type StoreState } from "./store.js";
 // end up in a config file:
 //   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
 //   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
+//   TRAINYARD_PLATFORM_ADMINS    comma-separated emails of platform admins (support console, every workspace)
 //   TRAINYARD_SECRET             encrypts Miro/Lucid/Mural/monday/Trello tokens at rest (falls back to the admin key)
 //   ANTHROPIC_API_KEY            AI facilitation through Claude (model: TRAINYARD_AI_MODEL)
 //   TRAINYARD_LLM_URL            or any OpenAI-compatible server, e.g. http://ollama:11434/v1
@@ -71,6 +72,12 @@ async function main() {
   }
   console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY, or TRAINYARD_LLM_URL for a local model)");
 
+  const platformAdminEmails = (process.env.TRAINYARD_PLATFORM_ADMINS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  if (platformAdminEmails.length) {
+    const known = platformAdminEmails.filter((e) => store.state.users.some((u) => u.email.toLowerCase() === e.toLowerCase()));
+    console.log(`[auth] platform admins by email: ${platformAdminEmails.length} listed, ${known.length} with an account`);
+  }
+
   const secret = process.env.TRAINYARD_SECRET ?? adminKey;
   if (!secret) console.log("[connections] no TRAINYARD_SECRET: board connections will not survive a restart");
   else if (!process.env.TRAINYARD_SECRET && env === "production") console.log("[connections] TRAINYARD_SECRET not set: tokens are sealed with the admin key; set a separate secret so rotating one does not break the other");
@@ -78,6 +85,7 @@ async function main() {
   const app = await buildApp({
     store,
     ...(adminKey ? { bootstrapAdminKey: adminKey } : {}),
+    ...(platformAdminEmails.length ? { platformAdminEmails } : {}),
     ...(secret ? { secret } : {}),
     ...(assist ? { assist } : {}),
     ...(process.env.TRAINYARD_WEBHOOK_SECRET ? { webhookSecret: process.env.TRAINYARD_WEBHOOK_SECRET } : {}),

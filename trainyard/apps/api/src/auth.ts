@@ -140,6 +140,11 @@ declare module "fastify" {
 export interface AuthOptions {
   /** Key for a bootstrap admin, usually from TRAINYARD_ADMIN_KEY. */
   bootstrapAdminKey?: string;
+  /**
+   * Emails of people who run the platform (TRAINYARD_PLATFORM_ADMINS), wherever their own account
+   * lives: they keep their workspace and also get the support console and every workspace.
+   */
+  platformAdminEmails?: string[];
 }
 
 /** Failed sign-ins per client before a 10-minute lockout. Keys are 192-bit random, so this only slows a guesser; it mostly keeps logs readable. */
@@ -149,6 +154,7 @@ const LOCKOUT_MS = 10 * 60 * 1000;
 export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {}) {
   const platform = tenants.platform;
   const bootstrapHash = opts.bootstrapAdminKey ? hashKey(opts.bootstrapAdminKey) : undefined;
+  const platformAdmins = new Set((opts.platformAdminEmails ?? []).map((e) => e.trim().toLowerCase()).filter(Boolean));
   const open = () => platform.state.users.length === 0 && !bootstrapHash;
   const failures = new Map<string, { count: number; since: number }>();
   const failed = (ip: string) => {
@@ -211,7 +217,8 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
       throw new ApiError(401, "UNAUTHORIZED", key.startsWith("ts_") ? "This session has ended; sign in again." : "This API key is not valid.");
     }
     const home = user.workspaceId ?? tenants.platformId;
-    return { userId: user.id, name: user.name, role: user.role, anonymous: false, workspaceId: home, platformAdmin: home === tenants.platformId && user.role === "admin", ...(user.personId ? { personId: user.personId } : {}) };
+    const named = platformAdmins.has(user.email.toLowerCase());
+    return { userId: user.id, name: user.name, role: user.role, anonymous: false, workspaceId: home, platformAdmin: (home === tenants.platformId && user.role === "admin") || named, ...(user.personId ? { personId: user.personId } : {}) };
   };
 
   // ---- email and password sign-in ---------------------------------------------------------
@@ -245,6 +252,13 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
         let target = principal.workspaceId;
         if (typeof asked === "string" && asked && asked !== principal.workspaceId) {
           if (!principal.platformAdmin) throw new ApiError(403, "FORBIDDEN", "Only platform admins can open another workspace.");
+          // A platform admin whose own account lives in a customer workspace opens the platform's as an admin.
+          if (asked === tenants.platformId) {
+            target = asked;
+            principal = { ...principal, workspaceId: asked, role: "admin" };
+            req.principal = principal;
+            return platform;
+          }
           const record = tenants.record(asked);
           if (!record) throw notFound("Workspace");
           target = asked;

@@ -2451,3 +2451,26 @@ describe("what a student's link may write", () => {
     expect((await put("pbcfg", root)).status).toBe(200);
   });
 });
+
+describe("platform admins by email", () => {
+  it("gives a listed email the support console and every workspace, on top of its own", async () => {
+    const { call } = await setup({ platformAdminEmails: ["Owner@Example.io"] });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const platformId = (await call("GET", "/v1/me", undefined, root)).body.principal.workspaceId as string;
+    const owner = (await call("POST", "/v1/signups", { name: "Owner", email: "owner@example.io", plan: "practice" })).body.apiKey as string;
+    const other = (await call("POST", "/v1/signups", { name: "Other", email: "other@example.io", plan: "practice" })).body.apiKey as string;
+    const me = (await call("GET", "/v1/me", undefined, owner)).body;
+    expect(me.principal.platformAdmin).toBe(true);
+    expect(me.principal.workspaceId).not.toBe(platformId);
+    expect((await call("GET", "/v1/admin/workspaces", undefined, owner)).status).toBe(200);
+    // The platform's own workspace, as an admin; and someone else's, as support.
+    const plat = await call("GET", "/v1/me", undefined, owner, { "x-trainyard-workspace": platformId });
+    expect(plat.body.principal).toMatchObject({ workspaceId: platformId, role: "admin" });
+    const otherWs = (await call("GET", "/v1/me", undefined, other)).body.principal.workspaceId as string;
+    expect((await call("GET", "/v1/me", undefined, owner, { "x-trainyard-workspace": otherWs })).body.principal).toMatchObject({ workspaceId: otherWs, support: true });
+    // Anyone not listed stays in their own workspace.
+    expect((await call("GET", "/v1/me", undefined, other)).body.principal.platformAdmin).toBe(false);
+    expect((await call("GET", "/v1/admin/workspaces", undefined, other)).status).toBe(403);
+    expect((await call("GET", "/v1/me", undefined, other, { "x-trainyard-workspace": platformId })).status).toBe(403);
+  });
+});
