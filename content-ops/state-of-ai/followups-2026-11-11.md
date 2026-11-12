@@ -79,3 +79,16 @@ Our pages said both models were "withdrawn within a week" and never mentioned th
 - Epoch's AlphaGo Zero estimate is now 6.49×10^20 FLOP (training only), not ~3×10^23; check any site page quoting the old figure.
 - AI Index 2026 summary "$120M largest mid-2025 run, down ~30%" conflicts with Epoch ($218M–$388M amortised for 2025 runs) — CONTESTED; do not publish until checked against the report.
 - OpenAI GPT-6 Cyber (5 Nov 2026) and Daybreak for Frontline Defenders ($1B, 3 Sep) are not yet on the site.
+
+## G. 11 Nov (Eastern) — Fable restoration on live pages, and open items
+
+- 1654 corrected (caveat, What-changed block), 566 updated (restoration section, FAQ, update note), 3229 row added.
+  Backups: backups/1654-20261112.html, 566-20261112.html, 3229-20261112.html (filenames use UTC date).
+  Stamps being reset to 11 Nov (site-local Eastern date; the first pass wrongly used 12 Nov). 566 retitled
+  "…Pulled in Under a Week, Restored 19 Days Later" (slug unchanged).
+- Open on 1654: opening/analysis/FAQ treat GPT-5.6 Sol (58.9) as the top score, omitting Fable 5 (59.9), now
+  available again — needs What-changed rows + new CSV at next refresh (CRITICAL, due 1 Dec).
+- 566: add to refresh-register.md with a cadence; Fable/Mythos 5.2 (9 Nov) not yet mentioned; older external
+  links lack `nofollow`.
+- New drafts (AI history report, AI Development Index, Perez report) were built with a 12 Nov stamp; re-stamp to
+  the actual publication date at go-live.
