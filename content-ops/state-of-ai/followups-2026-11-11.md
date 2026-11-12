@@ -101,3 +101,11 @@ Writing chunks into a live page would leave it half-written in public for the du
 upload each rebuilt edition as a separate DRAFT with a temporary slug (state-of-ai-2024-rebuild,
 state-of-ai-2025-rebuild); at go-live, with the owner's OK, set the old page's slug to *-archive and draft,
 then give the new page the real slug and publish. URL unchanged; page ID changes (no internal links use IDs).
+
+## I. AI-history and Perez drafts
+
+| Page | ID | CSV media | Status |
+|---|---|---|---|
+| Is AI a Technological Revolution? (Perez method) | 3821 | 3886 | draft, IDENTICAL; byline `&amp;middot;` fixed by one alter (11 Nov ET) |
+| How AI Developed, 1950–2026 | pending | | uploading old build → then apply patches/how-ai-developed-1950-2026-byline.json |
+| AI Development Index | pending | | uploading old build → then apply patches/ai-development-index-byline.json |

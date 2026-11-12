@@ -253,7 +253,7 @@ def page(d, kind, published, published_h, outdir):
     toc = ''.join(f'<li><a href="#{c.get("id") or "ch-" + str(i + 1)}">{E(c.get("kicker", ""))}</a> &mdash; {E(c.get("action_title", ""))}</li>' for i, c in enumerate(chs))
     toc += ''.join(f'<li><a href="#{a}">{E(t)}</a></li>' for a, t in d.get('toc_extra', []))
     body = header(d['trail'], d['eyebrow'], d['title'], d['dek'],
-                  f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time> &middot; {E(d.get("cadence_note", ""))}',
+                  f'By the Report AI editorial team &middot; Published <time datetime="{published}">{published_h}</time> &middot; {d.get("cadence_note", "")}',
                   [(n, u, n == d.get('nav_active')) for n, u in d.get('nav', [])])
     if d.get('tiles'):
         body += tiles(d['tiles'])
