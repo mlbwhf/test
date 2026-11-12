@@ -351,7 +351,7 @@ def gantt_chart(ex):
         out += legend([{'name': g or 'Other'} for g in groups], 14)
     nyears = (hi - lo) // 12
     if nyears > 16:  # long spans: gridlines and labels per decade (or 5 years), placed on the line
-        st = 10 if nyears > 40 else 5
+        st = 50 if nyears > 200 else 25 if nyears > 100 else 10 if nyears > 40 else 5
         lo = (lo // (12 * st)) * 12 * st; hi = -(-hi // (12 * st)) * 12 * st
         for yv in range(lo // 12, hi // 12 + 1, st):
             x = X(yv * 12)

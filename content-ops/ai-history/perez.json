@@ -1,0 +1,272 @@
+{
+ "slug": "ai-technological-revolution-perez",
+ "path": "/reports/ai-technological-revolution-perez/",
+ "parent_path": "/reports/",
+ "csv": "report-ai-data-ai-technological-revolution-perez.csv",
+ "trail": [["Reports", "/reports/"], ["The AI revolution, Perez method", "/reports/ai-technological-revolution-perez/"]],
+ "eyebrow": "Report AI &middot; Analysis &middot; Technological revolutions 1771–2026 &middot; Reviewed quarterly",
+ "title": "Is AI a Technological Revolution? Carlota Perez's Method, Applied",
+ "dek": "Carlota Perez showed that five technological revolutions since 1771 followed the same sequence: a cheap key input, a new infrastructure, a financial frenzy, a crash and then a golden age. We apply her method to AI, test it against the data, and compare her own verdict with the alternatives.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next review February 2027",
+ "edition": "November 2026 edition",
+ "coverage": "1771/2026",
+ "nav_active": "The AI revolution (Perez method)",
+ "nav": [["The report", "/reports/how-ai-developed-1950-2026/"], ["AI Development Index", "/indexes/state-of-ai/ai-development-index/"], ["The AI revolution (Perez method)", "/reports/ai-technological-revolution-perez/"], ["AI Bubble Tracker", "/indexes/ai-economics/ai-bubble-tracker/"], ["State of AI", "/indexes/state-of-ai/"]],
+ "tiles": [
+  {"value": "5", "label": "technological revolutions since 1771 in Perez's framework, each lasting about 40–60 years", "confidence": "HIGH"},
+  {"value": "~1.5%", "label": "of US GDP: big-five tech capex in 2025, against UK railway investment of about 7% of national income at the 1847 peak", "confidence": "DERIVED"},
+  {"value": "~72%", "label": "of global venture funding went to AI companies in January–September 2026 (Crunchbase)", "confidence": "DERIVED"},
+  {"value": "37%", "label": "of McKinsey 2026 survey respondents report any EBIT contribution from AI, though 89% use it", "confidence": "MEDIUM"}
+ ],
+ "at_a_glance": [
+  "Carlota Perez's framework, set out in Technological Revolutions and Financial Capital (2002), finds five surges since 1771, each lasting about 40–60 years, each starting with a 'big bang' and passing through an installation period with a financial bubble, a turning point and a deployment period or golden age.",
+  "Perez's own verdict is that AI is not a sixth revolution: in March 2024 she wrote that it 'is better understood as a key development within the still-evolving' information and communications technology revolution that began with Intel's microprocessor in 1971.",
+  "Tested against her four criteria for a revolution's cheap key input, 'cheap intelligence' passes on falling cost and on pervasiveness, fails on 'apparently unlimited supply' because chips, packaging and power are scarce, and is not yet proven on productivity (Report AI analysis).",
+  "The financial pattern is recognisably Perez-like: AI took about 72% of global venture funding in January–September 2026, and big-five tech capex reached about $448 billion in 2025. In relative terms it is still smaller than the railway mania, when UK railway investment reached about 7% of national income in 1847.",
+  "Our reading is a hybrid: a revolutionary technology inside the ICT surge, comparable to electricity inside the steel age, that could seed a sixth surge. On Perez's timing, a crash now would look more like a precursor bubble than the end of an installation period."
+ ],
+ "toc_extra": [["stop-quoting", "Numbers to stop quoting"], ["outlook", "Outlook"], ["definitions", "Definitions"], ["faq", "FAQ"], ["about", "About the research"]],
+ "analysis": [
+  "Carlota Perez's framework is the most widely used account of how technological revolutions unfold. It explains why a burst of innovation is followed by a speculative bubble, why the bubble bursts, and why the productive 'golden age' tends to come after the crash, once institutions have caught up. Applying it to AI requires the same steps she applied to railways, steel, oil and microchips: identify the big bang, the cheap key input, the infrastructure and the organising principles, then locate the present on the life cycle.",
+  "The hardest question is not whether AI is important but whether it is a new surge or a new chapter. Perez herself is clear that it is a chapter: AI depends on the internet, which depends on microprocessors, and its leaders are the giants of the ICT surge rather than new entrants. She compares it to plastics in the mass-production age, and her framework treats electricity the same way, as a revolutionary technology inside the steel age. The 'sixth surge' reading rests on AI's speed, its key input whose price falls tenfold or more a year, and finance that looks like a classic frenzy.",
+  "The data tested here supports parts of both readings. The cost of a fixed level of AI capability is falling faster than any key input Perez documented, and investment is concentrated and debt-financed in ways that echo past frenzies. But supply is constrained, not unlimited; the infrastructure largely rides on the internet and cloud; and measured productivity effects are still small. Those are the marks of a technology still being installed, not yet deployed.",
+  "The practical conclusion is about timing. If AI is a sixth surge whose big bang was ChatGPT in November 2022, a major crash four years in would be early by historical standards, where big bang to crash has taken 15–29 years. If AI is the latest stage of the ICT surge, Perez's reading is that the turning point has lasted since 2000–2008 and that a golden age depends less on the technology than on financial regulation and on governments giving it direction."
+ ],
+ "takeaways": [
+  "Use Perez's own distinction: 'a revolutionary technology is not the same thing as a technological revolution'.",
+  "Cheap intelligence meets two of her four key-factor criteria clearly; supply and productivity are the open questions.",
+  "Today's AI capex is large in dollars but, relative to the economy, smaller than the 1847 railway mania.",
+  "Frenzy signals to watch are the ones Perez named: finance decoupled from production, circular and supplier financing, and valuations ahead of revenue.",
+  "In her framework a golden age comes after institutions recompose; regulation and direction-setting are part of the mechanism, not an afterthought."
+ ],
+ "chapters": [
+  {
+   "id": "method",
+   "kicker": "1. The method",
+   "action_title": "Perez explains technological change as surges of about half a century, each driven by a cheap input and an infrastructure, and each split by a crash",
+   "paras": [
+    "Perez built on Joseph Schumpeter and on her own work with Christopher Freeman at the University of Sussex. A technological revolution, in her definition, is a cluster of new technologies, products and industries that can transform the whole economy. Each one has a 'big bang', a visible event that crystallises the opportunity, and a key factor: an input whose cost falls dramatically and which becomes cheap enough to reorganise production. Each also brings a new or redefined infrastructure and a techno-economic paradigm, a new common sense about the most efficient way to organise firms and the economy.",
+    "The life cycle has two halves. In the installation period, financial capital pours into the new technologies, the old economy declines, and speculation eventually inflates a bubble; Perez divides this into irruption and frenzy. The bubble bursts at a turning point, a recession in which, she says, finance is brought back under regulation and institutions are recomposed. The deployment period that follows, in synergy and then maturity, is when production capital takes the lead and the technology spreads through the whole economy, often as a golden age. She gives each surge 'fifty to sixty years fully to deploy (and exhaust)', installation 'two or three decades', and a turning point lasting 'anywhere from two to thirteen years or more'.",
+    "Her test for a key factor, first set out in 1985, has four parts, quoted in the table below. It is the most useful single tool for asking whether AI is a revolution, because it asks about prices, supply and productivity rather than about how impressive the technology seems."
+   ],
+   "tables": [
+    {"title": "Perez's four criteria for a key factor (1985)", "columns": ["Criterion", "Her wording", "Source"], "rows": [
+     ["1. Cost", "clearly perceived low - and descending - relative cost", "Perez (1985), World Development 13(3)"],
+     ["2. Supply", "apparently unlimited supply (for all practical purposes)", "Perez (1985)"],
+     ["3. Pervasiveness", "obvious potential for all-pervasive influence in the productive sphere", "Perez (1985)"],
+     ["4. Productivity", "a generally recognized capacity... to reduce the costs and change the quality of capital equipment, labor and products", "Perez (1985)"]
+    ], "note": "Quoted from the author's PDF on carlotaperez.org. In 2025 she restated three features of a revolution: economy-wide productivity and cost effects, strong synergy among knowledge bases and skills, and a new infrastructure (Development and Change interview)."},
+    {"title": "The phases of a surge", "columns": ["Phase", "Period", "What happens", "Who leads"], "rows": [
+     ["Irruption", "Installation", "New technologies and industries appear; the old economy begins to decline", "Entrepreneurs and financial capital"],
+     ["Frenzy", "Installation", "Speculation and infrastructure building; a bubble inflates; inequality grows", "Financial capital, decoupled from production"],
+     ["Turning point", "Between the two", "Crash and recession; finance is re-regulated and institutions recomposed", "The state"],
+     ["Synergy", "Deployment", "The technology spreads across the economy; a golden age of broad-based growth", "Production capital"],
+     ["Maturity", "Deployment", "Markets saturate, returns fall, and the next revolution gestates", "Incumbents"]
+    ], "note": "Report AI summary of Perez (2002) and later papers."}
+   ]
+  },
+  {
+   "id": "surges",
+   "kicker": "2. Five surges",
+   "action_title": "Five revolutions since 1771 followed the same sequence: big bang, installation, bubble, turning point, golden age",
+   "paras": [
+    "Perez dates the five surges from their big bangs: Arkwright's mill at Cromford in 1771; the trial of the 'Rocket' locomotive for the Liverpool–Manchester railway in 1829; Carnegie's Bessemer steel plant in Pittsburgh in 1875; the first Model T from Ford's Detroit plant in 1908; and Intel's microprocessor in Santa Clara in 1971. Each began in a core country, Britain for the first two, the United States and Germany for the third, and the United States for the fourth and fifth, before spreading.",
+    "Each produced a bubble tied to its infrastructure: canal mania (crash 1793), railway mania (1847), the global infrastructure bubbles that ended in the Baring and Argentine crises of 1890–93, the Roaring Twenties (1929), and, for ICT, what Perez calls a 'double bubble': the internet mania that burst in 2000 and the easy-credit boom that burst in 2007–08. The railway mania was the largest relative to its economy: at the 1847 peak UK railway investment reached about 7% of national income and nearly 55% of gross fixed capital formation, according to figures Perez cites.",
+    "From big bang to major crash took 22, 18, 15, 21 and 29 years for the five surges, an average of about 21 years (Report AI calculation from Perez's dates, using 2000 for ICT). For the fifth surge Perez says both the installation period and the turning point have broken their length records: the golden age she expected after 2008 has not yet begun (Exhibit 1)."
+   ],
+   "exhibits": [
+    {"type": "gantt", "title": "Five surges, and where AI might fit", "subtitle": "Installation, turning point and deployment periods of Perez's five technological revolutions, 1771–2026, with the AI boom shown for comparison", "gantt": [
+     {"label": "1 Mechanisation: installation", "start": "1771-01", "end": "1793-01", "group": "Installation"},
+     {"label": "1 Mechanisation: turning point", "start": "1793-01", "end": "1797-12", "group": "Turning point"},
+     {"label": "1 Mechanisation: deployment", "start": "1797-12", "end": "1828-12", "group": "Deployment"},
+     {"label": "2 Steam & railways: installation", "start": "1829-01", "end": "1847-12", "group": "Installation"},
+     {"label": "2 Steam & railways: turning point", "start": "1848-01", "end": "1850-12", "group": "Turning point"},
+     {"label": "2 Steam & railways: deployment", "start": "1850-01", "end": "1873-12", "group": "Deployment"},
+     {"label": "3 Steel & electricity: install.", "start": "1875-01", "end": "1890-12", "group": "Installation"},
+     {"label": "3 Steel & electricity: turning pt", "start": "1890-01", "end": "1895-12", "group": "Turning point"},
+     {"label": "3 Steel & electricity: deploy.", "start": "1895-01", "end": "1914-12", "group": "Deployment"},
+     {"label": "4 Oil & mass production: install.", "start": "1908-01", "end": "1929-12", "group": "Installation"},
+     {"label": "4 Oil & mass prod.: turning pt", "start": "1929-01", "end": "1943-12", "group": "Turning point"},
+     {"label": "4 Oil & mass prod.: deployment", "start": "1945-01", "end": "1971-12", "group": "Deployment"},
+     {"label": "5 ICT: installation", "start": "1971-01", "end": "2000-12", "group": "Installation"},
+     {"label": "5 ICT: turning point (ongoing)", "start": "2000-01", "end": "2026-11", "group": "Turning point"},
+     {"label": "AI boom (if a 6th surge)", "start": "2022-11", "end": "2026-11", "group": "Installation"}
+    ], "source": "Source: Carlota Perez (2002, 2009, 2016, 2022, 2025); Report AI layout", "notes": "Periods follow Perez's published dates; where she gives a range, the start of installation is the big bang and its end is the crash year. Surge 4's turning point uses her US dating (1929–1943). Perez treats the ICT turning point as unfinished. The AI row is Report AI's comparison, not Perez's classification.", "confidence": "MEDIUM"}
+   ],
+   "tables": [
+    {"title": "The five surges", "columns": ["Surge (big bang)", "Core country", "Key factor", "New infrastructure", "Bubble and crash", "Golden age"], "rows": [
+     ["1. 'Industrial Revolution': mechanisation (1771, Arkwright's Cromford mill)", "Britain", "Mechanised cotton, water power (Perez does not name a single input)", "Canals, turnpike roads, water power", "Canal mania, 1793", "'Great British Leap'"],
+     ["2. Steam and railways (1829, 'Rocket' trial)", "Britain", "Cheap coal and steam transport", "Railways, telegraph, ports, postal service", "Railway mania, 1847", "Victorian boom, 1850–1873"],
+     ["3. Steel, electricity and heavy engineering (1875, Carnegie's Bessemer plant)", "USA and Germany", "Cheap steel ('as cheap as iron')", "Steel steamships, world railways, telegraph, electrical networks", "Baring / Argentine crises, 1890–93", "Belle Époque / Progressive Era"],
+     ["4. Oil, the automobile and mass production (1908, first Model T)", "USA", "Cheap oil and energy-intensive materials", "Roads, highways, airports, universal electricity, analogue telecoms", "Roaring Twenties, 1929", "Post-war boom, 1945–1971"],
+     ["5. Information and telecommunications (1971, Intel microprocessor)", "USA", "Cheap microelectronics, and so information", "Digital telecoms, internet, flexible electricity networks", "Internet mania 2000; easy-credit boom 2007–08", "Not yet: a possible 'smart, green, fair and global golden age'"]
+    ], "note": "From Perez (2002, 2009, 2016) and Perez & Murray Leach (2022). Wording of the 1771 and 1829 events comes from a reproduction of her table (MEDIUM); years are HIGH."},
+    {"title": "Each surge's 'common sense' (techno-economic paradigm)", "columns": ["Surge", "Organising principles"], "rows": [
+     ["1. Mechanisation", "Factory production; mechanisation; time-keeping and time-saving; local networks"],
+     ["2. Steam and railways", "Economies of agglomeration; national markets; scale as progress; standard parts"],
+     ["3. Steel and electricity", "Giant structures; economies of scale of plant; science as a productive force; universal standardisation"],
+     ["4. Oil and mass production", "Mass production and mass markets; standardisation; energy intensity; hierarchical pyramids; suburbanisation"],
+     ["5. ICT", "Information intensity; decentralised networks; platforms; knowledge as capital; data as raw material; adaptability"]
+    ], "note": "Condensed from Perez (2002) and Perez & Murray Leach (2022)."}
+   ]
+  },
+  {
+   "id": "verdict",
+   "kicker": "3. Perez on AI",
+   "action_title": "Perez's own verdict: AI is the latest stage of the ICT revolution, not a sixth one, though it could prepare the ground for one",
+   "paras": [
+    "Perez has addressed AI directly several times. In a March 2024 Project Syndicate essay, 'What Is AI's Place in History?', she wrote: 'Everyone is talking about artificial intelligence as though it represents the next technological revolution. In fact, it is better understood as a key development within the still-evolving information-communications-technology (ICT) revolution, which started in the 1970s with the microprocessor.' Her 2022 update of her surge table lists artificial intelligence, robotics and the Internet of Things among the fifth surge's industries.",
+    "Her argument turns on a distinction: 'a revolutionary technology is not the same thing as a technological revolution.' She compares recent AI advances to 'the introduction of plastics mid-way through the mass-production revolution' and describes AI as possibly a 'third leap' within ICT, after microprocessors and the internet. She also notes what is new: 'after four revolutions replacing manual labour, the new technologies have found an enormous new territory to mechanise: mental labour!'",
+    "She leaves room for change. AI, she wrote in 2024, 'could also lay the groundwork for breakthroughs in biotech, nanotech, and other fields that may be at the center of an eventual sixth revolution'. And she warned that if AI develops 'in a system where financial markets remain unregulated and decoupled from the real economy, it is unlikely to move us in a more environmentally, socially, or politically sustainable direction'. Asked about the AI boom in August 2025, she told the Financial Times: 'I have not seen a golden age happening without a crash.'"
+   ],
+   "sidebar": {"title": "Not the 'fourth industrial revolution'", "body": "Perez's count differs from the popular 'Industry 4.0' or 'fourth industrial revolution' numbering promoted by the World Economic Forum. She counts five surges since 1771 and places today's digital technologies, AI included, in the fifth. The two numbering systems are not interchangeable."}
+  },
+  {
+   "id": "key-factor",
+   "kicker": "4. The key factor",
+   "action_title": "'Cheap intelligence' passes Perez's tests on cost and reach, fails on supply, and is unproven on productivity",
+   "paras": [
+    "If AI were a new surge, its key factor would be cheap intelligence: the price of a fixed level of model capability. On cost it passes easily. Epoch AI found in March 2025 that the price of reaching a given score fell between 9× and 900× a year depending on the benchmark, with a median of about 50×. On our own series, a dollar bought about 26,700 tokens of GPT-4-level output at GPT-4's launch in March 2023 and about 5 million in October 2026 (Exhibit 2). The underlying chips also keep getting cheaper: Epoch estimates AI chip performance per dollar has risen about 49% a year since 2023.",
+    "On pervasiveness it also passes: 89% of respondents to McKinsey's 2026 survey say their organisation uses AI in at least one function, 52% of US employees reported using it at work in May 2026, and ChatGPT passed 1 billion weekly users in August 2026.",
+    "Supply is where the test fails. Perez's key factors were, for practical purposes, unlimited: coal, steel, oil and chips could be produced in whatever quantity demand required. AI compute is not yet like that. Advanced packaging capacity at TSMC has had to be roughly doubled each year, North American data-centre vacancy fell to 1.4% in the first half of 2026, and the rental price of an Nvidia H100 rose from about $2.00 to $2.88 an hour between December 2025 and October 2026. Power is the binding constraint in many markets.",
+    "Productivity is unproven. Only 37% of McKinsey's 2026 respondents report any contribution to EBIT from AI. Daron Acemoglu's 2024 estimate put the total-factor-productivity gain over ten years at no more than 0.71%, and a 2025 randomised trial found experienced open-source developers took 19% longer on tasks with early-2025 AI tools. Other estimates are higher, and the evidence is moving, but it does not yet meet Perez's standard of 'a generally recognized capacity' to cut costs across the economy."
+   ],
+   "exhibits": [
+    {"type": "line", "log": true, "annotate": true, "connect": true, "title": "A dollar buys about 190 times more GPT-4-level output than in 2023", "subtitle": "Tokens of output per US dollar at the cheapest model of GPT-4's original quality, Mar 2023–Oct 2026 (log scale)", "unit": "tokens per US$", "series": [{"name": "Tokens per $1, GPT-4 quality", "points": [["Mar 2023", 26667, "GPT-4 launch"], ["Nov 2023", 66667, "GPT-4 Turbo"], ["Dec 2024", 2090000, "DeepSeek-V3"], ["Sep 2025", 3170000, "DeepSeek-V3.2-Exp"], ["Oct 2026", 5000000, "GPT-6 Luna / Haiku 5.5"]]}], "source": "Source: provider list prices; Report AI token price index", "notes": "Inverse of the cheapest blended price ($37.50 to $0.20 per million tokens) at a 3:1 input:output mix (Report AI method). Capability matching uses public benchmark scores.", "confidence": "DERIVED"}
+   ],
+   "tables": [
+    {"title": "AI against the four key-factor criteria", "columns": ["Criterion", "Evidence (dated, sourced)", "Verdict", "Confidence"], "rows": [
+     ["1. Low and falling relative cost", "Price at fixed capability falls 9×–900× a year, median ~50× (Epoch AI, Mar 2025); GPT-4-level output $37.50 → ~$0.20 per million tokens (Mar 2023 → Oct 2026); AI chip performance per dollar +49% a year since 2023 (Epoch AI)", "Passes", "DERIVED"],
+     ["2. Apparently unlimited supply", "H100 rental ~$2.00 → $2.88 per hour (Dec 2025 → Oct 2026); North American data-centre vacancy 1.4% (H1 2026); TSMC CoWoS capacity ~35k → 75–80k wafers a month (2024 → 2025)", "Fails, for now", "DERIVED"],
+     ["3. All-pervasive potential", "89% of organisations use AI in at least one function (McKinsey 2026); 52% of US employees use it at work (May 2026); ChatGPT 1B+ weekly users (Aug 2026)", "Passes", "DERIVED"],
+     ["4. Recognised capacity to cut costs and change products", "37% of organisations report any EBIT contribution (McKinsey 2026); ≤0.71% TFP over 10 years (Acemoglu 2024); generative AI saved ~2.2% of US work hours (Q1 2026 estimate)", "Unproven", "DERIVED"]
+    ], "note": "Report AI analysis applying Perez (1985). Underlying figures: Epoch AI, McKinsey, Gallup, OpenAI, CBRE, TrendForce and others as listed in the data download."}
+   ]
+  },
+  {
+   "id": "frenzy",
+   "kicker": "5. Infrastructure and finance",
+   "action_title": "The money looks like an installation-period frenzy, but relative to the economy it is still smaller than the railway mania",
+   "paras": [
+    "Every surge built an infrastructure, and AI's is GPU data centres plus the power to run them. Capital spending by the five largest cloud and platform companies (Microsoft, Amazon, Alphabet, Meta and Oracle) rose from about $162 billion in 2022 to about $448 billion in 2025, by Report AI's sum of Epoch AI figures (Exhibit 3), and the big four guided to $720–740 billion for 2026. Measured against the US economy, the 2025 figure is about 1.5% of GDP (Report AI calculation), above US telecom capex at the 2000 peak (about 1.0–1.2% of GDP) but far below UK railway investment in 1847, about 7% of national income (Exhibit 4).",
+    "The financial signals Perez associates with frenzy are present. AI companies took about 46% of US venture deal value in 2024, 65% in 2025 and 83% in January–September 2026, according to PitchBook data cited by our finance pages (Exhibit 5). The 'Magnificent Seven' reached nearly 35% of the S&P 500's value by December 2025, up from about 20% in November 2022, according to the Bank for International Settlements. Supplier and circular financing appeared: Nvidia signed a letter of intent in September 2025 to invest up to $100 billion in OpenAI, later replaced by a $30 billion equity stake. Hyperscaler bond issuance reached about $194 billion in the first half of 2026.",
+    "So did the revenue gap. Big-four capex was about 60 times the combined revenue of OpenAI and Anthropic in 2024, about 23 times in 2025 and about 13 times in 2026 on guidance (Report AI calculation). The gap is closing quickly because revenue is growing quickly: the two labs' combined annualised run-rate rose from about $6.5 billion in December 2024 to about $115 billion in the third quarter of 2026. The IMF noted in October 2025 that the boom was largely equity- and cash-funded, which makes a bust less likely to be systemic; Perez's own concern is the opposite tendency, with world debt at almost four times global GDP."
+   ],
+   "exhibits": [
+    {"type": "bar", "title": "Big-five tech capex nearly tripled between 2023 and 2025", "subtitle": "Capital expenditure of Microsoft, Amazon, Alphabet, Meta and Oracle, calendar years 2022–2025 (US$ billion)", "unit": "US$ B", "series": [{"name": "Big-five capex", "points": [["2022", 162.3], ["2023", 161.3], ["2024", 260.4], ["2025", 448.2]]}], "source": "Source: Epoch AI compilation of company filings; Report AI calendar-year sum", "notes": "Cash purchases of property, plant and equipment; includes non-AI spending. The big four (excluding Oracle) guided to $720–740B for 2026 on a company-reported basis, which is not directly comparable.", "confidence": "DERIVED"},
+    {"type": "hbar", "title": "Relative to the economy, AI capex is below the railway mania's peak", "subtitle": "Infrastructure investment at the peak of three booms (% of national income or GDP)", "unit": "%", "series": [{"name": "Share", "points": [["UK railways, 1847", 7.0], ["Big-five tech capex, 2025", 1.46], ["US telecom capex, 2000", 1.1]]}], "source": "Source: Perez (2009) citing Mitchell (1964) and Deane (1968); Epoch AI and BEA; telecom estimate from industry data", "notes": "Denominators differ (UK national income vs US GDP) and big-five capex includes non-AI spending and some spending outside the US; read as orders of magnitude. The telecom figure is the midpoint of a 1.0–1.2% range (MEDIUM). The tech share is a Report AI calculation.", "confidence": "DERIVED"},
+    {"type": "bar", "title": "AI's share of US venture capital rose from under half to over four-fifths", "subtitle": "AI and machine-learning share of US venture deal value (%)", "unit": "%", "series": [{"name": "AI share of US VC deal value", "points": [["2024", 46.4], ["2025", 65.4], ["Jan–Sep 2026", 82.7]]}], "source": "Source: PitchBook-NVCA Venture Monitor, as cited on Report AI finance pages", "notes": "2026 covers January to September. Deal value is concentrated in a few very large rounds.", "confidence": "MEDIUM"}
+   ],
+   "tables": [
+    {"title": "Frenzy indicators, then and now", "columns": ["Signal Perez describes", "AI evidence", "Date", "Confidence"], "rows": [
+     ["Capital floods into the new industries", "AI ~72% of global venture funding (Crunchbase); 82.7% of US VC deal value (PitchBook)", "Jan–Sep 2026", "MEDIUM"],
+     ["Market value concentrates in the leaders", "Magnificent Seven nearly 35% of S&P 500 market capitalisation, from ~20% in Nov 2022 (BIS)", "Dec 2025", "HIGH"],
+     ["Valuations run ahead of earnings", "OpenAI valued at $1.25T; Anthropic at $965B; Nvidia near $5T", "Nov 2025–Nov 2026", "MEDIUM"],
+     ["Supplier and circular financing", "Nvidia letter of intent for up to $100B in OpenAI (Sep 2025), replaced by a $30B stake (Mar 2026); Nvidia guarantee of up to $105B of Stargate debt", "2025–2026", "MEDIUM"],
+     ["Debt and off-balance-sheet structures", "Hyperscaler bonds ~$108B (2025) and ~$194B (to 7 Jul 2026); ~$1.65T off-balance-sheet obligations for five hyperscalers", "2025–2026", "MEDIUM"],
+     ["Revenue lags the infrastructure", "Big-four capex ~13× OpenAI + Anthropic revenue in 2026, down from ~60× in 2024", "2024–2026", "DERIVED"]
+    ], "note": "Report AI analysis; underlying sources as named, detailed in the data download and on the AI Bubble Tracker."}
+   ]
+  },
+  {
+   "id": "readings",
+   "kicker": "6. Where AI sits",
+   "action_title": "Three readings fit the evidence; we use a hybrid, in which AI is a revolutionary technology inside the ICT surge that could seed a sixth",
+   "shade": true,
+   "paras": [
+    "Applying the method leaves three defensible readings, set out in the table with the strongest argument for and against each. Reading A, AI as the sixth surge in its installation period, is the most common in markets and the press. Reading B, AI as a late chapter of the ICT surge, is Perez's own. Reading C combines them.",
+    "We use Reading C as our analytical frame, and it is our judgement, not Perez's classification. It follows her precedent of electricity, a revolutionary technology that spread inside the steel surge before becoming central to the next one. It explains why AI's key input is still the microchip and why ICT incumbents lead, while allowing that cognition priced by the token, agentic automation of mental work and the power infrastructure being built now could become the core of a sixth surge.",
+    "Timing follows from the reading. Under A, with ChatGPT as the big bang in November 2022, a crash in 2026 or 2027 would come only four or five years in, far earlier than the 15–29 years from big bang to crash in the five historical surges. It would resemble the 'precursor bubbles' Perez identifies in ICT's early years, such as 1987, more than an end of installation. Under B, the ICT turning point has lasted since 2000–2008, and Perez's view is that the golden age is held back by unregulated finance and lack of direction rather than by technology."
+   ],
+   "tables": [
+    {"title": "Three readings of the AI boom", "columns": ["Reading", "Strongest argument for", "Strongest argument against", "Who holds it"], "rows": [
+     ["A. AI is a sixth surge, now in installation (irruption or frenzy)", "A cluster of new technologies with a key input whose price falls ~50× a year at fixed capability, a new GW-scale infrastructure, and frenzy-style finance (AI ~72% of global VC in 2026); it mechanises mental rather than manual labour", "The key input is still microelectronics, the infrastructure rides on the internet and cloud, incumbents lead rather than new entrants, and a frenzy four years after a big bang would be historically early", "Many market commentators (e.g. Michael Wee, 2026)"],
+     ["B. AI is a late chapter of the fifth (ICT) surge", "Perez's own position (2024–2025); AI depends on the internet and on ever-cheaper chips; its principles (information intensity, data as raw material, platforms) are ICT's; its leaders are ICT incumbents funding capex largely from cash flow", "Makes the scale and speed of today's finance hard to explain as a 'last gasp'; ICT's turning point would have lasted more than 20 years, beyond any precedent", "Carlota Perez"],
+     ["C. Hybrid: a revolutionary technology inside ICT that may seed a sixth surge", "Matches Perez's own precedents (electricity in the steel age, plastics in mass production) and her 2024 remark that AI could lay the groundwork for a sixth revolution; fits both the incumbent-led structure and the new infrastructure", "Harder to test; risks having it both ways unless tied to indicators (who leads, what the key input is, whether a new infrastructure becomes independent of ICT)", "Report AI analytical frame"]
+    ], "note": "Report AI analysis (DERIVED) of the readings, built on Perez's published framework and the sources cited in this report."}
+   ]
+  },
+  {
+   "id": "deployment",
+   "kicker": "7. Deployment and institutions",
+   "action_title": "A golden age, in Perez's account, depends on institutions catching up, and in 2026 they had only begun to",
+   "paras": [
+    "Deployment, in Perez's framework, is when the technology's benefits spread across the economy, and it requires a recomposition of institutions after the turning point: re-regulation of finance and policies that give the new paradigm a direction. For the fourth surge that meant Keynesian demand management, collective bargaining, social security and the Bretton Woods institutions. For the current surge she has argued for a 'smart, green, fair and global golden age', with the state providing 'directionality'.",
+    "The institutional record on AI in 2026 is partial. The EU AI Act entered into force in August 2024, but its Omnibus regulation of July 2026 moved stand-alone high-risk obligations to December 2027, and no fines had been published by the end of September 2026. In the United States there is no federal AI statute; policy runs through executive orders, export controls and state laws, of which 145 were enacted in 2025 by one count. Export controls reached a frontier model for the first time in June 2026, when Claude Fable 5 and Mythos 5 were suspended for 19 days. Financial regulation of AI-related credit has not changed.",
+    "Deployment indicators are mixed. Use is broad, but measured gains are modest, and the labour effects are beginning to show: Challenger, Gray & Christmas counted 121,401 announced US job cuts attributed to AI in January–October 2026, and employment of 22–25-year-olds in the most AI-exposed occupations was about 19% lower relative to less-exposed groups by August 2026."
+   ],
+   "tables": [
+    {"title": "Deployment and institutional indicators", "columns": ["Indicator", "Latest reading", "Date", "Confidence"], "rows": [
+     ["Organisations using AI in at least one function", "89% (88% in 2025)", "2026 survey", "MEDIUM"],
+     ["Organisations reporting any EBIT contribution from AI", "37% (39% in 2025)", "2026 survey", "MEDIUM"],
+     ["US employees using AI at work at least a few times a year", "52% (27% in Q2 2024)", "May 2026", "MEDIUM"],
+     ["Share of US work hours saved by generative AI", "~2.2%", "Q1 2026", "MEDIUM"],
+     ["US job cuts attributed to AI (Challenger)", "121,401 announced", "Jan–Oct 2026", "MEDIUM"],
+     ["National AI-specific statutes in force (nine jurisdictions tracked)", "3: EU, Japan, South Korea", "2026", "DERIVED"],
+     ["EU AI Act fines published", "0", "to 29 Sep 2026", "MEDIUM"],
+     ["Export controls applied to a released frontier model", "Yes: Claude Fable 5 and Mythos 5 suspended 12 Jun–1 Jul 2026", "2026", "HIGH"]
+    ], "note": "Sources: McKinsey Global Survey on AI; Gallup; St. Louis Fed estimates; Challenger, Gray & Christmas; Stanford Digital Economy Lab; Report AI regulation tracking; Anthropic."}
+   ]
+  },
+  {
+   "id": "comparison",
+   "kicker": "Comparison",
+   "action_title": "Against the five surges, AI matches the pattern on cost, infrastructure and finance, and not yet on supply, new entrants or productivity",
+   "paras": [
+    "The scorecard summarises how well the AI boom fits each element of Perez's sequence. It is the basis for our hybrid reading: the fit is strong on the elements that describe installation, and weak on those that would mark a separate surge or a move into deployment."
+   ],
+   "tables": [
+    {"title": "The AI boom against Perez's sequence", "columns": ["Element", "Typical pattern in the five surges", "AI, November 2026", "Fit"], "rows": [
+     ["Big bang", "A visible event that crystallises the opportunity", "ChatGPT, 30 Nov 2022 (or AlexNet 2012, the transformer 2017)", "Strong"],
+     ["Key factor: cost", "An input whose relative cost collapses", "Cost of fixed capability falling ~10–50× a year", "Strong"],
+     ["Key factor: supply", "Apparently unlimited supply", "Chips, packaging and power constrained; GPU rental prices rising", "Weak"],
+     ["New infrastructure", "Canals, railways, electricity grids, highways, internet", "GW-scale data centres and power; largely built on internet and cloud", "Partial"],
+     ["New entrants lead", "Newcomers displace incumbents", "ICT incumbents lead; two new labs (OpenAI, Anthropic) near $1T valuations", "Partial"],
+     ["Financial frenzy", "Finance decouples from production; speculation", "Capital concentration, circular financing, debt growth", "Strong"],
+     ["Bubble scale", "Railway mania: ~7% of national income", "Big-five capex ~1.5% of US GDP", "Partial"],
+     ["Productivity across the economy", "Recognised capacity to cut costs everywhere", "37% report EBIT impact; macro estimates small", "Weak, so far"],
+     ["Institutional recomposition", "Comes after the crash", "Early and partial; financial rules unchanged", "Not yet due"]
+    ], "note": "Report AI assessment (DERIVED)."}
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {"claim": "AI is the fourth industrial revolution.", "fact": "That numbering comes from the World Economic Forum's 'Industry 4.0' framing. In Carlota Perez's widely used framework there have been five technological revolutions since 1771, and she places AI within the fifth, the ICT revolution that began in 1971.", "link": ""},
+  {"claim": "The AI investment boom is bigger than the railway mania.", "fact": "In dollars, yes; relative to the economy, no. UK railway investment reached about 7% of national income at the 1847 peak (figures cited by Perez, 2009); big-five tech capex was about 1.5% of US GDP in 2025 (Report AI calculation), and not all of it is for AI.", "link": ""},
+  {"claim": "Carlota Perez says AI is the sixth technological revolution.", "fact": "She says the opposite: in March 2024 she wrote that AI 'is better understood as a key development within the still-evolving' ICT revolution, while allowing that it could lay the groundwork for a sixth.", "link": ""}
+ ],
+ "outlook": {
+  "action_title": "What would tell the readings apart",
+  "paras": [
+   "The three readings make different predictions. The indicators below are the ones we will track each quarter on this page and on the AI Bubble Tracker."
+  ],
+  "watch": [
+   {"indicator": "Capex-to-revenue ratio", "now": "~13× (big-four capex vs OpenAI + Anthropic revenue, 2026 guidance)", "signal": "Continued fall towards single digits supports a soft landing; a reversal signals frenzy."},
+   {"indicator": "Key-factor supply", "now": "H100 rental $2.88/hr (Oct 2026); data-centre vacancy 1.4%", "signal": "Falling compute prices and rising vacancy would mean the key factor has become 'apparently unlimited'."},
+   {"indicator": "Who leads", "now": "ICT incumbents plus two new labs", "signal": "New firms displacing incumbents would favour Reading A; incumbent dominance favours B."},
+   {"indicator": "Productivity in national statistics", "now": "Small measured effects; 37% of firms report EBIT impact", "signal": "A visible rise in measured productivity would mark the start of deployment."},
+   {"indicator": "Financial regulation", "now": "No change for AI-related credit or private-credit data-centre finance", "signal": "Re-regulation of finance is Perez's marker of an institutional turning point."},
+   {"indicator": "A crash", "now": "None as of November 2026", "signal": "Under Reading A an early crash would be a precursor bubble; under B it could complete the long ICT turning point."}
+  ]
+ },
+ "definitions": [
+  {"term": "Technological revolution (surge)", "def": "In Perez's framework, a cluster of new technologies, industries and infrastructures, with a common key input, that transforms the whole economy over 40–60 years."},
+  {"term": "Big bang", "def": "A visible event that crystallises a revolution's opportunity, such as the first Model T in 1908 or Intel's microprocessor in 1971."},
+  {"term": "Key factor", "def": "The input whose relative cost collapses and which becomes cheap enough to reorganise production: coal, steel, oil, microelectronics."},
+  {"term": "Techno-economic paradigm", "def": "The 'common sense' of each surge about the most efficient way to organise production and firms."},
+  {"term": "Installation and deployment", "def": "The two halves of a surge: first the new technologies are installed, financed largely by speculative capital; then they spread across the economy, led by production capital."},
+  {"term": "Turning point", "def": "The crash and recession between installation and deployment, in which finance is re-regulated and institutions are recomposed."},
+  {"term": "Financial vs production capital", "def": "Perez's terms for capital seeking returns from financial assets versus capital invested in producing goods and services; they decouple in a frenzy and recouple in deployment."},
+  {"term": "Golden age", "def": "The synergy phase of deployment, when growth is broad-based, as in the Victorian boom or the post-war boom."}
+ ],
+ "faq": [
+  {"q": "Who is Carlota Perez?", "a": "Carlota Perez is a Venezuelan-British economist and scholar of technology and socio-economic development, known for Technological Revolutions and Financial Capital: The Dynamics of Bubbles and Golden Ages (Edward Elgar, 2002). Her framework of five technological surges since 1771 is widely used by economists and investors."},
+  {"q": "What are Carlota Perez's five technological revolutions?", "a": "The Industrial Revolution (from 1771), the age of steam and railways (1829), the age of steel, electricity and heavy engineering (1875), the age of oil, the automobile and mass production (1908), and the age of information and telecommunications (1971), each dated from a 'big bang' event."},
+  {"q": "Does Carlota Perez think AI is a new technological revolution?", "a": "No. In a March 2024 Project Syndicate essay she wrote that AI 'is better understood as a key development within the still-evolving information-communications-technology (ICT) revolution, which started in the 1970s with the microprocessor', while allowing that it could lay the groundwork for a sixth revolution."},
+  {"q": "Is AI in a bubble, according to Perez's framework?", "a": "Perez's framework predicts a financial frenzy and a crash during the installation of any revolution, and in August 2025 she told the Financial Times, 'I have not seen a golden age happening without a crash.' Report AI's data shows frenzy-style signals, such as AI taking about 72% of global venture funding in January–September 2026, but relative to the economy the investment is smaller than past manias."},
+  {"q": "How big is AI investment compared with the railway mania?", "a": "UK railway investment reached about 7% of national income at the 1847 peak, according to figures Perez cites. The five largest US tech companies' capital expenditure was about $448 billion in 2025, about 1.5% of US GDP by Report AI's calculation, and not all of it was for AI."}
+ ],
+ "methodology_extra": "This report applies the framework of Carlota Perez (Technological Revolutions and Financial Capital, 2002, and later papers and interviews on carlotaperez.org) to AI. Every Perez quotation was checked against the text of the source named, mostly the author's own PDFs; the Financial Times interview was read through its Irish Times syndication. The key-factor test, the three readings, the scorecard, the capex-to-GDP shares, the capex-to-revenue ratios and the big-bang-to-crash intervals are Report AI analysis and calculations (DERIVED), not Perez's classifications. Market data come from Report AI's State of AI data and the AI Bubble Tracker, with sources in the data download. ",
+ "related": "<a href=\"/reports/how-ai-developed-1950-2026/\">How AI developed, 1950–2026</a> &middot; <a href=\"/indexes/state-of-ai/ai-development-index/\">AI Development Index</a> &middot; <a href=\"/indexes/ai-economics/ai-bubble-tracker/\">AI Bubble Tracker</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-finance/\">State of AI Finance 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-spending/\">State of AI Spending 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-infrastructure-energy/\">State of AI Infrastructure &amp; Energy 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-tokens/\">State of AI Tokens 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-work/\">State of AI Work 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-regulation/\">State of AI Regulation 2026</a> &middot; <a href=\"/reports/ai-data-center-cost/\">What a $500 billion AI data center costs</a> &middot; <a href=\"/indexes/ai-economics/ai-native-companies-2026/\">AI-native companies</a> &middot; <a href=\"/reports/ai-predictions-scoreboard/\">AI predictions scoreboard</a> &middot; <a href=\"/reports/ai-statistics-fact-check/\">AI statistics fact-check</a>",
+ "about": {"@type": "Thing", "name": "Technological revolutions and artificial intelligence"}
+}
