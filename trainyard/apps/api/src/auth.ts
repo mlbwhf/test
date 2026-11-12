@@ -369,7 +369,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       if (req.body.personId && !tenants.handle.state.workspace.people.some((p) => p.id === req.body.personId)) throw notFound("Person");
       const record = recordOf(req);
       if (record) {
-        const limits = limitsFor(record.plan, record.seats);
+        const limits = limitsFor(record.plan, record.seats, record.kind);
         const usage = usageOf(tenants.handle.state, members(req));
         if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
         if (limits.staff !== null && req.body.role !== "viewer" && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
@@ -394,7 +394,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       // Turning someone back on counts against the plan like adding them; so does lifting a viewer.
       const enabling = !!u.disabled && req.body.disabled === false;
       const role = req.body.role ?? u.role;
-      const limits = limitsFor(record.plan, record.seats);
+      const limits = limitsFor(record.plan, record.seats, record.kind);
       const usage = usageOf(tenants.handle.state, members(req));
       if (enabling && limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
       if (role !== "viewer" && (enabling || u.role === "viewer") && (enabling || !u.disabled) && limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);

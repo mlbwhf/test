@@ -717,7 +717,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     allowance: (req) => {
       const record = tenants.record(req.principal.workspaceId);
       if (!record) return null;
-      const l = limitsFor(record.plan, record.seats);
+      const l = limitsFor(record.plan, record.seats, record.kind);
       return { rooms: l.rooms, privateRooms: l.privateRooms };
     },
   });

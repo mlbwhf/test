@@ -253,7 +253,7 @@ Trainyard`,
       // classes they are named on (auth.ts raises them to planner there). Plans that count people still count them.
       const record = tenants.record(here(req));
       if (record) {
-        const limits = limitsFor(record.plan, record.seats), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
+        const limits = limitsFor(record.plan, record.seats, record.kind), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
         if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
       }
       user = { id: `u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: body.name, email, role: "viewer", keyHash: hashKey(newKey()), createdAt: platform.now().toISOString(), ...(here(req) === tenants.platformId ? {} : { workspaceId: here(req) }) };

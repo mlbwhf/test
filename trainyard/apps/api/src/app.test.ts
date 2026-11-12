@@ -2531,3 +2531,27 @@ describe("company accounts", () => {
     expect((await call("GET", "/v1/company/report", undefined, st!.token)).status).toBe(403);
   });
 });
+
+describe("the free plan for a company", () => {
+  it("runs one class at a time, with every instructor it needs; archiving the class frees the slot", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const owner = (await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company", company: "Acme" })).body.apiKey as string;
+    // Far more than the free plan's five people: a company adds every instructor it needs.
+    for (const n of [1, 2, 3, 4, 5, 6, 7]) expect((await call("POST", "/v1/instructors", { name: `I${n}`, email: `i${n}@acme.io`, kind: n % 2 ? "trainer" : "co-instructor" }, owner)).status).toBe(201);
+    const first = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM · March" }, owner)).body.board.id as string;
+    const second = await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner);
+    expect(second.status).toBe(402);
+    expect(second.body.error.message).toContain("one class or board at a time");
+    // Archive the finished class: the next one starts.
+    expect((await call("POST", `/v1/boards/${first}/archive`, { archived: true }, owner)).status).toBeLessThan(300);
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner)).status).toBe(201);
+  });
+  it("keeps the five-person limit for an individual on the free plan", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const solo = (await call("POST", "/v1/signups", { name: "Sol", email: "sol@solo.io", plan: "practice" })).body.apiKey as string;
+    for (const n of [1, 2, 3, 4]) expect((await call("POST", "/v1/instructors", { name: `P${n}`, email: `p${n}@solo.io` }, solo)).status).toBe(201);
+    expect((await call("POST", "/v1/instructors", { name: "P5", email: "p5@solo.io" }, solo)).status).toBe(402);
+  });
+});

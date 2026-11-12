@@ -29,7 +29,7 @@ export const PLANS: Plan[] = [
     yearly: null,
     unit: "/ forever",
     blurb: "Self-host the whole product, or run one small room on ours. Free up to 5 people; paid plans start from the sixth.",
-    items: ["Teach the five SAFe classes, free", "Fifty ready-made templates, or bring your own", "Every planning board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one room, up to 5 people", "Community support"],
+    items: ["Teach the five SAFe classes, free", "Fifty ready-made templates, or bring your own", "Every planning board, canvas and value stream tool", "Self-hosted: unlimited people and trains", "Hosted: one class at a time, up to 5 people", "Companies: every instructor and co-instructor you need, one class at a time", "Community support"],
     cta: "Start free",
     bg: "#fff",
     fg: "#14123a",
@@ -106,7 +106,7 @@ export const COMPARISON: { tool: string; hosting: string; pi: string; art: strin
 ];
 
 export const FAQ: { q: string; a: string }[] = [
-  { q: "Is it free for independent trainers?", a: "Yes. Practice is free for one hosted room of up to 5 people, and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. From the sixth person, Trainer or Academy." },
+  { q: "Is it free for independent trainers?", a: "Yes. Practice is free for one hosted class at a time with up to 5 people (a company adds every instructor and co-instructor it needs; archive a finished class to start the next), and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. To run several classes at once, or from the sixth person, Trainer or Academy." },
   { q: "How do the trial and the guarantee work?", a: "Trainer and Academy start with a free 30-day trial: you enter a card, nothing is charged, we email you when the trial starts and again 7 days before the first charge, and you can cancel before the trial ends from Plan & billing. After the trial it is month by month. If the first paid month does not convince you, claim the money back yourself from Plan & billing within 30 days of that charge: the charge is refunded, the subscription ends, and your workspace stays on the free plan with everything kept. Yearly billing is a switch you can make after the first month." },
   { q: "Do participants need accounts?", a: "They open the board in a browser from a link. On a free room anyone with the link can take part; once you turn authentication on, viewers read and planners move cards, each with a key you send. Nothing to install." },
   { q: "Which frameworks are supported?", a: "SAFe (Essential, Portfolio, Full), AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and tribe models, as editable operating models. Change the model and the boards and dashboards follow." },

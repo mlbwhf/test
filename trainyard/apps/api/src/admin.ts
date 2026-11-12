@@ -43,7 +43,7 @@ export function registerAdminRoutes(app: App, tenants: Tenants) {
       owner: owner ? { id: owner.id, name: owner.name, email: owner.email, disabled: !!owner.disabled } : null,
       members: members.length,
       usage,
-      limits: limitsFor(r.plan, r.seats),
+      limits: limitsFor(r.plan, r.seats, r.kind),
       subscription: purchase ? { status: purchase.status, interval: purchase.interval, quantity: purchase.quantity, paidAt: purchase.paidAt, lastInvoiceAt: purchase.lastInvoiceAt, lastFailureAt: purchase.lastFailureAt, cancelledAt: purchase.cancelledAt, subscriptionId: purchase.subscriptionId } : null,
       lastActivityAt: last?.at ?? null,
       lastAction: last?.action ?? null,

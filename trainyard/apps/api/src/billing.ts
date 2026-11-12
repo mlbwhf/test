@@ -488,7 +488,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       ...(enabled && opts.publishableKey ? { publishableKey: opts.publishableKey } : {}),
       plans: enabled ? Object.fromEntries(Object.entries(opts.prices ?? {}).map(([k, v]) => [k, !!v])) : {},
       workspace: record ?? null,
-      limits: record ? limitsFor(record.plan, record.seats) : null,
+      limits: record ? limitsFor(record.plan, record.seats, record.kind) : null,
       usage,
       subscription: latest ? { id: latest.id, status: latest.status, plan: latest.plan, interval: latest.interval, quantity: latest.quantity, paidAt: latest.paidAt, trialEndsAt: latest.trialEndsAt, firstPaidAt: latest.firstPaidAt, refundedAt: latest.refundedAt, lastInvoiceAt: latest.lastInvoiceAt, lastFailureAt: latest.lastFailureAt, cancelledAt: latest.cancelledAt, hasSubscription: !!latest.subscriptionId, guaranteeUntil: latest.firstPaidAt ? new Date(Date.parse(latest.firstPaidAt) + GUARANTEE_DAYS * 86_400_000).toISOString() : null, trialDays: opts.trialDays ?? 0 } : null,
       trialDays: opts.trialDays ?? 0,

@@ -48,7 +48,7 @@ export function registerInstructorRoutes(app: App, tenants: Tenants, opts: Instr
     const role = req.body.kind === "trainer" ? "planner" : "viewer";
     const record = tenants.record(here(req));
     if (record) {
-      const limits = limitsFor(record.plan, record.seats), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
+      const limits = limitsFor(record.plan, record.seats, record.kind), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
       if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
       if (role === "planner" && limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
     }
@@ -84,7 +84,7 @@ export function registerInstructorRoutes(app: App, tenants: Tenants, opts: Instr
       const role = req.body.kind === "trainer" ? "planner" : "viewer";
       const record = tenants.record(here(req));
       if (role === "planner" && u.role === "viewer" && record) {
-        const limits = limitsFor(record.plan, record.seats), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
+        const limits = limitsFor(record.plan, record.seats, record.kind), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
         if (limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
       }
       u.role = role;
