@@ -145,3 +145,5 @@ refreshed with What-changed rows; three rows on 3229. Work crossed midnight ET: 
 3227; extra log rows for untraceable US/Europe shares and non-work figures; CSV re-issued as *-rev20261112.csv.
 Open: "Qwen up 58×" unverified; refresh-register row for 1266 lists old figures; 1654 and 964 "two Chinese models in the
 global top four" stale on Artificial Analysis v5.0.1 (Kimi K3.1 Pro #10 is the top Chinese model).
+- 12 Nov ET: 1266 stamps → 12 Nov; five 1266 rows on 3229 (Russia, Korea, Japan, US/Europe/UK shares, non-work figure);
+  fact-check entry #fc-russia-perplexity on 3227; CSV re-issued as media 4063 (*-rev20261112.csv, commit 3f4d191), old media 3271 unlinked.
