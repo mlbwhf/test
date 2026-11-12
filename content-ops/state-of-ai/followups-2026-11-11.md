@@ -107,5 +107,13 @@ then give the new page the real slug and publish. URL unchanged; page ID changes
 | Page | ID | CSV media | Status |
 |---|---|---|---|
 | Is AI a Technological Revolution? (Perez method) | 3821 | 3886 | draft, IDENTICAL; byline `&amp;middot;` fixed by one alter (11 Nov ET) |
-| How AI Developed, 1950–2026 | pending | | uploading old build → then apply patches/how-ai-developed-1950-2026-byline.json |
+| How AI Developed, 1950–2026 | 3788 | 3906 | draft, IDENTICAL; byline fixed by one alter (11 Nov ET) |
 | AI Development Index | pending | | uploading old build → then apply patches/ai-development-index-byline.json |
+
+## J. Page 1266 errors found by the geography research (11 Nov ET) — correct after verification pass
+
+- Russia "Perplexity ~48% share": no traceable source; StatCounter measures chatbot referral clicks, not use.
+- Korea "HyperCLOVA X most used": app trackers give ChatGPT ~91% of Korean AI-app users; Naver closed Clova X (Apr 2026).
+- Japan "Fugaku-LLM in the public sector": no evidence; government trials tsuzumi 2, Takane 32B, PLaMo.
+- Stale: Doubao 382M→419M; China total 499M→546M; ChatGPT "1.1B monthly"→1B+ weekly; Gemini 662M→1B+ monthly;
+  India now ChatGPT's largest market (OpenAI, 3 Nov 2026); "Updated August 2026" stamp vs 29 Oct modified.

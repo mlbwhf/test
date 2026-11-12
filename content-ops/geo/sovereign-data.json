@@ -1,0 +1,4190 @@
+{
+ "meta": {
+  "title": "Sovereign AI Index 2026 - research data (models, popularity, compute)",
+  "for_page": 934,
+  "page_url": "https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/",
+  "compiled": "2026-11-12",
+  "confidence_key": {
+   "HIGH": "primary source opened/downloaded this session",
+   "MEDIUM": "secondary reporting or search summary of a primary",
+   "DERIVED": "Report AI arithmetic; formula in note",
+   "CONTESTED": "credible sources disagree; both in note"
+  },
+  "rules": "Never sum MAU/WAU/downloads across apps or metrics; mobilisation headlines are not budgets."
+ },
+ "models": [
+  {
+   "country": "France",
+   "model_family": "Mistral (Mistral Large / Medium / Small; consumer app Le Chat, renamed Vibe)",
+   "developer": "Mistral AI",
+   "backing": {
+    "type": "private (VC + strategic; French state via Bpifrance as investor and defence customer)",
+    "funding": [
+     {
+      "value": "EUR 3B Series D at >EUR 21B post-money (~US$24B)",
+      "unit": "EUR",
+      "date": "2026-09-08",
+      "source": "tech.eu / Orrick / DatacenterDynamics (round led by Samsung Electronics; co-leads EQT Scaleup Europe Fund, PSG)",
+      "url": "https://tech.eu/2026/09/08/mistral-secures-eur3b-series-d-to-push-sovereign-ai-into-its-next-phase/",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "EUR 1.7B Series C at EUR 11.7B post-money (ASML-led)",
+      "unit": "EUR",
+      "date": "2025-09-09",
+      "source": "CNBC / Bloomberg (site page 956)",
+      "url": "https://www.cnbc.com/2025/09/09/ai-firm-mistral-valued-at-14-billion-as-asml-takes-major-stake.html",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "1.79x",
+      "unit": "valuation multiple",
+      "date": "2026-09-08",
+      "source": "Report AI calculation",
+      "url": null,
+      "confidence": "DERIVED",
+      "note": "21 / 11.7 = 1.79 (post-money, EUR)"
+     },
+     {
+      "value": "US$830M debt financing for Essonne data centre (44 MW, ~13,800 GB300)",
+      "unit": "USD",
+      "date": "2026-03-30",
+      "source": "SiliconANGLE / European Business Magazine",
+      "url": "https://siliconangle.com/?p=736800",
+      "confidence": "MEDIUM"
+     }
+    ]
+   },
+   "latest_version": "Mistral Large 4 (API preview 6 Oct 2026; open weights 29 Oct 2026)",
+   "release_date": "2026-10-29",
+   "size_params": "~1T total parameters, ~50B active (MoE); HF repo mistralai/Mistral-Large-4-1T-A52B",
+   "open_weights": true,
+   "licence": "Mistral Ecosystem Open-Weight licence (described by Mistral as modified MIT; resellers need a licence)",
+   "languages": "multilingual (English, French and other European languages; not a single-language national model)",
+   "build_type": "from scratch (private national champion)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": 124.3,
+     "unit": "million cumulative Hugging Face downloads (all Mistral repos)",
+     "date": "2026-01",
+     "source": "ATOM Report (arXiv 2604.07190), via secondary coverage",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM",
+     "note": "DeepSeek (128.2M) passed Mistral in Jan 2026; huggingface.co blocked from this environment; no model-card download count could be read"
+    },
+    "hf_downloads_last_month": null,
+    "users": [
+     {
+      "value": "about 1 million",
+      "unit": "app downloads in first 13 days",
+      "date": "2025-02",
+      "source": "eWeek",
+      "url": "https://www.eweek.com/news/mistral-ai-le-chat-app-downloads",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": null,
+      "unit": "monthly active users",
+      "date": "2026",
+      "source": null,
+      "url": null,
+      "confidence": "CONTESTED",
+      "note": "No Mistral-published MAU. Third-party 2026 estimates range ~5M to 65M; a DSA-style EU 'monthly active recipients below 45M' statement is reported second-hand. Do not publish a single MAU figure."
+     },
+     {
+      "value": "14%",
+      "unit": "share of French generative-AI users who cite Le Chat as a tool (vs 79% ChatGPT)",
+      "date": "2025-06",
+      "source": "Credoc digital barometer, cited by La Gazette France",
+      "url": "https://www.lagazettefrance.fr/article/ia-generatives-quelles-sont-les-plus-utilisees-en-france",
+      "confidence": "MEDIUM",
+      "note": "survey, not usage share"
+     },
+     {
+      "value": ">US$400M",
+      "unit": "annualised revenue run-rate",
+      "date": "2026 (early)",
+      "source": "Arthur Mensch to the Financial Times, via Sacra / secondary",
+      "url": "https://sacra.com/research/400m-year-napoleon-of-sovereign-ai/",
+      "confidence": "MEDIUM",
+      "note": "CFO told Reuters it is on track for US$1B ARR by end-2026 (target, not outcome)"
+     }
+    ],
+    "deployments": [
+     {
+      "value": "framework agreement with French Ministry of the Armed Forces (AMIAD), 3 years, hosted in France",
+      "unit": "contract",
+      "date": "2025-12-16 notified; announced Jan 2026",
+      "source": "TechRepublic / Analytics Insight",
+      "url": "https://www.techrepublic.com/article/news-mistral-french-military-ai-deal/",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": {
+     "value": "not in top 5",
+     "unit": "Statcounter AI-chatbot share, France",
+     "date": "2026-06",
+     "source": "Statcounter via search summary (ChatGPT 75.77%, Gemini 6.79%, Claude 6.41%, Perplexity 5.89%, Copilot 4.88%)",
+     "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/france",
+     "confidence": "MEDIUM",
+     "note": "Statcounter measures referral traffic from chatbots to websites, not users"
+    }
+   },
+   "status": "Le Chat renamed Vibe on 28 May 2026 (heise, alternativeto); app still at chat.mistral.ai",
+   "notes": "Mistral's sovereign strength is enterprise/government (on-prem, French hosting), not consumer share. Compute arm: 44 MW Essonne site partly live May 2026; target 200 MW across Europe by end-2027 (company target). Also 1% shareholder in the MGX/Bpifrance Campus AI JV.",
+   "site_pages": [
+    956,
+    934,
+    1266
+   ]
+  },
+  {
+   "country": "Germany",
+   "model_family": "Aleph Alpha (Luminous; PhariaAI platform)",
+   "developer": "Aleph Alpha (Heidelberg)",
+   "backing": {
+    "type": "private; being acquired by Cohere (Canada)",
+    "funding": [
+     {
+      "value": "acquisition by Cohere; combined group reported at ~US$20B; Aleph Alpha holders ~10%, Cohere ~90%",
+      "unit": "USD",
+      "date": "2026-04-24 (announced); definitive agreement reported ~Sep 2026",
+      "source": "Dealroom / tech.eu / HPCwire",
+      "url": "https://tech.eu/2026/04/24/aleph-alpha-to-be-acquired-by-cohere/",
+      "confidence": "MEDIUM",
+      "note": "closing not confirmed as of Nov 2026"
+     },
+     {
+      "value": "US$600M financing commitment from Schwarz Group (Lidl owner)",
+      "unit": "USD",
+      "date": "2026-04-24",
+      "source": "Dealroom",
+      "url": "https://dealroom.co/news/127656-cohere-acquires-aleph-alpha-and-raises-600-million-from-its-top-backer/",
+      "confidence": "MEDIUM"
+     }
+    ]
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": "German, English and other European languages",
+   "build_type": "from scratch (Luminous); later pivot to platform/serving",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "contracts with German federal digital ministry and Baden-Wuerttemberg state government",
+      "unit": "contracts",
+      "date": "2026-04",
+      "source": "CNBC as summarised by secondary coverage",
+      "url": null,
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Germany's best-known sovereign LLM company now folding into a Canadian group; ~50 job cuts early 2026 (Futurum)",
+   "notes": null,
+   "site_pages": [
+    956
+   ]
+  },
+  {
+   "country": "Germany / EU",
+   "model_family": "Teuken (OpenGPT-X)",
+   "developer": "Fraunhofer IAIS & IIS with OpenGPT-X consortium",
+   "backing": {
+    "type": "public research consortium (German federal funding)",
+    "funding": null
+   },
+   "latest_version": "Teuken-7B-instruct (research and commercial v0.4)",
+   "release_date": "2024-11-26",
+   "size_params": "7B",
+   "open_weights": true,
+   "licence": "Apache 2.0 (commercial variant); research-only variant",
+   "languages": "all 24 official EU languages (~50% non-English pre-training data)",
+   "build_type": "from scratch (~6T tokens per arXiv 2410.03730)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": null,
+     "unit": "downloads",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "huggingface.co blocked from this environment; no model-card download count could be read"
+    },
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "no newer Teuken release found in 2026",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "EU",
+   "model_family": "OpenEuroLLM",
+   "developer": "Consortium of 20+ European universities, labs and companies (coordinated by Charles University, Prague)",
+   "backing": {
+    "type": "public (EU Digital Europe Programme)",
+    "funding": [
+     {
+      "value": "EUR 37.4M total budget, of which EUR 20.6M from Digital Europe Programme",
+      "unit": "EUR",
+      "date": "2025-02",
+      "source": "European Commission / heise",
+      "url": "https://digital-strategy.ec.europa.eu/nl/news/pioneering-ai-project-awarded-opening-large-language-models-european-languages",
+      "confidence": "MEDIUM",
+      "note": "other outlets report EUR 52-54M on a wider scope"
+     }
+    ]
+   },
+   "latest_version": "'First models' deliverable due 31 Jul 2026",
+   "release_date": null,
+   "size_params": "8B model targeted for summer 2026 (project post, 6 Mar 2026)",
+   "open_weights": true,
+   "licence": "open (planned)",
+   "languages": "all EU official languages (+ others)",
+   "build_type": "from scratch (planned)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Unconfirmed delivery: one secondary report says 38 monolingual 2.15B models published mid-Aug 2026; a May 2026 essay said 2 of 11 deliverables had shipped. Coordinator cites compute shortfall.",
+   "notes": "Treat as in-progress; do not state that an OpenEuroLLM model is available without checking openeurollm.eu.",
+   "site_pages": []
+  },
+  {
+   "country": "EU / Portugal",
+   "model_family": "EuroLLM (and Portugal's AMALIA derivative)",
+   "developer": "Unbabel, Instituto Superior Tecnico and partners (EuroHPC compute)",
+   "backing": {
+    "type": "public-private (EU Horizon/EuroHPC compute)",
+    "funding": null
+   },
+   "latest_version": "EuroLLM-9B (22B reported Dec 2025, unconfirmed)",
+   "release_date": null,
+   "size_params": "9B (22B unconfirmed)",
+   "open_weights": true,
+   "licence": null,
+   "languages": "24 EU official languages + others",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "Portugal's AMALIA model built on EuroLLM-9B base, released 1 Jul 2026",
+      "unit": "derivative",
+      "date": "2026-07-01",
+      "source": "Let's Data Science",
+      "url": "https://letsdatascience.com/news/portugal-launches-amalia-open-source-portuguese-language-mod-d12ab37e",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "United Kingdom",
+   "model_family": "UK-LLM (English-Welsh reasoning model)",
+   "developer": "UCL, Bangor University with NVIDIA",
+   "backing": {
+    "type": "public research (Isambard-AI compute)",
+    "funding": null
+   },
+   "latest_version": "UK-LLM Welsh model",
+   "release_date": "2025-09-15",
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": "English, Welsh (Cornish, Irish, Scots, Scottish Gaelic planned)",
+   "build_type": "adapted (NVIDIA Nemotron open techniques/datasets)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "offered to developers via Nscale API (planned)",
+      "unit": null,
+      "date": "2025-09",
+      "source": "Bangor University",
+      "url": "https://www.bangor.ac.uk/news/2025-09-15-reaching-across-the-isles-uk-llm-brings-ai-to-uk-languages-with-nvidia-nemotron",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "UK has no single national frontier model.",
+   "site_pages": []
+  },
+  {
+   "country": "United Kingdom",
+   "model_family": "Lumen Sovereign",
+   "developer": "Cosine (London, ~30 staff)",
+   "backing": {
+    "type": "private, with UK Sovereign AI programme compute on Isambard-AI",
+    "funding": [
+     {
+      "value": "GBP 500M",
+      "unit": "UK Sovereign AI programme commitment (programme total, not Cosine funding)",
+      "date": "2026-06",
+      "source": "tech.eu / The Next Web",
+      "url": "https://tech.eu/2026/06/08/cosine-secures-industry-backing-for-britain-s-first-sovereign-frontier-model/",
+      "confidence": "MEDIUM",
+      "note": "City A.M. headline cites a GBP 400M plan; figures inconsistent across outlets"
+     }
+    ]
+   },
+   "latest_version": "in development; deployment-readiness targeted end-2026",
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch (claimed: pre-, mid- and post-training in house)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "MOUs with BT, Lloyds, LSEG, NatWest, PwC, Thales UK, Babcock, Telefonica Tech UK&I, OneAdvanced",
+      "unit": "memoranda (not contracts)",
+      "date": "2026-06-08",
+      "source": "tech.eu / IT Brief",
+      "url": "https://tech.eu/2026/06/08/cosine-secures-industry-backing-for-britain-s-first-sovereign-frontier-model/",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "announced 8 Jun 2026; not yet released",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Switzerland",
+   "model_family": "Apertus",
+   "developer": "Swiss AI Initiative (EPFL, ETH Zurich, CSCS)",
+   "backing": {
+    "type": "public (ETH Domain; trained on Alps supercomputer)",
+    "funding": null
+   },
+   "latest_version": "Apertus 1.5 (70B and smaller; distilled 0.5B/1.5B/4B in May 2026)",
+   "release_date": "2026-07-24",
+   "size_params": "70B dense (and 8B); v1.5 adds continued pre-training (total ~17T tokens reported)",
+   "open_weights": true,
+   "licence": "Apache 2.0; data and training recipes public",
+   "languages": "1,000+ languages (v1.0, Sep 2025)",
+   "build_type": "from scratch, fully open",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": "30,000+",
+     "unit": "all-time downloads, Apertus 70B (probably v1.0)",
+     "date": "2026",
+     "source": "DEV Community article",
+     "url": "https://dev.to/tekmag/switzerlands-apertus-70b-sovereign-ai-goes-open-source-59ni",
+     "confidence": "MEDIUM",
+     "note": "single low-quality source; a hosting listing shows ~1.0K for v1.5 70B; huggingface.co blocked from this environment; no model-card download count could be read"
+    },
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "Epoch AI: Alps phase 2 = 10,752 GH200 (H100e) operational Sep 2024.",
+   "site_pages": []
+  },
+  {
+   "country": "Spain",
+   "model_family": "ALIA",
+   "developer": "Barcelona Supercomputing Center (BSC-CNS)",
+   "backing": {
+    "type": "public (Spanish digital ministry; Catalan Aina project)",
+    "funding": null
+   },
+   "latest_version": "ALIA-40b-instruct-2601",
+   "release_date": "2026 (benchmark listing dated 2026-05-06)",
+   "size_params": "40B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "35 European languages incl. Spanish, Catalan, Basque, Galician",
+   "build_type": "from scratch on MareNostrum 5 (9.37T tokens per BSC; aggregator says 6.9T)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "2nd ALIA alignment challenge: 1,000+ participants",
+      "unit": "people",
+      "date": "2026-03",
+      "source": "Spanish Ministry for Digital Transformation press release",
+      "url": "https://digital.gob.es/en/comunicacion/notas-prensa/secretaria-digitalizacion-e-inteligencia-artificial/2026/03/mas-de-1-000-personas-colaboran-en-el-desafio-para-alinear-la-in",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Xataka described the launch as 'erratic and disappointing'; no named public-service deployments found",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Italy",
+   "model_family": "Minerva / ChatMinerva",
+   "developer": "Sapienza NLP (Sapienza University of Rome) with spin-off Babelscape",
+   "backing": {
+    "type": "public research",
+    "funding": null
+   },
+   "latest_version": "ChatMinerva (multimodal assistant on Minerva)",
+   "release_date": "2026-06",
+   "size_params": "7B (Minerva-7B)",
+   "open_weights": true,
+   "licence": "Apache 2.0 (7B, data and weights public)",
+   "languages": "Italian, English",
+   "build_type": "from scratch (500B+ words Italian/English)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Italy",
+   "model_family": "Velvet",
+   "developer": "Almawave (listed; Almaviva group)",
+   "backing": {
+    "type": "private (trained on Cineca Leonardo public supercomputer)",
+    "funding": null
+   },
+   "latest_version": "Velvet2-3B (Hugging Face listing Oct 2026); Velvet 25B",
+   "release_date": "2026-10",
+   "size_params": "2B-25B",
+   "open_weights": true,
+   "licence": "Apache 2.0 (Velvet2-3B listing)",
+   "languages": "Italian + multilingual",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "public-administration models developed with the Italian Senate",
+      "unit": null,
+      "date": null,
+      "source": "Almawave",
+      "url": "https://www.almawave.com/news/generative-ai-for-public-administration-almawave-develops-models-with-the-senate-of-the-republic/",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Netherlands",
+   "model_family": "GPT-NL",
+   "developer": "TNO, NFI, SURF",
+   "backing": {
+    "type": "public (Dutch government)",
+    "funding": null
+   },
+   "latest_version": "GPT-NL 1.0 (beta, launching partners only)",
+   "release_date": "2026-02 (soft launch)",
+   "size_params": "not disclosed (Jun 2026)",
+   "open_weights": null,
+   "licence": null,
+   "languages": "Dutch, English",
+   "build_type": "from scratch on Snellius with licensed Dutch data (news publishers; KB national library from Jun 2026)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "pilots by four government agencies and TNO; ICTU 'Gem' assistant for municipalities",
+      "unit": null,
+      "date": "2026-02-26",
+      "source": "NL Times",
+      "url": "https://nltimes.nl/2026/02/26/dutch-government-agencies-pilot-homegrown-ai-model-gpt-nl",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "no broad public release found as of Nov 2026",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Finland / Nordics",
+   "model_family": "Poro, Viking",
+   "developer": "AMD Silo AI with TurkuNLP (University of Turku)",
+   "backing": {
+    "type": "private (AMD acquired Silo AI for ~US$665M in 2024); LUMI public supercomputer",
+    "funding": null
+   },
+   "latest_version": "Poro 2 (8B, 70B)",
+   "release_date": "2025",
+   "size_params": "8B / 70B (Poro 2); Viking 7/13/33B (2024)",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Finnish, English (Poro 2); Nordic languages (Viking)",
+   "build_type": "Poro 2 = continued pre-training of Llama 3.1 (adapted); Poro 1/Viking = from scratch",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": null,
+     "unit": "downloads",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "huggingface.co blocked from this environment; no model-card download count could be read"
+    },
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "United Arab Emirates",
+   "model_family": "Falcon (Falcon-H1, Falcon-H1R, Falcon-H1 Arabic, Falcon 3)",
+   "developer": "Technology Innovation Institute (TII), Abu Dhabi ATRC",
+   "backing": {
+    "type": "state research institute",
+    "funding": null
+   },
+   "latest_version": "Falcon-H1R 7B (reasoning) and Falcon-H1 Arabic 3B/7B/34B; Falcon Perception (multimodal, May 2026)",
+   "release_date": "2026-01-05",
+   "size_params": "0.5B-34B (H1 family); 180B historic",
+   "open_weights": true,
+   "licence": "Falcon TII Licence (permissive, Apache-based)",
+   "languages": "English, Arabic, multilingual",
+   "build_type": "from scratch (hybrid Transformer-Mamba)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": "55M+",
+     "unit": "downloads across the Falcon ecosystem (TII-reported)",
+     "date": "2025",
+     "source": "Mobile World Live citing TII",
+     "url": "https://www.mobileworldlive.com/middle-east-and-north-africa/arabic-language-falcon-ai-model-takes-flight/",
+     "confidence": "MEDIUM",
+     "note": "supersedes the 45M figure on site pages 934/955; earlier TII figure 43M (Q1 2024)"
+    },
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": [
+     {
+      "value": "#1",
+      "unit": "Counterpoint Sovereign AI LLM Index H1 2026 (Falcon H1)",
+      "date": "2026-H1",
+      "source": "Counterpoint Research",
+      "url": "https://counterpointresearch.com/en/insights/middle-east-leads-sovereign-ai-llm-race-in-h1-2026",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "top of Open Arabic LLM Leaderboard (Falcon-H1 Arabic)",
+      "unit": "rank",
+      "date": "2026-01",
+      "source": "TII via Aletihad / HPCwire",
+      "url": "https://www.hpcwire.com/off-the-wire/uaes-tii-launches-falcon-h1-arabic-models-in-3b-7b-and-34b-configurations/",
+      "confidence": "MEDIUM",
+      "note": "vendor-reported"
+     }
+    ],
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    934,
+    955
+   ]
+  },
+  {
+   "country": "United Arab Emirates",
+   "model_family": "Jais",
+   "developer": "Inception (G42) with MBZUAI Institute of Foundation Models and Cerebras",
+   "backing": {
+    "type": "state-linked (G42 / Mubadala ecosystem)",
+    "funding": null
+   },
+   "latest_version": "Jais 2 (70B; 8B)",
+   "release_date": "2025-12-09",
+   "size_params": "70B and 8B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Arabic-first (600B Arabic tokens), English",
+   "build_type": "from scratch (2.6T tokens; trained and served on Cerebras)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": null,
+     "unit": "users",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Jais Chat app live on web/iOS/Android; no user figures published"
+    },
+    "deployments": null,
+    "leaderboard": {
+     "value": "state of the art on AraGen (developer claim)",
+     "unit": null,
+     "date": "2025-12",
+     "source": "MBZUAI / Cerebras",
+     "url": "https://www.businesswire.com/news/home/20251209964079/en/Cerebras-Delivers-End-to-End-Training-and-Inference-for-Jais-2-the-Worlds-Leading-Open-Arabic-LLM",
+     "confidence": "MEDIUM",
+     "note": "vendor claim"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "Site page 955 cites '20 open-source Jais models, 590M-70B' (first-generation family); Jais 2 is newer.",
+   "site_pages": [
+    955
+   ]
+  },
+  {
+   "country": "United Arab Emirates",
+   "model_family": "K2 Think / K2-V2",
+   "developer": "MBZUAI Institute of Foundation Models with G42 and Cerebras",
+   "backing": {
+    "type": "public university (Abu Dhabi)",
+    "funding": null
+   },
+   "latest_version": "K2 Think V2",
+   "release_date": "2026-01-27",
+   "size_params": "70B",
+   "open_weights": true,
+   "licence": "fully open (data, intermediate checkpoints, recipes) - exact licence not confirmed",
+   "languages": "English-centric reasoning",
+   "build_type": "from scratch, fully open",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": {
+     "value": "top of Artificial Analysis Openness Index (tied with K2-V2, Olmo 3)",
+     "unit": null,
+     "date": "2026-01",
+     "source": "MBZUAI press release",
+     "url": "https://mbzuai.ac.ae/news/mbzuai-launches-k2-think-v2-uaes-fully-sovereign-next-generation-reasoning-system/",
+     "confidence": "MEDIUM",
+     "note": "developer-cited"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Saudi Arabia",
+   "model_family": "ALLaM / HUMAIN Chat",
+   "developer": "HUMAIN (PIF-owned; ALLaM originated at SDAIA)",
+   "backing": {
+    "type": "state-owned company (Public Investment Fund)",
+    "funding": null
+   },
+   "latest_version": "ALLaM 34B (served via HUMAIN Chat)",
+   "release_date": "2025-08-25",
+   "size_params": "34B",
+   "open_weights": false,
+   "licence": "not released (34B served only through HUMAIN Chat)",
+   "languages": "Arabic, English",
+   "build_type": "from scratch (3T+ tokens per site page 955)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": null,
+     "unit": "users",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "No HUMAIN Chat user figures published; launched Saudi-only with regional expansion planned"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "HUMAIN's model effort is small relative to its compute programme",
+   "notes": null,
+   "site_pages": [
+    955
+   ]
+  },
+  {
+   "country": "Qatar",
+   "model_family": "Fanar",
+   "developer": "Qatar Computing Research Institute (QCRI), Hamad Bin Khalifa University",
+   "backing": {
+    "type": "state (with Ministry of Communications and IT)",
+    "funding": null
+   },
+   "latest_version": "Fanar 2.0 (Fanar-27B core model, FanarGuard moderation)",
+   "release_date": "2026-03-17 (arXiv 2603.16397)",
+   "size_params": "27B",
+   "open_weights": null,
+   "licence": null,
+   "languages": "Arabic, English",
+   "build_type": "adapted: continual pre-training of Google Gemma-3-27B",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Fanar 3.0 slated for Dec 2026 (QCRI director, secondary)",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "India",
+   "model_family": "Sarvam (Sarvam 30B, Sarvam 105B; Indus app)",
+   "developer": "Sarvam AI",
+   "backing": {
+    "type": "private, selected by IndiaAI Mission (Apr 2025) with subsidised mission compute",
+    "funding": null
+   },
+   "latest_version": "Sarvam 105B and Sarvam 30B",
+   "release_date": "unveiled 18-20 Feb 2026; weights early Mar 2026",
+   "size_params": "105B (106B, 128K context) and 30B (32B MoE)",
+   "open_weights": true,
+   "licence": "Apache 2.0 (Hugging Face sarvamai/ and AIKosh)",
+   "languages": "22 Indian languages + English",
+   "build_type": "from scratch on IndiaAI mission compute",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": null,
+     "unit": "downloads",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Not readable (huggingface.co blocked from this environment; no model-card download count could be read). Precedent: Sarvam-M (May 2025, Mistral-Small-based) drew criticism after only ~334 downloads in its first days."
+    },
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": null,
+     "unit": "users",
+     "date": "2026-02-20",
+     "source": "Outlook Business",
+     "url": "https://www.outlookbusiness.com/artificial-intelligence/sarvam-launches-indus-chat-app-as-interface-for-its-ai-models",
+     "confidence": null,
+     "note": "Indus chat app launched in limited beta with waitlist (compute-constrained); no user count"
+    },
+    "deployments": null,
+    "leaderboard": {
+     "value": "~90% win rate in Indian-language comparisons vs GPT-4, Claude, Gemini",
+     "unit": null,
+     "date": "2026-02",
+     "source": "Sarvam AI (vendor claim; site page 957)",
+     "url": "https://sarvam.ai/blogs/sarvam-30b-105b",
+     "confidence": "MEDIUM",
+     "note": "self-reported; not independently replicated"
+    },
+    "home_market_share": null
+   },
+   "status": "Inc42 (Mar 2026): early developer adoption hurdles (packaging, tooling)",
+   "notes": null,
+   "site_pages": [
+    957,
+    1266
+   ]
+  },
+  {
+   "country": "India",
+   "model_family": "BharatGen Param2",
+   "developer": "BharatGen consortium (IIT Bombay-anchored)",
+   "backing": {
+    "type": "public (Department of Science & Technology; IndiaAI Mission cohort 2)",
+    "funding": null
+   },
+   "latest_version": "Param2 17B-A2.4B (incl. Thinking checkpoint)",
+   "release_date": "2026-02 (India AI Impact Summit)",
+   "size_params": "17B total, 2.4B active (MoE)",
+   "open_weights": true,
+   "licence": null,
+   "languages": "22 Indian languages (English + Hindi + 21)",
+   "build_type": "from scratch (with NVIDIA collaboration)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "India",
+   "model_family": "EKA-1 (Project EKA)",
+   "developer": "Soket AI Labs",
+   "backing": {
+    "type": "private, IndiaAI Mission cohort 1",
+    "funding": null
+   },
+   "latest_version": "EKA-1",
+   "release_date": "2026-11-03",
+   "size_params": "26.3B (sparse hybrid); 120B flagship pending",
+   "open_weights": true,
+   "licence": null,
+   "languages": "22 scheduled Indian languages + English",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "released by IndiaAI Mission with ZenteiQ's Dhi 2B/5B models (newkerala, Swarajya, 3 Nov 2026)",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "India",
+   "model_family": "Inya VoiceOS / Vachana",
+   "developer": "Gnani.ai",
+   "backing": {
+    "type": "private, IndiaAI Mission cohort 1",
+    "funding": null
+   },
+   "latest_version": "Inya VoiceOS 5B voice-to-voice (preview); Vachana TTS; Vachana STT",
+   "release_date": "2026-02-17",
+   "size_params": "5B (voice-to-voice); 14B voice model mandated",
+   "open_weights": null,
+   "licence": null,
+   "languages": "12 Indic languages (TTS)",
+   "build_type": "from scratch (speech; STT trained on 1M+ hours)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "India",
+   "model_family": "Other IndiaAI foundation-model teams",
+   "developer": "Gan.AI (cohort 1); Tech Mahindra Makers Lab, Fractal Analytics, Avataar.ai, ZenteiQ.ai, Genloop, NeuroDX (IntelliHealth), Shodh AI (cohort 2, Sep 2025)",
+   "backing": {
+    "type": "IndiaAI Mission foundation-model pillar (12 teams total incl. Sarvam, Soket, Gnani, BharatGen)",
+    "funding": {
+     "value": "12",
+     "unit": "teams selected",
+     "date": "2025-09-18",
+     "source": "Business Standard / Analytics India Magazine",
+     "url": "https://www.business-standard.com/industry/news/govt-selects-eight-startups-to-build-indigenous-llms-slms-125091801138_1.html",
+     "confidence": "MEDIUM"
+    }
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": null,
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Public releases found only for Sarvam, BharatGen, Gnani, Soket and ZenteiQ (Dhi 2B/5B, 3 Nov 2026); Gan.AI's 70B not found",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "India",
+   "model_family": "Krutrim / Kruti",
+   "developer": "Krutrim (Ola group)",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": "Krutrim models (2T+ tokens, 22 languages per site page 957)",
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": null,
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": "offline",
+     "unit": "consumer assistant status",
+     "date": "2026-04",
+     "source": "Outlook Business / Analytics Insight",
+     "url": "https://www.outlookbusiness.com/corporate/bhavish-aggarwals-ai-bet-hits-another-snag-as-kruti-goes-offline",
+     "confidence": "MEDIUM"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "Kruti consumer assistant pulled from app stores Apr 2026; three layoff rounds in 2026; pivot to AI cloud (May 2026); claimed FY2026 revenue >INR 300 crore, mostly from Ola group",
+   "notes": null,
+   "site_pages": [
+    957
+   ]
+  },
+  {
+   "country": "Japan",
+   "model_family": "Sakana AI models",
+   "developer": "Sakana AI",
+   "backing": {
+    "type": "private (Japan's most valuable AI unicorn)",
+    "funding": {
+     "value": "US$135M Series B at US$2.65B post-money",
+     "unit": "USD",
+     "date": "2025-11-17",
+     "source": "TechCrunch",
+     "url": "https://techcrunch.com/2025/11/17/sakana-ai-raises-135m-series-b-at-a-2-65b-valuation-to-continue-building-ai-models-for-japan",
+     "confidence": "MEDIUM"
+    }
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "research lab (model merging / evolutionary methods; not a single national LLM)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": {
+     "value": "multi-year research contract with ATLA (Japan defence agency); MoD intelligence-analysis pilot (Aug 2026, single source)",
+     "unit": null,
+     "date": "2026-03",
+     "source": "secondary coverage",
+     "url": "https://www.startuphub.ai/news/sakana-ai-tapped-for-defense-research",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Japan",
+   "model_family": "PLaMo",
+   "developer": "Preferred Networks (PFN)",
+   "backing": {
+    "type": "private (GENIAC-supported)",
+    "funding": null
+   },
+   "latest_version": "PLaMo 3.1 Prime (27 Oct 2026); PLaMo 3 Translate open-weight 0.8B/2B/8B/31B (5 Nov 2026); PLaMo 3.0 Fin (9 Nov 2026)",
+   "release_date": "2026-10-27",
+   "size_params": null,
+   "open_weights": "partly (Translate models open; Prime via API/on-prem)",
+   "licence": null,
+   "languages": "Japanese-specialised",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": {
+     "value": "PLaMo 2.0 Prime among 3 domestic LLMs trialled on Digital Agency's government AI platform 'Gennai'",
+     "unit": null,
+     "date": "2026-07-10",
+     "source": "Dempa Digital",
+     "url": "https://dempa-digital.com/article/720178",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Japan",
+   "model_family": "LLM-jp",
+   "developer": "National Institute of Informatics (NII) LLM-jp consortium",
+   "backing": {
+    "type": "public",
+    "funding": null
+   },
+   "latest_version": "LLM-jp-4.1 (33B/32B-A3B/8B thinking)",
+   "release_date": "2026-09-28",
+   "size_params": "8B dense; 32B-A3B MoE; 33B dense",
+   "open_weights": true,
+   "licence": "open (Apache 2.0 reported for 8B)",
+   "languages": "Japanese, English",
+   "build_type": "from scratch (~12T tokens), fully open",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": {
+     "value": "Japanese MT-Bench 7.54 (8B) / 7.82 (32B-A3B)",
+     "unit": "score",
+     "date": "2026-04-03",
+     "source": "NII release",
+     "url": "https://www.nii.ac.jp/en/news/release/2026/0403.html",
+     "confidence": "MEDIUM",
+     "note": "self-reported"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Japan",
+   "model_family": "Fugaku-LLM",
+   "developer": "RIKEN, Tokyo Tech, Fujitsu and partners",
+   "backing": {
+    "type": "public research",
+    "funding": null
+   },
+   "latest_version": "Fugaku-LLM 13B",
+   "release_date": "2024-05-10",
+   "size_params": "13B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Japanese",
+   "build_type": "from scratch on Fugaku supercomputer",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": {
+     "value": "none found",
+     "unit": "public-sector deployments",
+     "date": "2026-11",
+     "source": "Report AI search",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "No evidence of government adoption; Digital Agency is trialling tsuzumi 2, Takane 32B and PLaMo 2.0 Prime instead"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    1266
+   ]
+  },
+  {
+   "country": "Japan",
+   "model_family": "tsuzumi",
+   "developer": "NTT",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": "tsuzumi 2 (chart/table update 19 May 2026)",
+   "release_date": "2025-10-20",
+   "size_params": null,
+   "open_weights": false,
+   "licence": null,
+   "languages": "Japanese, English",
+   "build_type": "from scratch (lightweight)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "1,827",
+      "unit": "orders for tsuzumi v1 (521 domestic, 1,306 overseas)",
+      "date": "2025-Q1",
+      "source": "NTT earnings materials via Alphaspread",
+      "url": "https://www.alphaspread.com/security/tse/9432/investor-relations/earnings-call/q1-2026",
+      "confidence": "MEDIUM",
+      "note": "v1, not tsuzumi 2"
+     },
+     {
+      "value": "trialled on Gennai (government AI) via NTT Data; on Microsoft Foundry Japan from 20 May 2026",
+      "unit": null,
+      "date": "2026-07-10",
+      "source": "Dempa Digital / NTT Data",
+      "url": "https://dempa-digital.com/article/720178",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Japan",
+   "model_family": "Sarashina",
+   "developer": "SB Intuitions (SoftBank)",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": "Sarashina3 series (5 models, Jun 2026); Sarashina3.2 mini thinking (29 Oct 2026)",
+   "release_date": "2026-10-29",
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": "Japanese",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": [
+     {
+      "value": "served on SoftBank sovereign 'Cloud PF Type A' (Oracle Alloy); east DC live 30 Jun 2026",
+      "unit": null,
+      "date": "2026-06-30",
+      "source": "SoftBank",
+      "url": "https://www.softbank.jp/business/news/2026/0630-01",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "free public beta 'Sarashina service' (6 models, API + chat)",
+      "unit": null,
+      "date": "2026-10-13",
+      "source": "Impress Watch",
+      "url": "https://www.watch.impress.co.jp/docs/news/2147706.html",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Japan",
+   "model_family": "National physical-AI foundation model",
+   "developer": "Noetra (formerly Japan AI Foundation Model Development; set up Apr 2026 by SoftBank, NEC, Honda, Sony; 44 backers) with AIST",
+   "backing": {
+    "type": "state-funded consortium (METI/NEDO)",
+    "funding": {
+     "value": "JPY 387.3B",
+     "unit": "FY2026 aid",
+     "date": "2026-06-30",
+     "source": "Kyodo via Adnkronos",
+     "url": "https://english.adnkronos.com/2026/06/30/japan-to-provide-aid-for-domestic-ai-development-project/",
+     "confidence": "MEDIUM",
+     "note": "reports of ~JPY 1T over five years (FY2026-FY2030); check overlap with the JPY 387.3B 'AI-specific' line on site page 374"
+    }
+   },
+   "latest_version": "in development (FY2026-FY2030)",
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch (multimodal: language, image, video, sensor for robots)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "South Korea",
+   "model_family": "K-EXAONE / EXAONE",
+   "developer": "LG AI Research",
+   "backing": {
+    "type": "private; national 'independent AI foundation model' project finalist",
+    "funding": null
+   },
+   "latest_version": "K-EXAONE 236B-A23B (Jan 2026); K-EXAONE 2.0 0803 (Aug 2026, Artificial Analysis listing)",
+   "release_date": "2026-01-11",
+   "size_params": "236B total, 23B active (MoE)",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Korean, English (+ others)",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": [
+     {
+      "value": 32,
+      "unit": "Artificial Analysis Intelligence Index at launch (#1 in Korea, #7 among open-weight models globally)",
+      "date": "2026-01-11",
+      "source": "Korea Times",
+      "url": "https://www.koreatimes.co.kr/business/tech-science/20260111/lgs-k-exaone-delivers-top-benchmark-results",
+      "confidence": "MEDIUM",
+      "note": "AA index versions change; later AA pages show lower numbers on a re-based index - not comparable"
+     },
+     {
+      "value": 69.0,
+      "unit": "national project 2nd-round score (of 100)",
+      "date": "2026-08-27",
+      "source": "MSIT via ibl.ai / Korea Times",
+      "url": "https://koreatimes.co.kr/business/tech-science/20260827/motif-challenges-national-ai-model-project-after-elimination",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "South Korea",
+   "model_family": "A.X",
+   "developer": "SK Telecom",
+   "backing": {
+    "type": "private; national project finalist",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": {
+     "value": 70.6,
+     "unit": "national project 2nd-round score (top)",
+     "date": "2026-08-27",
+     "source": "MSIT via ibl.ai / Korea Times",
+     "url": "https://koreatimes.co.kr/business/tech-science/20260827/motif-challenges-national-ai-model-project-after-elimination",
+     "confidence": "MEDIUM"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "Latest model name/size (reported A.X K1, ~519B) not verified.",
+   "site_pages": []
+  },
+  {
+   "country": "South Korea",
+   "model_family": "Solar",
+   "developer": "Upstage",
+   "backing": {
+    "type": "private; national project finalist",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": {
+     "value": 69.9,
+     "unit": "national project 2nd-round score",
+     "date": "2026-08-27",
+     "source": "MSIT via ibl.ai / Korea Times",
+     "url": "https://koreatimes.co.kr/business/tech-science/20260827/motif-challenges-national-ai-model-project-after-elimination",
+     "confidence": "MEDIUM"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "South Korea",
+   "model_family": "Motif",
+   "developer": "Motif Technologies (with KAIST)",
+   "backing": {
+    "type": "private; added to national project Feb 2026, eliminated 18 Aug 2026",
+    "funding": null
+   },
+   "latest_version": "Motif3",
+   "release_date": null,
+   "size_params": "~314B",
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": [
+     {
+      "value": 44,
+      "unit": "Artificial Analysis Intelligence Index (matched DeepSeek V4 Pro)",
+      "date": "2026-08",
+      "source": "Herald Business",
+      "url": "https://mbiz.heraldcorp.com/article/10843769",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": 65.8,
+      "unit": "national project 2nd-round score (eliminated; ranked 1st on AAII category with 11.9 pts)",
+      "date": "2026-08-27",
+      "source": "Korea Times",
+      "url": "https://koreatimes.co.kr/business/tech-science/20260827/motif-challenges-national-ai-model-project-after-elimination",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "South Korea",
+   "model_family": "HyperCLOVA X",
+   "developer": "Naver Cloud",
+   "backing": {
+    "type": "private; ELIMINATED from national project (15 Jan 2026) for using Alibaba Qwen encoder weights unmodified",
+    "funding": null
+   },
+   "latest_version": "HyperCLOVA X (SEED 4B open model; Think)",
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch core; vision encoder from Qwen (per MSIT ruling)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": [
+     {
+      "value": "about 30 million",
+      "unit": "monthly users of Naver AI Briefing (search answers powered by HyperCLOVA X)",
+      "date": "2026-05-28",
+      "source": "Naver press release",
+      "url": "https://www.navercorp.com/media/pressReleasesDetail?seq=34256",
+      "confidence": "MEDIUM",
+      "note": "a search feature reach figure, not a chatbot MAU"
+     },
+     {
+      "value": ">10 million",
+      "unit": "monthly active users of Naver AI Tab",
+      "date": "2026-08-07",
+      "source": "Naver Q2 2026 earnings call (Asiae)",
+      "url": "https://view.asiae.co.kr/en/article/2026080709204607613",
+      "confidence": "MEDIUM"
+     }
+    ],
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": [
+     {
+      "value": "62.86% (2025 avg); 64.28% (H1 2026 avg)",
+      "unit": "Naver share of Korean web search (InternetTrend)",
+      "date": "2026-H1",
+      "source": "InternetTrend via Asiae / FN News",
+      "url": "https://www.asiae.co.kr/en/article/2026010410205601139",
+      "confidence": "MEDIUM",
+      "note": "search engine share, not AI-assistant share; Statcounter page-view basis shows Google 46.63% vs Naver ~41.7% (May 2026)"
+     }
+    ]
+   },
+   "status": "Standalone Clova X chatbot and Cue: search closed Apr 2026 and folded into AI Briefing / AI Tab. Google app overtook Naver app in Korean MAU in Jul and Aug 2026 (Mobile Index: Aug 47,677,456 vs 47,253,614).",
+   "notes": null,
+   "site_pages": [
+    1266
+   ]
+  },
+  {
+   "country": "South Korea",
+   "model_family": "NC AI (VARCO)",
+   "developer": "NC AI",
+   "backing": {
+    "type": "private; eliminated from national project 15 Jan 2026 on scores",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": null,
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "did not reapply for the Feb 2026 extra slot",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Taiwan",
+   "model_family": "TAIDE",
+   "developer": "National Science and Technology Council (NSTC)",
+   "backing": {
+    "type": "public",
+    "funding": null
+   },
+   "latest_version": "Llama-3-TAIDE 8B (TAIDE 2.0 with 8B/70B reported by a vendor blog - unverified)",
+   "release_date": "2024-04-29",
+   "size_params": "8B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Traditional Chinese, Taiwanese data",
+   "build_type": "adapted (Meta Llama 3 base)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Singapore",
+   "model_family": "SEA-LION",
+   "developer": "AI Singapore (National Multimodal LLM Programme)",
+   "backing": {
+    "type": "public",
+    "funding": {
+     "value": "~US$52M",
+     "unit": "programme funding (site figure, Lawfare 2025)",
+     "date": "2025",
+     "source": "Lawfare (site page 934)",
+     "url": "https://www.lawfaremedia.org/article/sovereign-ai-in-a-hybrid-world--national-strategies-and-policy-responses",
+     "confidence": "MEDIUM",
+     "note": "not re-verified this session; widely reported as S$70M for the national programme, which is broader than SEA-LION"
+    }
+   },
+   "latest_version": "SEA-LION v4.5 27B / v4.8 (120B-A12B, 30B-A3B) (2026 listings); Qwen-SEA-LION-v4 (Nov 2025)",
+   "release_date": "2025-11 (v4)",
+   "size_params": null,
+   "open_weights": true,
+   "licence": null,
+   "languages": "11-13 Southeast Asian languages",
+   "build_type": "adapted: v4 on Google Gemma 3 27B; Qwen-SEA-LION-v4 on Alibaba Qwen (Singapore dropped Meta Llama as base, Nov 2025)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": "about 235,000",
+     "unit": "downloads",
+     "date": "2025-05",
+     "source": "Malay Mail",
+     "url": "https://www.malaymail.com/news/singapore/2025/05/05/singapores-sea-lion-ai-model-gains-traction-with-firms-like-indonesias-goto-group-offering-13-regional-languages/175629",
+     "confidence": "MEDIUM",
+     "note": "2025 figure; no 2026 count found"
+    },
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": {
+     "value": "used by GoTo Group; base for Indonesia's Sahabat-AI",
+     "unit": null,
+     "date": "2025",
+     "source": "Malay Mail / ISEAS Fulcrum",
+     "url": "https://fulcrum.sg/article/commentaries/advancing-southeast-asias-ai-future-through-sovereign-ai-models/",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    934
+   ]
+  },
+  {
+   "country": "Indonesia",
+   "model_family": "Sahabat-AI",
+   "developer": "GoTo Group and Indosat Ooredoo Hutchison",
+   "backing": {
+    "type": "private (national-champion consortium)",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": true,
+   "licence": null,
+   "languages": "Bahasa Indonesia, Javanese, Sundanese and others",
+   "build_type": "adapted (SEA-LION / Llama-based)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": null,
+     "unit": "users",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "no user figures found"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Vietnam",
+   "model_family": "VT-Super (Viettel AI)",
+   "developer": "Viettel (state-owned military telecom group)",
+   "backing": {
+    "type": "state-owned enterprise",
+    "funding": null
+   },
+   "latest_version": "VT-Super-120B-A12B",
+   "release_date": "2026-05-29",
+   "size_params": "120B total, 12B active",
+   "open_weights": null,
+   "licence": null,
+   "languages": "Vietnamese",
+   "build_type": "adapted: NVIDIA Nemotron 3 Super architecture, trained on local administrative/regulatory data",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "Au Lac AI Alliance (FPT, VNPT, Zalo; 20+ members) proposed an 'Au Lac LLM' - no release found. A US$1B G42 sovereign-AI deal (Feb 2026) rests on one secondary source.",
+   "site_pages": []
+  },
+  {
+   "country": "Thailand",
+   "model_family": "Typhoon",
+   "developer": "SCB 10X (SCBX banking group)",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": "Typhoon 2 family; Typhoon-S post-training method (Jun 2026); Typhoon Isan ASR; Typhoon OCR",
+   "release_date": null,
+   "size_params": null,
+   "open_weights": true,
+   "licence": null,
+   "languages": "Thai (+ Isan dialect)",
+   "build_type": "adapted (open base models, e.g. Llama/Qwen) - per release notes",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "OpenThaiGPT not researched this session.",
+   "site_pages": []
+  },
+  {
+   "country": "Malaysia",
+   "model_family": "ILMU",
+   "developer": "YTL AI Labs with Universiti Malaya",
+   "backing": {
+    "type": "private (YTL group)",
+    "funding": null
+   },
+   "latest_version": "ILMU-Nemo-30B (Mar 2026); ILMU-GLM-5.3 (ILMUcode, Oct 2026)",
+   "release_date": "2026-10",
+   "size_params": "30B (Nemo variant)",
+   "open_weights": null,
+   "licence": null,
+   "languages": "Malay, English",
+   "build_type": "adapted: NVIDIA Nemotron fine-tune; ILMU-GLM-5.3 built with Chinese lab Z.ai (Zhipu)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": [
+     {
+      "value": "10,000+",
+      "unit": "organic users of ILMUchat at launch",
+      "date": "2026-06-25",
+      "source": "The Edge Malaysia / NST",
+      "url": "https://theedgemalaysia.com/node/808329",
+      "confidence": "MEDIUM",
+      "note": "company figure"
+     },
+     {
+      "value": "3 million+",
+      "unit": "Yes telco subscribers given access to ILMUchat Pro",
+      "date": "2026-06",
+      "source": "NST",
+      "url": "https://www.nst.com.my/amp/business/corporate/2026/06/1472550/ytl-ai-labs-powers-yes-become-malaysias-ai-first-telco",
+      "confidence": "MEDIUM",
+      "note": "reach, not users"
+     }
+    ],
+    "deployments": {
+     "value": "integrated into Snowflake AI Data Cloud (in-country deployment)",
+     "unit": null,
+     "date": "2026-05-13",
+     "source": "FutureCIO",
+     "url": "https://futurecio.tech/snowflake-unveils-integration-of-malaysias-homegrown-sovereign-llm-into-its-ai-data-cloud-platform/",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Kazakhstan",
+   "model_family": "KazLLM (ISSAI KAZ-LLM)",
+   "developer": "ISSAI, Nazarbayev University",
+   "backing": {
+    "type": "public",
+    "funding": null
+   },
+   "latest_version": "KazLLM 8B and 70B",
+   "release_date": "2024-12",
+   "size_params": "8B / 70B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Kazakh, Russian, English, Turkish",
+   "build_type": "adapted (Meta Llama architecture/weights)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": "140,000+",
+     "unit": "downloads (ISSAI-reported)",
+     "date": "2026-02",
+     "source": "ISSAI",
+     "url": "https://issai.nu.edu.kz/2026/02/13/issai-explains-kazllm-why-kazakhstan-built-its-own-large-language-model/",
+     "confidence": "MEDIUM"
+    },
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": "600,000",
+     "unit": "'users' or 'requests' (sources disagree)",
+     "date": "2026-02",
+     "source": "Kursiv / Bes.media commentary",
+     "url": "https://bes.media/news/diplomnaya-rabota-za-milliardi-chto-ne-tak-s-natsionalnim-ii-kazllm/",
+     "confidence": "CONTESTED",
+     "note": "one commentary says 600,000 users (3% of population); the minister reportedly cited 600,000+ requests"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "President Tokayev publicly criticised KazLLM in Feb 2026; Kazakhstan providing KazLLM architecture to Pakistan under a Feb 2026 MoU; separate 'Alem LLM' on Alem.Cloud",
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Russia",
+   "model_family": "GigaChat",
+   "developer": "Sber (state-controlled bank)",
+   "backing": {
+    "type": "state-controlled corporate",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": null,
+     "unit": "monthly users",
+     "date": null,
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "no Sber MAU disclosure found; GigaChat entered the Sensor Tower/SimilarWeb web ranking in Jan 2026; Sber roughly quadrupled GigaChat TV advertising (10.9k GRP) in H1 2026"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": [
+     {
+      "value": "7.3%",
+      "unit": "share of AI-service web traffic in Russia (10 months of 2025)",
+      "date": "2025 (Jan-Oct)",
+      "source": "Kommersant / 3DNews",
+      "url": "https://3dnews.ru/1133039",
+      "confidence": "MEDIUM",
+      "note": "ChatGPT ~40%, DeepSeek 27.8%, Qwen 6.6%, Alice AI 5.7%"
+     }
+    ]
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    1266
+   ]
+  },
+  {
+   "country": "Russia",
+   "model_family": "Alice AI (formerly YandexGPT)",
+   "developer": "Yandex",
+   "backing": {
+    "type": "private (domestic champion)",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": "43 million",
+     "unit": "people asking Alice per month",
+     "date": "2026-06",
+     "source": "Sostav",
+     "url": "https://www.sostav.ru/blogs/290985/89861",
+     "confidence": "MEDIUM",
+     "note": "Yandex Browser with Alice: 71M mobile MAU (Sensor Tower, Jan 2026) is browser reach"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": [
+     {
+      "value": "5.7%",
+      "unit": "share of AI-service web traffic (2025)",
+      "date": "2025 (Jan-Oct)",
+      "source": "Kommersant / 3DNews",
+      "url": "https://3dnews.ru/1133039",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "67%",
+      "unit": "share of AI-assistant usage, Beeline Analytics",
+      "date": "2026-Q1",
+      "source": "Beeline Analytics via search summary",
+      "url": null,
+      "confidence": "CONTESTED",
+      "note": "different method (operator data); DeepSeek 29%, ChatGPT 7% on this measure"
+     }
+    ]
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    1266
+   ]
+  },
+  {
+   "country": "China",
+   "model_family": "DeepSeek",
+   "developer": "DeepSeek (Hangzhou; High-Flyer)",
+   "backing": {
+    "type": "private; first external round 2026",
+    "funding": {
+     "value": ">50B yuan (~US$7.4B) at >US$50B post-money",
+     "unit": "CNY/USD",
+     "date": "2026-05 (approx.)",
+     "source": "OfficeChai / Tiger Brokers",
+     "url": "https://officechai.com/ai/deepseek-raises-7-4-billion-at-50-billion-valuation-becomes-chinas-most-valuable-ai-startup/",
+     "confidence": "MEDIUM",
+     "note": "late-Oct 2026 reports of a ~US$86B round are CONTESTED (see data/geography.json)"
+    }
+   },
+   "latest_version": "DeepSeek-V4 preview (V4-Pro, V4-Flash)",
+   "release_date": "2026-04-24",
+   "size_params": "V4-Pro 1.6T total / 49B active; 1M context",
+   "open_weights": true,
+   "licence": "MIT",
+   "languages": "Chinese, English, multilingual",
+   "build_type": "from scratch (reportedly on Huawei Ascend, contested)",
+   "popularity": {
+    "hf_downloads_all_time": {
+     "value": 128.2,
+     "unit": "million cumulative Hugging Face downloads",
+     "date": "2026-01",
+     "source": "ATOM Report via secondary coverage",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM"
+    },
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": 122.65,
+     "unit": "million monthly active users (app)",
+     "date": "2026-09",
+     "source": "QuestMobile via 36Kr / FourWeekMBA",
+     "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+     "confidence": "MEDIUM",
+     "note": "May 2026: ~130M (site page 1266)"
+    },
+    "deployments": null,
+    "leaderboard": {
+     "value": 1476,
+     "unit": "LMArena text score, DeepSeek V4.1 Flash (#35)",
+     "date": "2026-11-02",
+     "source": "af.net aggregator citing BenchLeader",
+     "url": "https://af.net/realtime/google-gemini-4-carbon-leads-lmarena-text-leaderboard-with-1528-score/",
+     "confidence": "MEDIUM",
+     "note": "aggregator, low reliability"
+    },
+    "home_market_share": {
+     "value": "27.8%",
+     "unit": "share of AI-service web traffic in Russia (2025) - an export market",
+     "date": "2025",
+     "source": "Kommersant / 3DNews",
+     "url": "https://3dnews.ru/1133039",
+     "confidence": "MEDIUM"
+    }
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    954,
+    1266,
+    1654
+   ]
+  },
+  {
+   "country": "China",
+   "model_family": "Qwen / Qianwen app",
+   "developer": "Alibaba Cloud (Tongyi Lab)",
+   "backing": {
+    "type": "private (listed conglomerate)",
+    "funding": null
+   },
+   "latest_version": "Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug 2026)",
+   "release_date": "2026-08-14",
+   "size_params": "Qwen3.8-Max 2.4T total / 95B active; Qwen3.8-27B dense",
+   "open_weights": "mostly (flagship Max closed)",
+   "licence": "Apache 2.0 (open models)",
+   "languages": "119+ languages (Qwen3 family)",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": [
+     {
+      "value": 942.1,
+      "unit": "million cumulative Hugging Face downloads",
+      "date": "2026-03",
+      "source": "ATOM Report via secondary coverage",
+      "url": "https://arxiv.org/abs/2604.07190",
+      "confidence": "MEDIUM",
+      "note": "Llama 476.0M same month: Qwen ~1.98x Llama (DERIVED 942.1/476.0)"
+     },
+     {
+      "value": "about 3 billion",
+      "unit": "downloads of Alibaba models (all channels/repos, company-reported)",
+      "date": "2026-08-15",
+      "source": "Bloomberg via site page 1654",
+      "url": null,
+      "confidence": "MEDIUM",
+      "note": "different scope from HF-only counts"
+     }
+    ],
+    "hf_downloads_last_month": {
+     "value": 2045,
+     "unit": "million Hugging Face downloads Jan-Aug 2026 (period total, not monthly)",
+     "date": "2026-08",
+     "source": "Hugging Face 'State of open models' summer 2026, via secondary coverage",
+     "url": "https://huggingface.co/blog/state-of-open-models-summer-2026",
+     "confidence": "MEDIUM",
+     "note": "same report: 151,448 Qwen-based derivative models; 180-210 new derivative repos per day"
+    },
+    "users": {
+     "value": 158.17,
+     "unit": "million monthly active users (Qwen/Qianwen app)",
+     "date": "2026-09",
+     "source": "QuestMobile via FourWeekMBA / 36Kr",
+     "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+     "confidence": "MEDIUM",
+     "note": "down from ~167M in Jun 2026; DAU 29M on 30 Sep 2026"
+    },
+    "deployments": {
+     "value": "base model for sovereign projects in 6 countries incl. Egypt, Singapore, Thailand, Uganda, UAE",
+     "unit": "countries",
+     "date": "2026 (mid)",
+     "source": "CNAS Sovereign AI Index v2 via BAAI summary",
+     "url": "https://interactives.cnas.org/reports/sovereign-ai-index/",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": {
+     "value": 58,
+     "unit": "Artificial Analysis Intelligence Index (Qwen3.8-Max; #3 globally)",
+     "date": "2026-09-03",
+     "source": "Report AI page 1654",
+     "url": "https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/",
+     "confidence": "MEDIUM",
+     "note": "score moved 53 -> 56 -> 58"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    954,
+    1654,
+    861
+   ]
+  },
+  {
+   "country": "China",
+   "model_family": "Doubao",
+   "developer": "ByteDance",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": false,
+   "licence": null,
+   "languages": "Chinese (+ others)",
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": [
+     {
+      "value": 419.08,
+      "unit": "million monthly active users",
+      "date": "2026-09",
+      "source": "QuestMobile via FourWeekMBA / 36Kr",
+      "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+      "confidence": "MEDIUM",
+      "note": "May 2026: 382M (site page 1266)"
+     },
+     {
+      "value": 181,
+      "unit": "million daily active users",
+      "date": "2026-09-30",
+      "source": "QuestMobile Q3 2026 via FourWeekMBA",
+      "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "2.65x",
+      "unit": "Doubao MAU / Qwen app MAU",
+      "date": "2026-09",
+      "source": "Report AI calculation",
+      "url": null,
+      "confidence": "DERIVED",
+      "note": "419.08 / 158.17"
+     }
+    ],
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    1266,
+    1654
+   ]
+  },
+  {
+   "country": "China",
+   "model_family": "Kimi",
+   "developer": "Moonshot AI",
+   "backing": {
+    "type": "private",
+    "funding": null
+   },
+   "latest_version": "Kimi K3",
+   "release_date": null,
+   "size_params": "2.8T (MoE)",
+   "open_weights": true,
+   "licence": "MIT-based",
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": "US$300M",
+     "unit": "annual recurring revenue",
+     "date": "2026-06",
+     "source": "36Kr",
+     "url": "https://eu.36kr.com/en/p/3971481903306372",
+     "confidence": "MEDIUM"
+    },
+    "deployments": null,
+    "leaderboard": [
+     {
+      "value": 57.1,
+      "unit": "Artificial Analysis Intelligence Index (#4 globally)",
+      "date": "2026-09-03",
+      "source": "Report AI page 1654",
+      "url": "https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/",
+      "confidence": "HIGH"
+     },
+     {
+      "value": 1488,
+      "unit": "LMArena text score (#19)",
+      "date": "2026-11-02",
+      "source": "af.net aggregator",
+      "url": "https://af.net/realtime/google-gemini-4-carbon-leads-lmarena-text-leaderboard-with-1528-score/",
+      "confidence": "MEDIUM",
+      "note": "aggregator"
+     }
+    ],
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    1654
+   ]
+  },
+  {
+   "country": "China",
+   "model_family": "GLM",
+   "developer": "Zhipu AI (Z.ai)",
+   "backing": {
+    "type": "listed in Hong Kong 8 Jan 2026 (~US$558M raised at ~US$7.1B)",
+    "funding": null
+   },
+   "latest_version": "GLM-5 (Feb 2026); GLM-5.2/5.3",
+   "release_date": "2026-02",
+   "size_params": "GLM-5: 744B total / 40B active",
+   "open_weights": true,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch (GLM-5 trained on Huawei Ascend per site page 954)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": {
+     "value": "base of Malaysia's ILMU-GLM-5.3 (ILMUcode)",
+     "unit": null,
+     "date": "2026-10",
+     "source": "Soyacincau",
+     "url": "https://soyacincau.com/2026/10/02/ytl-ai-labs-ilmucode-launch-universiti-malaya-free-rm300-credit/",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": {
+     "value": 1481,
+     "unit": "LMArena text score, GLM 5.3 (#28)",
+     "date": "2026-11-02",
+     "source": "af.net aggregator",
+     "url": "https://af.net/realtime/google-gemini-4-carbon-leads-lmarena-text-leaderboard-with-1528-score/",
+     "confidence": "MEDIUM"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": [
+    954,
+    1654
+   ]
+  },
+  {
+   "country": "Canada",
+   "model_family": "Command (Cohere)",
+   "developer": "Cohere",
+   "backing": {
+    "type": "private, with Canadian federal support",
+    "funding": [
+     {
+      "value": "C$35.7B (~US$25.5B) post-money, Series E first close; round targeting up to C$7B",
+      "unit": "CAD",
+      "date": "2026-10-29",
+      "source": "Cryptobriefing / AI Magazine (Schwarz Group leading)",
+      "url": "https://aimagazine.com/news/cohere-hits-us-25bn-as-canada-nvidia-fund-sovereign-ai",
+      "confidence": "MEDIUM",
+      "note": "another report says US$5B at US$20.5B - CONTESTED"
+     },
+     {
+      "value": "up to C$240M (AI Compute Challenge, first recipient)",
+      "unit": "CAD",
+      "date": "2024-12-06; finalised 2025-03",
+      "source": "Government of Canada",
+      "url": "https://www.canada.ca/en/innovation-science-economic-development/news/2025/03/government-of-canada-finalizes-investment-to-support-canadian-born-ai-leader-cohere.html",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "up to C$1.6B equity stake (conditional)",
+      "unit": "CAD",
+      "date": "2026-11-02",
+      "source": "The Logic (as summarised)",
+      "url": null,
+      "confidence": "CONTESTED",
+      "note": "another source cites C$1.14B; not verified"
+     }
+    ]
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": "from scratch",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": [
+     {
+      "value": "about US$240M",
+      "unit": "ARR end-2025 (from US$62M end-2024)",
+      "date": "2025-12",
+      "source": "Sacra estimate",
+      "url": "https://sacra.com/research/cohere",
+      "confidence": "MEDIUM"
+     },
+     {
+      "value": "+165%",
+      "unit": "ARR growth YoY at end of Q3 2026; 300 customers (20x)",
+      "date": "2026-09-30",
+      "source": "Cohere via secondary coverage",
+      "url": null,
+      "confidence": "MEDIUM"
+     }
+    ],
+    "deployments": {
+     "value": "Bell AI Fabric partnership (Cohere models on Bell infrastructure)",
+     "unit": null,
+     "date": "2026-06",
+     "source": "secondary coverage",
+     "url": "https://marketingnewscanada.com/news/the-future-of-ai-is-canadian-inside-the-bell-amp-cohere-partnership",
+     "confidence": "MEDIUM"
+    },
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "~85% of revenue from private/on-prem deployments; acquiring Aleph Alpha (Germany).",
+   "site_pages": []
+  },
+  {
+   "country": "Latin America (Chile-led)",
+   "model_family": "Latam-GPT",
+   "developer": "CENIA (Chile) with regional partners; AWS, CAF",
+   "backing": {
+    "type": "public / multilateral",
+    "funding": null
+   },
+   "latest_version": "Latam-GPT v1",
+   "release_date": "2026-02-10",
+   "size_params": "70B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Spanish, Portuguese, indigenous languages (regional data)",
+   "build_type": "adapted (Meta Llama 3.1 base)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": {
+     "value": "no chat app (downloadable model only, budget limits)",
+     "unit": null,
+     "date": "2026-02",
+     "source": "Tech Policy Press",
+     "url": "https://www.techpolicy.press/latamgpt-navigates-the-gap-between-regional-aspiration-and-market-realities",
+     "confidence": "MEDIUM"
+    },
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": "Partner counts differ: 15 countries / 200+ collaborators / 33 alliances (Tech Policy Press) vs 8 countries / 30+ institutions (others).",
+   "site_pages": []
+  },
+  {
+   "country": "Brazil",
+   "model_family": "Federal sovereign Portuguese LLM (planned); SoberanIA (Piaui state)",
+   "developer": "Federal government / SERPRO; Piaui state (ETIPI)",
+   "backing": {
+    "type": "public",
+    "funding": {
+     "value": "R$23B (2024-2028) Brazilian AI Plan (PBIA), whole plan; +R$2.2B infrastructure package Aug 2026",
+     "unit": "BRL",
+     "date": "2026-08-22",
+     "source": "Lusa",
+     "url": "https://aman-alliance.org/Home/ContentDetail/105975",
+     "confidence": "MEDIUM"
+    }
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": null,
+   "open_weights": null,
+   "licence": null,
+   "languages": null,
+   "build_type": null,
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": "no federal model released; SoberanIA commercial public-sector ecosystem launched 19 May 2026",
+   "notes": "Maritaca AI's Sabia models not researched this session.",
+   "site_pages": []
+  },
+  {
+   "country": "Africa (South Africa-based)",
+   "model_family": "InkubaLM",
+   "developer": "Lelapa AI",
+   "backing": {
+    "type": "private (impact-backed)",
+    "funding": null
+   },
+   "latest_version": "InkubaLM-0.4B",
+   "release_date": "2024-08",
+   "size_params": "0.4B",
+   "open_weights": true,
+   "licence": "CC BY-NC 4.0 (per mirror listing)",
+   "languages": "Swahili, Yoruba, Hausa, isiZulu, isiXhosa, English, French",
+   "build_type": "from scratch (1.9B tokens)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Nigeria",
+   "model_family": "N-ATLaS",
+   "developer": "Awarri with NITDA and NCAIR",
+   "backing": {
+    "type": "public-private",
+    "funding": null
+   },
+   "latest_version": "N-ATLaS v1",
+   "release_date": "2025-09-20",
+   "size_params": "8B",
+   "open_weights": "gated",
+   "licence": null,
+   "languages": "Yoruba, Hausa, Igbo, Nigerian-accented English",
+   "build_type": "adapted (Llama-3 8B fine-tune on 400M+ tokens)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Israel",
+   "model_family": "Dicta-LM",
+   "developer": "DICTA (Israel Center for Text Analysis) with Bar-Ilan University",
+   "backing": {
+    "type": "public research (national NLP programme context)",
+    "funding": null
+   },
+   "latest_version": "Dicta-LM 3.0 (24B flagship; 12B; 1.7B)",
+   "release_date": "2026-02-02",
+   "size_params": "24B",
+   "open_weights": true,
+   "licence": null,
+   "languages": "Hebrew, English",
+   "build_type": "adapted/continued pre-training (base not confirmed)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": {
+     "value": "top open model <=70B on Hebrew LLM Leaderboard (MAFAT/DICTA)",
+     "unit": "rank",
+     "date": "2026-02",
+     "source": "Gadgety",
+     "url": "https://www.gadgety.co.il/354176/dicta-lm-3-launched/",
+     "confidence": "MEDIUM",
+     "note": "leaderboard co-run by the developer"
+    },
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  },
+  {
+   "country": "Turkey",
+   "model_family": "Bilge (and Kumru)",
+   "developer": "TUBITAK BILGEM (Bilge); VNGRS (Kumru)",
+   "backing": {
+    "type": "public (Bilge); private (Kumru)",
+    "funding": {
+     "value": "up to TL50M",
+     "unit": "grant per project, 'Turkish LLM foundation model sectoral adaptation' call",
+     "date": "2026",
+     "source": "Alomaliye",
+     "url": "https://www.alomaliye.com/2026/06/14/turkce-buyuk-dil-temel-modeli-nedir/",
+     "confidence": "MEDIUM"
+    }
+   },
+   "latest_version": null,
+   "release_date": null,
+   "size_params": "Bilge 37B (ministry figure); Kumru-2B open",
+   "open_weights": "Kumru-2B open; Bilge developer access pending (Jul 2026)",
+   "licence": null,
+   "languages": "Turkish",
+   "build_type": "from scratch (both reported)",
+   "popularity": {
+    "hf_downloads_all_time": null,
+    "hf_downloads_last_month": null,
+    "users": null,
+    "deployments": null,
+    "leaderboard": null,
+    "home_market_share": null
+   },
+   "status": null,
+   "notes": null,
+   "site_pages": []
+  }
+ ],
+ "popularity": [
+  {
+   "comparison": "Open-model downloads by developer country (Hugging Face)",
+   "metric": "share of downloads",
+   "rows": [
+    {
+     "country": "China",
+     "value": "41%",
+     "unit": "share of Hugging Face downloads",
+     "date": "Feb 2025-Feb 2026",
+     "source": "Hugging Face 'State of Open Source on Hugging Face: Spring 2026' (17 Mar 2026), via EqualOcean / The New Stack",
+     "url": "https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026",
+     "confidence": "MEDIUM"
+    },
+    {
+     "country": "United States",
+     "value": "36.5%",
+     "unit": "share of Hugging Face downloads",
+     "date": "Feb 2025-Feb 2026",
+     "source": "same",
+     "url": "https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026",
+     "confidence": "MEDIUM"
+    },
+    {
+     "country": "China (earlier window)",
+     "value": "17.1%",
+     "unit": "share of downloads",
+     "date": "Aug 2024-Aug 2025",
+     "source": "MIT / Hugging Face study (Stanford HAI-DigiChina brief)",
+     "url": "https://hai.stanford.edu/assets/files/hai-digichina-issue-brief-beyond-deepseek-chinas-diverse-open-weight-ai-ecosystem-policy-implications.pdf",
+     "confidence": "MEDIUM",
+     "note": "US 15.8% in same window"
+    }
+   ],
+   "note": "Primary HF post not readable (huggingface.co blocked); figures from consistent secondary coverage. Europe's share not published in sources found."
+  },
+  {
+   "comparison": "Cumulative Hugging Face downloads by model family (ATOM Report)",
+   "metric": "million cumulative downloads",
+   "rows": [
+    {
+     "family": "Qwen (Alibaba, China)",
+     "value": 942.1,
+     "unit": "million",
+     "date": "2026-03",
+     "source": "ATOM Report (arXiv 2604.07190) via secondary coverage",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM"
+    },
+    {
+     "family": "Llama (Meta, US)",
+     "value": 476.0,
+     "unit": "million",
+     "date": "2026-03",
+     "source": "same",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM"
+    },
+    {
+     "family": "DeepSeek (China)",
+     "value": 128.2,
+     "unit": "million",
+     "date": "2026-01",
+     "source": "same",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM"
+    },
+    {
+     "family": "Mistral (France)",
+     "value": 124.3,
+     "unit": "million",
+     "date": "2026-01",
+     "source": "same",
+     "url": "https://arxiv.org/abs/2604.07190",
+     "confidence": "MEDIUM"
+    },
+    {
+     "family": "Qwen vs Llama ratio",
+     "value": "1.98x",
+     "unit": "ratio",
+     "date": "2026-03",
+     "source": "Report AI calculation",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "942.1 / 476.0"
+    }
+   ],
+   "note": "ATOM: Chinese open models overtook US in cumulative downloads in late Jul 2025 (China 1.15B cumulative per paper); Qwen first passed Llama in Sep 2025 (325.4M vs 323.7M). Falcon (TII) reports 55M+ ecosystem downloads (2025) - different source/scope. Vendor all-channel figures (Llama 1.2B, Gemma 1B, Alibaba 3B) are not comparable with HF-only counts."
+  },
+  {
+   "comparison": "Derivatives (fine-tunes) built on national model families",
+   "metric": "count / share",
+   "rows": [
+    {
+     "family": "Qwen",
+     "value": 151448,
+     "unit": "derivative models on Hugging Face",
+     "date": "2026 (summer)",
+     "source": "Hugging Face summer 2026 report via secondary coverage",
+     "url": "https://huggingface.co/blog/state-of-open-models-summer-2026",
+     "confidence": "MEDIUM",
+     "note": "other outlets cite 200,000+ (Apr 2026) or 300,000 - different counting"
+    },
+    {
+     "family": "Qwen share of new fine-tunes",
+     "value": "69%",
+     "unit": "share of new fine-tunes (Meta 11%)",
+     "date": "2026-02",
+     "source": "ATOM Report, as cited on site page 954",
+     "url": "https://arxiv.org/pdf/2604.07190",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "note": null
+  },
+  {
+   "comparison": "OpenRouter token share by model origin",
+   "metric": "share of tokens",
+   "rows": [
+    {
+     "scope": "Top-10 models on OpenRouter",
+     "value": "61% Chinese (5.3T of 8.7T tokens)",
+     "unit": "share",
+     "date": "Feb-Mar 2026",
+     "source": "analysis via KuCoin / Trending Topics",
+     "url": "https://www.trendingtopics.eu/chinese-ai-models-overtake-us-rivals-in-global-token-consumption/",
+     "confidence": "MEDIUM",
+     "note": "top-10 only, not whole platform"
+    },
+    {
+     "scope": "Whole platform",
+     "value": "51% Chinese providers",
+     "unit": "share",
+     "date": "2026-04 (selected snapshots)",
+     "source": "secondary analysis",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "scope": "US enterprise traffic",
+     "value": ">=30% every week since 8 Feb 2026; weekly peak 46%",
+     "unit": "Chinese-origin share",
+     "date": "2026 (to mid-year)",
+     "source": "CNBC investigation via Forkast",
+     "url": "https://forkast.news/chinese-ai-models-now-capture-up-to-46-of-us-enterprise-token-usage/",
+     "confidence": "MEDIUM",
+     "note": "prior-12-month average 11%; H1 2025 4.5%. Bloomberg (via eWeek) put it at ~60% - CONTESTED"
+    },
+    {
+     "scope": "a16z/OpenRouter 100T-token study",
+     "value": "~13% average (peaks ~30%)",
+     "unit": "Chinese open-source share",
+     "date": "Nov 2024-Nov 2025",
+     "source": "a16z / OpenRouter (data/geography.json)",
+     "url": null,
+     "confidence": "MEDIUM"
+    }
+   ],
+   "note": "OpenRouter is one aggregator skewed to developers and role-play; never present as global market share."
+  },
+  {
+   "comparison": "Frontier leaderboards by developer country",
+   "metric": "score / rank",
+   "rows": [
+    {
+     "model": "Gemini 4 Carbon (Google, US)",
+     "value": 1528,
+     "unit": "LMArena text score (#1)",
+     "date": "2026-11-02",
+     "source": "af.net aggregator citing BenchLeader",
+     "url": "https://af.net/realtime/google-gemini-4-carbon-leads-lmarena-text-leaderboard-with-1528-score/",
+     "confidence": "MEDIUM",
+     "note": "aggregator; an Oct 15 snapshot names 'Gemini 4 Argon' 1524"
+    },
+    {
+     "model": "Kimi K3 (Moonshot, China)",
+     "value": 1488,
+     "unit": "LMArena text score (#19)",
+     "date": "2026-11-02",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "model": "GLM 5.3 (Zhipu, China)",
+     "value": 1481,
+     "unit": "LMArena text score (#28)",
+     "date": "2026-11-02",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "model": "DeepSeek V4.1 Flash (China)",
+     "value": 1476,
+     "unit": "LMArena text score (#35)",
+     "date": "2026-11-02",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "model": "GPT-5.6 Sol (OpenAI, US)",
+     "value": 58.9,
+     "unit": "Artificial Analysis Intelligence Index",
+     "date": "2026-09",
+     "source": "Report AI page 1654",
+     "url": "https://report-ai.org/indexes/technical-benchmarks/chinese-ai-models-2026/",
+     "confidence": "HIGH"
+    },
+    {
+     "model": "Qwen3.8-Max (Alibaba, China)",
+     "value": 58,
+     "unit": "AA Intelligence Index (#3)",
+     "date": "2026-09",
+     "source": "Report AI page 1654",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "model": "Kimi K3 (Moonshot, China)",
+     "value": 57.1,
+     "unit": "AA Intelligence Index (#4)",
+     "date": "2026-09",
+     "source": "Report AI page 1654",
+     "url": null,
+     "confidence": "HIGH"
+    },
+    {
+     "model": "Motif3 (Motif, Korea)",
+     "value": 44,
+     "unit": "AA Intelligence Index",
+     "date": "2026-08",
+     "source": "Herald Business",
+     "url": "https://mbiz.heraldcorp.com/article/10843769",
+     "confidence": "MEDIUM",
+     "note": "matched DeepSeek V4 Pro"
+    },
+    {
+     "model": "K-EXAONE (LG, Korea)",
+     "value": 32,
+     "unit": "AA Intelligence Index at launch (#7 open-weight)",
+     "date": "2026-01",
+     "source": "Korea Times",
+     "url": "https://www.koreatimes.co.kr/business/tech-science/20260111/lgs-k-exaone-delivers-top-benchmark-results",
+     "confidence": "MEDIUM",
+     "note": "AA rebased its index during 2026; Jan and Sep scores are not comparable"
+    }
+   ],
+   "note": "A full LMArena top-20 by developer country could not be compiled: lmarena.ai and artificialanalysis.ai are blocked. No non-US/China national model appears in any top-20 snippet found. Treat as a gap."
+  },
+  {
+   "comparison": "Home-market consumer use: China (Western assistants blocked)",
+   "metric": "monthly active users (app)",
+   "rows": [
+    {
+     "app": "Doubao (ByteDance)",
+     "value": 419.08,
+     "unit": "million MAU",
+     "date": "2026-09",
+     "source": "QuestMobile via FourWeekMBA / 36Kr",
+     "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Qwen / Qianwen (Alibaba)",
+     "value": 158.17,
+     "unit": "million MAU",
+     "date": "2026-09",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "DeepSeek",
+     "value": 122.65,
+     "unit": "million MAU",
+     "date": "2026-09",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "All AI-native apps",
+     "value": 546,
+     "unit": "million MAU (+82.1% YoY)",
+     "date": "2026-09",
+     "source": "QuestMobile via 36Kr",
+     "url": "https://eu.36kr.com/en/p/4053377095390343",
+     "confidence": "MEDIUM",
+     "note": "per-app MAU not deduplicated; do not sum"
+    }
+   ],
+   "note": null
+  },
+  {
+   "comparison": "Home-market consumer use: South Korea",
+   "metric": "app MAU / feature reach",
+   "rows": [
+    {
+     "app": "ChatGPT",
+     "value": 18762276,
+     "unit": "app MAU (~91% of AI-app users)",
+     "date": "2026-10",
+     "source": "Mobile Index via Hankyung / FourWeekMBA",
+     "url": "https://fourweekmba.com/ai-claudes-korea-app-users-rose-15x-to-2-1m-chatgpt-hit-18-8m/",
+     "confidence": "MEDIUM",
+     "note": "WiseApp panel gives higher numbers (23.45M Apr 2026)"
+    },
+    {
+     "app": "Claude",
+     "value": "about 2.1 million",
+     "unit": "app MAU",
+     "date": "2026-10",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Gemini",
+     "value": 8.45,
+     "unit": "million app MAU (WiseApp panel)",
+     "date": "2026-04",
+     "source": "WiseApp Retail",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "different panel from Mobile Index"
+    },
+    {
+     "app": "Naver AI Briefing (HyperCLOVA X)",
+     "value": "about 30 million",
+     "unit": "monthly users of AI search answers",
+     "date": "2026-05-28",
+     "source": "Naver",
+     "url": "https://www.navercorp.com/media/pressReleasesDetail?seq=34256",
+     "confidence": "MEDIUM",
+     "note": "search-feature reach; not comparable with chatbot app MAU"
+    },
+    {
+     "app": "Naver AI Tab",
+     "value": ">10 million",
+     "unit": "MAU",
+     "date": "2026-08-07",
+     "source": "Naver Q2 call",
+     "url": "https://view.asiae.co.kr/en/article/2026080709204607613",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "note": "Korea's local champion wins inside search, not as a standalone chatbot: Naver closed Clova X in Apr 2026."
+  },
+  {
+   "comparison": "Home-market consumer use: France",
+   "metric": "share",
+   "rows": [
+    {
+     "app": "ChatGPT",
+     "value": "75.77%",
+     "unit": "Statcounter AI-chatbot share (referral-based)",
+     "date": "2026-06",
+     "source": "Statcounter",
+     "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/france",
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Le Chat / Vibe (Mistral)",
+     "value": "not in top 5 (<4.88%)",
+     "unit": "Statcounter share",
+     "date": "2026-06",
+     "source": "Statcounter",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "below Copilot's 4.88%, the 5th-placed tool"
+    },
+    {
+     "app": "ChatGPT (traffic)",
+     "value": "77.2%",
+     "unit": "share of AI-tool traffic, France (80.9% a year earlier)",
+     "date": "2026",
+     "source": "SE Ranking",
+     "url": "https://seranking.com/blog/mistral-ai-traffic-research/",
+     "confidence": "MEDIUM",
+     "note": "Mistral in top 5 AI traffic sources in France; EU-wide Mistral share 0.21%"
+    },
+    {
+     "app": "Le Chat (survey)",
+     "value": "14% (ChatGPT 79%)",
+     "unit": "share of French gen-AI users citing the tool",
+     "date": "2025-06",
+     "source": "Credoc via La Gazette France",
+     "url": null,
+     "confidence": "MEDIUM"
+    }
+   ],
+   "note": null
+  },
+  {
+   "comparison": "Home-market consumer use: Russia",
+   "metric": "share (method varies)",
+   "rows": [
+    {
+     "app": "ChatGPT",
+     "value": "~40%",
+     "unit": "share of AI-service web traffic",
+     "date": "2025 (Jan-Oct)",
+     "source": "Kommersant / 3DNews",
+     "url": "https://3dnews.ru/1133039",
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "DeepSeek",
+     "value": "27.8%",
+     "unit": "same",
+     "date": "2025",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "GigaChat (Sber)",
+     "value": "7.3%",
+     "unit": "same",
+     "date": "2025",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Qwen",
+     "value": "6.6%",
+     "unit": "same",
+     "date": "2025",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Alice AI (Yandex)",
+     "value": "5.7%",
+     "unit": "same",
+     "date": "2025",
+     "source": "same",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "Statcounter (referrals)",
+     "value": "ChatGPT 48.68%, Perplexity 31.5%",
+     "unit": "AI-chatbot share",
+     "date": "2026-06",
+     "source": "Statcounter Russia",
+     "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/russian-federation",
+     "confidence": "MEDIUM",
+     "note": "desktop May 2026: ChatGPT 47.36 / Perplexity 36.19; mobile: Perplexity 7.55"
+    },
+    {
+     "app": "Alice AI (operator data)",
+     "value": "67% (DeepSeek 29%, ChatGPT 7%)",
+     "unit": "share",
+     "date": "2026-Q1",
+     "source": "Beeline Analytics",
+     "url": null,
+     "confidence": "CONTESTED"
+    },
+    {
+     "app": "All AI services",
+     "value": "55%",
+     "unit": "monthly reach, population 12+",
+     "date": "2026-09",
+     "source": "Mediascope via RBC",
+     "url": null,
+     "confidence": "MEDIUM"
+    }
+   ],
+   "note": "Methods disagree wildly; the domestic champions lead only on operator/telemetry measures. No measure supports 'Perplexity ~48%'."
+  },
+  {
+   "comparison": "Home-market consumer use: India",
+   "metric": "weekly / monthly users",
+   "rows": [
+    {
+     "app": "ChatGPT",
+     "value": 100,
+     "unit": "million weekly active users (#2 market at the time)",
+     "date": "2026-02-15",
+     "source": "Sam Altman via TechCrunch",
+     "url": "https://techcrunch.com/2026/02/15/india-has-100m-weekly-active-chatgpt-users-sam-altman-says/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "ChatGPT",
+     "value": "largest market by WAU; base doubled since January",
+     "unit": "rank",
+     "date": "2026-11-03",
+     "source": "OpenAI India MD Prabhjeet Singh to The Economic Times, via Inc42",
+     "url": "https://inc42.com/buzz/india-becomes-chatgpts-largest-market-globally-user-base-doubles-since-january/",
+     "confidence": "MEDIUM",
+     "note": "no number given"
+    },
+    {
+     "app": "ChatGPT / Gemini (Sensor Tower)",
+     "value": "180M / 118M",
+     "unit": "app MAU",
+     "date": "2026-01",
+     "source": "Sensor Tower via secondary",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "monthly, not comparable with WAU"
+    },
+    {
+     "app": "Sarvam Indus",
+     "value": null,
+     "unit": "users",
+     "date": "2026-02-20",
+     "source": "Outlook Business",
+     "url": null,
+     "confidence": null,
+     "note": "limited beta, waitlist; no count"
+    }
+   ],
+   "note": null
+  },
+  {
+   "comparison": "Home-market use: Malaysia, Kazakhstan, Japan government",
+   "metric": "users / deployments",
+   "rows": [
+    {
+     "app": "ILMUchat (Malaysia)",
+     "value": "10,000+",
+     "unit": "organic users at launch",
+     "date": "2026-06-25",
+     "source": "The Edge Malaysia",
+     "url": "https://theedgemalaysia.com/node/808329",
+     "confidence": "MEDIUM"
+    },
+    {
+     "app": "KazLLM (Kazakhstan)",
+     "value": "600,000",
+     "unit": "users or requests (disputed)",
+     "date": "2026-02",
+     "source": "Bes.media",
+     "url": null,
+     "confidence": "CONTESTED"
+    },
+    {
+     "app": "Japan 'Gennai' government AI",
+     "value": "3 domestic LLMs on trial (tsuzumi 2, Takane 32B, PLaMo 2.0 Prime)",
+     "unit": "trial",
+     "date": "2026-07-10",
+     "source": "Dempa Digital",
+     "url": "https://dempa-digital.com/article/720178",
+     "confidence": "MEDIUM",
+     "note": "7 domestic LLMs selected for evaluation 6 Mar 2026; paid procurement planned FY2027"
+    }
+   ],
+   "note": null
+  },
+  {
+   "comparison": "Sovereign model landscape counts",
+   "metric": "count / share",
+   "rows": [
+    {
+     "index": "CNAS Sovereign AI Index v2",
+     "value": "184 projects in 67 countries",
+     "unit": "projects",
+     "date": "2026-08-20",
+     "source": "CNAS Insights",
+     "url": "https://cnas.org/publications/cnas-insights/cnas-insights-sovereign-ais-second-wave-is-coming-into-view",
+     "confidence": "MEDIUM",
+     "note": "from-scratch models ~40% of model projects; Llama most-used base; Mistral and Gemma tied second; 3/5 of foreign bases American"
+    },
+    {
+     "index": "Counterpoint Sovereign AI LLM Index H1 2026",
+     "value": "56% adapted; of adapted: Llama 38%, Qwen 20%, Mistral 19%",
+     "unit": "share",
+     "date": "2026-09-21",
+     "source": "Counterpoint Research / Benzinga",
+     "url": "https://counterpointresearch.com/en/insights/56-of-sovereign-ai-llms-are-adapted-models-with-metas-llama-the-dominant-base",
+     "confidence": "MEDIUM",
+     "note": ">170 models, >55 countries; Falcon H1 ranked #1"
+    }
+   ],
+   "note": null
+  }
+ ],
+ "compute_programmes": [
+  {
+   "programme": "Stargate (US)",
+   "country": "United States",
+   "type": "private joint venture (OpenAI, Oracle, SoftBank, MGX) - no federal funds",
+   "figures": [
+    {
+     "value": "US$500B / 10 GW",
+     "unit": "target over four years",
+     "date": "2025-01-21",
+     "source": "OpenAI",
+     "url": "https://openai.com/index/announcing-the-stargate-project/",
+     "confidence": "MEDIUM",
+     "note": "site page 934"
+    },
+    {
+     "value": ">9 GW across 7 US sites (projected by 2029)",
+     "unit": "planned capacity",
+     "date": "2026-04-17",
+     "source": "Epoch AI, 'OpenAI Stargate: where the US sites stand'",
+     "url": "https://epoch.ai/publications/openai-stargate-where-the-us-sites-stand",
+     "confidence": "HIGH",
+     "note": "sites: Abilene 1.2 GW (Q4 2026), Shackelford Co. TX 2.0, Dona Ana NM 2.2, Milam Co. TX 1.2, Port Washington WI 1.3, Saline Twp MI 1.4, Lordstown OH <0.3 (all Q4 2028 or unknown)"
+    },
+    {
+     "value": "0.3 GW",
+     "unit": "operational (facility power, Abilene)",
+     "date": "2026-04-22",
+     "source": "Epoch AI (update 23 Apr 2026, citing Oracle '200 MW operational')",
+     "url": "https://epoch.ai/publications/openai-stargate-where-the-us-sites-stand",
+     "confidence": "HIGH"
+    },
+    {
+     "value": "about 3%",
+     "unit": "share of planned Stargate capacity operational, Apr 2026",
+     "date": "2026-04",
+     "source": "Report AI calculation",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "0.3 / 9.6 GW (sum of Epoch site projections, Lordstown taken at 0.3)"
+    },
+    {
+     "value": "618 MW (6 of 8 buildings, 75%) delivered to customer",
+     "unit": "Abilene",
+     "date": "2026-09-10",
+     "source": "Oracle Q1 FY27 earnings call, recorded in Epoch data-center timelines",
+     "url": "https://epoch.ai/data/data-centers",
+     "confidence": "HIGH"
+    },
+    {
+     "value": "824 MW IT; ~1.02 million H100-equivalents",
+     "unit": "Abilene, Epoch estimate",
+     "date": "2026-11-01",
+     "source": "Epoch AI Frontier Data Centers dataset",
+     "url": "https://epoch.ai/data/data-centers",
+     "confidence": "HIGH",
+     "note": "estimate: buildings 7-8 assumed operational"
+    }
+   ],
+   "site_pages": [
+    934,
+    374
+   ]
+  },
+  {
+   "programme": "Stargate UAE / UAE-US AI Campus",
+   "country": "United Arab Emirates",
+   "type": "sovereign-linked (G42 builds; OpenAI and Oracle operate)",
+   "figures": [
+    {
+     "value": "1 GW cluster within 5 GW campus; first 200 MW 'in 2026'",
+     "unit": "plan",
+     "date": "2025-05-22",
+     "source": "OpenAI",
+     "url": "https://openai.com/index/introducing-stargate-uae/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": 0,
+     "unit": "MW operational / H100e",
+     "date": "2026-11-12",
+     "source": "Epoch AI Frontier Data Centers dataset",
+     "url": "https://epoch.ai/data/data-centers",
+     "confidence": "HIGH",
+     "note": "buildings 1-2 projected operational 1 Dec 2026 (200 MW IT, ~253k H100e); 1 GW projected ~Jan 2028; similar Khazna Ajman site delayed over a year"
+    },
+    {
+     "value": "up to 35,000 GB300-equivalent",
+     "unit": "US export authorisation each for G42 and HUMAIN",
+     "date": "2025-11-19",
+     "source": "US Department of Commerce (site page 955)",
+     "url": "https://www.commerce.gov/news/press-releases/2025/11/statement-uae-and-saudi-chip-exports",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "site_pages": [
+    934,
+    955
+   ]
+  },
+  {
+   "programme": "HUMAIN",
+   "country": "Saudi Arabia",
+   "type": "sovereign vehicle (PIF-owned)",
+   "figures": [
+    {
+     "value": "up to 600,000 Nvidia GPUs over three years (Saudi Arabia and US)",
+     "unit": "ceiling",
+     "date": "2025-11",
+     "source": "HUMAIN / Nvidia (site page 934/955)",
+     "url": "https://www.prnewswire.com/news-releases/humain-expands-strategic-partnership-with-nvidia-advancing-global-ai-infrastructure-with-xai-global-ai-and-aws-at-the-us-saudi-investment-forum-302620854.html",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "up to 84 MW, ~27,000 GPUs in two phases through 2027; phase 1 = 14 MW, ~6,000 Blackwell B300 from Q4 2026",
+     "unit": "contracted expansion",
+     "date": "2026-10-22",
+     "source": "The National (Reuters) / Data Centre Magazine",
+     "url": "https://www.thenationalnews.com/future/technology/2026/10/22/saudi-arabias-humain-expands-nvidia-deal-with-84mw-ai-computing-plan/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "4.5%",
+     "unit": "Oct 2026 contracted GPUs as share of 600k ceiling",
+     "date": "2026-10",
+     "source": "Report AI calculation",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "27,000 / 600,000"
+    },
+    {
+     "value": "3 GW by 2030; 6 GW+ by 2034",
+     "unit": "targets",
+     "date": "2026",
+     "source": "secondary coverage",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "US$5B+; up to 150,000 accelerators",
+     "unit": "AWS 'AI Zone' Riyadh",
+     "date": "2025-05",
+     "source": "Amazon (site page 955)",
+     "url": "https://www.aboutamazon.com/news/company-news/amazon-aws-humain-ai-investment-in-saudi-arabia",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": null,
+     "unit": "MW operational",
+     "date": "2026-11",
+     "source": null,
+     "url": null,
+     "confidence": null,
+     "note": "Riyadh/Dammam sites planned for Q2 2026 (up to 100 MW each); no confirmation of go-live found"
+    }
+   ],
+   "site_pages": [
+    934,
+    955
+   ]
+  },
+  {
+   "programme": "EU InvestAI / AI Gigafactories / AI Factories",
+   "country": "European Union",
+   "type": "mobilisation headline + EuroHPC procurement",
+   "figures": [
+    {
+     "value": "EUR 200B mobilisation incl. EUR 20B gigafactory fund",
+     "unit": "headline",
+     "date": "2025-02-11",
+     "source": "European Commission (site pages 374/934)",
+     "url": "https://ec.europa.eu/commission/presscorner/detail/en/ip_25_467",
+     "confidence": "MEDIUM",
+     "note": "not a budget"
+    },
+    {
+     "value": "formal call for up to 7 AI Gigafactories opened 30 Jul 2026, closes 12 Nov 2026; awards early 2027; ops within 18 months of signature",
+     "unit": "procurement",
+     "date": "2026-07-30",
+     "source": "EuroHPC JU via Anadolu / eWeek / Brussels Times",
+     "url": "https://aa.com.tr/en/economy/eu-launches-tender-for-up-to-7-ai-gigafactories/4013865",
+     "confidence": "MEDIUM",
+     "note": "reported scale: 4 sites >=75,000 accelerators + 3 sites >=100,000; EUR 10B public (half EU, half host states) + ~EUR 20B private expected"
+    },
+    {
+     "value": ">EUR 2.7B across 19 AI Factories",
+     "unit": "confirmed co-investment",
+     "date": "2024-2027",
+     "source": "EuroHPC JU (site page 374)",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "23,536",
+     "unit": "H100-equivalents, JUPITER (Julich, EuroHPC), operational Jun 2025",
+     "date": "2025-06-10",
+     "source": "Epoch AI GPU clusters dataset",
+     "url": "https://epoch.ai/data/gpu-clusters",
+     "confidence": "HIGH"
+    }
+   ],
+   "site_pages": [
+    934,
+    956,
+    374
+   ]
+  },
+  {
+   "programme": "UK sovereign compute (AIRR, Isambard-AI, Sovereign AI Fund)",
+   "country": "United Kingdom",
+   "type": "budget",
+   "figures": [
+    {
+     "value": "GBP 2B AI envelope, ~GBP 1B compute",
+     "unit": "Spending Review 2025",
+     "date": "2025-06",
+     "source": "GOV.UK (site page 374)",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "20x AIRR expansion by 2030; 420 AI exaFLOPS",
+     "unit": "target",
+     "date": "2025-07",
+     "source": "DSIT Compute Roadmap via secondary",
+     "url": "https://www.gov.uk/government/news/engines-of-ai-primed-to-accelerate-new-breakthroughs-economic-growth-and-transform-the-uk-into-an-ai-maker",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "5,448",
+     "unit": "H100-equivalents (GH200), Isambard-AI, operational mid-2025",
+     "date": "2025-06-15",
+     "source": "Epoch AI GPU clusters dataset",
+     "url": "https://epoch.ai/data/gpu-clusters",
+     "confidence": "HIGH",
+     "note": "University of Bristol: a GBP 225M system"
+    },
+    {
+     "value": "GBP 500M + GBP 60M top-up",
+     "unit": "Sovereign AI Fund",
+     "date": "2026-04-16 / 2026-10",
+     "source": "data/spending.json (state-of-ai)",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "the 'GBP 700M sovereign AI fund' headline is wrong"
+    }
+   ],
+   "site_pages": [
+    374
+   ]
+  },
+  {
+   "programme": "France (Choose France, Campus AI, Mistral Compute)",
+   "country": "France",
+   "type": "mostly private / sovereign-wealth (UAE)",
+   "figures": [
+    {
+     "value": "EUR 109B (~EUR 26B confirmed)",
+     "unit": "Choose France AI commitments",
+     "date": "2025-02",
+     "source": "site page 374",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "mostly private"
+    },
+    {
+     "value": "1.4 GW (Paris-region campus), construction H2 2026, full ops 2028; expanded target up to 3 GW nationally with a second site",
+     "unit": "Campus AI (MGX 70%, Bpifrance 25%, Nvidia 4%, Mistral 1%)",
+     "date": "2026-06-01",
+     "source": "WAM / Multinationales",
+     "url": "https://www.wam.ae/en/article/1792zxu-mgx-strategic-partners-expand-campus-france-with",
+     "confidence": "MEDIUM",
+     "note": "'sovereign' label contested given UAE majority ownership"
+    },
+    {
+     "value": "44 MW, ~13,800 GB300; US$830M debt",
+     "unit": "Mistral Compute (Essonne)",
+     "date": "2026-03",
+     "source": "SiliconANGLE",
+     "url": "https://siliconangle.com/?p=736800",
+     "confidence": "MEDIUM",
+     "note": "partly live May 2026; target 200 MW by end-2027"
+    }
+   ]
+  },
+  {
+   "programme": "Germany (Industrial AI Cloud)",
+   "country": "Germany",
+   "type": "private (Deutsche Telekom + Nvidia)",
+   "figures": [
+    {
+     "value": "up to ~10,000 Blackwell GPUs (~0.5 EF), live Feb 2026; expanding to 20 MW with B300 after first phase sold out",
+     "unit": "capacity",
+     "date": "2026-11",
+     "source": "Deutsche Telekom",
+     "url": "https://www.telekom.com/en/newsroom/latest-updates/media-information/2026/11/ai-demand-rises-deutsche-telekom-expands-ai-factory-in-munich",
+     "confidence": "MEDIUM"
+    }
+   ]
+  },
+  {
+   "programme": "IndiaAI Mission compute",
+   "country": "India",
+   "type": "cabinet outlay (INR 10,372 crore, ~US$1.25B)",
+   "figures": [
+    {
+     "value": 38231,
+     "unit": "GPUs onboarded on common compute portal",
+     "date": "2026-03-25",
+     "source": "MoS Jitin Prasada, Lok Sabha (IANS / Devdiscourse)",
+     "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022",
+     "confidence": "MEDIUM",
+     "note": "PIB primary blocked; ~INR 65 per GPU-hour"
+    },
+    {
+     "value": "+20,000",
+     "unit": "GPUs announced 'in coming weeks'",
+     "date": "2026-02-18",
+     "source": "Business Today (Vaishnaw at India AI Impact Summit)",
+     "url": "https://www.businesstoday.in/india/story/india-to-add-20000-gpus-in-a-week-ramping-up-ai-capacity-beyond-pre-existing-38000-base-says-vaishnaw-516698-2026-02-18",
+     "confidence": "MEDIUM",
+     "note": "completion not confirmed as of Nov 2026"
+    },
+    {
+     "value": "38.2%",
+     "unit": "share of 100,000-GPU end-2026 target onboarded (Mar 2026)",
+     "date": "2026-03",
+     "source": "Report AI calculation",
+     "url": null,
+     "confidence": "DERIVED",
+     "note": "38,231 / 100,000"
+    },
+    {
+     "value": "200,000",
+     "unit": "GPU ambition discussed",
+     "date": "2026-02-27",
+     "source": "Angel One (Vaishnaw, Rising Bharat)",
+     "url": "https://www.angelone.in/news/economy/india-targets-200000-gpu-infrastructure-to-accelerate-ai-mission",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "site_pages": [
+    957,
+    934,
+    375
+   ]
+  },
+  {
+   "programme": "Japan (ABCI 3.0, METI/GENIAC, Noetra)",
+   "country": "Japan",
+   "type": "budget",
+   "figures": [
+    {
+     "value": "6,128 H200 GPUs; operational 20 Jan 2025",
+     "unit": "ABCI 3.0 (AIST)",
+     "date": "2025-01-20",
+     "source": "Epoch AI GPU clusters / OECD.AI",
+     "url": "https://epoch.ai/data/gpu-clusters",
+     "confidence": "HIGH"
+    },
+    {
+     "value": "16",
+     "unit": "foundation-model themes selected for GENIAC phase-4 compute support",
+     "date": "2026-06-04",
+     "source": "METI",
+     "url": "https://www.meti.go.jp/press/2026/06/20260604003/20260604003.html",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "JPY 387.3B FY2026 aid to Noetra/AIST national physical-AI model (FY2026-FY2030)",
+     "unit": "budget",
+     "date": "2026-06-30",
+     "source": "Kyodo via Adnkronos",
+     "url": "https://english.adnkronos.com/2026/06/30/japan-to-provide-aid-for-domestic-ai-development-project/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "JPY 1.23T (incl. JPY 387.3B AI-specific)",
+     "unit": "METI chips + AI, FY2026",
+     "date": "FY2026",
+     "source": "site page 374",
+     "url": null,
+     "confidence": "MEDIUM",
+     "note": "likely the same JPY 387.3B line as Noetra aid - do not add"
+    }
+   ]
+  },
+  {
+   "programme": "South Korea (260k GPU deal, national AI computing centre)",
+   "country": "South Korea",
+   "type": "budget + private",
+   "figures": [
+    {
+     "value": "260,000 Nvidia Blackwell GPUs: government 50,000, Samsung 50,000, SK 50,000, Hyundai 50,000, Naver Cloud 60,000",
+     "unit": "allocation",
+     "date": "2025-10-31",
+     "source": "Korea Times / TechRepublic (APEC Gyeongju)",
+     "url": "https://www.techrepublic.com/article/news-nvidia-south-korea-ai-chips/",
+     "confidence": "MEDIUM",
+     "note": "rollout 2026-2030 (single source); value up to ~US$10B (local reports)"
+    },
+    {
+     "value": "KRW 10.1T proposed (KRW 9.9T reported final)",
+     "unit": "2026 AI budget",
+     "date": "2025-11-04",
+     "source": "data/geography.json",
+     "url": null,
+     "confidence": "CONTESTED"
+    }
+   ]
+  },
+  {
+   "programme": "Canadian Sovereign AI Compute Strategy",
+   "country": "Canada",
+   "type": "budget",
+   "figures": [
+    {
+     "value": "C$2B over five years (Budget 2024): C$700M AI Compute Challenge, C$300M AI Compute Access Fund, public supercomputing",
+     "unit": "budget",
+     "date": "2024-04",
+     "source": "ISED / The Decoder",
+     "url": "https://the-decoder.com/canada-to-invest-2-billion-in-national-ai-computing-infrastructure/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "up to C$240M to Cohere (first AI Compute Challenge recipient)",
+     "unit": "grant",
+     "date": "2025-03",
+     "source": "Government of Canada",
+     "url": "https://www.canada.ca/en/innovation-science-economic-development/news/2025/03/government-of-canada-finalizes-investment-to-support-canadian-born-ai-leader-cohere.html",
+     "confidence": "MEDIUM"
+    }
+   ]
+  },
+  {
+   "programme": "Nvidia sovereign AI revenue",
+   "country": "global",
+   "type": "commercial proxy",
+   "figures": [
+    {
+     "value": ">US$30B (more than tripled)",
+     "unit": "sovereign AI revenue FY2026 (Feb 2025-Jan 2026)",
+     "date": "2026-02-25",
+     "source": "Nvidia Q4 FY2026 call (site page 934)",
+     "url": null,
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": ">80% YoY; infrastructure in nearly 40 countries",
+     "unit": "sovereign revenue growth, Q1 FY2027",
+     "date": "2026-05-20",
+     "source": "Nvidia Q1 FY2027 call transcript (Motley Fool)",
+     "url": "https://www.fool.com/earnings/call-transcripts/2026/05/20/nvidia-nvda-q1-2027-earnings-transcript/",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "more than doubled YoY; +35% QoQ",
+     "unit": "sovereign revenue growth, Q2 FY2027 (to 26 Jul 2026)",
+     "date": "2026-08",
+     "source": "CryptoBriefing (Kress on call)",
+     "url": "https://cryptobriefing.com/nvidia-cfo-sovereign-ai-business-doubles-yoy/",
+     "confidence": "MEDIUM",
+     "note": "single source; no dollar figure disclosed; Q3 FY2027 results due late Nov 2026"
+    }
+   ]
+  },
+  {
+   "programme": "Brazilian AI Plan (PBIA)",
+   "country": "Brazil",
+   "type": "budget",
+   "figures": [
+    {
+     "value": "R$23B (2024-2028); +R$2.2B infrastructure (supercomputer, national cloud) Aug 2026",
+     "unit": "budget",
+     "date": "2026-08-22",
+     "source": "Lusa",
+     "url": "https://aman-alliance.org/Home/ContentDetail/105975",
+     "confidence": "MEDIUM"
+    }
+   ]
+  },
+  {
+   "programme": "Other national systems (Epoch GPU clusters)",
+   "country": "various",
+   "type": "public supercomputers",
+   "figures": [
+    {
+     "value": "Alps (CH) 10,752 + 6,400 H100e; Gefion (DK) 3,032; Yotta Shakti NM1 (IN) 4,096; Jean Zay P4 (FR) 1,587; Core42 SuperPOD (UAE) 1,272",
+     "unit": "H100-equivalents",
+     "date": "2026-11",
+     "source": "Epoch AI GPU clusters dataset",
+     "url": "https://epoch.ai/data/gpu-clusters",
+     "confidence": "HIGH"
+    },
+    {
+     "value": "US 86.3%, Malaysia 9.1%, China 2.1%, UK 0.8%",
+     "unit": "share of H100e in Epoch's tracked frontier data centres",
+     "date": "2026-11-12",
+     "source": "Report AI calculation from Epoch data_centers.csv",
+     "url": "https://epoch.ai/data/data-centers",
+     "confidence": "DERIVED",
+     "note": "dataset covers ~44% of global deployed compute; China anonymised/partial; Malaysia's capacity is largely foreign tenants (e.g. ByteDance) - hosting is not sovereignty"
+    }
+   ]
+  }
+ ],
+ "typology": [
+  {
+   "term": "Sovereign AI (umbrella)",
+   "definition": "A state's capacity to develop, run and govern AI on infrastructure, data and models it controls, rather than renting them from foreign providers. Definitions are contested: 'hard' sovereignty means self-sufficiency across the stack; 'soft' sovereignty means control over the layers that matter for a given use case.",
+   "sources": [
+    {
+     "value": "Stanford HAI, 'AI Sovereignty's Definitional Dilemma'",
+     "unit": null,
+     "date": "2026-02-17",
+     "source": "Stanford HAI",
+     "url": "https://hai.stanford.edu/news/ai-sovereigntys-definitional-dilemma",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "McKinsey: four components - territorial, operational, technological, legal",
+     "unit": null,
+     "date": null,
+     "source": "McKinsey",
+     "url": "https://mckinsey.com/industries/technology-media-and-telecommunications/our-insights/sovereign-ai-building-ecosystems-for-strategic-resilience-and-impact",
+     "confidence": "MEDIUM"
+    },
+    {
+     "value": "CSET: five-layer stack - energy, chips, infrastructure, models, applications - plus talent, capital, research, governance, security",
+     "unit": null,
+     "date": null,
+     "source": "Georgetown CSET",
+     "url": "https://cset.georgetown.edu/?p=25117",
+     "confidence": "MEDIUM"
+    }
+   ]
+  },
+  {
+   "term": "Sovereign infrastructure (compute)",
+   "definition": "Domestic data centres and GPU clusters under national legal control, funded by budgets, state banks or sovereign-wealth vehicles.",
+   "examples": [
+    "IndiaAI common compute (38,231 GPUs)",
+    "Isambard-AI (UK)",
+    "ABCI 3.0 (Japan)",
+    "JUPITER (EU)",
+    "HUMAIN (Saudi)",
+    "Korea's 50,000-GPU national AI computing centre"
+   ],
+   "caveat": "Hosting is not ownership: Malaysia hosts ~9% of Epoch-tracked frontier compute, largely for foreign tenants; France's 'sovereign' Campus AI is 70% owned by Abu Dhabi's MGX."
+  },
+  {
+   "term": "Sovereign models - from scratch",
+   "definition": "Foundation models pre-trained from random initialisation by a national lab or champion.",
+   "examples": [
+    "Falcon (UAE)",
+    "Jais 2 (UAE)",
+    "K2 Think V2 (UAE)",
+    "ALLaM 34B (Saudi)",
+    "Apertus (CH)",
+    "ALIA-40B (ES)",
+    "Teuken-7B (DE/EU)",
+    "Minerva, Velvet (IT)",
+    "GPT-NL (NL)",
+    "Sarvam 30B/105B, Param2, EKA-1 (IN)",
+    "PLaMo, LLM-jp, tsuzumi, Sarashina (JP)",
+    "K-EXAONE, A.X, Solar, Motif (KR)",
+    "Mistral (FR)",
+    "InkubaLM (Africa)",
+    "Bilge, Kumru (TR)"
+   ],
+   "share": {
+    "value": "~40%",
+    "unit": "of sovereign model projects",
+    "date": "2026-08-20",
+    "source": "CNAS Sovereign AI Index v2",
+    "url": "https://cnas.org/publications/cnas-insights/cnas-insights-sovereign-ais-second-wave-is-coming-into-view",
+    "confidence": "MEDIUM",
+    "note": "Counterpoint H1 2026: 44% (DERIVED 100-56)"
+   }
+  },
+  {
+   "term": "Sovereign models - adapted (continued pre-training / fine-tune of foreign open weights)",
+   "definition": "A national model built on a foreign open-weight base (Llama, Gemma, Qwen, Mistral, Nemotron) with local data.",
+   "examples": [
+    "SEA-LION v4 (Gemma 3; Qwen variant)",
+    "Fanar 2.0 (Gemma-3-27B)",
+    "KazLLM (Llama)",
+    "Latam-GPT (Llama 3.1)",
+    "N-ATLaS (Llama-3 8B)",
+    "Poro 2 (Llama 3.1)",
+    "TAIDE (Llama 3)",
+    "ILMU-Nemo-30B (Nemotron), ILMU-GLM-5.3 (Zhipu GLM)",
+    "Viettel VT-Super-120B (Nemotron 3 Super)",
+    "Sarvam-M (Mistral Small)"
+   ],
+   "share": {
+    "value": "56% of sovereign LLMs; Llama 38%, Qwen 20%, Mistral 19% of adapted",
+    "unit": "share",
+    "date": "2026-09-21",
+    "source": "Counterpoint Research",
+    "url": "https://counterpointresearch.com/en/insights/56-of-sovereign-ai-llms-are-adapted-models-with-metas-llama-the-dominant-base",
+    "confidence": "MEDIUM"
+   },
+   "caveat": "Inherits the base model's licence, training-data and alignment choices; an AIES paper calls fine-tune-only sovereignty 'sovereignty theater'. Korea disqualified Naver for unmodified Qwen encoder weights (Jan 2026). Supply risk: CNAS (26 Oct 2026) warns top open-weight releases may dry up as Beijing drafts export controls covering model weights (MOFCOM/MOST draft 16 Oct 2026, comments to 15 Nov 2026)."
+  },
+  {
+   "term": "Sovereign deployment of foreign models",
+   "definition": "Foreign proprietary or open models run in-country under local data residency, often via 'sovereign cloud' offers.",
+   "examples": [
+    "Japan's 'Gennai' government AI (OpenAI-powered, now A/B-testing domestic LLMs)",
+    "SoftBank Cloud PF Type A on Oracle Alloy",
+    "Cohere on Bell AI Fabric (Canada)"
+   ],
+   "caveat": "Stanford HAI (Jul 2026 brief): big-tech sovereignty offerings may reconfigure rather than remove dependency."
+  },
+  {
+   "term": "Sovereign data",
+   "definition": "Legal and practical control over national training corpora and the data pipeline (licensed national-library, news and administrative text).",
+   "examples": [
+    "GPT-NL licensed news + KB national library",
+    "Viettel administrative/regulatory corpora",
+    "TAIDE government documents",
+    "Jais 2's 600B Arabic tokens"
+   ]
+  },
+  {
+   "term": "Sovereign capital",
+   "definition": "Public money behind the stack: budgets/appropriations, equity funds, sovereign-wealth vehicles, and mobilisation headlines - four categories that must never be summed.",
+   "examples": [
+    "IndiaAI Mission (budget)",
+    "China National AI Fund (equity)",
+    "HUMAIN, MGX (sovereign vehicles)",
+    "EU InvestAI EUR 200B (mobilisation)"
+   ],
+   "site_pages": [
+    374
+   ]
+  },
+  {
+   "term": "Sovereign by default",
+   "definition": "Markets where foreign assistants are blocked or restricted, so domestic models dominate regardless of policy intent.",
+   "examples": [
+    "China: Doubao 419M MAU, Qwen 158M, DeepSeek 123M (Sep 2026)",
+    "Russia (sanctions): domestic share depends on measurement method"
+   ]
+  },
+  {
+   "term": "Popularity metrics (and why they cannot be compared)",
+   "definition": "Hugging Face downloads (developer pulls, inflated by CI/mirrors), derivatives (fine-tunes on a base), app MAU/WAU (consumer reach; panels disagree), web-traffic share, Statcounter referral share (clicks from chatbots to websites), OpenRouter token share (one developer aggregator), leaderboard rank (capability, not use).",
+   "caveat": "Report each metric with its scope; never mix WAU with MAU or HF-only with all-channel downloads."
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "Perplexity holds about 48% of Russia's AI-chatbot market.",
+   "fact": "No source found supports it. Statcounter's Russia AI-chatbot table for June 2026 shows ChatGPT at 48.68% and Perplexity at 31.5% (a referral-traffic measure; on mobile Perplexity is 7.55%). Web-traffic data for 2025 put ChatGPT near 40% and DeepSeek at 27.8%.",
+   "source": "Statcounter; Kommersant / 3DNews",
+   "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/russian-federation"
+  },
+  {
+   "claim": "South Korea runs on Naver's HyperCLOVA X / HyperCLOVA X is Korea's most-used AI model.",
+   "fact": "Naver closed its standalone Clova X chatbot in April 2026, and Korea's ministry dropped Naver Cloud from the national foundation-model project on 15 January 2026. ChatGPT's Korean app had 18.76 million monthly users in October 2026 (Mobile Index), about 91% of AI-app users. HyperCLOVA X's reach is through Naver search: AI Briefing ~30 million monthly users (May 2026).",
+   "source": "Mobile Index via Hankyung; Naver; Korea Herald",
+   "url": "https://fourweekmba.com/ai-claudes-korea-app-users-rose-15x-to-2-1m-chatgpt-hit-18-8m/"
+  },
+  {
+   "claim": "Fugaku-LLM serves Japan's public sector.",
+   "fact": "No evidence of government adoption was found. Japan's Digital Agency began trialling three domestic LLMs on its 'Gennai' platform in July 2026: NTT's tsuzumi 2, Fujitsu's Takane 32B and PFN's PLaMo 2.0 Prime.",
+   "source": "Dempa Digital, 10 Jul 2026",
+   "url": "https://dempa-digital.com/article/720178"
+  },
+  {
+   "claim": "India is OpenAI's second-largest ChatGPT market.",
+   "fact": "True in February 2026 (100 million weekly users). On 3 November 2026 OpenAI's India managing director said India had become ChatGPT's largest market by weekly active users, with the user base doubling since January.",
+   "source": "Inc42 citing The Economic Times",
+   "url": "https://inc42.com/buzz/india-becomes-chatgpts-largest-market-globally-user-base-doubles-since-january/"
+  },
+  {
+   "claim": "The IndiaAI Mission has 34,000 GPUs.",
+   "fact": "34,000+ was the May-June 2025 count. 38,231 GPUs were onboarded by 25 March 2026 (Lok Sabha), and the IT minister announced 20,000 more in February 2026; the end-2026 target is 100,000.",
+   "source": "IANS / Business Today",
+   "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022"
+  },
+  {
+   "claim": "Falcon models have been downloaded 45 million times.",
+   "fact": "TII has since reported 55 million+ downloads across the Falcon ecosystem (2025); its Q1 2024 figure was 43 million.",
+   "source": "Mobile World Live citing TII",
+   "url": "https://www.mobileworldlive.com/middle-east-and-north-africa/arabic-language-falcon-ai-model-takes-flight/"
+  },
+  {
+   "claim": "Mistral AI is valued at $14 billion.",
+   "fact": "That was the September 2025 Series C (EUR 11.7B). Mistral's EUR 3 billion Series D on 8 September 2026 valued it at more than EUR 21 billion post-money (~US$24B).",
+   "source": "tech.eu / Orrick",
+   "url": "https://tech.eu/2026/09/08/mistral-secures-eur3b-series-d-to-push-sovereign-ai-into-its-next-phase/"
+  },
+  {
+   "claim": "Le Chat is Mistral's consumer assistant.",
+   "fact": "Mistral renamed Le Chat to Vibe on 28 May 2026; quote the new name with 'formerly Le Chat'.",
+   "source": "heise",
+   "url": "https://heise.de/-11311685"
+  },
+  {
+   "claim": "Aleph Alpha is Germany's independent sovereign AI champion.",
+   "fact": "Canada's Cohere agreed to acquire Aleph Alpha (announced 24 April 2026); the combined group keeps the Cohere name and Aleph Alpha shareholders hold about 10%.",
+   "source": "Dealroom / tech.eu",
+   "url": "https://tech.eu/2026/04/24/aleph-alpha-to-be-acquired-by-cohere/"
+  },
+  {
+   "claim": "Stargate UAE is live / went live in 2026.",
+   "fact": "Epoch AI's satellite-based tracking shows 0 MW operational at Stargate UAE as of November 2026, with the first two 100 MW buildings projected for December 2026.",
+   "source": "Epoch AI Frontier Data Centers",
+   "url": "https://epoch.ai/data/data-centers"
+  },
+  {
+   "claim": "Saudi Arabia's HUMAIN is deploying 600,000 Nvidia GPUs.",
+   "fact": "600,000 is an 'up to' ceiling over three years across Saudi Arabia and the US. The deal HUMAIN signed in October 2026 covers up to 84 MW and about 27,000 GPUs through 2027, starting with ~6,000 B300s in Q4 2026.",
+   "source": "The National (Reuters), 22 Oct 2026",
+   "url": "https://www.thenationalnews.com/future/technology/2026/10/22/saudi-arabias-humain-expands-nvidia-deal-with-84mw-ai-computing-plan/"
+  },
+  {
+   "claim": "Most national 'sovereign' models are home-grown from scratch.",
+   "fact": "Counterpoint's H1 2026 index found 56% of sovereign LLMs are adapted from foreign bases (Llama 38%, Qwen 20%, Mistral 19% of those). CNAS puts from-scratch models at about 40% of tracked model projects (Aug 2026).",
+   "source": "Counterpoint Research; CNAS",
+   "url": "https://counterpointresearch.com/en/insights/56-of-sovereign-ai-llms-are-adapted-models-with-metas-llama-the-dominant-base"
+  },
+  {
+   "claim": "Chinese models take 61% of OpenRouter tokens.",
+   "fact": "61% is the Chinese share among the top-10 models only, Feb-Mar 2026. Platform-wide snapshots in April 2026 showed ~51%, and Chinese models' share of US enterprise traffic was 30-46% weekly.",
+   "source": "Trending Topics; Forkast (CNBC)",
+   "url": "https://www.trendingtopics.eu/chinese-ai-models-overtake-us-rivals-in-global-token-consumption/"
+  },
+  {
+   "claim": "Doubao has 382 million users; Qwen's app 167 million.",
+   "fact": "Those are May-June 2026 readings. QuestMobile's September 2026 figures: Doubao 419.08 million MAU, Qwen app 158.17 million (down), DeepSeek 122.65 million.",
+   "source": "QuestMobile via FourWeekMBA / 36Kr",
+   "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/"
+  },
+  {
+   "claim": "The EU is building four AI gigafactories with EUR 20 billion.",
+   "fact": "No site has been chosen. The formal EuroHPC call for up to seven gigafactories closed on 12 November 2026, with awards expected in early 2027; public funding reported at EUR 10 billion plus ~EUR 20 billion hoped-for private money.",
+   "source": "Anadolu / eWeek",
+   "url": "https://aa.com.tr/en/economy/eu-launches-tender-for-up-to-7-ai-gigafactories/4013865"
+  },
+  {
+   "claim": "Kazakhstan's KazLLM has 600,000 users.",
+   "fact": "Sources disagree on whether 600,000 refers to users or to requests; ISSAI reports 140,000+ downloads. Quote neither as 'users' without the caveat.",
+   "source": "ISSAI; Bes.media",
+   "url": "https://issai.nu.edu.kz/2026/02/13/issai-explains-kazllm-why-kazakhstan-built-its-own-large-language-model/"
+  }
+ ],
+ "stale_on_site": [
+  {
+   "page": 934,
+   "text": "Falcon family ... downloaded more than 45 million times (TII, 2025)",
+   "update": "TII reports 55M+ downloads across the Falcon ecosystem (2025); latest releases Falcon-H1R 7B and Falcon-H1 Arabic (Jan 2026).",
+   "source": "Mobile World Live",
+   "url": "https://www.mobileworldlive.com/middle-east-and-north-africa/arabic-language-falcon-ai-model-takes-flight/"
+  },
+  {
+   "page": 934,
+   "text": "India's IndiaAI Mission has made 34,000+ GPUs available ... targets 100,000 GPUs by end-2026",
+   "update": "38,231 GPUs onboarded (25 Mar 2026); +20,000 announced Feb 2026; 200,000 ambition aired.",
+   "source": "IANS / Business Today",
+   "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022"
+  },
+  {
+   "page": 934,
+   "text": "by September 2025 the project counted nearly 7 gigawatts of planned capacity and over $400 billion",
+   "update": "Epoch AI (Apr 2026): 7 US sites, >9 GW projected by 2029, 0.3 GW operational; Abilene 618 MW delivered (Oracle, 10 Sep 2026).",
+   "source": "Epoch AI",
+   "url": "https://epoch.ai/publications/openai-stargate-where-the-us-sites-stand"
+  },
+  {
+   "page": 934,
+   "text": "Stargate UAE ... first 200-megawatt phase expected live in 2026",
+   "update": "0 MW operational as of Nov 2026; Epoch projects buildings 1-2 (200 MW) for Dec 2026.",
+   "source": "Epoch AI",
+   "url": "https://epoch.ai/data/data-centers"
+  },
+  {
+   "page": 934,
+   "text": "plan had expanded to up to 600,000 Nvidia GPUs over three years",
+   "update": "Label as a ceiling; add Oct 2026 contracted expansion: up to 84 MW / ~27,000 GPUs through 2027.",
+   "source": "The National (Reuters)",
+   "url": "https://www.thenationalnews.com/future/technology/2026/10/22/saudi-arabias-humain-expands-nvidia-deal-with-84mw-ai-computing-plan/"
+  },
+  {
+   "page": 934,
+   "text": "€20 billion fund for four AI gigafactories of roughly 100,000 next-generation AI chips each",
+   "update": "Formal call (30 Jul-12 Nov 2026) for up to seven gigafactories; awards early 2027.",
+   "source": "Anadolu / eWeek",
+   "url": "https://aa.com.tr/en/economy/eu-launches-tender-for-up-to-7-ai-gigafactories/4013865"
+  },
+  {
+   "page": 934,
+   "text": "US private AI investment reached $109.1 billion in 2024 — nearly 12 times China's $9.3 billion ... 40 notable AI models versus China's 15",
+   "update": "Stanford HAI 2026 AI Index: $285.9B vs $12.4B in 2025 (23.1x); notable models 2025 US 50 or 59 vs China 30 or 35 (CONTESTED).",
+   "source": "data/geography.json (Stanford HAI 2026)",
+   "url": "https://hai.stanford.edu/ai-index/2026-ai-index-report/economy"
+  },
+  {
+   "page": 934,
+   "text": "On the Tortoise Global AI Index 2024 ... US 100 versus China's 53",
+   "update": "Superseded: an Observer Global AI Index (Dec 2025) reportedly scores China 74 - single secondary source; verify before use or drop the Tortoise line.",
+   "source": "secondtalent.com (secondary)",
+   "url": "https://www.secondtalent.com/resources/countries-leading-ai-development/"
+  },
+  {
+   "page": 934,
+   "text": "Nvidia's revenue from sovereign AI customers exceeded $30 billion in fiscal 2026",
+   "update": "Still the latest dollar figure; add FY2027 growth: >80% YoY in Q1 (May 2026) and reportedly >2x YoY, +35% QoQ in Q2 (Aug 2026).",
+   "source": "Nvidia Q1 FY2027 transcript; CryptoBriefing",
+   "url": "https://www.fool.com/earnings/call-transcripts/2026/05/20/nvidia-nvda-q1-2027-earnings-transcript/"
+  },
+  {
+   "page": 934,
+   "text": "Singapore funded SEA-LION with roughly $52 million to serve 11 Southeast Asian languages",
+   "update": "Verify funding basis (national programme vs SEA-LION). Note SEA-LION v4 is built on Google Gemma 3 and an Alibaba Qwen variant (Nov 2025); ~235,000 downloads (May 2025).",
+   "source": "TechNode; Malay Mail",
+   "url": "https://technode.com/2025/11/25/singapores-national-ai-program-drops-meta-model-and-switches-to-alibabas-qwen/"
+  },
+  {
+   "page": 957,
+   "text": "It is now OpenAI's second-largest market with 100 million weekly ChatGPT users",
+   "update": "India became ChatGPT's largest market by WAU (OpenAI India MD, 3 Nov 2026).",
+   "source": "Inc42 / Economic Times",
+   "url": "https://inc42.com/buzz/india-becomes-chatgpts-largest-market-globally-user-base-doubles-since-january/"
+  },
+  {
+   "page": 957,
+   "text": "34,000+ subsidized GPUs ... More than 38,000 GPUs have since been onboarded",
+   "update": "Tile and FAQ still say 34,000+; use 38,231 (Mar 2026) everywhere and add the +20,000 announcement.",
+   "source": "IANS",
+   "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022"
+  },
+  {
+   "page": 957,
+   "text": "Krutrim trained a model on 2 trillion-plus tokens spanning 22 Indian languages",
+   "update": "Krutrim's Kruti assistant went offline Apr 2026; company pivoted to AI cloud after three layoff rounds.",
+   "source": "Outlook Business",
+   "url": "https://www.outlookbusiness.com/corporate/bhavish-aggarwals-ai-bet-hits-another-snag-as-kruti-goes-offline"
+  },
+  {
+   "page": 957,
+   "text": "BharatGen, Gnani.ai, and Soket AI round out a growing sovereign stack",
+   "update": "Add: 12 IndiaAI foundation-model teams; BharatGen Param2 17B (Feb 2026); Soket EKA-1 26.3B (3 Nov 2026); Gnani Inya VoiceOS 5B.",
+   "source": "Business Standard; Swarajya",
+   "url": "https://swarajyamag.com/tech/indiaai-mission-unveils-three-indigenous-ai-models-as-soket-launches-eka-1-and-zenteiq-releases-dhr-2b-and-5b"
+  },
+  {
+   "page": 955,
+   "text": "Falcon family has been downloaded more than 45 million times",
+   "update": "55M+ (TII, 2025).",
+   "source": "Mobile World Live",
+   "url": "https://www.mobileworldlive.com/middle-east-and-north-africa/arabic-language-falcon-ai-model-takes-flight/"
+  },
+  {
+   "page": 955,
+   "text": "G42's Inception has released a family of 20 open-source Jais models ... 590M to 70B",
+   "update": "Add Jais 2 (70B, from scratch, 9 Dec 2025) and K2 Think V2 (70B, fully open, Jan 2026).",
+   "source": "WAM / MBZUAI",
+   "url": "https://www.wam.ae/en/article/bn4kwsw-inception-cerebras-mbzuai-release-jais"
+  },
+  {
+   "page": 955,
+   "text": "The first 200-megawatt phase is expected to go live in 2026",
+   "update": "Not live as of Nov 2026 (Epoch: 0 MW; projected Dec 2026).",
+   "source": "Epoch AI",
+   "url": "https://epoch.ai/data/data-centers"
+  },
+  {
+   "page": 956,
+   "text": "France's Mistral AI reached a $14 billion (€12 billion) valuation in September 2025 ... Europe's most valuable AI lab",
+   "update": "€21B+ post-money Series D, 8 Sep 2026 (Samsung-led).",
+   "source": "tech.eu",
+   "url": "https://tech.eu/2026/09/08/mistral-secures-eur3b-series-d-to-push-sovereign-ai-into-its-next-phase/"
+  },
+  {
+   "page": 956,
+   "text": "Add Germany's Aleph Alpha and Black Forest Labs",
+   "update": "Aleph Alpha being acquired by Canada's Cohere (Apr 2026).",
+   "source": "tech.eu",
+   "url": "https://tech.eu/2026/04/24/aleph-alpha-to-be-acquired-by-cohere/"
+  },
+  {
+   "page": 956,
+   "text": "a €20 billion fund for AI gigafactories ... An informal call drew 77 proposals",
+   "update": "Formal call for up to 7 gigafactories closed 12 Nov 2026; awards early 2027.",
+   "source": "Anadolu",
+   "url": "https://aa.com.tr/en/economy/eu-launches-tender-for-up-to-7-ai-gigafactories/4013865"
+  },
+  {
+   "page": 954,
+   "text": "Alibaba's Qwen crossed 1 billion cumulative downloads on Hugging Face in 2026",
+   "update": "Scope it: ATOM counts 942.1M HF downloads by Mar 2026; HF's summer 2026 report counts 2.05B Qwen downloads in Jan-Aug 2026 and 151,448 derivatives; Alibaba says 3B across channels (Aug 2026).",
+   "source": "ATOM; Hugging Face; Bloomberg",
+   "url": "https://arxiv.org/abs/2604.07190"
+  },
+  {
+   "page": 954,
+   "text": "Their common playbook is open weights.",
+   "update": "Add: MOFCOM/MOST draft export controls (16 Oct 2026; comments to 15 Nov) cover 23 AI technologies including model weights.",
+   "source": "Business Standard",
+   "url": "https://www.business-standard.com/technology/tech-news/china-ai-export-controls-open-weight-models-126101900723_1.html"
+  },
+  {
+   "page": 1266,
+   "text": "Perplexity holds ~48% share — not because Russians prefer answer engines",
+   "update": "Unsupported. Statcounter Jun 2026: ChatGPT 48.68%, Perplexity 31.5% (referrals); 2025 traffic: ChatGPT ~40%, DeepSeek 27.8%, GigaChat 7.3%. Correction-log entry required.",
+   "source": "Statcounter; Kommersant / 3DNews",
+   "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/russian-federation"
+  },
+  {
+   "page": 1266,
+   "text": "Doubao (382M MAU), Alibaba's Qianwen (167M ...) and DeepSeek (130M)",
+   "update": "Sep 2026 QuestMobile: Doubao 419.08M, Qwen 158.17M, DeepSeek 122.65M.",
+   "source": "QuestMobile via FourWeekMBA",
+   "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/"
+  },
+  {
+   "page": 1266,
+   "text": "Korea on HyperCLOVA X ... South Korea | HyperCLOVA X — Naver (local-language) | ChatGPT (global tasks)",
+   "update": "Clova X closed Apr 2026; Naver eliminated from national project Jan 2026; ChatGPT app 18.76M MAU (Oct 2026). Naver's ~63% search share (InternetTrend 2025: 62.86%) still holds; Google app overtook Naver app MAU Jul-Aug 2026.",
+   "source": "Mobile Index; Naver; Korea Times",
+   "url": "https://koreatimes.co.kr/business/tech-science/20260811/google-surpasses-naver-in-monthly-average-users-in-korea-for-1st-time"
+  },
+  {
+   "page": 1266,
+   "text": "Fugaku-LLM in Japan's public sector / Japan | ... Fugaku-LLM (public sector)",
+   "update": "No evidence of adoption; government trial uses tsuzumi 2, Takane 32B, PLaMo 2.0 Prime (Jul 2026).",
+   "source": "Dempa Digital",
+   "url": "https://dempa-digital.com/article/720178"
+  },
+  {
+   "page": 1266,
+   "text": "India | ChatGPT (198M users, #2 country)",
+   "update": "India now ChatGPT's largest market by WAU (3 Nov 2026).",
+   "source": "Inc42 / ET",
+   "url": "https://inc42.com/buzz/india-becomes-chatgpts-largest-market-globally-user-base-doubles-since-january/"
+  },
+  {
+   "page": 374,
+   "text": "Japan budgeted ¥1.23 trillion ... of which ¥387.3B is AI-specific",
+   "update": "¥387.3B is also reported as FY2026 aid to the Noetra/AIST national physical-AI model; confirm it is the same line and say so.",
+   "source": "Kyodo via Adnkronos",
+   "url": "https://english.adnkronos.com/2026/06/30/japan-to-provide-aid-for-domestic-ai-development-project/"
+  },
+  {
+   "page": 375,
+   "text": "India's ≥10,000-GPU IndiaAI Mission",
+   "update": "38,231 GPUs onboarded (Mar 2026).",
+   "source": "IANS",
+   "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022"
+  }
+ ],
+ "sources": [
+  {
+   "name": "Epoch AI - OpenAI Stargate: where the US sites stand (17 Apr 2026, upd. 23 Apr)",
+   "url": "https://epoch.ai/publications/openai-stargate-where-the-us-sites-stand",
+   "accessed": "2026-11-12",
+   "access": "opened (HIGH)"
+  },
+  {
+   "name": "Epoch AI - Frontier Data Centers dataset (data_centers.csv, data_center_timelines.csv)",
+   "url": "https://epoch.ai/data/data-centers",
+   "accessed": "2026-11-12",
+   "access": "downloaded (HIGH)"
+  },
+  {
+   "name": "Epoch AI - GPU Clusters dataset (gpu_clusters.csv)",
+   "url": "https://epoch.ai/data/gpu-clusters",
+   "accessed": "2026-11-12",
+   "access": "downloaded (HIGH)"
+  },
+  {
+   "name": "Report AI site corpus 2026-11-10 (pages 934, 954, 955, 956, 957, 1266, 374, 375, 861, 1654)",
+   "url": "content-ops/state-of-ai/site-corpus-2026-11-10.txt",
+   "accessed": "2026-11-12",
+   "access": "local"
+  },
+  {
+   "name": "Report AI state-of-ai data/geography.json and narrative/geography.json; data/spending.json",
+   "url": "content-ops/state-of-ai/data/",
+   "accessed": "2026-11-12",
+   "access": "local"
+  },
+  {
+   "name": "CNAS Insights - Sovereign AI's second wave (20 Aug 2026); CNAS Sovereign AI Index",
+   "url": "https://interactives.cnas.org/reports/sovereign-ai-index/",
+   "access": "search summary (MEDIUM)"
+  },
+  {
+   "name": "CNAS Insights - A Closing Door on Open Weights (26 Oct 2026)",
+   "url": "https://www.cnas.org/publications/cnas-insights/cnas-insights-a-closing-door-on-open-weights-implications-for-ai-sovereignty",
+   "access": "search summary"
+  },
+  {
+   "name": "Counterpoint Research - Sovereign AI LLM Index H1 2026 (21 Sep 2026)",
+   "url": "https://counterpointresearch.com/en/insights/56-of-sovereign-ai-llms-are-adapted-models-with-metas-llama-the-dominant-base",
+   "access": "search summary"
+  },
+  {
+   "name": "Stanford HAI - AI Sovereignty's Definitional Dilemma (17 Feb 2026)",
+   "url": "https://hai.stanford.edu/news/ai-sovereigntys-definitional-dilemma",
+   "access": "search summary"
+  },
+  {
+   "name": "Hugging Face - State of Open Source on Hugging Face: Spring 2026",
+   "url": "https://huggingface.co/blog/huggingface/state-of-os-hf-spring-2026",
+   "access": "blocked; secondary coverage"
+  },
+  {
+   "name": "ATOM Report: Measuring the Open Language Model Ecosystem (arXiv 2604.07190)",
+   "url": "https://arxiv.org/abs/2604.07190",
+   "access": "blocked; secondary coverage"
+  },
+  {
+   "name": "QuestMobile Q3 2026 AI app data via FourWeekMBA / 36Kr",
+   "url": "https://fourweekmba.com/ai-bytedances-doubao-hits-419m-users-daily-base-6x-qwens/",
+   "access": "search summary"
+  },
+  {
+   "name": "Korea national foundation-model project: Korea Times (20 Feb, 27 Aug 2026), Asiae, Herald",
+   "url": "https://koreatimes.co.kr/business/tech-science/20260827/motif-challenges-national-ai-model-project-after-elimination",
+   "access": "search summary"
+  },
+  {
+   "name": "Japan Digital Agency Gennai domestic-LLM trial - Dempa Digital (10 Jul 2026); digital.go.jp result PDF (6 Mar 2026)",
+   "url": "https://dempa-digital.com/article/720178",
+   "access": "search summary"
+  },
+  {
+   "name": "Mistral Series D - tech.eu (8 Sep 2026); Orrick",
+   "url": "https://tech.eu/2026/09/08/mistral-secures-eur3b-series-d-to-push-sovereign-ai-into-its-next-phase/",
+   "access": "search summary"
+  },
+  {
+   "name": "HUMAIN-Nvidia 84 MW expansion - The National (22 Oct 2026)",
+   "url": "https://www.thenationalnews.com/future/technology/2026/10/22/saudi-arabias-humain-expands-nvidia-deal-with-84mw-ai-computing-plan/",
+   "access": "search summary"
+  },
+  {
+   "name": "EU AI Gigafactories call - Anadolu Agency",
+   "url": "https://aa.com.tr/en/economy/eu-launches-tender-for-up-to-7-ai-gigafactories/4013865",
+   "access": "search summary"
+  },
+  {
+   "name": "IndiaAI GPUs - IANS (25 Mar 2026); Business Today (18 Feb 2026)",
+   "url": "https://ianslive.in/indiaai-mission-onboards-38000-gpus-190-projects-approved-jitin-prasada--20260325172022",
+   "access": "search summary"
+  },
+  {
+   "name": "Russia AI traffic shares - 3DNews / Kommersant",
+   "url": "https://3dnews.ru/1133039",
+   "access": "search summary"
+  },
+  {
+   "name": "Statcounter AI chatbot market share (Russia, France)",
+   "url": "https://gs.statcounter.com/ai-chatbot-market-share/all/russian-federation",
+   "access": "blocked; search summary"
+  },
+  {
+   "name": "Other per-model sources: see each metric's url field",
+   "url": null,
+   "access": "search summaries (MEDIUM)"
+  }
+ ],
+ "blocked_hosts": {
+  "method": "curl via agent proxy (HTTP 000 / CONNECT 403) and WebFetch (ENOTFOUND). Reachable: epoch.ai, en.wikipedia.org, github.com. All other figures came via WebSearch summaries.",
+  "hosts": [
+   "3dnews.ru",
+   "a16z.com",
+   "aisingapore.org",
+   "alia.gob.es",
+   "artificialanalysis.ai",
+   "arxiv.org",
+   "cohere.com",
+   "digital-strategy.ec.europa.eu",
+   "ec.europa.eu",
+   "economictimes.indiatimes.com",
+   "en.yna.co.kr",
+   "ethz.ch",
+   "falconllm.tii.ae",
+   "gs.statcounter.com",
+   "huggingface.co",
+   "indiaai.gov.in",
+   "ised-isde.canada.ca",
+   "issai.nu.edu.kz",
+   "lelapa.ai",
+   "llm-jp.nii.ac.jp",
+   "lmarena.ai",
+   "mistral.ai",
+   "nvidianews.nvidia.com",
+   "openai.com",
+   "openeurollm.eu",
+   "opengpt-x.de",
+   "openrouter.ai",
+   "restofworld.org",
+   "sakana.ai",
+   "sifted.eu",
+   "taide.tw",
+   "techcrunch.com",
+   "venturebeat.com",
+   "www.ai.sg",
+   "www.aleph-alpha.com",
+   "www.arabnews.com",
+   "www.atomproject.ai",
+   "www.bloomberg.com",
+   "www.canada.ca",
+   "www.cnbc.com",
+   "www.datacenterdynamics.com",
+   "www.etnews.com",
+   "www.eurohpc-ju.europa.eu",
+   "www.euronews.com",
+   "www.ft.com",
+   "www.gov.uk",
+   "www.gpt-nl.nl",
+   "www.humain.com",
+   "www.ithome.com.tw",
+   "www.kommersant.ru",
+   "www.korea.net",
+   "www.koreaherald.com",
+   "www.koreatimes.co.kr",
+   "www.latamgpt.org",
+   "www.lawfaremedia.org",
+   "www.lgresearch.ai",
+   "www.livemint.com",
+   "www.mediascope.net",
+   "www.meti.go.jp",
+   "www.msit.go.kr",
+   "www.navercorp.com",
+   "www.ntt.com",
+   "www.pib.gov.in",
+   "www.preferred.jp",
+   "www.reuters.com",
+   "www.sarvam.ai",
+   "www.scmp.com",
+   "www.semianalysis.com",
+   "www.similarweb.com",
+   "www.sktelecom.com",
+   "www.softbank.jp",
+   "www.swiss-ai.org",
+   "www.thenationalnews.com",
+   "www.tii.ae",
+   "www.tortoisemedia.com",
+   "www.upstage.ai"
+  ],
+  "most_needed": [
+   "huggingface.co (model-card and API download counts)",
+   "lmarena.ai and artificialanalysis.ai (leaderboards by country)",
+   "openrouter.ai (token share)",
+   "arxiv.org (ATOM report tables)",
+   "gs.statcounter.com (country chatbot shares)",
+   "www.pib.gov.in / indiaai.gov.in (GPU counts)"
+  ]
+ }
+}
