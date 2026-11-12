@@ -1,9 +1,9 @@
 // Keeps a language catalogue in step with the code. Reads i18n/labels.json (from extract.cjs) and
 // i18n/<lang>.json, then: keeps every existing translation, adds new English texts as "new",
 // and marks texts no longer in the code as "stale" (kept, so a wording change can reuse them).
-// Usage: node i18n/sync.cjs fr        (from the trainyard folder; with --check, exits 1 while a class text (phase 1) has no translation)
+// Usage: node i18n/sync.cjs fr-CA        (from the trainyard folder; with --check, exits 1 while a class text (phase 1) has no translation)
 const fs = require("fs"), path = require("path");
-const lang = process.argv[2] || "fr", check = process.argv.includes("--check");
+const lang = process.argv[2] || "fr-CA", check = process.argv.includes("--check");
 const dir = __dirname, labels = JSON.parse(fs.readFileSync(path.join(dir, "labels.json"), "utf8"));
 const file = path.join(dir, `${lang}.json`);
 const cat = fs.existsSync(file) ? JSON.parse(fs.readFileSync(file, "utf8")) : {};

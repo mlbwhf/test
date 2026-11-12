@@ -78,7 +78,7 @@
   "where": "apps/web/lib/public.ts:205"
  },
  "-week iteration; adjust for part-time members. Subtract one point for every vacation day and holiday. Assign one point to a story that takes about half a day to develop and half a day to test and validate, and estimate every other story relative to it.": {
-  "fr": " semaines ; ajustez pour les membres à temps partiel. Retirez un point par jour de congé et jour férié. Attribuez un point à un récit qui demande environ une demi-journée de développement et une demi-journée de test et de validation, puis estimez chaque autre récit par rapport à celui-ci.",
+  "fr": " semaines; ajustez pour les membres à temps partiel. Retirez un point par jour de congé et jour férié. Attribuez un point à un récit qui demande environ une demi-journée de développement et une demi-journée de test et de validation, puis estimez chaque autre récit par rapport à celui-ci.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:927",
@@ -183,7 +183,7 @@
   "where": "apps/web/components/ainative.tsx:215 apps/web/components/ainative.tsx:226"
  },
  ", synchronize with cross-domain planning": {
-  "fr": " ; synchroniser avec la planification inter-domaines",
+  "fr": "; synchroniser avec la planification inter-domaines",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:53",
@@ -239,7 +239,7 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:1331"
  },
  "; preserve options": {
-  "fr": " ; préserver les options",
+  "fr": "; préserver les options",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:53"
@@ -351,7 +351,7 @@
   "note": "fragment appended to a sentence; 'it' assumed to be a card/note (feminine)"
  },
  ". Auto-picked from points; tap a size to override.": {
-  "fr": ". Choisie automatiquement d’après les points ; touchez une taille pour la remplacer.",
+  "fr": ". Choisie automatiquement d’après les points; touchez une taille pour la remplacer.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:687",
@@ -589,7 +589,7 @@
   "where": "apps/web/components/studio-views-lsa.tsx:230"
  },
  "· emailed": {
-  "fr": "· envoyé par e-mail",
+  "fr": "· envoyé par courriel",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:310"
@@ -895,7 +895,7 @@
   "where": "packages/core/src/ainative.ts:35"
  },
  "\"{0}\" takes {1}% of the {2} budget; the limit is {3}%.": {
-  "fr": "« {0} » représente {1} % du budget {2} ; la limite est de {3} %.",
+  "fr": "« {0} » représente {1} % du budget {2}; la limite est de {3} %.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/portfolio.ts:224"
@@ -949,7 +949,7 @@
   "where": "apps/web/components/landing.tsx:739"
  },
  "(emailed ones are already on their way)": {
-  "fr": "(ceux envoyés par e-mail sont déjà en route)",
+  "fr": "(ceux envoyés par courriel sont déjà en route)",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:305"
@@ -1073,7 +1073,7 @@
   "where": "apps/web/app/(app)/admin/page.tsx:79"
  },
  "). What is one change that would move it up a point?": {
-  "fr": "). Quel changement le ferait progresser d’un point ?",
+  "fr": "). Quel changement le ferait progresser d’un point?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:425",
@@ -1311,28 +1311,28 @@
   "where": "packages/core/src/lanes.ts:65"
  },
  "{0} is in and has been emailed the class link.": {
-  "fr": "{0} est ajouté et a reçu le lien de la formation par e-mail.",
+  "fr": "{0} est ajouté et a reçu le lien de la formation par courriel.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:425",
   "note": "gender: masculine assumed"
  },
  "{0} is in; they can open the class from their Classes list.": {
-  "fr": "{0} est ajouté ; il peut ouvrir la formation depuis sa liste Formations.",
+  "fr": "{0} est ajouté; il peut ouvrir la formation depuis sa liste Formations.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:425",
   "note": "gender: masculine assumed"
  },
  "{0} is in: an email with a code to choose a password is on its way.": {
-  "fr": "{0} est ajouté : un e-mail avec un code pour choisir un mot de passe est en route.",
+  "fr": "{0} est ajouté : un courriel avec un code pour choisir un mot de passe est en route.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:425",
   "note": "gender: masculine assumed"
  },
  "{0} is in. Mail is off here: ask them to sign up with {1} and use “Forgot password” to set one.": {
-  "fr": "{0} est ajouté. L’envoi d’e-mails est désactivé ici : demandez-lui de s’inscrire avec {1} et d’utiliser « Mot de passe oublié » pour en définir un.",
+  "fr": "{0} est ajouté. L’envoi de courriels est désactivé ici : demandez-lui de s’inscrire avec {1} et d’utiliser « Mot de passe oublié » pour en définir un.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:425",
@@ -1499,7 +1499,7 @@
   "where": "apps/web/components/okr-explorer.tsx:163"
  },
  "{0}: a kanban with {1}. Open it from the menu on the left; each lesson is a ticket to drag from {2} to {3} as the day goes on.": {
-  "fr": "{0} : un kanban avec {1}. Ouvrez-le depuis le menu de gauche ; chaque leçon est un ticket à faire glisser de {2} vers {3} au fil de la journée.",
+  "fr": "{0} : un kanban avec {1}. Ouvrez-le depuis le menu de gauche; chaque leçon est un ticket à faire glisser de {2} vers {3} au fil de la journée.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:149"
@@ -1523,7 +1523,7 @@
   "where": "packages/core/src/insights.ts:358"
  },
  "{0}% of finished work in {1} was enablers; the floor is {2}%.": {
-  "fr": "{0} % du travail terminé en {1} concernait des enablers ; le plancher est de {2} %.",
+  "fr": "{0} % du travail terminé en {1} concernait des enablers; le plancher est de {2} %.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/portfolio.ts:254"
@@ -2463,7 +2463,7 @@
   "where": "apps/web/components/studio-views.tsx:265"
  },
  "▼ WHY?": {
-  "fr": "▼ POURQUOI ?",
+  "fr": "▼ POURQUOI?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:262 apps/web/components/studio-views.tsx:266"
@@ -2715,13 +2715,13 @@
   "where": "apps/web/app/pricing/page.tsx:52"
  },
  "€31M from online shopping; payments and fulfilment are not monetised separately and are valued by the shopper trust they keep.": {
-  "fr": "31 M€ issus des achats en ligne ; les paiements et l’exécution des commandes ne sont pas monétisés séparément et sont valorisés par la confiance des clients qu’ils préservent.",
+  "fr": "31 M€ issus des achats en ligne; les paiements et l’exécution des commandes ne sont pas monétisés séparément et sont valorisés par la confiance des clients qu’ils préservent.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:653"
  },
  "€6.8M a year, two thirds on people; the payment gateway contract and cloud spend are the biggest external costs.": {
-  "fr": "6,8 M€ par an, dont deux tiers en personnel ; le contrat de passerelle de paiement et les dépenses cloud sont les principaux coûts externes.",
+  "fr": "6,8 M€ par an, dont deux tiers en personnel; le contrat de passerelle de paiement et les dépenses cloud sont les principaux coûts externes.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:652",
@@ -2914,13 +2914,13 @@
   "where": "apps/web/components/studio-views.tsx:310"
  },
  "1 · WHICH SAFe EVENTS AND ACTIVITIES HELP ESTABLISH TRUST? 2 · CLICK THEM ON THE BIG PICTURE AND SAY WHY": {
-  "fr": "1 · QUELS ÉVÉNEMENTS ET ACTIVITÉS SAFe AIDENT À ÉTABLIR LA CONFIANCE ? 2 · CLIQUEZ DESSUS DANS LE BIG PICTURE ET EXPLIQUEZ POURQUOI",
+  "fr": "1 · QUELS ÉVÉNEMENTS ET ACTIVITÉS SAFe AIDENT À ÉTABLIR LA CONFIANCE? 2 · CLIQUEZ DESSUS DANS LE BIG PICTURE ET EXPLIQUEZ POURQUOI",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:96"
  },
  "1 · Who are we empathizing with?": {
-  "fr": "1 · Avec qui faisons-nous preuve d’empathie ?",
+  "fr": "1 · Avec qui faisons-nous preuve d’empathie?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3147,7 +3147,7 @@
   "where": "apps/web/components/studio-views.tsx:510"
  },
  "2 · HOW DOES YOUR ART KANBAN SUPPORT VISUALIZING THESE METRICS? WHAT ADJUSTMENTS WOULD HELP YOU SEE OR TRACK FLOW MORE EFFECTIVELY?": {
-  "fr": "2 · COMMENT VOTRE KANBAN D’ART AIDE-T-IL À VISUALISER CES MÉTRIQUES ? QUELS AJUSTEMENTS VOUS AIDERAIENT À VOIR OU À SUIVRE LE FLUX PLUS EFFICACEMENT ?",
+  "fr": "2 · COMMENT VOTRE KANBAN D’ART AIDE-T-IL À VISUALISER CES MÉTRIQUES? QUELS AJUSTEMENTS VOUS AIDERAIENT À VOIR OU À SUIVRE LE FLUX PLUS EFFICACEMENT?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:317"
@@ -3189,7 +3189,7 @@
   "where": "packages/core/src/classes.ts:520"
  },
  "2 · What do they need to do?": {
-  "fr": "2 · Que doivent-ils faire ?",
+  "fr": "2 · Que doivent-ils faire?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3201,7 +3201,7 @@
   "where": "apps/web/components/ainative.tsx:549"
  },
  "2 · WHICH SAFe VALUE(S), PRINCIPLE(S) OR PRACTICE(S) WILL GUIDE YOU?": {
-  "fr": "2 · QUELS VALEURS, PRINCIPES OU PRATIQUES SAFe VOUS GUIDERONT ?",
+  "fr": "2 · QUELS VALEURS, PRINCIPES OU PRATIQUES SAFe VOUS GUIDERONT?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:141"
@@ -3268,7 +3268,7 @@
   "note": "Fragment; closing » must be in the following text."
  },
  "3 · HOW WOULD YOU FACILITATE IT? FOCUS ON HOW YOU FIND THE SOLUTION IN PI PLANNING, NOT WHAT THE SOLUTION IS": {
-  "fr": "3 · COMMENT LE FACILITERIEZ-VOUS ? CONCENTREZ-VOUS SUR LA MANIÈRE DE TROUVER LA SOLUTION EN PI PLANNING, PAS SUR LA SOLUTION ELLE-MÊME",
+  "fr": "3 · COMMENT LE FACILITERIEZ-VOUS? CONCENTREZ-VOUS SUR LA MANIÈRE DE TROUVER LA SOLUTION EN PI PLANNING, PAS SUR LA SOLUTION ELLE-MÊME",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:520"
@@ -3305,13 +3305,13 @@
   "where": "apps/web/components/studio-views.tsx:82"
  },
  "3 · What do they see?": {
-  "fr": "3 · Que voient-ils ?",
+  "fr": "3 · Que voient-ils?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
  },
  "3 · WHICH QUALITIES DOES IT MEET?": {
-  "fr": "3 · QUELLES QUALITÉS REMPLIT-ELLE ?",
+  "fr": "3 · QUELLES QUALITÉS REMPLIT-ELLE?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:894"
@@ -3419,7 +3419,7 @@
   "where": "apps/web/components/planning-views.tsx:896"
  },
  "4 · What do they say?": {
-  "fr": "4 · Que disent-ils ?",
+  "fr": "4 · Que disent-ils?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3479,7 +3479,7 @@
   "where": "packages/core/src/classes.ts:244 packages/core/src/templates.ts:83 packages/core/src/templates.ts:220"
  },
  "5 · What do they do?": {
-  "fr": "5 · Que font-ils ?",
+  "fr": "5 · Que font-ils?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3563,7 +3563,7 @@
   "where": "packages/core/src/classes.ts:520"
  },
  "6 · What do they hear?": {
-  "fr": "6 · Qu’entendent-ils ?",
+  "fr": "6 · Qu’entendent-ils?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3599,13 +3599,13 @@
   "where": "packages/core/src/valuestreams.ts:160"
  },
  "7 · What do they think and feel? Gains": {
-  "fr": "7 · Que pensent-ils et ressentent-ils ? Gains",
+  "fr": "7 · Que pensent-ils et ressentent-ils? Gains",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
  },
  "7 · What do they think and feel? Pains": {
-  "fr": "7 · Que pensent-ils et ressentent-ils ? Difficultés",
+  "fr": "7 · Que pensent-ils et ressentent-ils? Difficultés",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:463"
@@ -3779,7 +3779,7 @@
   "where": "apps/web/components/planning-views.tsx:373"
  },
  "A fiduciary expresses concerns that the move away from project funding is going to lead to a loss of control over how investments are allocated. What can you do to help the fiduciary work through this concern?": {
-  "fr": "Un responsable fiduciaire craint que l’abandon du financement par projet entraîne une perte de contrôle sur l’allocation des investissements. Que pouvez-vous faire pour l’aider à surmonter cette préoccupation ?",
+  "fr": "Un responsable fiduciaire craint que l’abandon du financement par projet entraîne une perte de contrôle sur l’allocation des investissements. Que pouvez-vous faire pour l’aider à surmonter cette préoccupation?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:116",
@@ -3828,7 +3828,7 @@
   "where": "packages/core/src/ainative.ts:140"
  },
  "A live view of the record; open it to edit.": {
-  "fr": "Une vue en direct de l’enregistrement ; ouvrez-le pour le modifier.",
+  "fr": "Une vue en direct de l’enregistrement; ouvrez-le pour le modifier.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:1064"
@@ -3852,7 +3852,7 @@
   "where": "packages/core/src/cards.ts:46"
  },
  "A measure of everything; the safest, slowest story.": {
-  "fr": "Un peu de tout ; l’option la plus sûre et la plus lente.",
+  "fr": "Un peu de tout; l’option la plus sûre et la plus lente.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:318",
@@ -3889,7 +3889,7 @@
   "where": "apps/web/components/landing.tsx:624"
  },
  "A new link; the old one stops working": {
-  "fr": "Un nouveau lien ; l’ancien cesse de fonctionner",
+  "fr": "Un nouveau lien; l’ancien cesse de fonctionner",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:378"
@@ -3919,7 +3919,7 @@
   "where": "apps/web/components/landing.tsx:491"
  },
  "A picture to work on, such as a framework diagram. It stays put; people connect to spots on it.": {
-  "fr": "Une image sur laquelle travailler, comme un schéma de cadre de référence. Elle reste fixe ; on se connecte à des points dessus.",
+  "fr": "Une image sur laquelle travailler, comme un schéma de cadre de référence. Elle reste fixe; on se connecte à des points dessus.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:716"
@@ -4081,7 +4081,7 @@
   "where": "apps/web/lib/public.ts:113"
  },
  "A very optimistic view of the world where the solution is a complete success. What will the ideal world look like in two years? Start with 'In 2 years time…'. Example: 'In 2 years time, we will be the leading POS solution in Europe.'": {
-  "fr": "Une vision très optimiste du monde où la solution est un succès total. À quoi ressemblera le monde idéal dans deux ans ? Commencez par « Dans 2 ans… ». Exemple : « Dans 2 ans, nous serons la solution de point de vente leader en Europe. »",
+  "fr": "Une vision très optimiste du monde où la solution est un succès total. À quoi ressemblera le monde idéal dans deux ans? Commencez par « Dans 2 ans… ». Exemple : « Dans 2 ans, nous serons la solution de point de vente leader en Europe. »",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:553"
@@ -5109,7 +5109,7 @@
   "where": "apps/web/components/class-students.tsx:468"
  },
  "Add each student&apos;s name and email. Everyone gets a personal link that opens this class board, with no account and no password. A link works until you replace it or remove the student.": {
-  "fr": "Ajoutez le nom et l’e-mail de chaque participant. Chacun reçoit un lien personnel qui ouvre ce tableau de formation, sans compte ni mot de passe. Un lien fonctionne jusqu’à ce que vous le remplaciez ou retiriez le participant.",
+  "fr": "Ajoutez le nom et le courriel de chaque participant. Chacun reçoit un lien personnel qui ouvre ce tableau de formation, sans compte ni mot de passe. Un lien fonctionne jusqu’à ce que vous le remplaciez ou retiriez le participant.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:155"
@@ -5350,7 +5350,7 @@
   "where": "packages/core/src/canvases.ts:317"
  },
  "Addressed; the risk is no longer a concern": {
-  "fr": "Traité ; le risque n’est plus une préoccupation",
+  "fr": "Traité; le risque n’est plus une préoccupation",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:212",
@@ -5479,7 +5479,7 @@
   "note": "course name kept in English"
  },
  "Advanced: interview, challenge, break down, analysis, chain-of-thought?": {
-  "fr": "Avancé : entretien, contestation, décomposition, analyse, chaîne de pensée ?",
+  "fr": "Avancé : entretien, contestation, décomposition, analyse, chaîne de pensée?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -6186,7 +6186,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:267"
  },
  "All five stages described. Now compare: where does your ART skip a stage, or measure outputs instead of outcomes?": {
-  "fr": "Les cinq étapes sont décrites. Comparez maintenant : où votre ART saute-t-il une étape, ou mesure-t-il des livrables plutôt que des résultats ?",
+  "fr": "Les cinq étapes sont décrites. Comparez maintenant : où votre ART saute-t-il une étape, ou mesure-t-il des livrables plutôt que des résultats?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:76"
@@ -6794,7 +6794,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:50"
  },
  "Apply cadence; synchronize with cross-domain planning": {
-  "fr": "Appliquer une cadence ; synchroniser avec la planification inter-domaines",
+  "fr": "Appliquer une cadence; synchroniser avec la planification inter-domaines",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:438"
@@ -6934,7 +6934,7 @@
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:157"
  },
  "Archive this class? Students' links close and the class leaves your list; you keep it, can download it, and can reopen it. Archived classes are deleted after the retention period, with the record emailed to you first.": {
-  "fr": "Archiver cette formation ? Les liens des participants sont désactivés et la formation disparaît de votre liste ; vous la conservez, pouvez la télécharger et la rouvrir. Les formations archivées sont supprimées après la durée de conservation, après envoi du dossier par e-mail.",
+  "fr": "Archiver cette formation? Les liens des participants sont désactivés et la formation disparaît de votre liste; vous la conservez, pouvez la télécharger et la rouvrir. Les formations archivées sont supprimées après la durée de conservation, après envoi du dossier par courriel.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:154"
@@ -6952,7 +6952,7 @@
   "where": "apps/web/components/board-list.tsx:99"
  },
  "Are all team members attending PI Planning, whether in person or involved remotely?": {
-  "fr": "Tous les membres des équipes participent-ils au PI Planning, en présentiel ou à distance ?",
+  "fr": "Tous les membres des équipes participent-ils au PI Planning, en présentiel ou à distance?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:532"
@@ -6965,7 +6965,7 @@
   "note": "Gender assumes two épopées/solutions (f.)."
  },
  "are in the room?": {
-  "fr": "sont dans la salle ?",
+  "fr": "sont dans la salle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:258",
@@ -7002,13 +7002,13 @@
   "where": "packages/core/src/ainative.ts:417"
  },
  "Are you discussing trade-offs and conflicting priorities with your Business Owners?": {
-  "fr": "Discutez-vous des arbitrages et des priorités contradictoires avec vos responsables d’affaires ?",
+  "fr": "Discutez-vous des arbitrages et des priorités contradictoires avec vos responsables d’affaires?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:236"
  },
  "Are you discussing tradeoffs and conflicting priorities with your Business Owners?": {
-  "fr": "Discutez-vous des compromis et des priorités contradictoires avec vos responsables d’affaires ?",
+  "fr": "Discutez-vous des compromis et des priorités contradictoires avec vos responsables d’affaires?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
@@ -7542,7 +7542,7 @@
   "where": "apps/web/components/handout-scenarios.ts:192"
  },
  "As a book commentator, I can receive an email notification based on my personal notification schedule to comment on a book I already purchased, so that I can more easily share my opinions even though I have a busy life.": {
-  "fr": "En tant que commentateur de livres, je reçois un rappel par e-mail, selon mon calendrier de notifications personnel, pour commenter un livre déjà acheté, afin de partager plus facilement mon avis malgré une vie bien remplie.",
+  "fr": "En tant que commentateur de livres, je reçois un rappel par courriel, selon mon calendrier de notifications personnel, pour commenter un livre déjà acheté, afin de partager plus facilement mon avis malgré une vie bien remplie.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:188"
@@ -7688,7 +7688,7 @@
   "where": "apps/web/components/handout-scenarios.ts:180"
  },
  "As a book rater, I can receive an email notification based on my personal notification schedule to rate a book I already purchased, so that I that I can more easily share my opinions even though I have a busy life.": {
-  "fr": "En tant qu’évaluateur de livres, je reçois un rappel par e-mail, selon mon calendrier de notifications personnel, pour noter un livre déjà acheté, afin de partager plus facilement mon avis malgré une vie bien remplie.",
+  "fr": "En tant qu’évaluateur de livres, je reçois un rappel par courriel, selon mon calendrier de notifications personnel, pour noter un livre déjà acheté, afin de partager plus facilement mon avis malgré une vie bien remplie.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:183"
@@ -8680,7 +8680,7 @@
   "where": "packages/core/src/classes.ts:283"
  },
  "Assume variability; preserve options": {
-  "fr": "Assumer la variabilité ; préserver les options",
+  "fr": "Assumer la variabilité; préserver les options",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:438"
@@ -8921,7 +8921,7 @@
   "where": "packages/core/src/frameworks.ts:385"
  },
  "Autonomous vehicles for delivery of commercial goods; Autonomous vehicles for public transportation of people": {
-  "fr": "Véhicules autonomes pour la livraison de marchandises commerciales ; véhicules autonomes pour le transport public de personnes",
+  "fr": "Véhicules autonomes pour la livraison de marchandises commerciales; véhicules autonomes pour le transport public de personnes",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43"
@@ -9030,7 +9030,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:36"
  },
  "Average profit margin, customer acquisition cost; Customer retention": {
-  "fr": "Marge bénéficiaire moyenne, coût d’acquisition client ; fidélisation des clients",
+  "fr": "Marge bénéficiaire moyenne, coût d’acquisition client; fidélisation des clients",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43"
@@ -9506,7 +9506,7 @@
   "note": "'Consolidated results' must match its section title."
  },
  "Big upfront plan and budget; hard to change mid-year.": {
-  "fr": "Gros plan et budget initiaux ; difficiles à modifier en cours d’année.",
+  "fr": "Gros plan et budget initiaux; difficiles à modifier en cours d’année.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:28"
@@ -9584,7 +9584,7 @@
   "where": "apps/web/components/planning-pages.tsx:349"
  },
  "Blank? Some sites do not allow being shown inside another page.": {
-  "fr": "Vide ? Certains sites ne peuvent pas s’afficher dans une autre page.",
+  "fr": "Vide? Certains sites ne peuvent pas s’afficher dans une autre page.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-board.tsx:852"
@@ -9930,7 +9930,7 @@
   "note": "'Plan' is a menu name; match its translation"
  },
  "Bring the room you set up under Plan → Planning room into this class? It replaces whatever this class's room holds.": {
-  "fr": "Importer dans cette formation la salle que vous avez configurée sous Planifier → Salle de planification ? Elle remplace tout le contenu actuel de la salle de cette formation.",
+  "fr": "Importer dans cette formation la salle que vous avez configurée sous Planifier → Salle de planification? Elle remplace tout le contenu actuel de la salle de cette formation.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/exercise-boards.tsx:251",
@@ -11137,7 +11137,7 @@
   "where": "packages/core/src/classes.ts:618"
  },
  "Case study 3: do we have the metrics we need?": {
-  "fr": "Étude de cas 3 : avons-nous les indicateurs nécessaires ?",
+  "fr": "Étude de cas 3 : avons-nous les indicateurs nécessaires?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:619"
@@ -11179,7 +11179,7 @@
   "where": "apps/web/components/studio-model.ts:556 apps/web/components/studio-model.ts:595"
  },
  "CAUSE TICKETS · EACH ARROW IS A “WHY?” · VOTE ON EACH TICKET BY ITSELF": {
-  "fr": "TICKETS DE CAUSE · CHAQUE FLÈCHE EST UN « POURQUOI ? » · VOTEZ SUR CHAQUE TICKET SÉPARÉMENT",
+  "fr": "TICKETS DE CAUSE · CHAQUE FLÈCHE EST UN « POURQUOI? » · VOTEZ SUR CHAQUE TICKET SÉPARÉMENT",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:256"
@@ -11209,7 +11209,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:192"
  },
  "Centralize or decentralize? Score each decision": {
-  "fr": "Centraliser ou décentraliser ? Notez chaque décision",
+  "fr": "Centraliser ou décentraliser? Notez chaque décision",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:522"
@@ -11993,7 +11993,7 @@
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:133"
  },
  "Clear the whole board, content and all?": {
-  "fr": "Vider tout le tableau, contenu compris ?",
+  "fr": "Vider tout le tableau, contenu compris?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:128"
@@ -12251,7 +12251,7 @@
   "where": "apps/web/app/privacy/page.tsx:67"
  },
  "Co-instructor email": {
-  "fr": "E-mail du co-formateur",
+  "fr": "Courriel du co-formateur",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:466"
@@ -12415,7 +12415,7 @@
   "where": "apps/web/components/class-students.tsx:465"
  },
  "Colleagues who run this class with you: the board, the students, the teams and the class record. A co-instructor uses no trainer seat: they run only the classes you add them to. A new colleague gets an email to choose a password.": {
-  "fr": "Collègues qui animent cette formation avec vous : le tableau, les participants, les équipes et le dossier de la formation. Un co-formateur n’utilise pas de siège de formateur : il anime uniquement les formations auxquelles vous l’ajoutez. Un nouveau collègue reçoit un e-mail pour choisir un mot de passe.",
+  "fr": "Collègues qui animent cette formation avec vous : le tableau, les participants, les équipes et le dossier de la formation. Un co-formateur n’utilise pas de siège de formateur : il anime uniquement les formations auxquelles vous l’ajoutez. Un nouveau collègue reçoit un courriel pour choisir un mot de passe.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:449"
@@ -12592,7 +12592,7 @@
   "where": "apps/web/components/studio-views-lsa.tsx:238"
  },
  "Committed?": {
-  "fr": "Engagé ?",
+  "fr": "Engagé?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:794 packages/core/src/inspectadapt.ts:21"
@@ -12677,7 +12677,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:49"
  },
  "Compare with a partner. Did your answers name the same OKR?": {
-  "fr": "Comparez avec un partenaire. Vos réponses citent-elles le même OKR ?",
+  "fr": "Comparez avec un partenaire. Vos réponses citent-elles le même OKR?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:101"
@@ -13175,7 +13175,7 @@
   "where": "apps/web/components/ainative.tsx:439"
  },
  "Context (optional): is there background info the AI needs?": {
-  "fr": "Contexte (facultatif) : l’IA a-t-elle besoin d’informations de fond ?",
+  "fr": "Contexte (facultatif) : l’IA a-t-elle besoin d’informations de fond?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -13664,7 +13664,7 @@
   "note": "unclear what 'COUNTS' means (counted toward capacity?)"
  },
  "Counts?": {
-  "fr": "Compte ?",
+  "fr": "Compte?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:182"
@@ -13700,7 +13700,7 @@
   "where": "apps/web/components/vs-breakdown.tsx:141"
  },
  "Crazy 8s: fold an A4 into 8; one minute per box": {
-  "fr": "Crazy 8s : pliez une feuille A4 en 8 ; une minute par case",
+  "fr": "Crazy 8s : pliez une feuille A4 en 8; une minute par case",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:559"
@@ -14262,7 +14262,7 @@
   "where": "packages/core/src/classes.ts:638"
  },
  "Customer insights: how might AI analysing large amounts of customer feedback change how you identify needs and define value?": {
-  "fr": "Connaissance client : comment l’analyse par l’IA de grandes quantités de retours clients pourrait-elle changer votre façon d’identifier les besoins et de définir la valeur ?",
+  "fr": "Connaissance client : comment l’analyse par l’IA de grandes quantités de retours clients pourrait-elle changer votre façon d’identifier les besoins et de définir la valeur?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:637"
@@ -14739,7 +14739,7 @@
   "where": "apps/web/components/studio-views-lsa.tsx:53"
  },
  "DECIDE FOR EACH: SAFE TO IMPLEMENT, OR THE WRONG PROBLEM?": {
-  "fr": "DÉCIDEZ POUR CHACUN : PEUT ÊTRE MIS EN ŒUVRE, OU MAUVAIS PROBLÈME ?",
+  "fr": "DÉCIDEZ POUR CHACUN : PEUT ÊTRE MIS EN ŒUVRE, OU MAUVAIS PROBLÈME?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:367"
@@ -14866,7 +14866,7 @@
   "where": "apps/web/components/studio-views-lpm.tsx:241"
  },
  "Defect count and cycle time; support call volume; escaped defects": {
-  "fr": "Nombre de défauts et temps de cycle ; volume d’appels au support ; défauts échappés",
+  "fr": "Nombre de défauts et temps de cycle; volume d’appels au support; défauts échappés",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:109"
@@ -15043,7 +15043,7 @@
   "where": "apps/web/components/board-list.tsx:53"
  },
  "Delete \"{0}\"? Students' links stop working and the planning room goes with it. A copy of the class record is emailed to you first; use \"Download record\" if you want it on this computer too.": {
-  "fr": "Supprimer « {0} » ? Les liens des participants cessent de fonctionner et la salle de planification est supprimée avec. Une copie du dossier de la formation vous est d’abord envoyée par e-mail ; utilisez « Télécharger le dossier » si vous la voulez aussi sur cet ordinateur.",
+  "fr": "Supprimer « {0} »? Les liens des participants cessent de fonctionner et la salle de planification est supprimée avec. Une copie du dossier de la formation vous est d’abord envoyée par courriel; utilisez « Télécharger le dossier » si vous la voulez aussi sur cet ordinateur.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:162",
@@ -15237,7 +15237,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:102"
  },
  "Delivery order insurance. Benefit hypothesis: allows users to purchase extra insurance for an existing delivery order. Acceptance criteria: access insurance catalog from account profile; display available insurance options; integrate with shopping cart; process payment. Map the activities or tasks across the top, then the stories under each, essential ones for this release above the line, future releases below.": {
-  "fr": "Assurance des commandes de livraison. Hypothèse de bénéfice : permet aux utilisateurs d’acheter une assurance supplémentaire pour une commande de livraison existante. Critères d’acceptation : accéder au catalogue d’assurances depuis le profil du compte ; afficher les options d’assurance disponibles ; intégrer au panier ; traiter le paiement. Placez les activités ou tâches en haut, puis les récits sous chacune : les récits essentiels pour cette livraison au-dessus de la ligne, ceux des livraisons futures en dessous.",
+  "fr": "Assurance des commandes de livraison. Hypothèse de bénéfice : permet aux utilisateurs d’acheter une assurance supplémentaire pour une commande de livraison existante. Critères d’acceptation : accéder au catalogue d’assurances depuis le profil du compte; afficher les options d’assurance disponibles; intégrer au panier; traiter le paiement. Placez les activités ou tâches en haut, puis les récits sous chacune : les récits essentiels pour cette livraison au-dessus de la ligne, ceux des livraisons futures en dessous.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:674"
@@ -15486,7 +15486,7 @@
   "where": "apps/web/components/studio-views-lpm.tsx:248"
  },
  "Description: allow purchase of supplemental insurance via the TTC mobile app. Benefit hypothesis: mobile access to insurance options improves convenience, increasing engagement and revenue. Acceptance criteria: customers can access insurance options through the mobile app's package booking flow; the app supports secure payment for insurance purchases; customers receive a push notification confirming their purchase.": {
-  "fr": "Description : permettre l’achat d’une assurance complémentaire via l’application mobile TTC. Hypothèse de bénéfice : l’accès mobile aux options d’assurance améliore la commodité, ce qui accroît l’engagement et les revenus. Critères d’acceptation : les clients peuvent accéder aux options d’assurance dans le parcours de réservation de colis de l’application mobile ; l’application prend en charge le paiement sécurisé des achats d’assurance ; les clients reçoivent une notification push confirmant leur achat.",
+  "fr": "Description : permettre l’achat d’une assurance complémentaire via l’application mobile TTC. Hypothèse de bénéfice : l’accès mobile aux options d’assurance améliore la commodité, ce qui accroît l’engagement et les revenus. Critères d’acceptation : les clients peuvent accéder aux options d’assurance dans le parcours de réservation de colis de l’application mobile; l’application prend en charge le paiement sécurisé des achats d’assurance; les clients reçoivent une notification push confirmant leur achat.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:651"
@@ -15552,7 +15552,7 @@
   "where": "apps/web/app/(app)/users/page.tsx:180"
  },
  "Details (optional): are there any specific requirements?": {
-  "fr": "Détails (facultatif) : y a-t-il des exigences particulières ?",
+  "fr": "Détails (facultatif) : y a-t-il des exigences particulières?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -16267,37 +16267,37 @@
   "note": "Epic hypothesis template slot (\"who … do something\"); check assembly with \"qui\"."
  },
  "Do we have a strategy for using and improving the Continuous Delivery Pipeline?": {
-  "fr": "Avons-nous une stratégie pour utiliser et améliorer le pipeline de livraison continue ?",
+  "fr": "Avons-nous une stratégie pour utiliser et améliorer le pipeline de livraison continue?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:540"
  },
  "Do we have, or can we get, the people, partners and resources?": {
-  "fr": "Avons-nous, ou pouvons-nous obtenir, les personnes, les partenaires et les ressources ?",
+  "fr": "Avons-nous, ou pouvons-nous obtenir, les personnes, les partenaires et les ressources?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:309"
  },
  "Do we know how and where iterations, PIs, features, stories, measures, etc., will be maintained?": {
-  "fr": "Savons-nous comment et où seront gérés les itérations, les PI, les fonctionnalités, les récits, les mesures, etc. ?",
+  "fr": "Savons-nous comment et où seront gérés les itérations, les PI, les fonctionnalités, les récits, les mesures, etc.?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:539"
  },
  "Do we know what other key business and technology stakeholders should attend?": {
-  "fr": "Savons-nous quelles autres parties prenantes clés, métier et technologie, doivent participer ?",
+  "fr": "Savons-nous quelles autres parties prenantes clés, métier et technologie, doivent participer?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:538"
  },
  "Do we know who will present the architecture vision and required development practices?": {
-  "fr": "Savons-nous qui présentera la vision d’architecture et les pratiques de développement requises ?",
+  "fr": "Savons-nous qui présentera la vision d’architecture et les pratiques de développement requises?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:535"
  },
  "Do we know who will set and present the business context and strategy? Do we know who will assign business value and accept the plans?": {
-  "fr": "Savons-nous qui définira et présentera le contexte et la stratégie d’affaires ? Savons-nous qui attribuera la valeur d’affaires et acceptera les plans ?",
+  "fr": "Savons-nous qui définira et présentera le contexte et la stratégie d’affaires? Savons-nous qui attribuera la valeur d’affaires et acceptera les plans?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:533"
@@ -16333,7 +16333,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:25"
  },
  "Does each team have an identified Scrum Master/Team Coach and Product Owner?": {
-  "fr": "Chaque équipe a-t-elle un Scrum Master/Team Coach et un Product Owner identifiés ?",
+  "fr": "Chaque équipe a-t-elle un Scrum Master/Team Coach et un Product Owner identifiés?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:530"
@@ -16672,7 +16672,7 @@
   "where": "apps/web/components/studio-views-lpm.tsx:332"
  },
  "Drag from RTE to a dot; drop on an empty spot to plot one there": {
-  "fr": "Faites glisser du RTE vers un point ; déposez sur un espace vide pour y placer un point",
+  "fr": "Faites glisser du RTE vers un point; déposez sur un espace vide pour y placer un point",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:755"
@@ -16867,7 +16867,7 @@
   "where": "packages/core/src/classes.ts:603"
  },
  "Dysfunctional leadership with conflicting priorities and autocratic, risk-averse styles; little psychological safety among executives. A rigid financial structure: portfolio spend committed annually with no flexibility. A portfolio structure that creates silos: each senior vice president owns their own portfolio.": {
-  "fr": "Une direction dysfonctionnelle, aux priorités contradictoires et aux styles autocratiques et réfractaires au risque ; peu de sécurité psychologique entre dirigeants. Une structure financière rigide : les dépenses du portefeuille sont engagées chaque année sans aucune flexibilité. Une structure de portefeuille qui crée des silos : chaque vice-président principal possède son propre portefeuille.",
+  "fr": "Une direction dysfonctionnelle, aux priorités contradictoires et aux styles autocratiques et réfractaires au risque; peu de sécurité psychologique entre dirigeants. Une structure financière rigide : les dépenses du portefeuille sont engagées chaque année sans aucune flexibilité. Une structure de portefeuille qui crée des silos : chaque vice-président principal possède son propre portefeuille.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:571"
@@ -17144,13 +17144,13 @@
   "where": "apps/web/components/studio-views-lsa.tsx:53"
  },
  "Economies of scale?": {
-  "fr": "Économies d’échelle ?",
+  "fr": "Économies d’échelle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:187"
  },
  "Economies of scale? Y=0 N=2": {
-  "fr": "Économies d’échelle ? O=0 N=2",
+  "fr": "Économies d’échelle? O=0 N=2",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:522",
@@ -17301,7 +17301,7 @@
   "where": "apps/web/app/support/page.tsx:36"
  },
  "Email an order summary within a minute of purchase.": {
-  "fr": "Envoyer un récapitulatif de commande par e-mail dans la minute qui suit l’achat.",
+  "fr": "Envoyer un récapitulatif de commande par courriel dans la minute qui suit l’achat.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:50"
@@ -17313,7 +17313,7 @@
   "where": "apps/web/app/(app)/login/page.tsx:47"
  },
  "Email each student their link": {
-  "fr": "Envoyer son lien par e-mail à chaque participant",
+  "fr": "Envoyer son lien par courriel à chaque participant",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:288"
@@ -18397,7 +18397,7 @@
   "where": "apps/web/components/planning-pages.tsx:289"
  },
  "Every exercise keeps one copy per team; each student works on their team&apos;s copy and the trainer switches between them on the board. New students join the smallest team.": {
-  "fr": "Chaque exercice garde une copie par équipe ; chaque participant travaille sur la copie de son équipe et le formateur passe de l’une à l’autre sur le tableau. Les nouveaux participants rejoignent la plus petite équipe.",
+  "fr": "Chaque exercice garde une copie par équipe; chaque participant travaille sur la copie de son équipe et le formateur passe de l’une à l’autre sur le tableau. Les nouveaux participants rejoignent la plus petite équipe.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:160"
@@ -18993,7 +18993,7 @@
   "note": "Release = mise en production (aligned)."
  },
  "Explainable: what evidence supports this recommendation?": {
-  "fr": "Explicable : quelles données étayent cette recommandation ?",
+  "fr": "Explicable : quelles données étayent cette recommandation?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:686"
@@ -19030,13 +19030,13 @@
   "where": "apps/web/components/handout-scenarios.ts:146"
  },
  "Exploration Enabler: A/B test different UX models for browsing: leftside navigation; left-side and current selection criteria in the top, etc.": {
-  "fr": "Enabler d’exploration : test A/B de différents modèles UX de navigation : navigation à gauche ; navigation à gauche et critères de sélection actuels en haut, etc.",
+  "fr": "Enabler d’exploration : test A/B de différents modèles UX de navigation : navigation à gauche; navigation à gauche et critères de sélection actuels en haut, etc.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:173"
  },
  "Exploration Enabler: Internally test the “is this comment useful?” functionality for PI 2.": {
-  "fr": "Enabler d’exploration : tester en interne la fonction « Ce commentaire est-il utile ? » pour le PI 2.",
+  "fr": "Enabler d’exploration : tester en interne la fonction « Ce commentaire est-il utile? » pour le PI 2.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:194"
@@ -19223,7 +19223,7 @@
   "where": "packages/core/src/courses/rte.ts:515"
  },
  "Facilitator and scribe in place; board and backlog open": {
-  "fr": "Facilitateur et secrétaire en place ; tableau et carnet ouverts",
+  "fr": "Facilitateur et secrétaire en place; tableau et carnet ouverts",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/coachsync.ts:39"
@@ -19397,7 +19397,7 @@
   "where": "packages/core/src/canvases.ts:197"
  },
  "Feature canvas with benefit hypothesis, acceptance criteria and WSJF; enabler canvas with the architectural runway.": {
-  "fr": "Canevas de fonctionnalité avec hypothèse de bénéfice, critères d’acceptation et WSJF ; canevas d’enabler avec la piste d’architecture.",
+  "fr": "Canevas de fonctionnalité avec hypothèse de bénéfice, critères d’acceptation et WSJF; canevas d’enabler avec la piste d’architecture.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:656"
@@ -19464,7 +19464,7 @@
   "where": "packages/core/src/classes.ts:638"
  },
  "Feature writing: how might AI change how you write features and benefit hypotheses?": {
-  "fr": "Rédaction des fonctionnalités : comment l’IA pourrait-elle changer votre façon de rédiger les fonctionnalités et les hypothèses de bénéfice ?",
+  "fr": "Rédaction des fonctionnalités : comment l’IA pourrait-elle changer votre façon de rédiger les fonctionnalités et les hypothèses de bénéfice?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:637"
@@ -19937,7 +19937,7 @@
   "note": "LLM prompt fragment; quotes paired with item p1-5-56. AI will answer in French."
  },
  "Fishbone: why does the ART miss its PI objectives?": {
-  "fr": "Arête de poisson : pourquoi l’ART manque-t-il ses objectifs de PI ?",
+  "fr": "Arête de poisson : pourquoi l’ART manque-t-il ses objectifs de PI?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:603"
@@ -20727,13 +20727,13 @@
   "where": "packages/core/src/courses/leading-safe.ts:311"
  },
  "Frequent?": {
-  "fr": "Fréquent ?",
+  "fr": "Fréquent?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:187"
  },
  "Frequent? Y=2 N=0": {
-  "fr": "Fréquente ? O=2 N=0",
+  "fr": "Fréquente? O=2 N=0",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:522",
@@ -20758,7 +20758,7 @@
   "where": "apps/web/app/(app)/imports/page.tsx:56"
  },
  "From an operational value stream (trigger, steps, value) to the systems behind it, the people who build them, the development value streams and the ARTs. Example: Old Age Security, a government benefit service for Canadian seniors, triggered by retirement; steps from 'learn about benefit' to 'terminate benefit'; systems: benefit marketing, application processing, benefit processing.": {
-  "fr": "D’un flux de valeur opérationnel (déclencheur, étapes, valeur) aux systèmes qui le soutiennent, aux personnes qui les construisent, aux flux de valeur de développement et aux ART. Exemple : la Sécurité de la vieillesse, une prestation gouvernementale pour les aînés canadiens, déclenchée par la retraite ; étapes de « s’informer sur la prestation » à « mettre fin à la prestation » ; systèmes : promotion des prestations, traitement des demandes, traitement des prestations.",
+  "fr": "D’un flux de valeur opérationnel (déclencheur, étapes, valeur) aux systèmes qui le soutiennent, aux personnes qui les construisent, aux flux de valeur de développement et aux ART. Exemple : la Sécurité de la vieillesse, une prestation gouvernementale pour les aînés canadiens, déclenchée par la retraite; étapes de « s’informer sur la prestation » à « mettre fin à la prestation »; systèmes : promotion des prestations, traitement des demandes, traitement des prestations.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:601",
@@ -20969,7 +20969,7 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:494"
  },
  "Functional and nonfunctional; usually written in ART backlog refinement. The feature fits in one PI.": {
-  "fr": "Fonctionnels et non fonctionnels ; généralement rédigés lors de l’affinage du carnet de l’ART. La fonctionnalité tient dans un PI.",
+  "fr": "Fonctionnels et non fonctionnels; généralement rédigés lors de l’affinage du carnet de l’ART. La fonctionnalité tient dans un PI.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:209"
@@ -21388,7 +21388,7 @@
   "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:481"
  },
  "Goal: what are you trying to accomplish?": {
-  "fr": "Objectif : que cherchez-vous à accomplir ?",
+  "fr": "Objectif : que cherchez-vous à accomplir?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -21418,7 +21418,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:41"
  },
  "Government and company networks often block or flag sites and senders they do not know yet (a security warning on the link, the email in spam). Send their IT this note before the class.": {
-  "fr": "Les réseaux d’administrations et d’entreprises bloquent ou signalent souvent les sites et expéditeurs qu’ils ne connaissent pas encore (alerte de sécurité sur le lien, e-mail en spam). Envoyez ce message à leur service informatique avant la formation.",
+  "fr": "Les réseaux d’administrations et d’entreprises bloquent ou signalent souvent les sites et expéditeurs qu’ils ne connaissent pas encore (alerte de sécurité sur le lien, courriel en spam). Envoyez ce message à leur service informatique avant la formation.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:333"
@@ -21729,7 +21729,7 @@
   "note": "ROAM: Resolved definition."
  },
  "Has the system team been identified and formed?": {
-  "fr": "L’équipe système a-t-elle été identifiée et constituée ?",
+  "fr": "L’équipe système a-t-elle été identifiée et constituée?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:536"
@@ -21741,67 +21741,67 @@
   "where": "apps/web/components/landing.tsx:767"
  },
  "Have the shared services (User Experience, Architecture, etc.) been identified?": {
-  "fr": "Les services partagés (expérience utilisateur, architecture, etc.) ont-ils été identifiés ?",
+  "fr": "Les services partagés (expérience utilisateur, architecture, etc.) ont-ils été identifiés?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:537"
  },
  "Have we identified cross-functional Agile Teams? Are there dedicated team members on every team?": {
-  "fr": "Avons-nous identifié des équipes agiles transverses ? Chaque équipe a-t-elle des membres dédiés ?",
+  "fr": "Avons-nous identifié des équipes agiles transverses? Chaque équipe a-t-elle des membres dédiés?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:531"
  },
  "Have we identified the PI Planning dates, the iteration cadence, and the PI cadence?": {
-  "fr": "Avons-nous fixé les dates du PI Planning, la cadence des itérations et la cadence du PI ?",
+  "fr": "Avons-nous fixé les dates du PI Planning, la cadence des itérations et la cadence du PI?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:529"
  },
  "Have we identified the Release Train Engineer? Do they understand the scope of the role in preparing the organization and preparing for the PI Planning event?": {
-  "fr": "Avons-nous identifié le Release Train Engineer ? Comprend-il l’étendue de son rôle dans la préparation de l’organisation et de l’événement PI Planning ?",
+  "fr": "Avons-nous identifié le Release Train Engineer? Comprend-il l’étendue de son rôle dans la préparation de l’organisation et de l’événement PI Planning?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:528"
  },
  "Have you begun resolving dependencies with other teams?": {
-  "fr": "Avez-vous commencé à résoudre les dépendances avec d’autres équipes ?",
+  "fr": "Avez-vous commencé à résoudre les dépendances avec d’autres équipes?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45 packages/core/src/classes.ts:236"
  },
  "Have you identified any ART PI risks?": {
-  "fr": "Avez-vous identifié des risques de PI pour l’ART ?",
+  "fr": "Avez-vous identifié des risques de PI pour l’ART?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:236"
  },
  "Have you identified any ART PI Risks?": {
-  "fr": "Avez-vous identifié des risques de PI pour l’ART ?",
+  "fr": "Avez-vous identifié des risques de PI pour l’ART?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
  },
  "Have you identified most of the stories for the first two iterations and begun estimating?": {
-  "fr": "Avez-vous identifié la plupart des récits des deux premières itérations et commencé à les estimer ?",
+  "fr": "Avez-vous identifié la plupart des récits des deux premières itérations et commencé à les estimer?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:236"
  },
  "Have you identified most of the Stories for the first two Iterations and begun estimating?": {
-  "fr": "Avez-vous identifié la plupart des récits des deux premières itérations et commencé à les estimer ?",
+  "fr": "Avez-vous identifié la plupart des récits des deux premières itérations et commencé à les estimer?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
  },
  "Have you identified the capacity for each iteration of the PI?": {
-  "fr": "Avez-vous identifié la capacité de chaque itération du PI ?",
+  "fr": "Avez-vous identifié la capacité de chaque itération du PI?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:236"
  },
  "Have you identified the capacity for each Iteration of the PI?": {
-  "fr": "Avez-vous déterminé la capacité de chaque itération du PI ?",
+  "fr": "Avez-vous déterminé la capacité de chaque itération du PI?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
@@ -22252,7 +22252,7 @@
   "where": "packages/core/src/courses/rte.ts:502"
  },
  "How are you feeling about [insert topic you are conducting empathy interviews on]?": {
-  "fr": "Comment vous sentez-vous au sujet de [insérez le sujet de vos entretiens d’empathie] ?",
+  "fr": "Comment vous sentez-vous au sujet de [insérez le sujet de vos entretiens d’empathie]?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -22270,25 +22270,25 @@
   "where": "packages/core/src/courses/rte.ts:111"
  },
  "How can product roles support Continuous Deployment?": {
-  "fr": "Comment les rôles produit peuvent-ils soutenir le déploiement continu ?",
+  "fr": "Comment les rôles produit peuvent-ils soutenir le déploiement continu?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:673"
  },
  "How can product roles support Continuous Exploration?": {
-  "fr": "Comment les rôles produit peuvent-ils soutenir l’exploration continue ?",
+  "fr": "Comment les rôles produit peuvent-ils soutenir l’exploration continue?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:673"
  },
  "How can product roles support Continuous Integration?": {
-  "fr": "Comment les rôles produit peuvent-ils soutenir l’intégration continue ?",
+  "fr": "Comment les rôles produit peuvent-ils soutenir l’intégration continue?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:673"
  },
  "How can product roles support Release on Demand?": {
-  "fr": "Comment les rôles produit peuvent-ils soutenir la mise en service à la demande ?",
+  "fr": "Comment les rôles produit peuvent-ils soutenir la mise en service à la demande?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:673"
@@ -22300,49 +22300,49 @@
   "where": "packages/core/src/courses/rte.ts:187"
  },
  "How can the RTE support the building of DevOps capabilities?": {
-  "fr": "Comment le RTE peut-il soutenir le développement des capacités DevOps ?",
+  "fr": "Comment le RTE peut-il soutenir le développement des capacités DevOps?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:310"
  },
  "How can you apply your strengths to overcome present and potential threats?": {
-  "fr": "Comment appliquer vos forces pour surmonter les menaces actuelles et potentielles ?",
+  "fr": "Comment appliquer vos forces pour surmonter les menaces actuelles et potentielles?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:50"
  },
  "How can you leverage sync events as a PO or Product Manager to ensure alignment across the ART?": {
-  "fr": "Comment pouvez-vous tirer parti des événements de synchronisation en tant que PO ou Product Manager pour assurer l’alignement au sein de l’ART ?",
+  "fr": "Comment pouvez-vous tirer parti des événements de synchronisation en tant que PO ou Product Manager pour assurer l’alignement au sein de l’ART?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:683"
  },
  "How can you minimize weaknesses and avoid threats?": {
-  "fr": "Comment minimiser vos faiblesses et éviter les menaces ?",
+  "fr": "Comment minimiser vos faiblesses et éviter les menaces?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:50"
  },
  "How can your opportunities be leveraged to overcome weaknesses?": {
-  "fr": "Comment tirer parti de vos opportunités pour surmonter vos faiblesses ?",
+  "fr": "Comment tirer parti de vos opportunités pour surmonter vos faiblesses?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:50"
  },
  "How can your strengths be used to exploit and maximize opportunities?": {
-  "fr": "Comment utiliser vos forces pour exploiter et maximiser les opportunités ?",
+  "fr": "Comment utiliser vos forces pour exploiter et maximiser les opportunités?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:50"
  },
  "How could AI reduce effort, improve clarity, or surface risks earlier?": {
-  "fr": "Comment l’IA pourrait-elle réduire l’effort, améliorer la clarté ou faire émerger les risques plus tôt ?",
+  "fr": "Comment l’IA pourrait-elle réduire l’effort, améliorer la clarté ou faire émerger les risques plus tôt?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:664 packages/core/src/courses/leading-safe.ts:559 packages/core/src/courses/rte.ts:206"
  },
  "How could this research inform (but not replace) customer discovery?": {
-  "fr": "Comment cette recherche pourrait-elle alimenter (sans la remplacer) la découverte client ?",
+  "fr": "Comment cette recherche pourrait-elle alimenter (sans la remplacer) la découverte client?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:650"
@@ -22360,7 +22360,7 @@
   "where": "packages/core/src/ainative.ts:417"
  },
  "How do portfolio OKRs inform your ART’s product development cycle?": {
-  "fr": "Comment les OKR du portefeuille orientent-ils le cycle de développement de produit de votre ART ?",
+  "fr": "Comment les OKR du portefeuille orientent-ils le cycle de développement de produit de votre ART?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:27"
@@ -22420,7 +22420,7 @@
   "where": "packages/core/src/insights.ts:586"
  },
  "How long does it wait? (e.g. 3 days)": {
-  "fr": "Combien de temps attend-il ? (p. ex. 3 jours)",
+  "fr": "Combien de temps attend-il? (p. ex. 3 jours)",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:128"
@@ -22462,7 +22462,7 @@
   "where": "packages/core/src/courses/rte.ts:120 packages/core/src/courses/rte.ts:124"
  },
  "How much value, for which segments, how soon?": {
-  "fr": "Quelle valeur, pour quels segments, dans quels délais ?",
+  "fr": "Quelle valeur, pour quels segments, dans quels délais?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:308"
@@ -22534,7 +22534,7 @@
   "where": "packages/core/src/classes.ts:283"
  },
  "How well does this future state serve the enterprise strategy and strategic themes?": {
-  "fr": "Dans quelle mesure cet état futur sert-il la stratégie de l’entreprise et les thèmes stratégiques ?",
+  "fr": "Dans quelle mesure cet état futur sert-il la stratégie de l’entreprise et les thèmes stratégiques?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:307"
@@ -22552,7 +22552,7 @@
   "where": "packages/core/src/courses/lpm.ts:101"
  },
  "How would you adapt it for your context?": {
-  "fr": "Comment l’adapteriez-vous à votre contexte ?",
+  "fr": "Comment l’adapteriez-vous à votre contexte?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:170"
@@ -22570,13 +22570,13 @@
   "where": "packages/core/src/courses/rte.ts:188"
  },
  "How would you use the results to improve flow?": {
-  "fr": "Comment utiliseriez-vous les résultats pour améliorer le flux ?",
+  "fr": "Comment utiliseriez-vous les résultats pour améliorer le flux?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:354"
  },
  "How would you, the RTE, act if you could see these on the ART planning board at the end of Day 1 in PI Planning?": {
-  "fr": "En tant que RTE, comment agiriez-vous si vous voyiez ces éléments sur le tableau de planification de l’ART à la fin du jour 1 du PI Planning ?",
+  "fr": "En tant que RTE, comment agiriez-vous si vous voyiez ces éléments sur le tableau de planification de l’ART à la fin du jour 1 du PI Planning?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:55"
@@ -22618,7 +22618,7 @@
   "where": "apps/web/app/(app)/ai/page.tsx:142"
  },
  "Human-centric: what are the risks or unintended impacts for users?": {
-  "fr": "Centrée sur l’humain : quels sont les risques ou les effets imprévus pour les utilisateurs ?",
+  "fr": "Centrée sur l’humain : quels sont les risques ou les effets imprévus pour les utilisateurs?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:686"
@@ -23262,7 +23262,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:109"
  },
  "Improved Customer satisfaction; reduced support call volume, and lower product development costs": {
-  "fr": "Meilleure satisfaction client ; volume d’appels au support réduit et coûts de développement produit plus faibles",
+  "fr": "Meilleure satisfaction client; volume d’appels au support réduit et coûts de développement produit plus faibles",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:109"
@@ -24114,7 +24114,7 @@
   "where": "packages/core/src/ainative.ts:579"
  },
  "Intermediate: examples, data, interaction, steps, reasoning?": {
-  "fr": "Intermédiaire : exemples, données, interaction, étapes, raisonnement ?",
+  "fr": "Intermédiaire : exemples, données, interaction, étapes, raisonnement?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -24405,31 +24405,31 @@
   "where": "packages/core/src/templates.ts:478"
  },
  "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?": {
-  "fr": "Le périmètre (produit, système, domaines technologiques) du processus de planification est-il compris ? Avons-nous identifié nos flux de valeur et nos trains de livraison agiles ?",
+  "fr": "Le périmètre (produit, système, domaines technologiques) du processus de planification est-il compris? Avons-nous identifié nos flux de valeur et nos trains de livraison agiles?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:527"
  },
  "Is there a strategy for applying built-in quality practices?": {
-  "fr": "Existe-t-il une stratégie pour appliquer les pratiques de qualité intégrée ?",
+  "fr": "Existe-t-il une stratégie pour appliquer les pratiques de qualité intégrée?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:541"
  },
  "Is there anything you need to discuss with other Scrum Masters/Team Coaches? If so, stay for the meet-after.": {
-  "fr": "Avez-vous des points à aborder avec d’autres Scrum Masters/Team Coaches ? Si oui, restez pour la réunion qui suit.",
+  "fr": "Avez-vous des points à aborder avec d’autres Scrum Masters/Team Coaches? Si oui, restez pour la réunion qui suit.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
  },
  "Is there reasonable agreement on priorities amongst the Business Owners and Product Management?": {
-  "fr": "Les responsables d’affaires et la gestion de produit s’accordent-ils raisonnablement sur les priorités ?",
+  "fr": "Les responsables d’affaires et la gestion de produit s’accordent-ils raisonnablement sur les priorités?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:534"
  },
  "Is this train predictable?": {
-  "fr": "Ce train est-il prévisible ?",
+  "fr": "Ce train est-il prévisible?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:516"
@@ -25784,7 +25784,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:28"
  },
  "Leading by example: which one or two attributes will you focus on?": {
-  "fr": "Montrer l’exemple : sur quel(s) attribut(s) allez-vous vous concentrer ?",
+  "fr": "Montrer l’exemple : sur quel(s) attribut(s) allez-vous vous concentrer?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:206"
@@ -26285,7 +26285,7 @@
   "where": "apps/web/app/classes/[id]/page.tsx:43"
  },
  "Lessons: each lesson has its own tab at the top; Full screen hides everything else": {
-  "fr": "Leçons : chaque leçon a son propre onglet en haut ; Plein écran masque tout le reste",
+  "fr": "Leçons : chaque leçon a son propre onglet en haut; Plein écran masque tout le reste",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:278"
@@ -26303,7 +26303,7 @@
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:216"
  },
  "Let's get started!": {
-  "fr": "C’est parti !",
+  "fr": "C’est parti!",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:285"
@@ -26507,7 +26507,7 @@
   "where": "packages/core/src/courses/lpm.ts:97"
  },
  "Listen as the experts in the room are interviewed. As they talk, write How-Might-We statements, one per sticky. Example: the expert says 'we have a problem with the checkout flow'; you write 'HMW improve our checkout flow?'": {
-  "fr": "Écoutez l’interview des experts présents. Pendant qu’ils parlent, écrivez des questions « Comment pourrions-nous… » (CPN), une par post-it. Exemple : l’expert dit « nous avons un problème avec le parcours de paiement » ; vous écrivez « CPN améliorer notre parcours de paiement ? »",
+  "fr": "Écoutez l’interview des experts présents. Pendant qu’ils parlent, écrivez des questions « Comment pourrions-nous… » (CPN), une par post-it. Exemple : l’expert dit « nous avons un problème avec le parcours de paiement »; vous écrivez « CPN améliorer notre parcours de paiement? »",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:548",
@@ -26520,7 +26520,7 @@
   "where": "apps/web/components/planning-pages.tsx:832 apps/web/components/planning-pages.tsx:908"
  },
  "Live across all tables. ● fully funded · ◐ partially funded (a candidate to descope or stop). Debrief: what got funded, what didn’t, what caused debate?": {
-  "fr": "En direct sur toutes les tables. ● entièrement financé · ◐ partiellement financé (candidat à une réduction de périmètre ou à l’arrêt). Débriefing : qu’est-ce qui a été financé, qu’est-ce qui ne l’a pas été, qu’est-ce qui a fait débat ?",
+  "fr": "En direct sur toutes les tables. ● entièrement financé · ◐ partiellement financé (candidat à une réduction de périmètre ou à l’arrêt). Débriefing : qu’est-ce qui a été financé, qu’est-ce qui ne l’a pas été, qu’est-ce qui a fait débat?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:229"
@@ -26993,7 +26993,7 @@
   "where": "packages/core/src/templates.ts:454"
  },
  "Mail is not set up on this server: copy the links and send them yourself.": {
-  "fr": "L’envoi d’e-mails n’est pas configuré sur ce serveur : copiez les liens et envoyez-les vous-même.",
+  "fr": "L’envoi de courriels n’est pas configuré sur ce serveur : copiez les liens et envoyez-les vous-même.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:291"
@@ -27464,7 +27464,7 @@
   "where": "apps/web/app/(app)/outcomes/page.tsx:689 apps/web/app/(app)/outcomes/page.tsx:812 apps/web/app/(app)/outcomes/page.tsx:823"
  },
  "Measure and grow: where are we?": {
-  "fr": "Mesurer et grandir : où en sommes-nous ?",
+  "fr": "Mesurer et grandir : où en sommes-nous?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:605"
@@ -27592,7 +27592,7 @@
   "note": "check: may be a value (risk level)."
  },
  "Meets all four. Then what keeps it that way?": {
-  "fr": "Remplit les quatre critères. Qu’est-ce qui permettra de le maintenir ?",
+  "fr": "Remplit les quatre critères. Qu’est-ce qui permettra de le maintenir?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:112"
@@ -27629,7 +27629,7 @@
   "note": "Fragment followed by table name."
  },
  "Members of the Development Value Streams indicated lack of capacity to work on LPM-approved Epics. What could be causing this situation, and what can you do to address it?": {
-  "fr": "Des membres des flux de valeur de développement signalent un manque de capacité pour travailler sur les épopées approuvées par la LPM. Qu’est-ce qui pourrait causer cette situation, et que pouvez-vous faire pour y remédier ?",
+  "fr": "Des membres des flux de valeur de développement signalent un manque de capacité pour travailler sur les épopées approuvées par la LPM. Qu’est-ce qui pourrait causer cette situation, et que pouvez-vous faire pour y remédier?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:116"
@@ -28142,7 +28142,7 @@
   "where": "apps/web/app/(app)/billing/page.tsx:249"
  },
  "More frequent releases; faster feature delivery": {
-  "fr": "Mises en production plus fréquentes ; livraison plus rapide des fonctionnalités",
+  "fr": "Mises en production plus fréquentes; livraison plus rapide des fonctionnalités",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:109"
@@ -28389,13 +28389,13 @@
   "where": "apps/web/components/studio-model.ts:109"
  },
  "Must be in place?": {
-  "fr": "Doit être en place ?",
+  "fr": "Doit être en place?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-board.tsx:744"
  },
  "MUST BE IN PLACE?": {
-  "fr": "DOIT ÊTRE EN PLACE ?",
+  "fr": "DOIT ÊTRE EN PLACE?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:46"
@@ -28929,7 +28929,7 @@
   "where": "apps/web/components/class-students.tsx:394"
  },
  "New links; the old ones stop working": {
-  "fr": "De nouveaux liens ; les anciens cessent de fonctionner",
+  "fr": "De nouveaux liens; les anciens cessent de fonctionner",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:393"
@@ -29093,7 +29093,7 @@
   "where": "apps/web/components/class-students.tsx:209"
  },
  "New teams at the start of every chapter, so everyone works with new people; the board switches by itself.": {
-  "fr": "Nouvelles équipes au début de chaque chapitre, pour que chacun travaille avec de nouvelles personnes ; le tableau change automatiquement.",
+  "fr": "Nouvelles équipes au début de chaque chapitre, pour que chacun travaille avec de nouvelles personnes; le tableau change automatiquement.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:209"
@@ -29183,7 +29183,7 @@
   "where": "packages/core/src/classes.ts:605"
  },
  "next to a name only if a link was lost; the old one then stops working.": {
-  "fr": "à côté d’un nom seulement si un lien a été perdu ; l’ancien cesse alors de fonctionner.",
+  "fr": "à côté d’un nom seulement si un lien a été perdu; l’ancien cesse alors de fonctionner.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:300",
@@ -29299,7 +29299,7 @@
   "where": "packages/core/src/ainative.ts:682"
  },
  "No CoFund in the room? Run the handout’s spreadsheet alternative right here.": {
-  "fr": "Pas de CoFund dans la salle ? Utilisez ici l’alternative tableur du document.",
+  "fr": "Pas de CoFund dans la salle? Utilisez ici l’alternative tableur du document.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:216"
@@ -29360,7 +29360,7 @@
   "note": "Error message (thrown Error), probably not shown to users"
  },
  "No email on:": {
-  "fr": "Pas d’e-mail pour :",
+  "fr": "Pas de courriel pour :",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:284"
@@ -29925,7 +29925,7 @@
   "where": "packages/core/src/classes.ts:775"
  },
  "Normalized cost: the lowest-cost Epic is 1.0; divide each other Epic’s cost by it. WSJF = CoD ÷ normalized Epic cost. Implement the highest WSJF first.": {
-  "fr": "Coût normalisé : l’épopée la moins chère vaut 1,0 ; divisez le coût de chaque autre épopée par celui-ci. WSJF = CoD ÷ coût normalisé de l’épopée. Réalisez d’abord le WSJF le plus élevé.",
+  "fr": "Coût normalisé : l’épopée la moins chère vaut 1,0; divisez le coût de chaque autre épopée par celui-ci. WSJF = CoD ÷ coût normalisé de l’épopée. Réalisez d’abord le WSJF le plus élevé.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:300",
@@ -30277,7 +30277,7 @@
   "where": "apps/web/components/planning-pages.tsx:512"
  },
  "Notes & ideas: copy the goal, the sprint questions, your favourite demos; rough thoughts": {
-  "fr": "Notes et idées : recopiez l’objectif, les questions du sprint, vos démos préférées ; idées brutes",
+  "fr": "Notes et idées : recopiez l’objectif, les questions du sprint, vos démos préférées; idées brutes",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:559"
@@ -30422,7 +30422,7 @@
   "where": "apps/web/app/(app)/help/page.tsx:61"
  },
  "Nothing more can be done; if it occurs, the release may be compromised": {
-  "fr": "Rien de plus ne peut être fait ; s’il survient, la mise en service pourrait être compromise",
+  "fr": "Rien de plus ne peut être fait; s’il survient, la mise en service pourrait être compromise",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:212",
@@ -30526,7 +30526,7 @@
   "where": "apps/web/app/(app)/ai/[id]/page.tsx:214 apps/web/app/(app)/board/page.tsx:136 apps/web/components/okr-explorer.tsx:200"
  },
  "Now get pessimistic: what could stop us from reaching the long-term goal? Start with 'Can we…'. Example: 'Can we replace the need for a washing machine at home?'": {
-  "fr": "Soyez maintenant pessimiste : qu’est-ce qui pourrait nous empêcher d’atteindre l’objectif à long terme ? Commencez par « Pouvons-nous… ». Exemple : « Pouvons-nous éliminer le besoin d’une machine à laver à la maison ? »",
+  "fr": "Soyez maintenant pessimiste : qu’est-ce qui pourrait nous empêcher d’atteindre l’objectif à long terme? Commencez par « Pouvons-nous… ». Exemple : « Pouvons-nous éliminer le besoin d’une machine à laver à la maison? »",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:555"
@@ -30598,7 +30598,7 @@
   "where": "packages/core/src/canvases.ts:136"
  },
  "Number of releases; flow time": {
-  "fr": "Nombre de mises en production ; temps de flux",
+  "fr": "Nombre de mises en production; temps de flux",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:109"
@@ -31157,7 +31157,7 @@
   "where": "apps/web/components/studio-views-lsa.tsx:246"
  },
  "On the ART planning board below, features (blue) are strung to the significant dependencies (red) they wait on; milestones and events are orange. Red strings connect a feature or milestone to one or more dependencies; sometimes a dependency has its own dependencies. Mark each issue with a warning triangle, then resolve it: re-sequence, split, or negotiate.": {
-  "fr": "Sur le tableau de planification de l’ART ci-dessous, les fonctionnalités (bleu) sont reliées par des fils aux dépendances importantes (rouge) qu’elles attendent ; les jalons et événements sont en orange. Les fils rouges relient une fonctionnalité ou un jalon à une ou plusieurs dépendances ; parfois une dépendance a elle-même des dépendances. Marquez chaque problème d’un triangle d’avertissement, puis résolvez-le : réordonner, découper ou négocier.",
+  "fr": "Sur le tableau de planification de l’ART ci-dessous, les fonctionnalités (bleu) sont reliées par des fils aux dépendances importantes (rouge) qu’elles attendent; les jalons et événements sont en orange. Les fils rouges relient une fonctionnalité ou un jalon à une ou plusieurs dépendances; parfois une dépendance a elle-même des dépendances. Marquez chaque problème d’un triangle d’avertissement, puis résolvez-le : réordonner, découper ou négocier.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:662"
@@ -31392,7 +31392,7 @@
   "where": "apps/web/components/planning-views.tsx:684"
  },
  "One per line: name, email": {
-  "fr": "Un par ligne : nom, e-mail",
+  "fr": "Un par ligne : nom, courriel",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:280"
@@ -31428,7 +31428,7 @@
   "where": "packages/core/src/planning.ts:85"
  },
  "One sticky per column; we read them out in turn.": {
-  "fr": "Un post-it par colonne ; nous les lisons à tour de rôle.",
+  "fr": "Un post-it par colonne; nous les lisons à tour de rôle.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:281"
@@ -31530,7 +31530,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:50"
  },
  "Online Platform with eCommerce capabilities; Interactive app with customizable preferences": {
-  "fr": "Plateforme en ligne avec fonctions d’e-commerce ; application interactive aux préférences personnalisables",
+  "fr": "Plateforme en ligne avec fonctions d’e-commerce; application interactive aux préférences personnalisables",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43"
@@ -32491,7 +32491,7 @@
   "where": "packages/core/src/canvases.ts:598"
  },
  "Our training runs on Trainyard. Please allow for our participants: - Web: https://{0} and https://api.{1} (TLS, port 443; no inspection or block page on these hosts) - Email: messages from support@{2} (SPF, DKIM and DMARC are published for {3}; sent through Postmark) Participants open a personal link of the form https://{4}/join/… ; no account, download or plug-in is needed.": {
-  "fr": "Notre formation utilise Trainyard. Merci d’autoriser pour nos participants : - Web : https://{0} et https://api.{1} (TLS, port 443 ; pas d’inspection ni de page de blocage sur ces hôtes) - E-mail : messages de support@{2} (SPF, DKIM et DMARC sont publiés pour {3} ; envoyés via Postmark) Les participants ouvrent un lien personnel de la forme https://{4}/join/… ; aucun compte, téléchargement ni plug-in n’est nécessaire.",
+  "fr": "Notre formation utilise Trainyard. Merci d’autoriser pour nos participants : - Web : https://{0} et https://api.{1} (TLS, port 443; pas d’inspection ni de page de blocage sur ces hôtes) - Courriel : messages de support@{2} (SPF, DKIM et DMARC sont publiés pour {3}; envoyés via Postmark) Les participants ouvrent un lien personnel de la forme https://{4}/join/…; aucun compte, téléchargement ni plug-in n’est nécessaire.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:25",
@@ -32994,7 +32994,7 @@
   "where": "apps/web/components/handout-scenarios.ts:32"
  },
  "Parking lot": {
-  "fr": "Parking",
+  "fr": "Stationnement",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:377 packages/core/src/classes.ts:284 packages/core/src/templates.ts:85",
@@ -33906,7 +33906,7 @@
   "where": "packages/core/src/courses/rte.ts:129"
  },
  "PI planning readiness: must it be in place to launch? Y · N · D(epends)": {
-  "fr": "Préparation au PI Planning : doit-il être en place pour le lancement ? O · N · D(épend)",
+  "fr": "Préparation au PI Planning : doit-il être en place pour le lancement? O · N · D(épend)",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:510",
@@ -34130,7 +34130,7 @@
   "where": "apps/web/components/class-students.tsx:221"
  },
  "Pick a team on a feature to hand it over with its stories; on a team&apos;s board, choose &quot;ART backlog&quot; to put one back.": {
-  "fr": "Choisissez une équipe sur une fonctionnalité pour la lui confier avec ses récits ; sur le tableau d’une équipe, choisissez « Carnet de l’ART » pour en remettre une.",
+  "fr": "Choisissez une équipe sur une fonctionnalité pour la lui confier avec ses récits; sur le tableau d’une équipe, choisissez « Carnet de l’ART » pour en remettre une.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:388",
@@ -34422,7 +34422,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:50"
  },
  "Place each release on the grid where demand is highest for its market. Markers: Local retail market (grey), Medical specimen market (teal), Hardware release (red). Then discuss: which rhythms are fixed, which are ours to choose, and what that means for the PI calendar.": {
-  "fr": "Placez chaque livraison sur la grille là où la demande est la plus forte pour son marché. Repères : marché de la vente au détail local (gris), marché des échantillons médicaux (sarcelle), livraison matérielle (rouge). Discutez ensuite : quels rythmes sont imposés, lesquels pouvons-nous choisir, et qu’est-ce que cela implique pour le calendrier du PI ?",
+  "fr": "Placez chaque livraison sur la grille là où la demande est la plus forte pour son marché. Repères : marché de la vente au détail local (gris), marché des échantillons médicaux (sarcelle), livraison matérielle (rouge). Discutez ensuite : quels rythmes sont imposés, lesquels pouvons-nous choisir, et qu’est-ce que cela implique pour le calendrier du PI?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:646"
@@ -35776,7 +35776,7 @@
   "where": "apps/web/components/studio-model-aart.ts:21"
  },
  "Prioritise the CARS portfolio backlog with WSJF using Fibonacci values, then challenge each other's numbers: which assumptions drive the order?": {
-  "fr": "Priorisez le carnet du portefeuille de CARS avec le WSJF et des valeurs de Fibonacci, puis remettez en question les chiffres des autres : quelles hypothèses déterminent l’ordre ?",
+  "fr": "Priorisez le carnet du portefeuille de CARS avec le WSJF et des valeurs de Fibonacci, puis remettez en question les chiffres des autres : quelles hypothèses déterminent l’ordre?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:620"
@@ -36746,7 +36746,7 @@
   "where": "apps/web/components/ainative.tsx:523"
  },
  "Push or email when the parcel is out for delivery.": {
-  "fr": "Notification push ou e-mail lorsque le colis est en cours de livraison.",
+  "fr": "Notification push ou courriel lorsque le colis est en cours de livraison.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:50"
@@ -37386,7 +37386,7 @@
   "where": "apps/web/components/planning-pages.tsx:51"
  },
  "Realise ARTs: which topology fits each train?": {
-  "fr": "Concrétiser les ART : quelle topologie convient à chaque train ?",
+  "fr": "Concrétiser les ART : quelle topologie convient à chaque train?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:799"
@@ -37944,20 +37944,20 @@
   "where": "apps/web/app/(app)/card-types/page.tsx:160 apps/web/app/(app)/imports/page.tsx:228 apps/web/app/(app)/outcome-planning/page.tsx:620"
  },
  "Remove {0} as co-instructor? They keep their sign-in, but no longer run this class.": {
-  "fr": "Retirer {0} comme co-formateur ? Cette personne garde sa connexion, mais n’anime plus cette formation.",
+  "fr": "Retirer {0} comme co-formateur? Cette personne garde sa connexion, mais n’anime plus cette formation.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:436"
  },
  "Remove {0} student{1}? Their links stop working.": {
-  "fr": "Retirer {0} participant{1} ? Leurs liens cessent de fonctionner.",
+  "fr": "Retirer {0} participant{1}? Leurs liens cessent de fonctionner.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:131",
   "note": "{1} is the English plural suffix 's'; works in French too"
  },
  "Remove {0}? Their link stops working.": {
-  "fr": "Retirer {0} ? Son lien cesse de fonctionner.",
+  "fr": "Retirer {0}? Son lien cesse de fonctionner.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:103"
@@ -38077,7 +38077,7 @@
   "where": "apps/web/components/class-students.tsx:178"
  },
  "Remove the template \"{0}\"? Classes already started from it stay.": {
-  "fr": "Supprimer le modèle « {0} » ? Les formations déjà démarrées à partir de celui-ci sont conservées.",
+  "fr": "Supprimer le modèle « {0} »? Les formations déjà démarrées à partir de celui-ci sont conservées.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:225"
@@ -38441,7 +38441,7 @@
   "where": "packages/core/src/classes.ts:283"
  },
  "Respiratory season Oct–Feb raises demand; budgets often reset with the fiscal year.": {
-  "fr": "La saison respiratoire (oct.–févr.) augmente la demande ; les budgets sont souvent renouvelés avec l’exercice fiscal.",
+  "fr": "La saison respiratoire (oct.–févr.) augmente la demande; les budgets sont souvent renouvelés avec l’exercice fiscal.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:61"
@@ -38615,7 +38615,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:48"
  },
  "Revenue per monetised value stream; the value of non-monetised (development) value streams.": {
-  "fr": "Revenus par flux de valeur monétisé ; valeur des flux de valeur non monétisés (de développement).",
+  "fr": "Revenus par flux de valeur monétisé; valeur des flux de valeur non monétisés (de développement).",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:67"
@@ -38949,7 +38949,7 @@
   "where": "packages/core/src/frameworks.ts:501"
  },
  "Role: what persona or expertise should the AI assume?": {
-  "fr": "Rôle : quel persona ou quelle expertise l’IA doit-elle adopter ?",
+  "fr": "Rôle : quel persona ou quelle expertise l’IA doit-elle adopter?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -40474,7 +40474,7 @@
   "where": "apps/web/app/terms/page.tsx:66"
  },
  "Send the confirmation email": {
-  "fr": "Envoyer l’e-mail de confirmation",
+  "fr": "Envoyer le courriel de confirmation",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:50"
@@ -40666,7 +40666,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:119"
  },
  "Set this up before class. Defaults come from the TTC handout. Tables are the class groups. Rules: an Epic needs its value stream’s Solutions fully funded first; “requires” needs the named item fully funded; “excludes” means only one of the pair can be funded.": {
-  "fr": "Configurez ceci avant la formation. Les valeurs par défaut viennent du document TTC. Les tables sont les groupes de la formation. Règles : une épopée nécessite que les solutions de son flux de valeur soient d’abord entièrement financées ; « requiert » nécessite que l’élément nommé soit entièrement financé ; « exclut » signifie qu’un seul élément de la paire peut être financé.",
+  "fr": "Configurez ceci avant la formation. Les valeurs par défaut viennent du document TTC. Les tables sont les groupes de la formation. Règles : une épopée nécessite que les solutions de son flux de valeur soient d’abord entièrement financées; « requiert » nécessite que l’élément nommé soit entièrement financé; « exclut » signifie qu’un seul élément de la paire peut être financé.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:238",
@@ -40727,13 +40727,13 @@
   "where": "apps/web/components/class-students.tsx:264"
  },
  "Several criteria are missing. Is “Complete the migration ahead of the deadline” a result or a task?": {
-  "fr": "Plusieurs critères manquent. « Terminer la migration avant l’échéance » est-il un résultat ou une tâche ?",
+  "fr": "Plusieurs critères manquent. « Terminer la migration avant l’échéance » est-il un résultat ou une tâche?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:86"
  },
  "Several key members of the Value Stream do not support Epics approved by the LPM process. What could be causing this situation, and what can you do to address it?": {
-  "fr": "Plusieurs membres clés du flux de valeur ne soutiennent pas les épopées approuvées par le processus LPM. Qu’est-ce qui pourrait causer cette situation, et que pouvez-vous faire pour y remédier ?",
+  "fr": "Plusieurs membres clés du flux de valeur ne soutiennent pas les épopées approuvées par le processus LPM. Qu’est-ce qui pourrait causer cette situation, et que pouvez-vous faire pour y remédier?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:116"
@@ -41574,7 +41574,7 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:127"
  },
  "Slides group into lessons by their titles (&ldquo;Lesson 3 Activity: …&rdquo;, &ldquo;L3: …&rdquo;); the rest open the board under Welcome. Pictures and charts are left out. Up to 200 slides and 35 MB.": {
-  "fr": "Les diapositives sont regroupées en leçons d’après leur titre (« Lesson 3 Activity: … », « L3: … ») ; les autres s’ouvrent dans le tableau sous Bienvenue. Les images et les graphiques sont ignorés. Jusqu’à 200 diapositives et 35 Mo.",
+  "fr": "Les diapositives sont regroupées en leçons d’après leur titre (« Lesson 3 Activity: … », « L3: … »); les autres s’ouvrent dans le tableau sous Bienvenue. Les images et les graphiques sont ignorés. Jusqu’à 200 diapositives et 35 Mo.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:266",
@@ -42363,7 +42363,7 @@
   "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:387"
  },
  "Stakeholders indicated feeling overwhelmed due to the complexity and level of change of the LPM implementation. What can you do to help them work through this and identify a path forward?": {
-  "fr": "Les parties prenantes se disent dépassées par la complexité et l’ampleur du changement qu’implique la mise en place de la LPM. Que pouvez-vous faire pour les aider à surmonter cela et à trouver une voie à suivre ?",
+  "fr": "Les parties prenantes se disent dépassées par la complexité et l’ampleur du changement qu’implique la mise en place de la LPM. Que pouvez-vous faire pour les aider à surmonter cela et à trouver une voie à suivre?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:116"
@@ -43159,7 +43159,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:500"
  },
  "Step 1: When a lesson starts, drag its ticket from {0} to {1}. Step 2: When it ends, drag it on to {2}. Step 3: One column at a time: the counts show how far the day has come.": {
-  "fr": "Étape 1 : quand une leçon commence, faites glisser son ticket de {0} vers {1}. Étape 2 : quand elle se termine, faites-le glisser vers {2}. Étape 3 : une colonne à la fois ; les compteurs montrent l’avancement de la journée.",
+  "fr": "Étape 1 : quand une leçon commence, faites glisser son ticket de {0} vers {1}. Étape 2 : quand elle se termine, faites-le glisser vers {2}. Étape 3 : une colonne à la fois; les compteurs montrent l’avancement de la journée.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:148",
@@ -43452,7 +43452,7 @@
   "where": "packages/core/src/classes.ts:638"
  },
  "Story writing: how might AI-assisted story writing and acceptance criteria generation change your daily priorities and how you budget your time?": {
-  "fr": "Rédaction des récits : comment la rédaction de récits et la génération de critères d’acceptation assistées par l’IA pourraient-elles changer vos priorités quotidiennes et la gestion de votre temps ?",
+  "fr": "Rédaction des récits : comment la rédaction de récits et la génération de critères d’acceptation assistées par l’IA pourraient-elles changer vos priorités quotidiennes et la gestion de votre temps?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:637"
@@ -43578,7 +43578,7 @@
   "where": "packages/core/src/templates.ts:117"
  },
  "Strategy is set once a year; new ideas wait up to 12 months.": {
-  "fr": "La stratégie est fixée une fois par an ; les nouvelles idées attendent jusqu’à 12 mois.",
+  "fr": "La stratégie est fixée une fois par an; les nouvelles idées attendent jusqu’à 12 mois.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:28"
@@ -44387,7 +44387,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:318"
  },
  "Tap pills to mark what the OKR meets. Then talk: would this make it obvious what to prioritize? Which Key Result could a dashboard show automatically? See the": {
-  "fr": "Touchez les pastilles pour indiquer les critères que remplit l’OKR. Puis discutez : cela rendrait-il évident ce qu’il faut prioriser ? Quel résultat clé un tableau de bord pourrait-il afficher automatiquement ? Voir le",
+  "fr": "Touchez les pastilles pour indiquer les critères que remplit l’OKR. Puis discutez : cela rendrait-il évident ce qu’il faut prioriser? Quel résultat clé un tableau de bord pourrait-il afficher automatiquement? Voir le",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:860",
@@ -44478,7 +44478,7 @@
   "where": "packages/core/src/frameworks.ts:366 packages/core/src/templates.ts:94 packages/core/src/templates.ts:103"
  },
  "Task: what exactly do you want the AI to do?": {
-  "fr": "Tâche : que voulez-vous exactement que l’IA fasse ?",
+  "fr": "Tâche : que voulez-vous exactement que l’IA fasse?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:640"
@@ -44766,7 +44766,7 @@
   "where": "apps/web/lib/public.ts:17"
  },
  "Team capacity: each contributor gives allocation × {0} points per iteration, minus one point per day off; Scrum Master and Product Owner do not count": {
-  "fr": "Capacité de l’équipe : chaque contributeur apporte allocation × {0} points par itération, moins un point par jour d’absence ; le Scrum Master et le Product Owner ne comptent pas",
+  "fr": "Capacité de l’équipe : chaque contributeur apporte allocation × {0} points par itération, moins un point par jour d’absence; le Scrum Master et le Product Owner ne comptent pas",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:783"
@@ -46166,7 +46166,7 @@
   "where": "apps/web/app/privacy/page.tsx:24"
  },
  "The situation: what happened, what signal did we miss?": {
-  "fr": "La situation : que s’est-il passé, quel signal avons-nous manqué ?",
+  "fr": "La situation : que s’est-il passé, quel signal avons-nous manqué?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:178"
@@ -46390,7 +46390,7 @@
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:197"
  },
  "their@email": {
-  "fr": "son@e-mail",
+  "fr": "son@courriel",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:466"
@@ -46511,7 +46511,7 @@
   "where": "apps/web/app/(app)/dashboards/page.tsx:141"
  },
  "This deck is {0} MB; up to 35 MB can be imported. Compress its pictures in PowerPoint and try again.": {
-  "fr": "Cette présentation fait {0} Mo ; 35 Mo maximum peuvent être importés. Compressez ses images dans PowerPoint et réessayez.",
+  "fr": "Cette présentation fait {0} Mo; 35 Mo maximum peuvent être importés. Compressez ses images dans PowerPoint et réessayez.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:200"
@@ -46572,7 +46572,7 @@
   "where": "apps/web/app/join/[token]/page.tsx:23"
  },
  "This OKR passes your bar. Would the room agree?": {
-  "fr": "Cet OKR atteint votre niveau d’exigence. La salle serait-elle d’accord ?",
+  "fr": "Cet OKR atteint votre niveau d’exigence. La salle serait-elle d’accord?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:86"
@@ -46734,7 +46734,7 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:511"
  },
  "Throughout this course, you’ve learned about various ways to integrate AI into your daily work as an RTE. What do you want to implement when you return to your role?": {
-  "fr": "Tout au long de cette formation, vous avez découvert différentes façons d’intégrer l’IA dans votre travail quotidien de RTE. Que voulez-vous mettre en œuvre à votre retour dans votre rôle ?",
+  "fr": "Tout au long de cette formation, vous avez découvert différentes façons d’intégrer l’IA dans votre travail quotidien de RTE. Que voulez-vous mettre en œuvre à votre retour dans votre rôle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:137"
@@ -46819,13 +46819,13 @@
   "where": "apps/web/app/(app)/model/page.tsx:131"
  },
  "Time-critical?": {
-  "fr": "Urgent ?",
+  "fr": "Urgent?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:187"
  },
  "Time-critical? Y=2 N=0": {
-  "fr": "Urgente ? O=2 N=0",
+  "fr": "Urgente? O=2 N=0",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:522",
@@ -47156,7 +47156,7 @@
   "where": "apps/web/app/(app)/agents/page.tsx:207"
  },
  "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow": {
-  "fr": "Outils : + Carte ajoute un post-it ; double-cliquez ou touchez deux fois une carte pour écrire ; faites-la glisser pour la déplacer ; Relier trace une flèche",
+  "fr": "Outils : + Carte ajoute un post-it; double-cliquez ou touchez deux fois une carte pour écrire; faites-la glisser pour la déplacer; Relier trace une flèche",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:278",
@@ -47271,7 +47271,7 @@
   "where": "packages/core/src/templates.ts:552"
  },
  "Total portfolio budget; the most important and most expensive costs, resources and activities.": {
-  "fr": "Budget total du portefeuille ; les coûts, ressources et activités les plus importants et les plus coûteux.",
+  "fr": "Budget total du portefeuille; les coûts, ressources et activités les plus importants et les plus coûteux.",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:66"
@@ -47695,7 +47695,7 @@
   "where": "packages/core/src/canvases.ts:647"
  },
  "Trustworthy: does this reflect the full customer experience?": {
-  "fr": "Fiable : cela reflète-t-il l’expérience client complète ?",
+  "fr": "Fiable : cela reflète-t-il l’expérience client complète?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:686"
@@ -47782,14 +47782,14 @@
   "where": "apps/web/components/studio-views-lpm.tsx:134"
  },
  "TTC Web Services Partner Network; Enhanced vision system and laser-based lidars": {
-  "fr": "Réseau de partenaires TTC Web Services ; système de vision amélioré et lidars laser",
+  "fr": "Réseau de partenaires TTC Web Services; système de vision amélioré et lidars laser",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43",
   "note": "\"TTC Web Services Partner Network\" partly translated; could be kept as a name."
  },
  "TTC Web Services Partner Network; Regional transportation transit system": {
-  "fr": "Réseau de partenaires TTC Web Services ; réseau régional de transport en commun",
+  "fr": "Réseau de partenaires TTC Web Services; réseau régional de transport en commun",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43"
@@ -48475,7 +48475,7 @@
   "where": "packages/core/src/courses/lpm.ts:94"
  },
  "Use the AI prompting template from Lesson 1. Compare: which goals are clearer, which are measurable, which would the team sign up for?": {
-  "fr": "Utilisez le modèle de prompt de la leçon 1. Comparez : quels objectifs sont les plus clairs, lesquels sont mesurables, lesquels l’équipe accepterait-elle ?",
+  "fr": "Utilisez le modèle de prompt de la leçon 1. Comparez : quels objectifs sont les plus clairs, lesquels sont mesurables, lesquels l’équipe accepterait-elle?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:677"
@@ -49326,7 +49326,7 @@
   "where": "packages/core/src/templates.ts:122"
  },
  "Voice of the customer; Service subscribers": {
-  "fr": "Voix du client ; abonnés au service",
+  "fr": "Voix du client; abonnés au service",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:43"
@@ -49949,7 +49949,7 @@
   "where": "packages/core/src/courses/lpm.ts:61"
  },
  "What are the biggest challenges facing you in your role supporting the organization?": {
-  "fr": "Quels sont les plus grands défis auxquels vous faites face dans votre rôle au service de l’organisation ?",
+  "fr": "Quels sont les plus grands défis auxquels vous faites face dans votre rôle au service de l’organisation?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -49967,13 +49967,13 @@
   "where": "packages/core/src/courses/lpm.ts:67"
  },
  "What are they hearing others say? From friends? From colleagues? Second-hand?": {
-  "fr": "Qu’entend-elle les autres dire ? Ses amis ? Ses collègues ? De seconde main ?",
+  "fr": "Qu’entend-elle les autres dire? Ses amis? Ses collègues? De seconde main?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "What are we solving?": {
-  "fr": "Que résolvons-nous ?",
+  "fr": "Que résolvons-nous?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:113"
@@ -49985,7 +49985,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:50"
  },
  "What are your roles and responsibilities?": {
-  "fr": "Quels sont vos rôles et responsabilités ?",
+  "fr": "Quels sont vos rôles et responsabilités?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -49997,7 +49997,7 @@
   "where": "packages/core/src/courses/lpm.ts:66"
  },
  "What assumptions does this research appear to make?": {
-  "fr": "Quelles hypothèses cette recherche semble-t-elle faire ?",
+  "fr": "Quelles hypothèses cette recherche semble-t-elle faire?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:650"
@@ -50045,7 +50045,7 @@
   "where": "packages/core/src/canvases.ts:68"
  },
  "What changes if you lead this way?": {
-  "fr": "Qu’est-ce qui change si vous dirigez ainsi ?",
+  "fr": "Qu’est-ce qui change si vous dirigez ainsi?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:206"
@@ -50057,13 +50057,13 @@
   "where": "packages/core/src/classes.ts:687"
  },
  "What could be a potential solution for the specific problems?": {
-  "fr": "Quelle pourrait être une solution aux problèmes identifiés ?",
+  "fr": "Quelle pourrait être une solution aux problèmes identifiés?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:55"
  },
  "What could go wrong, and how reversible is it?": {
-  "fr": "Qu’est-ce qui pourrait mal tourner, et est-ce réversible ?",
+  "fr": "Qu’est-ce qui pourrait mal tourner, et est-ce réversible?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:311"
@@ -50081,55 +50081,55 @@
   "where": "apps/web/app/(app)/billing/page.tsx:300"
  },
  "What did the room say?": {
-  "fr": "Qu’a dit la salle ?",
+  "fr": "Qu’a dit la salle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:914"
  },
  "What did you connect, and what flows between the RTE and it?": {
-  "fr": "Qu’avez-vous connecté, et qu’est-ce qui circule entre le RTE et cet élément ?",
+  "fr": "Qu’avez-vous connecté, et qu’est-ce qui circule entre le RTE et cet élément?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:1227"
  },
  "What do they do today? What behavior have we observed? What can we imagine them doing?": {
-  "fr": "Que fait-elle aujourd’hui ? Quel comportement avons-nous observé ? Que pouvons-nous l’imaginer faire ?",
+  "fr": "Que fait-elle aujourd’hui? Quel comportement avons-nous observé? Que pouvons-nous l’imaginer faire?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "What do they do today? What behaviour have we observed?": {
-  "fr": "Que fait-elle aujourd’hui ? Quel comportement avons-nous observé ?",
+  "fr": "Que fait-elle aujourd’hui? Quel comportement avons-nous observé?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:469"
  },
  "What do they need to do differently? What job(s) do they want or need to get done? What decision(s) do they need to make? How will we know they were successful?": {
-  "fr": "Que doit-elle faire différemment ? Quelle(s) tâche(s) veut-elle ou doit-elle accomplir ? Quelle(s) décision(s) doit-elle prendre ? Comment saurons-nous qu’elle a réussi ?",
+  "fr": "Que doit-elle faire différemment? Quelle(s) tâche(s) veut-elle ou doit-elle accomplir? Quelle(s) décision(s) doit-elle prendre? Comment saurons-nous qu’elle a réussi?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "what do they need to do?": {
-  "fr": "que doit-il faire ?",
+  "fr": "que doit-il faire?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:506"
  },
  "What do they need to DO?": {
-  "fr": "Que doit-elle FAIRE ?",
+  "fr": "Que doit-elle FAIRE?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "What do they see in the marketplace and in their immediate environment? What do they see others saying and doing? What are they watching and reading?": {
-  "fr": "Que voit-elle sur le marché et dans son environnement immédiat ? Que voit-elle les autres dire et faire ? Que regarde-t-elle et que lit-elle ?",
+  "fr": "Que voit-elle sur le marché et dans son environnement immédiat? Que voit-elle les autres dire et faire? Que regarde-t-elle et que lit-elle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "What does it take to get there, in money and attention?": {
-  "fr": "Que faut-il pour y arriver, en argent et en attention ?",
+  "fr": "Que faut-il pour y arriver, en argent et en attention?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:310"
@@ -50147,7 +50147,7 @@
   "where": "apps/web/lib/public.ts:130"
  },
  "What else should I know about in order to successfully prepare for our event?": {
-  "fr": "Que devrais-je savoir d’autre pour bien préparer notre événement ?",
+  "fr": "Que devrais-je savoir d’autre pour bien préparer notre événement?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -50159,7 +50159,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:69"
  },
  "What flows between the RTE and this?": {
-  "fr": "Qu’est-ce qui circule entre le RTE et cet élément ?",
+  "fr": "Qu’est-ce qui circule entre le RTE et cet élément?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:83"
@@ -50177,7 +50177,7 @@
   "where": "apps/web/components/studio-model.ts:319"
  },
  "What happened?": {
-  "fr": "Que s’est-il passé ?",
+  "fr": "Que s’est-il passé?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:564"
@@ -50189,7 +50189,7 @@
   "where": "apps/web/lib/public.ts:100"
  },
  "What have we heard them say? What can we imagine them saying?": {
-  "fr": "Que l’avons-nous entendue dire ? Que pouvons-nous l’imaginer dire ?",
+  "fr": "Que l’avons-nous entendue dire? Que pouvons-nous l’imaginer dire?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35 packages/core/src/classes.ts:468"
@@ -50213,7 +50213,7 @@
   "where": "packages/core/src/classes.ts:636"
  },
  "What insights would require direct customer validation?": {
-  "fr": "Quels enseignements nécessiteraient une validation directe auprès des clients ?",
+  "fr": "Quels enseignements nécessiteraient une validation directe auprès des clients?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:650"
@@ -50231,7 +50231,7 @@
   "where": "packages/core/src/canvases.ts:202"
  },
  "What is it waiting for? Potential causes": {
-  "fr": "Qu’attend-il ? Causes possibles",
+  "fr": "Qu’attend-il? Causes possibles",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:128"
@@ -50267,61 +50267,61 @@
   "where": "packages/core/src/courses/lpm.ts:79"
  },
  "What is the best possible outcome imaginable for our event?": {
-  "fr": "Quel est le meilleur résultat possible que l’on puisse imaginer pour notre événement ?",
+  "fr": "Quel est le meilleur résultat possible que l’on puisse imaginer pour notre événement?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
  },
  "What is the biggest risk in introducing change to your teams?": {
-  "fr": "Quel est le plus grand risque à introduire du changement dans vos équipes ?",
+  "fr": "Quel est le plus grand risque à introduire du changement dans vos équipes?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
  },
  "What is the call to action?": {
-  "fr": "Quel est l’appel à l’action ?",
+  "fr": "Quel est l’appel à l’action?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:113"
  },
  "What is the challenge? Too slow? Too many handoffs?": {
-  "fr": "Quelle est la difficulté ? Trop lent ? Trop de transferts ?",
+  "fr": "Quelle est la difficulté? Trop lent? Trop de transferts?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:51"
  },
  "What is the first cause? Type, then click away": {
-  "fr": "Quelle est la première cause ? Saisissez, puis cliquez ailleurs",
+  "fr": "Quelle est la première cause? Saisissez, puis cliquez ailleurs",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:613"
  },
  "What is the potential impact on sales, distribution, deployment and support?": {
-  "fr": "Quel est l’impact potentiel sur les ventes, la distribution, le déploiement et le support ?",
+  "fr": "Quel est l’impact potentiel sur les ventes, la distribution, le déploiement et le support?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:73"
  },
  "What is the potential impact on solutions, programs and services?": {
-  "fr": "Quel est l’impact potentiel sur les solutions, les programmes et les services ?",
+  "fr": "Quel est l’impact potentiel sur les solutions, les programmes et les services?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:73"
  },
  "What is the problem? Who has the problem? Why is it important?": {
-  "fr": "Quel est le problème ? Qui a ce problème ? Pourquoi est-ce important ?",
+  "fr": "Quel est le problème? Qui a ce problème? Pourquoi est-ce important?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:649"
  },
  "What issues and opportunities might you bring up?": {
-  "fr": "Quels problèmes et quelles opportunités pourriez-vous soulever ?",
+  "fr": "Quels problèmes et quelles opportunités pourriez-vous soulever?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:683"
  },
  "What issues or topics will people avoid discussing that I should be aware of?": {
-  "fr": "Quels problèmes ou sujets les gens éviteront-ils d’aborder et dont je devrais être conscient ?",
+  "fr": "Quels problèmes ou sujets les gens éviteront-ils d’aborder et dont je devrais être conscient?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -50381,7 +50381,7 @@
   "where": "apps/web/components/planning-views.tsx:344"
  },
  "What jobs do they want done? What decisions must they make? How will we know they succeeded?": {
-  "fr": "Quelles tâches veut-elle accomplir ? Quelles décisions doit-elle prendre ? Comment saurons-nous qu’elle a réussi ?",
+  "fr": "Quelles tâches veut-elle accomplir? Quelles décisions doit-elle prendre? Comment saurons-nous qu’elle a réussi?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:466"
@@ -50405,7 +50405,7 @@
   "where": "apps/web/components/planning-pages.tsx:508"
  },
  "What metrics will you use to support your pitch?": {
-  "fr": "Quelles métriques utiliserez-vous pour étayer votre pitch ?",
+  "fr": "Quelles métriques utiliserez-vous pour étayer votre pitch?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:310"
@@ -50423,7 +50423,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:71"
  },
  "What other thoughts and feelings might motivate their behavior?": {
-  "fr": "Quels autres pensées et sentiments pourraient motiver son comportement ?",
+  "fr": "Quels autres pensées et sentiments pourraient motiver son comportement?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
@@ -50447,7 +50447,7 @@
   "where": "packages/core/src/courses/rte.ts:110"
  },
  "What potential solutions might you offer to resolve the issues and follow through with opportunities?": {
-  "fr": "Quelles solutions pourriez-vous proposer pour résoudre les problèmes et donner suite aux opportunités ?",
+  "fr": "Quelles solutions pourriez-vous proposer pour résoudre les problèmes et donner suite aux opportunités?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:683"
@@ -50465,19 +50465,19 @@
   "where": "packages/core/src/courses/rte.ts:340"
  },
  "What problems do you see?": {
-  "fr": "Quels problèmes voyez-vous ?",
+  "fr": "Quels problèmes voyez-vous?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:55"
  },
  "What product(s) is your ART responsible for?": {
-  "fr": "De quel(s) produit(s) votre ART est-il responsable ?",
+  "fr": "De quel(s) produit(s) votre ART est-il responsable?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-aart.ts:27"
  },
  "What question does this metric help you answer?": {
-  "fr": "À quelle question cette métrique vous aide-t-elle à répondre ?",
+  "fr": "À quelle question cette métrique vous aide-t-elle à répondre?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:354"
@@ -50489,13 +50489,13 @@
   "where": "packages/core/src/courses/rte.ts:260"
  },
  "What ROAM, why, and how would you facilitate it?": {
-  "fr": "Quel ROAM, pourquoi, et comment le faciliteriez-vous ?",
+  "fr": "Quel ROAM, pourquoi, et comment le faciliteriez-vous?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:525"
  },
  "What should always remain a human responsibility?": {
-  "fr": "Qu’est-ce qui doit toujours rester une responsabilité humaine ?",
+  "fr": "Qu’est-ce qui doit toujours rester une responsabilité humaine?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:664 packages/core/src/courses/leading-safe.ts:560 packages/core/src/courses/rte.ts:207"
@@ -50513,7 +50513,7 @@
   "where": "apps/web/components/okr-explorer.tsx:238"
  },
  "What Solutions do you provide them?": {
-  "fr": "Quelles solutions leur fournissez-vous ?",
+  "fr": "Quelles solutions leur fournissez-vous?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:340"
@@ -50615,13 +50615,13 @@
   "where": "apps/web/app/privacy/page.tsx:8"
  },
  "what value do they get?": {
-  "fr": "quelle valeur en retire-t-il ?",
+  "fr": "quelle valeur en retire-t-il?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:506"
  },
  "What was the impact?": {
-  "fr": "Quel a été l’impact ?",
+  "fr": "Quel a été l’impact?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:564"
@@ -50657,7 +50657,7 @@
   "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:392"
  },
  "What will happen if DevOps capabilities are not built?": {
-  "fr": "Que se passera-t-il si les capacités DevOps ne sont pas développées ?",
+  "fr": "Que se passera-t-il si les capacités DevOps ne sont pas développées?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:310"
@@ -50669,13 +50669,13 @@
   "where": "apps/web/components/planning-pages.tsx:508"
  },
  "What will we gain if we proceed?": {
-  "fr": "Que gagnerons-nous si nous poursuivons ?",
+  "fr": "Que gagnerons-nous si nous poursuivons?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:113"
  },
  "What will we lose if we don’t proceed?": {
-  "fr": "Que perdrons-nous si nous ne poursuivons pas ?",
+  "fr": "Que perdrons-nous si nous ne poursuivons pas?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:113"
@@ -50711,7 +50711,7 @@
   "where": "apps/web/app/privacy/page.tsx:43"
  },
  "What's one AI-enabled improvement you'd consider trying next PI?": {
-  "fr": "Quelle amélioration fondée sur l’IA envisageriez-vous d’essayer au prochain PI ?",
+  "fr": "Quelle amélioration fondée sur l’IA envisageriez-vous d’essayer au prochain PI?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:664"
@@ -50735,7 +50735,7 @@
   "where": "apps/web/app/privacy/page.tsx:42"
  },
  "When did it happen?": {
-  "fr": "Quand cela s’est-il produit ?",
+  "fr": "Quand cela s’est-il produit?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:564"
@@ -50771,7 +50771,7 @@
   "where": "apps/web/components/studio-model.ts:564 apps/web/components/studio-views.tsx:277"
  },
  "Where could you collect this data (for example, from a tool, report, or board)?": {
-  "fr": "Où pourriez-vous collecter ces données (par exemple, dans un outil, un rapport ou un tableau) ?",
+  "fr": "Où pourriez-vous collecter ces données (par exemple, dans un outil, un rapport ou un tableau)?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:354"
@@ -50783,7 +50783,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:254"
  },
  "Where did it happen?": {
-  "fr": "Où cela s’est-il produit ?",
+  "fr": "Où cela s’est-il produit?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:564"
@@ -50801,7 +50801,7 @@
   "where": "packages/core/src/courses/leading-safe.ts:232"
  },
  "Where does AI change the work?": {
-  "fr": "Où l’IA change-t-elle le travail ?",
+  "fr": "Où l’IA change-t-elle le travail?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:617"
@@ -50813,7 +50813,7 @@
   "where": "packages/core/src/courses/rte.ts:205"
  },
  "Where does planning seem the hardest or most time-consuming?": {
-  "fr": "Où la planification semble-t-elle la plus difficile ou la plus chronophage ?",
+  "fr": "Où la planification semble-t-elle la plus difficile ou la plus chronophage?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:664"
@@ -50837,7 +50837,7 @@
   "where": "apps/web/app/(app)/imports/page.tsx:90"
  },
  "WHERE IS YOUR PORTFOLIO TODAY?": {
-  "fr": "OÙ EN EST VOTRE PORTEFEUILLE AUJOURD’HUI ?",
+  "fr": "OÙ EN EST VOTRE PORTEFEUILLE AUJOURD’HUI?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:19"
@@ -50915,7 +50915,7 @@
   "where": "apps/web/lib/pricing.ts:112"
  },
  "Which internal and/or external customers are affected, and how?": {
-  "fr": "Quels clients internes et/ou externes sont concernés, et de quelle manière ?",
+  "fr": "Quels clients internes et/ou externes sont concernés, et de quelle manière?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:73"
@@ -50927,19 +50927,19 @@
   "where": "packages/core/src/courses/leading-safe.ts:441"
  },
  "Which PI objective or business outcome does this serve?": {
-  "fr": "Quel objectif de PI ou résultat d’affaires cela sert-il ?",
+  "fr": "Quel objectif de PI ou résultat d’affaires cela sert-il?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:507"
  },
  "Which pivot would have helped?": {
-  "fr": "Quel pivot aurait aidé ?",
+  "fr": "Quel pivot aurait aidé?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:297"
  },
  "Which responsibility would be hardest in your organization?": {
-  "fr": "Quelle responsabilité serait la plus difficile dans votre organisation ?",
+  "fr": "Quelle responsabilité serait la plus difficile dans votre organisation?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:340"
@@ -51005,25 +51005,25 @@
   "where": "apps/web/app/(app)/outcomes/page.tsx:1011"
  },
  "Who are the Business Owners?": {
-  "fr": "Qui sont les responsables d’affaires ?",
+  "fr": "Qui sont les responsables d’affaires?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:193"
  },
  "Who are the Customers you serve?": {
-  "fr": "Qui sont les clients que vous servez ?",
+  "fr": "Qui sont les clients que vous servez?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:340"
  },
  "WHO are we empathizing with?": {
-  "fr": "AVEC QUI faisons-nous preuve d’empathie ?",
+  "fr": "AVEC QUI faisons-nous preuve d’empathie?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "Who are we empathizing with? (customer or user)": {
-  "fr": "Avec qui faisons-nous preuve d’empathie ? (client ou utilisateur)",
+  "fr": "Avec qui faisons-nous preuve d’empathie? (client ou utilisateur)",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:138"
@@ -51053,7 +51053,7 @@
   "where": "apps/web/app/pricing/page.tsx:53"
  },
  "Who do we need? Guiding coalition": {
-  "fr": "De qui avons-nous besoin ? Coalition directrice",
+  "fr": "De qui avons-nous besoin? Coalition directrice",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:598"
@@ -51065,7 +51065,7 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:438"
  },
  "Who else should I speak with in preparation for our event?": {
-  "fr": "Avec qui d’autre devrais-je m’entretenir pour préparer notre événement ?",
+  "fr": "Avec qui d’autre devrais-je m’entretenir pour préparer notre événement?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:115"
@@ -51083,7 +51083,7 @@
   "where": "apps/web/lib/public.ts:130"
  },
  "WHO IS IN THE ROOM? PICK THE ROLE YOU WILL PLAY": {
-  "fr": "QUI EST DANS LA SALLE ? CHOISISSEZ LE RÔLE QUE VOUS JOUEREZ",
+  "fr": "QUI EST DANS LA SALLE? CHOISISSEZ LE RÔLE QUE VOUS JOUEREZ",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:209"
@@ -51101,19 +51101,19 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:304"
  },
  "Who is the person we want to understand? What is the situation they are in? What is their role in the situation?": {
-  "fr": "Quelle est la personne que nous voulons comprendre ? Dans quelle situation se trouve-t-elle ? Quel est son rôle dans cette situation ?",
+  "fr": "Quelle est la personne que nous voulons comprendre? Dans quelle situation se trouve-t-elle? Quel est son rôle dans cette situation?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "Who is the person we want to understand? What situation are they in? What is their role?": {
-  "fr": "Qui est la personne que nous voulons comprendre ? Dans quelle situation se trouve-t-elle ? Quel est son rôle ?",
+  "fr": "Qui est la personne que nous voulons comprendre? Dans quelle situation se trouve-t-elle? Quel est son rôle?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:465"
  },
  "who is the user or role?": {
-  "fr": "qui est l’utilisateur ou le rôle ?",
+  "fr": "qui est l’utilisateur ou le rôle?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:506"
@@ -51137,7 +51137,7 @@
   "where": "packages/core/src/classes.ts:598"
  },
  "Who must say yes?": {
-  "fr": "Qui doit dire oui ?",
+  "fr": "Qui doit dire oui?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:322"
@@ -51215,7 +51215,7 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:254 packages/core/src/courses/ai-native-arts.ts:340"
  },
  "Why does that happen? Type, then click away": {
-  "fr": "Pourquoi cela arrive-t-il ? Saisissez, puis cliquez ailleurs",
+  "fr": "Pourquoi cela arrive-t-il? Saisissez, puis cliquez ailleurs",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:613"
@@ -51305,19 +51305,19 @@
   "where": "apps/web/app/privacy/page.tsx:54"
  },
  "Why would it help establish trust?": {
-  "fr": "Pourquoi aiderait-il à établir la confiance ?",
+  "fr": "Pourquoi aiderait-il à établir la confiance?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:102"
  },
  "Why would this be hard for you? Press Enter": {
-  "fr": "Pourquoi serait-ce difficile pour vous ? Appuyez sur Entrée",
+  "fr": "Pourquoi serait-ce difficile pour vous? Appuyez sur Entrée",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:383"
  },
  "Why? What context is the widget missing?": {
-  "fr": "Pourquoi ? Quel contexte manque-t-il au widget ?",
+  "fr": "Pourquoi? Quel contexte manque-t-il au widget?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:338"
@@ -51353,13 +51353,13 @@
   "where": "packages/core/src/templates.ts:478"
  },
  "Will you be ready to start writing PI Objectives in the next 15 minutes?": {
-  "fr": "Serez-vous prêts à commencer à rédiger les objectifs de PI dans les 15 prochaines minutes ?",
+  "fr": "Serez-vous prêts à commencer à rédiger les objectifs de PI dans les 15 prochaines minutes?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:45"
  },
  "Will you be ready to write PI objectives in the next 15 minutes?": {
-  "fr": "Serez-vous prêts à rédiger les objectifs de PI dans les 15 prochaines minutes ?",
+  "fr": "Serez-vous prêts à rédiger les objectifs de PI dans les 15 prochaines minutes?",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:236"
@@ -51390,7 +51390,7 @@
   "where": "apps/web/components/landing.tsx:57"
  },
  "Wipe everything learners added and start the class fresh?": {
-  "fr": "Effacer tout ce que les participants ont ajouté et repartir de zéro ?",
+  "fr": "Effacer tout ce que les participants ont ajouté et repartir de zéro?",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:128"
@@ -51855,7 +51855,7 @@
   "where": "apps/web/components/studio-model-lsa.ts:255"
  },
  "Write the steps that lead to value for one solution, left to right; under them, where work waits and why. Example: Apply → Gather info → Determine eligibility → Release decision → Process payments; delay: waiting on information from external partners (28 days).": {
-  "fr": "Écrivez de gauche à droite les étapes qui mènent à la valeur pour une solution ; en dessous, indiquez où le travail attend et pourquoi. Exemple : Demande → Collecte d’informations → Détermination de l’admissibilité → Décision → Traitement des paiements ; délai : attente d’informations de partenaires externes (28 jours).",
+  "fr": "Écrivez de gauche à droite les étapes qui mènent à la valeur pour une solution; en dessous, indiquez où le travail attend et pourquoi. Exemple : Demande → Collecte d’informations → Détermination de l’admissibilité → Décision → Traitement des paiements; délai : attente d’informations de partenaires externes (28 jours).",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:521"
@@ -52437,7 +52437,7 @@
   "where": "apps/web/components/studio-model-lpm.ts:77"
  },
  "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson": {
-  "fr": "Zoom : les boutons + et −, la molette de la souris avec Ctrl, ou le pincement ; Ajuster affiche toute la leçon",
+  "fr": "Zoom : les boutons + et −, la molette de la souris avec Ctrl, ou le pincement; Ajuster affiche toute la leçon",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:278",
