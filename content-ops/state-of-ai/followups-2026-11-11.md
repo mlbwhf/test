@@ -109,7 +109,7 @@ then give the new page the real slug and publish. URL unchanged; page ID changes
 |---|---|---|---|
 | Is AI a Technological Revolution? (Perez method) | 3821 | 3886 | draft, IDENTICAL; byline `&amp;middot;` fixed by one alter (11 Nov ET) |
 | How AI Developed, 1950–2026 | 3788 | 3906 | draft, IDENTICAL; byline fixed by one alter (11 Nov ET) |
-| AI Development Index | pending | | uploading old build → then apply patches/ai-development-index-byline.json |
+| AI Development Index | 3789 | 3971 | draft, IDENTICAL; byline fixed by one alter (11 Nov ET) |
 
 ## J. Page 1266 errors found by the geography research (11 Nov ET) — correct after verification pass
 
