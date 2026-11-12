@@ -136,3 +136,12 @@ sovereign-ai-index-2026, re-stamp dates if not 11 Nov, publish; verify permalink
 Its rebuilt content is 28.5 KB (3 chunks). At go-live, with the owner's OK, replace it in one update rather than marker
 chunks (no half-written live page): back up first; if the WAF blocks the single update, write the new content in a
 draft, then apply it in 3 sequential replacements of contiguous old sections so every intermediate state is complete.
+
+## M. Page 1266 (11–12 Nov ET)
+
+Corrected Russia (Misattribution: StatCounter referral share shown as use; now Alice AI by Mediascope reach), Korea (ChatGPT ~91%
+of AI-app users), Japan (Gennai trial of tsuzumi 2 / Takane 32B / PLaMo 2.0 Prime; Fugaku-LLM claim removed); 16 stale figures
+refreshed with What-changed rows; three rows on 3229. Work crossed midnight ET: stamps being moved to 12 Nov; fact-check entry on
+3227; extra log rows for untraceable US/Europe shares and non-work figures; CSV re-issued as *-rev20261112.csv.
+Open: "Qwen up 58×" unverified; refresh-register row for 1266 lists old figures; 1654 and 964 "two Chinese models in the
+global top four" stale on Artificial Analysis v5.0.1 (Kimi K3.1 Pro #10 is the top Chinese model).
