@@ -71,3 +71,11 @@ Our pages said both models were "withdrawn within a week" and never mentioned th
 - 2026 edition and YoY were rebuilt before upload (not yet on site).
 - Live: 1654 Chinese AI Models (correction + 3229 row), 566 Fable 5 report (update block).
 - Still to check: price ladder "$10/$50 Fable 5.1" vs Fable/Mythos 5.2 at $8/$40 (9 Nov 2026).
+
+## F. Found by the AI-history verification pass (12 Nov)
+
+- models.json says no public 2026 training-compute estimate exists; Epoch AI now estimates GPT-6 Astra at
+  ~9.4×10^26 FLOP ("Likely", range ~5e26–2e27). Update at next Models refresh (What-changed block).
+- Epoch's AlphaGo Zero estimate is now 6.49×10^20 FLOP (training only), not ~3×10^23; check any site page quoting the old figure.
+- AI Index 2026 summary "$120M largest mid-2025 run, down ~30%" conflicts with Epoch ($218M–$388M amortised for 2025 runs) — CONTESTED; do not publish until checked against the report.
+- OpenAI GPT-6 Cyber (5 Nov 2026) and Daybreak for Frontline Defenders ($1B, 3 Sep) are not yet on the site.
