@@ -47,6 +47,7 @@
 | State of AI Geography 2026 | 3704 | 3753 | draft (IDENTICAL 122,149 bytes, old build) → patch 3704-geography-20261112.json |
 | State of AI Industries 2026 | 3705 | 3754 | draft (IDENTICAL 134,267 bytes), 12 Nov |
 | State of AI Regulation 2026 | 3757 | 3836 | draft (IDENTICAL 127,911 bytes), 11 Nov ET |
+| State of AI Risk 2026 | 3756 | 3839 | draft (IDENTICAL 125,212 bytes), 11 Nov ET |
 
 Corrections A1–A9 done 11 Nov (agent report): 376, 1100, 92, 89, 386, 413, 498, 374, 954, 930; ten rows on 3229.
 12 Nov: the owner's accidentally rejected edit was redone — 376 JSON-LD citation "Gartner Worldwide AI
@@ -93,3 +94,10 @@ Our pages said both models were "withdrawn within a week" and never mentioned th
   links lack `nofollow`.
 - New drafts (AI history report, AI Development Index, Perez report) were built with a 12 Nov stamp; re-stamp to
   the actual publication date at go-live.
+
+## H. Go-live plan change for 322 (2024) and 358 (2025)
+
+Writing chunks into a live page would leave it half-written in public for the duration of the upload. Instead:
+upload each rebuilt edition as a separate DRAFT with a temporary slug (state-of-ai-2024-rebuild,
+state-of-ai-2025-rebuild); at go-live, with the owner's OK, set the old page's slug to *-archive and draft,
+then give the new page the real slug and publish. URL unchanged; page ID changes (no internal links use IDs).
