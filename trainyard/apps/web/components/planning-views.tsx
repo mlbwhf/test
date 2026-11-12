@@ -837,7 +837,7 @@ export function AartView({ v }: { v: any }) {
 </div>
 <div style={{ display: "flex", alignItems: "center", gap: "8px", color: "#8a8a99", font: "600 12px 'Instrument Sans',sans-serif", margin: "0 6px" } as any}><i style={{ flex: "1", borderBottom: "2px solid #8a8a99", borderLeft: "2px solid #8a8a99", height: "12px", display: "block" } as any}></i>◂ Feedback<i style={{ flex: "1", borderBottom: "2px solid #8a8a99", borderRight: "2px solid #8a8a99", height: "12px", display: "block" } as any}></i></div>
 <div style={{ display: "grid", gridTemplateColumns: "repeat(5,minmax(0,1fr))", gap: "22px", marginTop: "12px" } as any}>
-{(v.stages || []).map((s: any, s_n: number) => (<Fragment key={s_n}><textarea key={s.val} defaultValue={s.val} onBlur={s.set} placeholder="In your ART today…" style={{ minHeight: "84px", border: `2px solid ${s.bd}`, borderRadius: "10px", padding: "8px", fontSize: "13px", resize: "vertical", background: "#fff", color: "#14123a" } as any}></textarea></Fragment>))}
+{(v.stages || []).map((s: any, s_n: number) => (<Fragment key={s_n}><textarea key={"s.val|" + String(s.val ?? "")} defaultValue={s.val} onBlur={s.set} placeholder="In your ART today…" style={{ minHeight: "84px", border: `2px solid ${s.bd}`, borderRadius: "10px", padding: "8px", fontSize: "13px", resize: "vertical", background: "#fff", color: "#14123a" } as any}></textarea></Fragment>))}
 </div></div>
 <div style={{ fontSize: "13px", marginTop: "10px", fontWeight: "600", color: `${v.flowColor}` } as any}>{v.flowMsg}</div>
 </div>
@@ -882,7 +882,7 @@ export function AartView({ v }: { v: any }) {
 
 {v.isStrategy ? (<>
 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,300px),1fr))", gap: "14px" } as any}>
-{(v.strat || []).map((q: any, q_n: number) => (<Fragment key={q_n}><label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 13px 'Instrument Sans',sans-serif" } as any}>{q.q}<textarea key={q.val} defaultValue={q.val} onBlur={q.set} style={{ minHeight: "130px", border: "2px solid #14123a", borderRadius: "14px", padding: "12px", fontSize: "15px", background: "#fbf9f4", resize: "vertical", color: "#14123a" } as any}></textarea></label></Fragment>))}
+{(v.strat || []).map((q: any, q_n: number) => (<Fragment key={q_n}><label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 13px 'Instrument Sans',sans-serif" } as any}>{q.q}<textarea key={"q.val|" + String(q.val ?? "")} defaultValue={q.val} onBlur={q.set} style={{ minHeight: "130px", border: "2px solid #14123a", borderRadius: "14px", padding: "12px", fontSize: "15px", background: "#fbf9f4", resize: "vertical", color: "#14123a" } as any}></textarea></label></Fragment>))}
 </div>
 <div style={{ fontSize: "14px", color: `${v.stratColor}`, fontWeight: "600" } as any}>{v.stratMsg}</div>
 </>) : null}
@@ -890,10 +890,10 @@ export function AartView({ v }: { v: any }) {
 {v.isData ? (<>
 <div style={{ display: "flex", flexDirection: "column", gap: "14px" } as any}>
 <div><div style={{ font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em", marginBottom: "6px" } as any}>1 · PICK A DATA TYPE YOUR ART RELIES ON</div><div style={{ display: "flex", gap: "8px", flexWrap: "wrap" } as any}>{(v.dataTypes || []).map((d: any, d_n: number) => (<Fragment key={d_n}><button onClick={d.go} style={{ border: "2px solid #14123a", borderRadius: "99px", padding: "9px 16px", font: "700 14px 'Instrument Sans',sans-serif", cursor: "pointer", background: `${d.bg}` } as any}>{d.n}</button></Fragment>))}</div></div>
-<label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>2 · NAME A SPECIFIC SOURCE THAT ALREADY EXISTS<input key={v.dataSource} defaultValue={v.dataSource} onBlur={v.setSource} placeholder="A real system or document, not a category" style={{ border: "2px solid #14123a", borderRadius: "12px", padding: "11px 14px", fontSize: "16px", background: "#fbf9f4", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>2 · NAME A SPECIFIC SOURCE THAT ALREADY EXISTS<input key={"v.dataSource|" + String(v.dataSource ?? "")} defaultValue={v.dataSource} onBlur={v.setSource} placeholder="A real system or document, not a category" style={{ border: "2px solid #14123a", borderRadius: "12px", padding: "11px 14px", fontSize: "16px", background: "#fbf9f4", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any} /></label>
 <div><div style={{ font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em", marginBottom: "6px" } as any}>3 · WHICH QUALITIES DOES IT MEET?</div>
 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(150px,1fr))", gap: "10px" } as any}>{(v.dataQ || []).map((q: any, q_n: number) => (<Fragment key={q_n}><button onClick={q.go} style={{ border: "2px solid #14123a", borderRadius: "16px", padding: "16px 10px", cursor: "pointer", background: `${q.bg}`, font: "700 15px 'Instrument Sans',sans-serif", color: "#14123a" } as any}>{q.mark} {q.n}</button></Fragment>))}</div></div>
-<label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>4 · ONE CONCRETE ACTION THAT FIXES THE GAP<input key={v.dataAction} defaultValue={v.dataAction} onBlur={v.setAction} style={{ border: "2px solid #14123a", borderRadius: "12px", padding: "11px 14px", fontSize: "16px", background: "#fbf9f4", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any} /></label>
+<label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>4 · ONE CONCRETE ACTION THAT FIXES THE GAP<input key={"v.dataAction|" + String(v.dataAction ?? "")} defaultValue={v.dataAction} onBlur={v.setAction} style={{ border: "2px solid #14123a", borderRadius: "12px", padding: "11px 14px", fontSize: "16px", background: "#fbf9f4", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any} /></label>
 <div style={{ fontWeight: "600", color: `${v.dataColor}` } as any}>{v.dataMsg}</div>
 </div>
 </>) : null}
@@ -911,7 +911,7 @@ export function AartView({ v }: { v: any }) {
 <button onClick={v.sendGaps} style={{ border: "0", background: "#ffe14d", color: "#14123a", borderRadius: "99px", padding: "13px 22px", fontWeight: "800", fontSize: "15px", cursor: "pointer" } as any}>{v.sendLabel}</button></div>
 </>) : null}
 
-{v.hasNotes ? (<><label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>SCRIBE NOTES<textarea key={v.notes} defaultValue={v.notes} onBlur={v.setNotes} placeholder="What did the room say?" style={{ minHeight: "90px", border: "2px solid #14123a", borderRadius: "14px", padding: "12px", fontSize: "15px", background: "#fbf9f4", resize: "vertical", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any}></textarea></label></>) : null}
+{v.hasNotes ? (<><label style={{ display: "flex", flexDirection: "column", gap: "6px", font: "700 12px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" } as any}>SCRIBE NOTES<textarea key={"v.notes|" + String(v.notes ?? "")} defaultValue={v.notes} onBlur={v.setNotes} placeholder="What did the room say?" style={{ minHeight: "90px", border: "2px solid #14123a", borderRadius: "14px", padding: "12px", fontSize: "15px", background: "#fbf9f4", resize: "vertical", color: "#14123a", fontFamily: "'Instrument Sans',sans-serif" } as any}></textarea></label></>) : null}
 
 </div></div></div>
     </>
