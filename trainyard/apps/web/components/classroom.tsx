@@ -127,7 +127,7 @@ function ClassLibrary({ running, busy, anonymous, onStart, reload }: { running: 
                 </header>
                 <ol className="lib-card-lessons">
                   {c.lessons.map((l, k) => (
-                    <li key={l.title}>
+                    <li key={`${k}:${l.title}`}>
                       <b>{String(k + 1).padStart(2, "0")}</b> {l.title}
                     </li>
                   ))}

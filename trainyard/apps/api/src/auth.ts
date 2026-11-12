@@ -40,6 +40,8 @@ export interface User {
    * sign-on through OIDC or SAML adds one entry per provider, keyed by its subject id.
    */
   identities?: { provider: string; subject: string; linkedAt: string }[];
+  /** In a company: the courses (class ids, e.g. "leading-safe", "lpm") this instructor teaches. */
+  courses?: string[];
 }
 
 export interface Principal {
@@ -348,7 +350,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       principal: req.principal,
       open: platform.state.users.length === 0,
       permissions: Object.fromEntries(Object.entries(PERMISSIONS).map(([k, roles]) => [k, (roles as readonly Role[]).includes(req.principal.role)])),
-      workspace: { id: ws.id, name: record?.name ?? ws.name, plan: record?.plan ?? "platform", seats: record?.seats ?? 0, status: record?.status ?? "active", ...(record?.frozenReason ? { frozenReason: record.frozenReason } : {}), platform: here(req) === tenants.platformId },
+      workspace: { id: ws.id, name: record?.name ?? ws.name, plan: record?.plan ?? "platform", kind: record?.kind ?? "individual", seats: record?.seats ?? 0, status: record?.status ?? "active", ...(record?.frozenReason ? { frozenReason: record.frozenReason } : {}), platform: here(req) === tenants.platformId },
     };
   });
 

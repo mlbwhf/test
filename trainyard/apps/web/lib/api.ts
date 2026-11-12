@@ -113,7 +113,7 @@ export interface Me {
   principal: { userId: string; name: string; role: string; personId?: string; anonymous: boolean; workspaceId: string; platformAdmin: boolean; support?: boolean; guestBoardId?: string };
   open: boolean;
   permissions: Record<string, boolean>;
-  workspace: { id: string; name: string; plan: "practice" | "trainer" | "academy" | "insights" | "platform"; seats: number; status: "active" | "frozen"; frozenReason?: string; platform: boolean };
+  workspace: { id: string; name: string; plan: "practice" | "trainer" | "academy" | "insights" | "platform"; kind?: "individual" | "company"; seats: number; status: "active" | "frozen"; frozenReason?: string; platform: boolean };
 }
 
 /** Who the current key belongs to and what they may do. */

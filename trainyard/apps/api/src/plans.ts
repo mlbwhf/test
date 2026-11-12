@@ -15,6 +15,8 @@ export interface WorkspaceRecord {
   plan: Plan;
   /** Trainers (Trainer plan) or trains (Academy plan); unused on Practice. */
   seats: number;
+  /** A company (training provider) manages a roster of instructors and the courses each teaches. */
+  kind?: "individual" | "company";
   status: WorkspaceStatus;
   ownerUserId: string;
   createdAt: string;

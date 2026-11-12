@@ -98,9 +98,9 @@ export class Tenants {
   }
 
   /** Creates the registry entry and the tenant's starting state. */
-  async create(input: { name: string; plan: Plan; seats: number; ownerUserId: string; note?: string }, actor: Parameters<Store["commit"]>[0]): Promise<WorkspaceRecord> {
+  async create(input: { name: string; plan: Plan; seats: number; ownerUserId: string; note?: string; kind?: "individual" | "company" }, actor: Parameters<Store["commit"]>[0]): Promise<WorkspaceRecord> {
     const id = `ws-${this.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 7)}`;
-    const record: WorkspaceRecord = { id, name: input.name, plan: input.plan, seats: Math.max(1, input.seats), status: "active", ownerUserId: input.ownerUserId, createdAt: this.now().toISOString(), ...(input.note ? { note: input.note } : {}) };
+    const record: WorkspaceRecord = { id, name: input.name, plan: input.plan, seats: Math.max(1, input.seats), status: "active", ownerUserId: input.ownerUserId, createdAt: this.now().toISOString(), ...(input.note ? { note: input.note } : {}), ...(input.kind === "company" ? { kind: "company" as const } : {}) };
     this.records().push(record);
     await this.platform.commit(actor, "workspace.create", { workspaceId: id, plan: record.plan, seats: record.seats });
     await this.get(id);

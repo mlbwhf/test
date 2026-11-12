@@ -216,11 +216,33 @@ Trainyard`,
   const web = (opts.webUrl ?? "").replace(/\/$/, "");
   app.get("/v1/boards/:id/instructors", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    return { instructors: instructorsOf(req, b), canEmail: !!opts.mailer?.live };
+    // The company's other instructors, those who teach this class's course first.
+    const course = typeof b.fields?.class === "string" ? b.fields.class : "";
+    const taken = new Set([b.fields?.ownerId, ...instructorIds(b)]);
+    const candidates = tenants.members(here(req)).filter((u) => !u.disabled && !taken.has(u.id) && u.id !== req.principal.userId)
+      .map((u) => ({ id: u.id, name: u.name, email: u.email, teaches: !!course && (u.courses ?? []).includes(course), courses: u.courses ?? [] }))
+      .sort((a, c) => Number(c.teaches) - Number(a.teaches) || a.name.localeCompare(c.name));
+    return { instructors: instructorsOf(req, b), candidates, course, canEmail: !!opts.mailer?.live };
   });
-  app.post("/v1/boards/:id/instructors", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) }) } }, async (req, reply) => {
+  app.post("/v1/boards/:id/instructors", { schema: { params: z.object({ id: z.string().max(200) }), body: z.union([z.object({ userId: z.string().max(80) }), z.object({ name: z.string().trim().min(1).max(80), email: z.string().trim().email().max(200) })]) } }, async (req, reply) => {
     const b = classBoard(req, req.params.id);
-    const email = req.body.email.toLowerCase();
+    // Picked from the company's instructors: someone already in this workspace.
+    if ("userId" in req.body) {
+      const u = tenants.members(here(req)).find((x) => x.id === (req.body as { userId: string }).userId && !x.disabled);
+      if (!u) throw notFound("Instructor");
+      if (u.id !== b.fields?.ownerId && !instructorIds(b).includes(u.id)) {
+        b.fields = { ...(b.fields ?? {}), instructors: [...instructorIds(b), u.id] };
+        await store.commit(req.principal, "class.instructors.add", { boardId: b.id, userId: u.id });
+      }
+      const room = b.roomId ? (store.state.rooms ?? []).find((r) => r.id === b.roomId) : undefined;
+      if (room && room.visibility === "private" && !room.members.some((m) => m.userId === u.id)) {
+        room.members.push({ userId: u.id, access: "edit" });
+        await store.commit(req.principal, "room.members", { id: room.id, added: u.id });
+      }
+      return reply.code(201).send({ instructors: instructorsOf(req, b), created: false, emailed: false });
+    }
+    const body = req.body as { name: string; email: string };
+    const email = body.email.toLowerCase();
     const inHere = (u: User) => (here(req) === tenants.platformId ? !u.workspaceId : u.workspaceId === here(req));
     let user = platform.state.users.find((u) => u.email.toLowerCase() === email);
     let created = false;
@@ -234,7 +256,7 @@ Trainyard`,
         const limits = limitsFor(record.plan, record.seats), usage = usageOf(tenants.handle.state, tenants.members(here(req)));
         if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
       }
-      user = { id: `u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: req.body.name, email, role: "viewer", keyHash: hashKey(newKey()), createdAt: platform.now().toISOString(), ...(here(req) === tenants.platformId ? {} : { workspaceId: here(req) }) };
+      user = { id: `u-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: body.name, email, role: "viewer", keyHash: hashKey(newKey()), createdAt: platform.now().toISOString(), ...(here(req) === tenants.platformId ? {} : { workspaceId: here(req) }) };
       platform.state.users.push(user);
       created = true;
       await platform.commit(req.principal, "user.create", { userId: user.id, role: user.role, workspaceId: here(req), invitedFor: b.id });

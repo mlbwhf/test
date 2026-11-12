@@ -2474,3 +2474,60 @@ describe("platform admins by email", () => {
     expect((await call("GET", "/v1/me", undefined, other, { "x-trainyard-workspace": platformId })).status).toBe(403);
   });
 });
+
+describe("company accounts", () => {
+  it("signs a company up, lets its admin build the instructor roster, assign classes and read progress", async () => {
+    const { call, app } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    expect((await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company" })).body.error.code).toBe("COMPANY_NAME");
+    const owner = (await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company", company: "Acme Training" })).body.apiKey as string;
+    expect((await call("GET", "/v1/me", undefined, owner)).body.workspace).toMatchObject({ name: "Acme Training", kind: "company" });
+    // The roster: a trainer who teaches LPM, and a co-instructor who uses no seat.
+    const bo = await call("POST", "/v1/instructors", { name: "Bo", email: "bo@acme.io", kind: "trainer", courses: ["lpm", "leading-safe"] }, owner);
+    expect(bo.status).toBe(201);
+    expect(bo.body.instructor).toMatchObject({ kind: "trainer", courses: ["lpm", "leading-safe"] });
+    const cy = (await call("POST", "/v1/instructors", { name: "Cy", email: "cy@acme.io", kind: "co-instructor", courses: ["rte"] }, owner)).body.instructor as { id: string };
+    expect((await call("POST", "/v1/instructors", { name: "X", email: "x@acme.io", courses: ["not-a-course"] }, owner)).status).toBe(400);
+    const roster = (await call("GET", "/v1/instructors", undefined, owner)).body;
+    expect(roster).toMatchObject({ canManage: true, company: true });
+    expect(roster.instructors.map((i: { name: string }) => i.name).sort()).toEqual(["Ana", "Bo", "Cy"]);
+    expect((await call("PATCH", `/v1/instructors/${cy.id}`, { courses: ["rte", "lpm"] }, owner)).body.instructor.courses).toEqual(["rte", "lpm"]);
+    // A class: the picker lists the company's instructors, those who teach the course first.
+    const cls = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM · March" }, owner)).body.board.id as string;
+    const pick = (await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body;
+    expect(pick.course).toBe("lpm");
+    expect(pick.candidates.map((c: { name: string; teaches: boolean }) => [c.name, c.teaches])).toEqual([["Bo", true], ["Cy", true]]);
+    expect((await call("POST", `/v1/boards/${cls}/instructors`, { userId: cy.id }, owner)).body.instructors.map((i: { name: string }) => i.name)).toEqual(["Ana", "Cy"]);
+    // The admin hands the class to Bo; Ana stays on as co-instructor. A co-instructor-only person cannot lead.
+    expect((await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: cy.id }, owner)).body.error.code).toBe("NOT_A_TRAINER");
+    const lead = await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: bo.body.instructor.id }, owner);
+    expect(lead.body.lead.name).toBe("Bo");
+    expect((await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body.instructors.map((i: { name: string; role: string }) => [i.name, i.role])).toEqual([["Bo", "owner"], ["Cy", "co-instructor"], ["Ana", "co-instructor"]]);
+    // Students, a contribution and an exercise done: the report sees them.
+    const [st] = (await call("POST", `/v1/boards/${cls}/students`, { students: [{ name: "Dee", email: "dee@acme.io" }, { name: "Eve", email: "eve@acme.io" }] }, owner)).body.students as { id: string; token: string }[];
+    await call("GET", "/v1/me", undefined, st!.token);
+    await call("POST", `/v1/boards/${cls}/nodes`, { text: "Our flow", x: 1, y: 1 }, st!.token);
+    const board = (await call("GET", `/v1/boards/${cls}`, undefined, owner)).body.board as { frames: { id: string; parentId?: string; title: string }[] };
+    const lessons = new Set(board.frames.filter((f) => !f.parentId && /^Lesson \d/.test(f.title)).map((f) => f.id));
+    const ex = board.frames.find((f) => f.parentId && lessons.has(f.parentId))!;
+    await call("PATCH", `/v1/boards/${cls}/frames/${encodeURIComponent(ex.id)}`, { done: true }, owner);
+    const rep = (await call("GET", "/v1/company/report", undefined, owner)).body;
+    expect(rep.totals).toMatchObject({ classes: 1, live: 1, instructors: 3, students: 2, joined: 1 });
+    const row = rep.classes[0];
+    expect(row).toMatchObject({ name: "LPM · March", course: "lpm", lead: { name: "Bo" }, students: 2, joined: 1, done: 1, contributions: 1 });
+    expect(row.exercises).toBeGreaterThan(20);
+    expect(row.roster.find((s: { name: string }) => s.name === "Dee")).toMatchObject({ joined: true, contributions: 1 });
+    expect(rep.byInstructor.find((i: { name: string }) => i.name === "Bo")).toMatchObject({ led: 1, students: 2 });
+    expect(rep.byCourse[0]).toMatchObject({ course: "lpm", classes: 1, students: 2 });
+    const csv = await app.inject({ method: "GET", url: "/v1/company/report.csv", headers: { authorization: `Bearer ${owner}` } });
+    expect(csv.statusCode).toBe(200);
+    expect(csv.body.split("\r\n").filter(Boolean)).toHaveLength(3); // header + one row per student
+    expect(csv.body).toContain('"LPM · March","Lean Portfolio Management (LPM)","Bo"');
+    // Only the company admin reads reports and assigns leads.
+    const boKey = (await call("POST", `/v1/users/${bo.body.instructor.id}/rotate-key`, undefined, owner)).body.apiKey as string;
+    expect((await call("GET", "/v1/company/report", undefined, boKey)).status).toBe(403);
+    expect((await call("POST", "/v1/instructors", { name: "Z", email: "z@acme.io" }, boKey)).status).toBe(403);
+    expect((await call("GET", "/v1/instructors", undefined, boKey)).body.canManage).toBe(false);
+    expect((await call("GET", "/v1/company/report", undefined, st!.token)).status).toBe(403);
+  });
+});

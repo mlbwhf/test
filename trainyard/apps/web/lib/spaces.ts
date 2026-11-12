@@ -58,6 +58,7 @@ export const SPACES: Space[] = [
       { href: "/classroom", label: "Class boards" },
       { href: "/classroom/breakouts", label: "Breakouts" },
       { href: "/classroom/agenda", label: "Agenda" },
+      { href: "/classroom/company", label: "Company" },
     ],
   },
   {

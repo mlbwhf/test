@@ -48,6 +48,8 @@ import { registerAssistRoutes } from "./assist.js";
 import { registerBoardRoutes } from "./boards.js";
 import { SecretBox } from "./secrets.js";
 import { registerPasswordReset, ResetCodes } from "./password-reset.js";
+import { registerInstructorRoutes } from "./instructors.js";
+import { registerCompanyRoutes } from "./company.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
 import { clientIp, type ProxyTrust } from "./proxies.js";
 import { ApiError, defined, notFound } from "./errors.js";
@@ -776,6 +778,8 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store), beforeDelete: retention.beforeDelete });
   const codes = new ResetCodes();
   registerPasswordReset(app, tenants, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  registerCompanyRoutes(app, tenants, store);
+  registerInstructorRoutes(app, tenants, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
   registerStudentRoutes(app, tenants, store, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
 
   return Object.assign(app, { sync });

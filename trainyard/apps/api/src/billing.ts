@@ -298,7 +298,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const key = newKey();
     const user: User = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}), ...(signup.emailVerifiedAt ? { emailVerifiedAt: signup.emailVerifiedAt } : {}) };
     store.state.users.push(user);
-    const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
+    const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id, ...(signup.account === "company" ? { kind: "company" as const } : {}) }, STRIPE_ACTOR);
     user.workspaceId = record.id;
     Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, workspaceId: record.id, pendingKey: key });
     signup.status = "invited";

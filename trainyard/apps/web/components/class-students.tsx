@@ -410,7 +410,18 @@ type Instructor = { id: string; name: string; email: string; role: "owner" | "co
 
 /** Who runs the class: its owner and the co-instructors they add by email. A new colleague gets a sign-in by email. */
 export function ClassInstructors({ boardId }: { boardId: string }) {
-  const q = useApi<{ instructors: Instructor[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/instructors`);
+  const q = useApi<{ instructors: Instructor[]; candidates?: { id: string; name: string; email: string; teaches: boolean }[]; canEmail: boolean }>(`/v1/boards/${encodeURIComponent(boardId)}/instructors`);
+  const pickOne = async (userId: string) => {
+    if (!userId) return;
+    setErr(null);
+    try {
+      await api("POST", `/v1/boards/${encodeURIComponent(boardId)}/instructors`, { userId });
+      setNote(`${q.data?.candidates?.find((c) => c.id === userId)?.name ?? "They"} now runs this class with you.`);
+      await q.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    }
+  };
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [busy, setBusy] = useState(false);
@@ -461,6 +472,20 @@ export function ClassInstructors({ boardId }: { boardId: string }) {
         ))}
         {q.data && !q.data.instructors.length ? <span className="faint">Nobody named yet.</span> : null}
       </div>
+      {q.data?.candidates?.length ? (
+        <label className="row" style={{ gap: 8, alignItems: "center", flexWrap: "wrap" }}>
+          <span className="faint">From your instructors:</span>
+          <select value="" onChange={(e) => void pickOne(e.target.value)} aria-label="Add one of your instructors">
+            <option value="">Choose…</option>
+            {q.data.candidates.map((c) => (
+              <option key={c.id} value={c.id}>
+                {c.name}
+                {c.teaches ? " ✓ teaches this course" : ""}
+              </option>
+            ))}
+          </select>
+        </label>
+      ) : null}
       <div className="row" style={{ gap: 8, flexWrap: "wrap" }}>
         <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Colleague's name" aria-label="Co-instructor name" style={{ flex: "1 1 160px" }} />
         <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="their@email" type="email" aria-label="Co-instructor email" onKeyDown={(e) => e.key === "Enter" && void add()} style={{ flex: "1 1 200px" }} />

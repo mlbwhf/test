@@ -549,6 +549,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [company, setCompany] = useState("");
+  const [account, setAccount] = useState<"individual" | "company">("individual");
   const [seats, setSeats] = useState("");
   const [note, setNote] = useState("");
   const [hp, setHp] = useState("");
@@ -578,6 +579,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         password,
         plan,
         audience,
+        account,
         ...(company.trim() ? { company: company.trim() } : {}),
         ...(seats && Number(seats) > 0 ? { seats: Number(seats) } : {}),
         ...(note.trim() ? { note: note.trim() } : {}),
@@ -804,6 +806,22 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
           Choose a password
           <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required minLength={10} maxLength={200} placeholder="10 characters or more" autoComplete="new-password" />
         </label>
+        <div style={{ fontWeight: 700, fontSize: 15 }}>I am signing up as</div>
+        <div className="plans" role="group" aria-label="Account type">
+          <button type="button" className={`pill${account === "individual" ? " on" : ""}`} onClick={() => setAccount("individual")} aria-pressed={account === "individual"}>
+            A trainer
+          </button>
+          <button type="button" className={`pill${account === "company" ? " on" : ""}`} onClick={() => setAccount("company")} aria-pressed={account === "company"}>
+            A company
+          </button>
+        </div>
+        {account === "company" ? (
+          <label>
+            Company name
+            <input value={company} onChange={(e) => setCompany(e.target.value)} required maxLength={120} placeholder="Acme Training" autoComplete="organization" />
+            <span style={{ fontSize: 13, opacity: 0.75 }}>You become the company&apos;s admin: you add instructors and the courses each one teaches, assign them to classes, and follow progress reports.</span>
+          </label>
+        ) : null}
         <div style={{ fontWeight: 700, fontSize: 15 }}>Plan</div>
         <div className="plans" role="group" aria-label="Plan">
           {PLANS.map((p) => (
@@ -814,10 +832,12 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
         </div>
         {plan !== "practice" ? (
           <div className="two">
-            <label>
-              {plan === "academy" ? "Organisation" : "Company (optional)"}
-              <input value={company} onChange={(e) => setCompany(e.target.value)} maxLength={120} required={plan === "academy"} autoComplete="organization" />
-            </label>
+            {account === "company" ? null : (
+              <label>
+                {plan === "academy" ? "Organisation" : "Company (optional)"}
+                <input value={company} onChange={(e) => setCompany(e.target.value)} maxLength={120} required={plan === "academy"} autoComplete="organization" />
+              </label>
+            )}
             <label>
               {plan === "academy" ? "Trains" : plan === "insights" ? "Packs of 10 data sources" : "Trainers"}
               <input type="number" min={1} max={100000} value={seats} onChange={(e) => setSeats(e.target.value)} placeholder={plan === "academy" ? "e.g. 3" : "1"} />
