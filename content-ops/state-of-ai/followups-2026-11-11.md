@@ -124,7 +124,7 @@ then give the new page the real slug and publish. URL unchanged; page ID changes
 | Page | ID | CSV media | Status |
 |---|---|---|---|
 | Sovereign AI Index 2026 rebuild (staged) | 3915 | 3982 | draft, slug sovereign-ai-index-2026-rebuild, parent 930, IDENTICAL 94,886 |
-| AI Use by Country 2026 | pending | | uploading |
+| AI Use by Country 2026 | 3916 | 4002 | draft, parent 930, IDENTICAL 126,099 |
 
 Swap for 934 at go-live (owner OK needed): set 934 slug → sovereign-ai-index-2026-archive + draft; set 3915 slug →
 sovereign-ai-index-2026, re-stamp dates if not 11 Nov, publish; verify permalink. 934 links no CSV.
