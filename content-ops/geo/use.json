@@ -69,11 +69,11 @@
   }
  ],
  "at_a_glance": [
-  "About 18.8% of the world's people aged 15–64 used a generative AI product in the second quarter of 2026, according to Microsoft's AI Diffusion data, up from 15.1% in the first half of 2025. That is roughly 0.99 billion people (Report AI calculation).",
-  "The United Arab Emirates leads at 73.3%, followed by Singapore (64.3%); the United States ranks 21th at 33.0%, and China 67th at 17.5% on Microsoft's measure, which misses most Chinese domestic apps.",
+  "About 18.8% of the world's people aged 15–64 used a generative AI product in the second quarter of 2026, according to Microsoft's AI Diffusion data, up from 15.1% in the first half of 2025. That is roughly 990 million people (Report AI calculation).",
+  "The United Arab Emirates leads at 73.3%, followed by Singapore (64.3%); the United States ranks 21st at 33.0%, and China 67th at 17.5% on Microsoft's measure, which misses most Chinese domestic apps.",
   "The divide is widening: the gap between the Global North (28.8%) and the Global South (16.2%) grew from 9.8 to 12.6 percentage points across four editions.",
   "Growth has moved to East Asia: South Korea rose from 25.9% to 40.6% and Japan from 16.7% to 24.7% between H1 2025 and Q2 2026.",
-  "National trackers fill the gaps: China had 546M monthly users of AI-native apps in September 2026 (QuestMobile), and 55% of 12+ of Russians aged 12 and over used an AI service monthly (Mediascope), led by Yandex's Alice AI."
+  "National trackers fill the gaps: China had 546M monthly users of AI-native apps in September 2026 (QuestMobile), and 55% of Russians aged 12 and over used an AI service monthly (Mediascope), led by Yandex's Alice AI."
  ],
  "toc_extra": [
   [
@@ -96,7 +96,7 @@
  "analysis": [
   "Three facts dominate the map of AI use. First, it is still a minority activity: on Microsoft's telemetry-based measure, fewer than one in five working-age people worldwide used a generative AI product in the second quarter of 2026. Second, the leaders are small, rich, connected economies rather than the countries that build frontier models: the United Arab Emirates, Singapore, Ireland, France and Norway all rank above the United States. Third, use is spreading fastest where governments and telecom operators have pushed it hard and where local-language quality has improved, notably in South Korea and Japan.",
   "The divide is the uncomfortable finding. In every edition of Microsoft's data the Global North has pulled further ahead, from a 9.8-point gap to 12.6 points. Sub-Saharan Africa averages 10.6% and South Asia 16.4%, against 33.6% in North America. The constraint is mostly upstream of AI: internet access, digital skills, electricity and the quality of models in local languages.",
-  "Measures disagree, and the reasons matter. Microsoft's figures come from Windows and Microsoft-product telemetry adjusted to population, so they undercount countries where people use domestic apps on phones: China's own surveys report far higher use than Microsoft's 17.5%, and Russia's 9.9% sits beside a Mediascope reach of 55% of 12+. Surveys of the online population, such as the KPMG and University of Melbourne study, report higher use again, because they exclude people who are offline. We publish all three kinds of measure side by side and never rank countries across them.",
+  "Measures disagree, and the reasons matter. Microsoft's figures are estimated from Windows desktop telemetry on visits to 19 named AI services, scaled to mobile use and to population; the list includes some Chinese and Russian services but not ByteDance's Doubao, so the measure undercounts countries where people use domestic apps on phones: China's own surveys report far higher use than Microsoft's 17.5%, and Russia's 9.9% sits beside a Mediascope reach of 55%. Surveys of the online population, such as the KPMG and University of Melbourne study, report higher use again, because they exclude people who are offline. We publish all three kinds of measure side by side and never rank countries across them.",
   "For businesses the picture is earlier still. Eurostat found that about one in five EU enterprises with ten or more staff used at least one AI technology in 2025, and the OECD reports a similar share of firms across its members. Individual use runs ahead of organisational adoption almost everywhere."
  ],
  "takeaways": [
@@ -110,7 +110,7 @@
   {
    "id": "ranking",
    "kicker": "1. The ranking",
-   "action_title": "The United Arab Emirates and Singapore lead the world in AI use; the United States ranks 21th",
+   "action_title": "The United Arab Emirates and Singapore lead the world in AI use; the United States ranks 21st",
    "paras": [
     "Microsoft's AI Economy Institute estimates the share of each economy's working-age population that used a generative AI product in a period, from anonymised telemetry adjusted for device share, internet penetration and population. In the second quarter of 2026, 31 economies were above 30%, up from 26 a quarter earlier.",
     "The top of the table is dominated by small, high-income economies with near-universal connectivity and active government programmes: United Arab Emirates (73.3%, #1), Singapore (64.3%, #2), Ireland (49.9%, #3), France (49.6%, #4) and Norway (49.4%, #5). Among the largest economies, the United Kingdom is at 43.7%, Germany 32.3%, Japan 24.7%, Brazil 20.2%, India 18.5% and Indonesia 14.8%."
@@ -503,7 +503,7 @@
    "action_title": "Growth has shifted to East Asia: South Korea, Japan and Thailand grew fastest",
    "paras": [
     "Between the first half of 2025 and the second quarter of 2026, South Korea's share rose by 57% in relative terms, from 25.9% to 40.6%, the fastest of any economy (Report AI calculation from Microsoft data). Japan (+48%) and Thailand (+47%) followed. In absolute terms the largest gains were in South Korea and the UAE, both up by about 14 percentage points.",
-    "Explanations offered in the national data include better local-language models, operator bundles that put AI assistants on phones by default, and government campaigns. The United States grew more slowly in relative terms, from a higher base."
+    "The United States grew more slowly in relative terms, from 26.3% to 33.0%, from a higher base. China's measured rise was among the smallest of the large economies, from 15.4% to 17.5%, which says more about the measure's blind spots there than about Chinese use."
    ],
    "exhibits": [
     {
@@ -2287,8 +2287,8 @@
    "kicker": "5. Other measures",
    "action_title": "National trackers and surveys show higher use where Microsoft's telemetry cannot see",
    "paras": [
-    "Microsoft's measure is the only consistent cross-country series, but it is built on Microsoft products. In China, where Western assistants are blocked and phones run domestic apps, QuestMobile counted 546M monthly users of AI-native apps in September 2026, led by ByteDance's Doubao at 419.08M. In Russia, Mediascope found that 55% of 12+ of people aged 12 and over used an AI service in a month, with Yandex's Alice AI reaching about ~48% (~59M).",
-    "Surveys answer different questions again. Eurostat found 32.7% of EU residents aged 16–74 used generative AI tools in 2025, while 19.95% of EU enterprises with ten or more staff used at least one AI technology. The KPMG and University of Melbourne study found 66% of people across 47 countries using AI with some regularity, a survey of online respondents that reads higher than population-wide measures."
+    "Microsoft's measure is the only consistent cross-country series, but it is built on Microsoft products. In China, where Western assistants are blocked and phones run domestic apps, QuestMobile counted 546M monthly users of AI-native apps in September 2026, led by ByteDance's Doubao at 419.08M. In Russia, Mediascope found that 55% of people aged 12 and over used an AI service in a month, with Yandex's Alice AI reaching about ~48% (~59M).",
+    "Surveys answer different questions again. Eurostat found 32.66% of EU residents aged 16–74 used generative AI tools in 2025, while 19.95% of EU enterprises with ten or more staff used at least one AI technology. The KPMG and University of Melbourne study found 66% of people across 47 countries using AI with some regularity, a survey of online respondents that reads higher than population-wide measures."
    ],
    "exhibits": [
     {
@@ -2399,7 +2399,7 @@
       [
        "European Union",
        "Individuals 16–74 using generative AI",
-       "32.7%",
+       "32.66%",
        "2025",
        "Eurostat",
        "HIGH"
@@ -2434,7 +2434,7 @@
        "66%",
        "Nov 2024-Jan 2025",
        "University of Melbourne & KPMG, Trust, attitudes and use of AI 2025",
-       "MEDIUM"
+       "HIGH"
       ]
      ],
      "note": "Each row is a different measure; do not compare rows or rank countries across them."
@@ -2444,13 +2444,674 @@
   {
    "id": "attitudes",
    "kicker": "6. Attitudes",
-   "action_title": "Enthusiasm and anxiety are almost evenly split worldwide, and highest-use countries are not the most enthusiastic",
+   "action_title": "Optimism is highest where measured use is often lowest: Asian and emerging economies are the most positive",
    "paras": [
-    "Across 32 countries in March–April 2026, 51% of adults said AI products make them excited and 50% said they make them nervous (Ipsos AI Monitor 2026). Pew's 25-country median in 2025 found 34% more concerned than excited and 16% more excited than concerned. Optimism tends to be higher in Asia and lower in Europe and North America, a pattern that does not track adoption: several high-use European economies are among the more sceptical."
+    "Across 32 countries in March–April 2026, 51% of adults said AI products make them excited and 50% said they make them nervous (Ipsos AI Monitor 2026). The spread is wide: 85% in China and 77% in Indonesia said AI products have more benefits than drawbacks, against 38% in the United States and 38% in France, where 64% of Americans said AI makes them nervous.",
+    "Self-reported use follows the same pattern. In the University of Melbourne and KPMG study of 47 countries (fieldwork November 2024–January 2025), 89% of respondents in China said they use AI regularly, against 53% in the United States; emerging economies averaged about 80% and advanced economies 58%. These are surveys of online populations and measure something different from Microsoft's population-wide estimate, which is one reason China ranks low on one and high on the other. Pew's 25-country median in 2025 found 34% more concerned than excited about AI and 16% more excited than concerned."
    ],
    "tables": [
     {
-     "title": "Surveys used in this index",
+     "title": "Ipsos AI Monitor 2026: attitudes by country",
+     "columns": [
+      "Country",
+      "More benefits than drawbacks",
+      "Excited",
+      "Nervous",
+      "AI saved me time at work",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "China",
+       "85%",
+       "83%",
+       "40%",
+       "90%",
+       "HIGH"
+      ],
+      [
+       "India",
+       "80%",
+       "79%",
+       "63%",
+       "83%",
+       "HIGH"
+      ],
+      [
+       "Indonesia",
+       "77%",
+       "76%",
+       "43%",
+       "85%",
+       "HIGH"
+      ],
+      [
+       "Thailand",
+       "74%",
+       "77%",
+       "61%",
+       "80%",
+       "HIGH"
+      ],
+      [
+       "Peru",
+       "71%",
+       "65%",
+       "47%",
+       "74%",
+       "HIGH"
+      ],
+      [
+       "Malaysia",
+       "70%",
+       "71%",
+       "53%",
+       "82%",
+       "HIGH"
+      ],
+      [
+       "Singapore",
+       "68%",
+       "61%",
+       "58%",
+       "76%",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "67%",
+       "74%",
+       "40%",
+       "60%",
+       "HIGH"
+      ],
+      [
+       "South Africa",
+       "66%",
+       "68%",
+       "53%",
+       "72%",
+       "HIGH"
+      ],
+      [
+       "Mexico",
+       "66%",
+       "63%",
+       "51%",
+       "70%",
+       "HIGH"
+      ],
+      [
+       "Turkey (Türkiye)",
+       "65%",
+       "65%",
+       "48%",
+       "62%",
+       "HIGH"
+      ],
+      [
+       "Colombia",
+       "63%",
+       "63%",
+       "48%",
+       "70%",
+       "HIGH"
+      ],
+      [
+       "Chile",
+       "60%",
+       "47%",
+       "50%",
+       "65%",
+       "HIGH"
+      ],
+      [
+       "Argentina",
+       "56%",
+       "43%",
+       "44%",
+       "64%",
+       "HIGH"
+      ],
+      [
+       "Brazil",
+       "56%",
+       "52%",
+       "41%",
+       "59%",
+       "HIGH"
+      ],
+      [
+       "Spain",
+       "54%",
+       "47%",
+       "52%",
+       "58%",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "53%",
+       "47%",
+       "45%",
+       "56%",
+       "HIGH"
+      ],
+      [
+       "Israel",
+       "51%",
+       "39%",
+       "30%",
+       "63%",
+       "HIGH"
+      ],
+      [
+       "Hungary",
+       "50%",
+       "42%",
+       "50%",
+       "49%",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "50%",
+       "47%",
+       "31%",
+       "44%",
+       "HIGH"
+      ],
+      [
+       "Ireland",
+       "47%",
+       "43%",
+       "63%",
+       "53%",
+       "HIGH"
+      ],
+      [
+       "Sweden",
+       "47%",
+       "36%",
+       "57%",
+       "44%",
+       "HIGH"
+      ],
+      [
+       "Poland",
+       "47%",
+       "44%",
+       "37%",
+       "52%",
+       "HIGH"
+      ],
+      [
+       "New Zealand",
+       "46%",
+       "40%",
+       "65%",
+       "57%",
+       "HIGH"
+      ],
+      [
+       "Australia",
+       "43%",
+       "36%",
+       "67%",
+       "57%",
+       "HIGH"
+      ],
+      [
+       "Belgium",
+       "41%",
+       "36%",
+       "46%",
+       "48%",
+       "HIGH"
+      ],
+      [
+       "France",
+       "38%",
+       "33%",
+       "49%",
+       "42%",
+       "HIGH"
+      ],
+      [
+       "United Kingdom",
+       "38%",
+       "29%",
+       "62%",
+       "45%",
+       "HIGH"
+      ],
+      [
+       "Netherlands",
+       "38%",
+       "34%",
+       "47%",
+       "47%",
+       "HIGH"
+      ],
+      [
+       "United States",
+       "38%",
+       "33%",
+       "64%",
+       "49%",
+       "HIGH"
+      ],
+      [
+       "Germany",
+       "37%",
+       "37%",
+       "41%",
+       "38%",
+       "HIGH"
+      ],
+      [
+       "Canada",
+       "34%",
+       "26%",
+       "67%",
+       "46%",
+       "HIGH"
+      ]
+     ],
+     "note": "Ipsos AI Monitor 2026, 32 countries, 23,532 adults, 20 March–3 April 2026; online samples, more urban and educated than the population in emerging markets."
+    },
+    {
+     "title": "University of Melbourne and KPMG: regular use and trust by country",
+     "columns": [
+      "Country",
+      "Use AI regularly",
+      "Use AI at work",
+      "Trust AI systems",
+      "High acceptance",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "India",
+       "92%",
+       "91%",
+       "76%",
+       "63%",
+       "HIGH"
+      ],
+      [
+       "Nigeria",
+       "92%",
+       "85%",
+       "79%",
+       "66%",
+       "HIGH"
+      ],
+      [
+       "United Arab Emirates",
+       "91%",
+       "84%",
+       "65%",
+       "54%",
+       "HIGH"
+      ],
+      [
+       "Egypt",
+       "90%",
+       "84%",
+       "71%",
+       "61%",
+       "HIGH"
+      ],
+      [
+       "China",
+       "89%",
+       "88%",
+       "68%",
+       "69%",
+       "HIGH"
+      ],
+      [
+       "Saudi Arabia",
+       "88%",
+       "82%",
+       "62%",
+       "52%",
+       "HIGH"
+      ],
+      [
+       "Costa Rica",
+       "87%",
+       "76%",
+       "52%",
+       "43%",
+       "HIGH"
+      ],
+      [
+       "South Africa",
+       "83%",
+       "74%",
+       "62%",
+       "49%",
+       "HIGH"
+      ],
+      [
+       "Brazil",
+       "82%",
+       "75%",
+       "55%",
+       "44%",
+       "HIGH"
+      ],
+      [
+       "Turkey (Türkiye)",
+       "81%",
+       "69%",
+       "56%",
+       "44%",
+       "HIGH"
+      ],
+      [
+       "Mexico",
+       "77%",
+       "64%",
+       "51%",
+       "38%",
+       "HIGH"
+      ],
+      [
+       "Argentina",
+       "75%",
+       "62%",
+       "46%",
+       "35%",
+       "HIGH"
+      ],
+      [
+       "Colombia",
+       "74%",
+       "65%",
+       "45%",
+       "32%",
+       "HIGH"
+      ],
+      [
+       "Singapore",
+       "73%",
+       "64%",
+       "50%",
+       "31%",
+       "HIGH"
+      ],
+      [
+       "Chile",
+       "72%",
+       "58%",
+       "45%",
+       "33%",
+       "HIGH"
+      ],
+      [
+       "Latvia",
+       "72%",
+       "53%",
+       "47%",
+       "36%",
+       "HIGH"
+      ],
+      [
+       "Norway",
+       "71%",
+       "67%",
+       "54%",
+       "43%",
+       "HIGH"
+      ],
+      [
+       "Estonia",
+       "70%",
+       "53%",
+       "47%",
+       "34%",
+       "HIGH"
+      ],
+      [
+       "Poland",
+       "69%",
+       "54%",
+       "41%",
+       "30%",
+       "HIGH"
+      ],
+      [
+       "Lithuania",
+       "69%",
+       "54%",
+       "34%",
+       "35%",
+       "HIGH"
+      ],
+      [
+       "Israel",
+       "68%",
+       "46%",
+       "51%",
+       "38%",
+       "HIGH"
+      ],
+      [
+       "Slovenia",
+       "66%",
+       "50%",
+       "40%",
+       "28%",
+       "HIGH"
+      ],
+      [
+       "Switzerland",
+       "65%",
+       "65%",
+       "46%",
+       "36%",
+       "HIGH"
+      ],
+      [
+       "Portugal",
+       "63%",
+       "49%",
+       "36%",
+       "24%",
+       "HIGH"
+      ],
+      [
+       "Romania",
+       "62%",
+       "52%",
+       "45%",
+       "36%",
+       "HIGH"
+      ],
+      [
+       "South Korea",
+       "61%",
+       "54%",
+       "44%",
+       "28%",
+       "HIGH"
+      ],
+      [
+       "Greece",
+       "61%",
+       "43%",
+       "46%",
+       "27%",
+       "HIGH"
+      ],
+      [
+       "Spain",
+       "60%",
+       "50%",
+       "51%",
+       "32%",
+       "HIGH"
+      ],
+      [
+       "Italy",
+       "60%",
+       "49%",
+       "40%",
+       "30%",
+       "HIGH"
+      ],
+      [
+       "Denmark",
+       "57%",
+       "53%",
+       "41%",
+       "33%",
+       "HIGH"
+      ],
+      [
+       "Ireland",
+       "56%",
+       "47%",
+       "38%",
+       "20%",
+       "HIGH"
+      ],
+      [
+       "Finland",
+       "55%",
+       "47%",
+       "25%",
+       "20%",
+       "HIGH"
+      ],
+      [
+       "Austria",
+       "53%",
+       "49%",
+       "40%",
+       "26%",
+       "HIGH"
+      ],
+      [
+       "United States",
+       "53%",
+       "52%",
+       "41%",
+       "21%",
+       "HIGH"
+      ],
+      [
+       "Slovakia",
+       "53%",
+       "35%",
+       "36%",
+       "25%",
+       "HIGH"
+      ],
+      [
+       "United Kingdom",
+       "52%",
+       "48%",
+       "42%",
+       "22%",
+       "HIGH"
+      ],
+      [
+       "France",
+       "51%",
+       "44%",
+       "33%",
+       "24%",
+       "HIGH"
+      ],
+      [
+       "Germany",
+       "51%",
+       "42%",
+       "32%",
+       "29%",
+       "HIGH"
+      ],
+      [
+       "New Zealand",
+       "50%",
+       "41%",
+       "34%",
+       "15%",
+       "HIGH"
+      ],
+      [
+       "Australia",
+       "50%",
+       "49%",
+       "36%",
+       "17%",
+       "HIGH"
+      ],
+      [
+       "Canada",
+       "50%",
+       "43%",
+       "34%",
+       "19%",
+       "HIGH"
+      ],
+      [
+       "Hungary",
+       "50%",
+       "39%",
+       "54%",
+       "29%",
+       "HIGH"
+      ],
+      [
+       "Japan",
+       "50%",
+       "44%",
+       "28%",
+       "18%",
+       "HIGH"
+      ],
+      [
+       "Sweden",
+       "49%",
+       "44%",
+       "36%",
+       "22%",
+       "HIGH"
+      ],
+      [
+       "Czechia",
+       "49%",
+       "33%",
+       "31%",
+       "22%",
+       "HIGH"
+      ],
+      [
+       "Belgium",
+       "47%",
+       "44%",
+       "35%",
+       "21%",
+       "HIGH"
+      ],
+      [
+       "Netherlands",
+       "43%",
+       "42%",
+       "33%",
+       "18%",
+       "HIGH"
+      ]
+     ],
+     "note": "Trust, attitudes and use of AI: a global study 2025; 47 countries, 48,340 respondents; fieldwork November 2024–January 2025. 'Use at work' values read from a chart."
+    },
+    {
+     "title": "Surveys and trackers used in this index",
      "columns": [
       "Survey",
       "Coverage",
@@ -2574,7 +3235,7 @@
  "stop_quoting": [
   {
    "claim": "Perplexity is Russia's most popular AI, with a 48% share.",
-   "fact": "48.07% was Perplexity's share of AI-chatbot referral page views to StatCounter-tagged sites in April 2026 - links clicked out of chatbots, not chatbot use. StatCounter's Aug 2026 desktop reading put ChatGPT at 40.2% and Perplexity at 26.7%. By monthly reach, Mediascope (Sep 2026) puts Yandex's Alice AI at ~48% of Russians aged 12+, DeepSeek at 11% and GigaChat at 5%.",
+   "fact": "StatCounter measures which chatbot sends clicks to websites running its tracker, not use. On that referral measure Perplexity had 47.92% in Russia in April 2026, fell behind ChatGPT from May to September, and led again in October 2026 at 39.34% (Gemini 32.44%, ChatGPT 23.38%). By use, Mediascope's September 2026 data put Yandex's Alice AI at about 48% monthly reach among Russians aged 12+, DeepSeek at 11% (13 million) and Sber's GigaChat at 5% (6 million).",
    "link": ""
   },
   {
@@ -2584,7 +3245,7 @@
   },
   {
    "claim": "Only 10.4% of Nigerians use AI (Microsoft).",
-   "fact": "Microsoft gives the identical value (8.7% -> 9.3% -> 10.1% -> 10.4%) to Nigeria and 11 other West African economies in every edition - a shared regional estimate, not a Nigeria measurement. Quote it as 'Microsoft's West Africa estimate'. Firm-level: the World Bank puts AI use among Nigerian formal firms at ~40% (2025).",
+   "fact": "Microsoft's technical paper (Table 2, †) marks Nigeria and 35 other economies as 'Region-imputed estimate due to insufficient telemetry coverage'; Nigeria shares 8.7% -> 9.3% -> 10.1% -> 10.4% with 11 other West African economies. Quote it as Microsoft's West Africa estimate. Survey contrast: KPMG/Melbourne found 92% of Nigerians use AI at least every few months (fieldwork Nov 2024-Jan 2025); the World Bank puts AI use among Nigerian formal firms at ~40% (2025).",
    "link": ""
   },
   {
@@ -2599,7 +3260,7 @@
   },
   {
    "claim": "South Korea's most-used AI is Naver's HyperCLOVA X, not ChatGPT.",
-   "fact": "App trackers show the opposite: IGAWorks Mobile Index counted 18.76M ChatGPT app users in Korea in Oct 2026, ~91% of users across tracked AI apps; Wiseapp counted ChatGPT 24.7M, Gemini 9.87M and Claude 4.04M in Sep 2026. Neither tracker lists a HyperCLOVA X / CLOVA X app at comparable scale (Naver's AI is embedded in search, which these trackers do not count as AI-app use).",
+   "fact": "App trackers show the opposite: IGAWorks Mobile Index counted 18.76M ChatGPT app users in Korea in Oct 2026, ~91% of users across tracked AI apps; Wiseapp counted ChatGPT 24.7M, Gemini 9.87M and Claude 4.04M in Sep 2026. Neither tracker lists a HyperCLOVA X / CLOVA X app at comparable scale (Naver's AI is embedded in search, which these trackers do not count as AI-app use). StatCounter's referral data (Oct 2026) also show no Korean model: Gemini 65.25%, ChatGPT 23.62%, Perplexity 8.05% of chatbot-referred page views. Microsoft attributes Korea's adoption surge to Korean-language gains in GPT-4o and GPT-5 (Global AI Adoption in 2025, Jan 2026).",
    "link": ""
   },
   {
@@ -2631,12 +3292,22 @@
    "claim": "Japan lags: only about a quarter of Japanese have used generative AI.",
    "fact": "26.7% was the previous MIC survey. Japan's 2026 Information and Communications White Paper (survey Jan-Feb 2026) found 58.8% have used gen AI (US 75.6%, Germany 75.6%, China 93.6%). Microsoft's working-age measure: Japan 24.7% in Q2 2026, up from 16.7% in H1 2025.",
    "link": ""
+  },
+  {
+   "claim": "The US is less excited about AI than anywhere else.",
+   "fact": "Canada (26%) and Great Britain (29%) are less excited than the US (33%) in Ipsos's 2026 AI Monitor; the 32-country average is 51%. Canadians and Australians are the most nervous (67% each), the US 64%.",
+   "link": ""
+  },
+  {
+   "claim": "Microsoft measures what share of people use AI in every country.",
+   "fact": "It estimates desktop-observed visits to 19 named AI sites in Windows telemetry, scaled to mobile and to the 15-64 population; 36 of 147 economies are regional imputations, telemetry is limited in Russia, Iran and partly China, and several Chinese domestic tools are excluded until the next edition.",
+   "link": ""
   }
  ],
  "definitions": [
   {
    "term": "AI user share (Microsoft)",
-   "def": "Microsoft AI user share = share of people aged 15-64 who used a generative AI product during the period, from anonymised Microsoft telemetry adjusted for OS/device share, internet penetration and population (technical paper arXiv 2511.02781)."
+   "def": "The share of people aged 15–64 who used a generative AI product in the period, estimated by Microsoft from anonymised Windows desktop telemetry on visits to 19 named AI services, scaled to mobile use with StatCounter ratios and to population with World Bank data. It is not a survey; the 19 services include some Chinese and Russian ones but not ByteDance's Doubao, and economies with low telemetry opt-in are pulled towards the global average."
   },
   {
    "term": "Global North and Global South",
@@ -2666,7 +3337,7 @@
   },
   {
    "q": "How does the United States rank for AI use?",
-   "a": "The United States ranked 21th of 147 economies in Microsoft's Q2 2026 data, with 33.0% of working-age people using generative AI, up from 26.3% in H1 2025."
+   "a": "The United States ranked 21st of 147 economies in Microsoft's Q2 2026 data, with 33.0% of working-age people using generative AI, up from 26.3% in H1 2025."
   },
   {
    "q": "Why does China rank so low?",
