@@ -104,6 +104,15 @@ upload each rebuilt edition as a separate DRAFT with a temporary slug (state-of-
 state-of-ai-2025-rebuild); at go-live, with the owner's OK, set the old page's slug to *-archive and draft,
 then give the new page the real slug and publish. URL unchanged; page ID changes (no internal links use IDs).
 
+Staged (12 Nov ET):
+
+| Edition | Draft ID | CSV media | Notes |
+|---|---|---|---|
+| 2024 | 4007 | 4086 (`2026/11/report-ai-data-state-of-ai-2024-in-numbers.csv`, 89,041 bytes) | slug state-of-ai-2024-rebuild, parent 362, compare.py IDENTICAL 207,186 bytes. Live 322 untouched (still links CSV 3298 from 2026/10). |
+| 2025 | (pending) | (pending) | upload agent still running |
+
+At the swap: the draft's canonical, schema `url` and nav already point at `/indexes/state-of-ai/state-of-ai-2024/`, so they resolve once 4007 takes the real slug. Re-stamp dates to the publish day. Old CSV 3298 stays in the library, unlinked (no media deletes).
+
 ## I. AI-history and Perez drafts
 
 | Page | ID | CSV media | Status |
