@@ -65,8 +65,9 @@ WAF note: a wp_alter_post whose search began with `"><div` and whose replacement
 Our pages said both models were "withdrawn within a week" and never mentioned that Anthropic restored them on
 1 July 2026 (Commerce ended the order 30 June; Mythos 5 back for US organisations only; 5.1 on 1 Sep).
 - Sources fixed: data/models.json, data/geography.json, narrative/models.json, narrative/geography.json (commit 329b647).
-- Drafts 3628 (Models) and 3704 (Geography) patched via content-ops/state-of-ai/patches/*.json; models CSV
-  re-issued as report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv (media 3699 left unlinked).
+- Drafts 3628 (Models, IDENTICAL 135,476) and 3704 (Geography, IDENTICAL 122,443) patched 12 Nov via
+  content-ops/state-of-ai/patches/*.json; models CSV re-issued as media 3784
+  (report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv); media 3699 left unlinked.
 - 2026 edition and YoY were rebuilt before upload (not yet on site).
 - Live: 1654 Chinese AI Models (correction + 3229 row), 566 Fable 5 report (update block).
 - Still to check: price ladder "$10/$50 Fable 5.1" vs Fable/Mythos 5.2 at $8/$40 (9 Nov 2026).

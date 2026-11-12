@@ -18,6 +18,112 @@ UP = 'https://report-ai.org/wp-content/uploads/2026/11/'
 KICK = 'font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:#2545f5;margin-bottom:14px;'
 
 
+H = {}
+MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
+
+
+def xlabel(x, fmt=None):
+    y = int(x)
+    if fmt == 'year' or float(x) == y:
+        return str(y)
+    return f'{MON[min(11, int(round((float(x) - y) * 12)))]} {y}'
+
+
+def rows_for(key, match=None, exclude=(), unit=None):
+    out = []
+    for r in H['series'][key]:
+        if r.get('value') in (None, ''):
+            continue
+        if unit and r.get('unit') != unit:
+            continue
+        if match and not any(m.lower() in r['label'].lower() for m in ([match] if isinstance(match, str) else match)):
+            continue
+        if any(x.lower() in r['label'].lower() for x in exclude):
+            continue
+        out.append(r)
+    return sorted(out, key=lambda r: float(r['x']))
+
+
+def fmtv(v, unit):
+    v = float(v); u = unit or ''
+    if u == 'FLOP':
+        return charts.sci(v) + ' FLOP'
+    if u == 'USD':
+        return '$' + (f'{v / 1e9:,.1f}B' if v >= 1e9 else f'{v / 1e6:,.1f}M' if v >= 1e6 else f'{v:,.0f}')
+    if u == 'parameters':
+        return (f'{v / 1e12:g}T' if v >= 1e12 else f'{v / 1e9:g}B' if v >= 1e9 else f'{v / 1e6:g}M' if v >= 1e6 else f'{v:,.0f}') + ' parameters'
+    if 'users' in u and v >= 1e6:
+        return f'{v / 1e6:,.0f}M {u}'
+    if u.startswith('USD per'):
+        return f'${v:,.3g} {u[4:]}'
+    return f'{charts.fmt(v)} {u}'
+
+
+def resolve(ex):
+    """Fill an exhibit from content-ops/ai-history/history-data.json so verified upgrades flow through."""
+    src = ex.get('from')
+    if not src:
+        return ex
+    ex = dict(ex)
+    if src == 'eras':
+        ex['gantt'] = [{'label': re.sub(r'\s*\(.*?\)', '', e['name']), 'start': f"{e['start']}-01",
+                        'end': f"{e['end'] or 2026}-{'11' if not e['end'] else '12'}",
+                        'group': 'AI winter' if 'winter' in e['name'].lower() else 'Expansion'} for e in H['eras']]
+        ex['type'] = 'gantt'
+    elif src == 'series':
+        groups = ex.get('groups') or [{'name': ex.get('name', ''), 'match': ex.get('match'), 'exclude': ex.get('exclude', []), 'unit': ex.get('unit_eq')}]
+        sc = float(ex.get('scale', 1)); strip = ex.get('strip', '')
+        series = []
+        for g in groups:
+            rs = rows_for(ex['key'], g.get('match'), g.get('exclude', ex.get('exclude', [])), g.get('unit', ex.get('unit_eq')))
+            pts = []
+            for r in rs:
+                v = float(r['value']) / sc
+                v = round(v, 4) if abs(v) < 1e6 else v
+                lab = xlabel(r['x'], ex.get('xfmt'))
+                p = [lab, v]
+                if ex.get('annotate'):
+                    p.append(r['label'].replace(strip, '').strip(' —'))
+                pts.append(p)
+            series.append({'name': g['name'], 'points': pts})
+        ex['series'] = series
+    elif src == 'eras_table':
+        ex['table'] = {'columns': ['Era', 'Years', 'Opened with', 'Closed with', 'Marker', 'Confidence'],
+                       'rows': [[e['name'], f"{e['start']}–{e['end'] or 'now'}", e.get('start_event', ''), e.get('end_event') or 'Still running', e.get('quant_marker') or '', e.get('confidence', '')] for e in H['eras']]}
+        ex['type'] = 'table'
+    elif src == 'series_table':
+        rows = []
+        for r in rows_for(ex['key'], ex.get('match'), ex.get('exclude', []), ex.get('unit_eq')):
+            rows.append([r['date'], r['label'], fmtv(r['value'], r['unit']),
+                         {'text': r['source'][:90], 'href': r['url']} if r.get('url') else r['source'][:90], r['confidence']])
+        ex['table'] = {'columns': ['Date', 'Measure', 'Value', 'Source', 'Confidence'], 'rows': rows}
+        ex['type'] = 'table'
+    elif src == 'decade_table':
+        rows = []
+        comp = rows_for('a', unit='FLOP')
+        for dec in range(1950, 2030, 10):
+            cs = [r for r in comp if dec <= float(r['x']) < dec + 10]
+            top = max(cs, key=lambda r: float(r['value'])) if cs else None
+            ms = [m for m in H['milestones'] if dec <= int(m['year']) < dec + 10]
+            eras = [e['name'] for e in H['eras'] if e['start'] < dec + 10 and (e['end'] or 2026) > dec]
+            rows.append([f'{dec}s', ', '.join(re.sub(r'\s*\(.*?\)', '', x) for x in eras),
+                         f"{charts.sci(float(top['value']))} FLOP ({top['label']}, {top['date']})" if top else '—',
+                         str(len(cs)), '; '.join(m['title'] for m in ms[:4]) + (f' (+{len(ms) - 4} more)' if len(ms) > 4 else ''),
+                         'DERIVED'])
+        ex['table'] = {'columns': ['Decade', 'Era(s)', 'Largest estimated training compute', 'Models in compute data', 'Landmarks', 'Confidence'], 'rows': rows}
+        ex['type'] = 'table'
+    elif src == 'milestones':
+        lo, hi = ex.get('from_year', 0), ex.get('to_year', 9999)
+        rows = []
+        for m in H['milestones']:
+            if lo <= int(m['year']) <= hi:
+                rows.append([m['date'], m['title'], m['significance'] + ((' ' + m['quant_hook']) if m.get('quant_hook') else ''),
+                             {'text': m['source'][:80], 'href': m['url']} if m.get('url') else m['source'][:80], m['confidence']])
+        ex['table'] = {'columns': ['Date', 'Milestone', 'What it showed', 'Source', 'Confidence'], 'rows': rows}
+        ex['type'] = 'table'
+    return ex
+
+
 def crumbs(trail):
     sep = ' <span style="color:#d3d3da;">/</span> '
     parts = ['<a href="/" style="color:#9a9aa2;text-decoration:none;">Home</a>']
@@ -155,12 +261,14 @@ def page(d, kind, published, published_h, outdir):
         cid = c.get('id') or f'ch-{i + 1}'
         bg = ' style="background:#f5f5f7;"' if c.get('shade') else ''
         body += f'\n<div class="tai-padx tai-ch" id="{cid}"{bg}><div class="tai-kicker">{E(c.get("kicker", ""))}</div><h2>{E(c.get("action_title", ""))}</h2>'
-        ps = c.get('paras', []); exs = c.get('exhibits', [])
+        ps = c.get('paras', []); exs = [resolve(e) for e in c.get('exhibits', [])]
         k = max(1, (len(ps) + 1) // 2)
         for e in exs:
             T.add_exhibit(e)
         body += B.paras(ps[:k]) + ''.join(C.ex(e) for e in exs[:1]) + B.paras(ps[k:]) + ''.join(C.ex(e) for e in exs[1:])
         for tb in c.get('tables', []):
+            if tb.get('from'):
+                tb = dict(tb, **resolve(tb)['table'])
             T.add(tb.get('title') or c.get('kicker', ''), tb['columns'], tb['rows'])
             body += (f'<h3>{E(tb["title"])}</h3>' if tb.get('title') else '') + table(tb) + (f'<p class="tai-mono" style="font-size:11.5px;color:#77777f;margin-top:8px;">{E(tb["note"])}</p>' if tb.get('note') else '')
         if c.get('after'):
@@ -188,12 +296,16 @@ if __name__ == '__main__':
     outdir = sys.argv[1]; published = sys.argv[2] if len(sys.argv) > 2 else datetime.date.today().isoformat()
     published_h = datetime.date.fromisoformat(published).strftime('%-d %B %Y')
     os.makedirs(outdir, exist_ok=True)
+    H.update(json.load(open(os.path.join(SRC, 'history-data.json'))))
     out = []
     for name, kind in (('report', 'report'), ('perez', 'report'), ('index', 'index')):
         p = os.path.join(SRC, name + '.json')
         if not os.path.exists(p):
             continue
-        r = page(json.load(open(p)), kind, published, published_h, outdir)
+        d = json.load(open(p))
+        if d.get('stop_from_data'):
+            d['stop_quoting'] = d.get('stop_quoting', []) + [dict(x, fact=x.get('fact') or '', link=x.get('link') or x.get('report_ai_link')) for x in H.get('stop_quoting', [])]
+        r = page(d, kind, published, published_h, outdir)
         fn = r['slug'] + '.html'
         open(os.path.join(outdir, fn), 'w').write(r['html'])
         text = re.sub(r'<script.*?</script>|<style.*?</style>|<svg.*?</svg>', ' ', r['html'], flags=re.S)

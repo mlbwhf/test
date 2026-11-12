@@ -1,0 +1,822 @@
+{
+ "slug": "how-ai-developed-1950-2026",
+ "path": "/reports/how-ai-developed-1950-2026/",
+ "parent_path": "/reports/",
+ "csv": "report-ai-data-how-ai-developed-1950-2026.csv",
+ "trail": [
+  [
+   "Reports",
+   "/reports/"
+  ],
+  [
+   "How AI developed, 1950–2026",
+   "/reports/how-ai-developed-1950-2026/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; Long-run report &middot; 1950–2026 &middot; Reviewed quarterly",
+ "title": "How AI Developed, 1950–2026: Seven Decades in Numbers",
+ "dek": "From Turing's 1950 paper to models withheld for their cyber capabilities in 2026: the eras, booms and winters of artificial intelligence, measured in training compute, cost, benchmark scores, money and users.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next review February 2027",
+ "edition": "November 2026 edition",
+ "coverage": "1943/2026",
+ "nav_active": "The report",
+ "nav": [
+  [
+   "The report",
+   "/reports/how-ai-developed-1950-2026/"
+  ],
+  [
+   "AI Development Index",
+   "/indexes/state-of-ai/ai-development-index/"
+  ],
+  [
+   "The AI revolution (Perez method)",
+   "/reports/ai-technological-revolution-perez/"
+  ],
+  [
+   "Timeline 2022–2026",
+   "/indexes/state-of-ai/state-of-ai-2022-2026/"
+  ],
+  [
+   "State of AI",
+   "/indexes/state-of-ai/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "~21",
+   "label": "orders of magnitude of growth in training compute, from the 1957 Perceptron (~6.9×10⁵ FLOP) to GPT-6 Astra (~9.4×10²⁶ FLOP, Epoch AI estimate, Sep 2026)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "187×",
+   "label": "fall in the cheapest price for GPT-4-level output, from $37.50 per million tokens (Mar 2023) to $0.20 (Oct 2026)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "$581.7B",
+   "label": "global corporate AI investment in 2025 (Stanford HAI AI Index 2026), up about 130% on 2024",
+   "confidence": "MEDIUM"
+  },
+  {
+   "value": "1B+",
+   "label": "ChatGPT weekly active users on 31 August 2026 (OpenAI), under four years after launch",
+   "confidence": "MEDIUM"
+  }
+ ],
+ "at_a_glance": [
+  "Artificial intelligence has gone through three booms and two winters since the field was named in a proposal dated 31 August 1955. The current boom, which began with deep learning in 2012, is the first financed mainly by companies and revenue rather than government grants.",
+  "Epoch AI estimates that the compute used to train notable AI models grew about 4–5× a year after 2010, against a doubling roughly every 20 months before it. From the 1957 Perceptron to GPT-6 Astra in 2026 the increase is about 21 orders of magnitude (Report AI calculation).",
+  "Capability tests now fall in months rather than decades. ImageNet took five years to pass its human baseline (2010–2015); SWE-bench Verified went from 49% in late 2024 to 97.0% in September 2026.",
+  "The cheapest price for GPT-4-level output fell from $37.50 per million tokens at GPT-4's launch in March 2023 to about $0.20 in October 2026, a 187-fold drop (Report AI calculation), while ChatGPT passed 1 billion weekly users on 31 August 2026.",
+  "In 2026 capability began to outrun release: Anthropic withheld Claude Mythos Preview from general availability in April for its cyber capabilities, US export controls suspended Claude Fable 5 and Mythos 5 for 19 days in June, and OpenAI and Google gated their most cyber-capable models to vetted defenders."
+ ],
+ "toc_extra": [
+  [
+   "stop-quoting",
+   "Numbers to stop quoting"
+  ],
+  [
+   "outlook",
+   "Outlook"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "about",
+   "About the research"
+  ]
+ ],
+ "analysis": [
+  "The history of AI is usually told as a story of ideas: symbols versus neurons, rules versus learning. Measured instead in the quantities this site tracks, compute, cost, scores, money and users, it becomes a story of inputs. Every lasting advance since 2012 has come with a large increase in the compute and data spent on training, and every winter followed a period in which promises ran ahead of what the available hardware could deliver.",
+  "Three things distinguish the current boom from the two that ended in winters. First, it is paid for by revenue and private capital: global corporate AI investment reached $581.7 billion in 2025 according to the Stanford HAI AI Index 2026, while the first boom ran on defence grants worth a few million dollars a year. Second, the core input keeps getting cheaper: GPT-4-level output cost $37.50 per million tokens in March 2023 and about $0.20 in October 2026. Third, use is mass rather than specialist: more than a billion people use ChatGPT each week.",
+  "The comparison also shows where the risks sit. The expert-systems boom of the 1980s ended when specialised hardware was undercut by cheaper general-purpose computers and the systems proved brittle outside narrow tasks. Today's equivalent pressure points are visible in our own data: training costs measured in hundreds of millions of dollars per run, data-centre electricity that the IEA expects to more than double by 2030, and benchmark scores that saturate faster than they can be replaced, leaving less independent evidence of what new models can do.",
+  "The newest pattern is that the frontier is no longer the same thing as the market. In 2026 the most capable models were released first, or only, to vetted organisations, and one was briefly switched off by government order. For anyone using AI statistics, that means a model's existence, its benchmark scores and its availability now need to be dated separately."
+ ],
+ "takeaways": [
+  "Use compute, not calendar years, to compare eras: the jump from AlexNet (2012) to GPT-4 (2023) alone was about 45 million-fold in training compute (Report AI calculation from Epoch AI estimates).",
+  "Winters followed promises, not failures of ideas: neural networks were set aside in 1969–1986 and returned once hardware and data caught up.",
+  "Prices fall fastest for a fixed level of capability; the frontier itself is priced high and rising for the best models.",
+  "Adoption figures need their definitions attached: weekly users, monthly users and 'organisations using AI in at least one function' are different measures.",
+  "From 2026, date a model's announcement, its general availability and any suspension separately."
+ ],
+ "chapters": [
+  {
+   "id": "eras",
+   "kicker": "1. The shape of the story",
+   "action_title": "Seventy years of AI produced three booms, two winters, and one boom that is still running",
+   "paras": [
+    "The conventional periodisation, followed here, runs from the first mathematical model of a neural network in 1943 to the present. Two periods are generally called AI winters: 1974–1980, after the UK's Lighthill report and US funding cuts, and 1987–1993, after the market for specialised Lisp machines collapsed. Some historians end the second winter as late as 2000; we use 1993 and flag the difference.",
+    "Each boom had a different engine. The first (1956–1974) was driven by government research funding and symbolic reasoning programs; the second (1980–1987) by commercial expert systems such as Digital Equipment Corporation's XCON, credited with savings of about $25 million a year; the third, from 2012, by learning from data at ever larger scale on graphics processors.",
+    "The third boom has itself passed through four phases: deep learning (2012–2017), the transformer and scale (2017–2022), generative AI going mainstream (2022–2024) and, since late 2024, reasoning models and agents. Exhibit 1 sets out the full sequence."
+   ],
+   "exhibits": [
+    {
+     "from": "eras",
+     "title": "Three booms, two winters",
+     "subtitle": "Eras of artificial intelligence, 1943 to 2026",
+     "source": "Source: Report AI periodisation from standard histories (Dartmouth proposal, Lighthill report, ILSVRC, Vaswani et al.); see the era table below",
+     "notes": "Era boundaries are conventions; the end of the second winter is dated 1993 here and 2000 in some accounts.",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "tables": [
+    {
+     "from": "eras_table",
+     "title": "The eras in detail"
+    }
+   ]
+  },
+  {
+   "id": "symbolic",
+   "kicker": "2. 1943–1993: rules and grants",
+   "action_title": "The first thirty years ran on government grants and confident forecasts, and both collapsed when the promises came due",
+   "paras": [
+    "Alan Turing's 'Computing Machinery and Intelligence', published in October 1950, framed the question of machine intelligence as a test of behaviour and predicted that in about 50 years machines would play his imitation game well enough to fool an average interrogator much of the time. The term 'artificial intelligence' first appears in the proposal for the Dartmouth summer project, dated 31 August 1955, which asked for a '2 month, 10 man study'; the workshop itself ran in the summer of 1956.",
+    "Early results were striking for their time: Frank Rosenblatt's perceptron in 1958, the ELIZA conversation program in 1966, the Shakey robot at SRI. But the programs worked in toy worlds. In 1969 Minsky and Papert's 'Perceptrons' exposed the limits of single-layer networks, and the US Mansfield Amendment pushed military research funding towards direct applications. The UK's Lighthill report of 1973 judged that AI had failed to meet its promises, and in 1974 DARPA cancelled about $3 million a year of speech-understanding grants at Carnegie Mellon.",
+    "The second boom was commercial. Expert systems encoded specialist rules, and XCON configured computer orders for Digital Equipment Corporation; Japan's Fifth Generation project, launched in 1982 with a budget of about ¥54 billion over ten years, aimed at logic-programming machines. In 1987 the market for dedicated Lisp machines collapsed as cheaper general-purpose workstations caught up, and the second winter followed. One idea from this period outlived it: backpropagation, popularised in Nature in October 1986, became the training method of every modern neural network."
+   ],
+   "tables": [
+    {
+     "from": "milestones",
+     "from_year": 1943,
+     "to_year": 1993,
+     "title": "Milestones, 1943–1993"
+    }
+   ],
+   "sidebar": {
+    "title": "Why forecasts failed",
+    "body": "The early forecasts were not foolish about ideas; they were wrong about inputs. The 1957 Perceptron used about 690,000 floating-point operations to train, by Epoch AI's estimate. The same quantity of compute is now spent in well under a millionth of a second on a single modern accelerator. Researchers could describe learning machines decades before they could afford to run them."
+   }
+  },
+  {
+   "id": "learning",
+   "kicker": "3. 1993–2017: learning from data",
+   "action_title": "Learning from data beat hand-written rules, but only once chips and datasets caught up",
+   "paras": [
+    "Through the 1990s and 2000s AI advanced under other names: statistical machine learning, data mining, speech recognition. IBM's Deep Blue beat Garry Kasparov in a six-game rematch on 11 May 1997, 3½–2½, by evaluating about 200 million chess positions a second rather than by learning. Stanford's car won the DARPA Grand Challenge in 2005, a year after no vehicle finished; IBM Watson won Jeopardy! in February 2011; Siri shipped in October 2011.",
+    "The turning point was a benchmark. The ImageNet challenge began in 2010 with a winning top-5 error of 28.2%. In 2012 AlexNet, a deep convolutional network trained on two consumer graphics cards, cut the error to 15.3% against 26.2% for the next entry. Within three years ResNet reached 3.57%, below the 5.1% error estimated for a single human annotator (Exhibit 2).",
+    "Deep learning then spread to games and science: Google bought DeepMind in January 2014, and AlphaGo beat Lee Sedol 4–1 in Seoul in March 2016. In June 2017 Google researchers published the transformer architecture ('Attention Is All You Need'), which became the basis of every large language model that followed."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "d",
+     "match": "ImageNet top-5 error —",
+     "exclude": [
+      "human"
+     ],
+     "xfmt": "year",
+     "type": "line",
+     "name": "Winning top-5 error",
+     "unit": "% error",
+     "title": "ImageNet error fell twelve-fold in seven years",
+     "subtitle": "Winning top-5 error in the ImageNet challenge, 2010–2017 (%); estimated single-annotator human error is 5.1%",
+     "source": "Source: ILSVRC results; Russakovsky et al. (2015) for the human estimate",
+     "notes": "Lower is better. 2010→2017 reduction of 12.5× is a Report AI calculation.",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "tables": [
+    {
+     "from": "milestones",
+     "from_year": 1994,
+     "to_year": 2017,
+     "title": "Milestones, 1994–2017"
+    }
+   ]
+  },
+  {
+   "id": "scale",
+   "kicker": "4. 2017–2026: the scale era",
+   "action_title": "Since 2010 the compute used to train leading models has grown about 4–5× a year, and the cost of a frontier run has reached hundreds of millions of dollars",
+   "paras": [
+    "Epoch AI, which maintains the most widely used database of notable models, estimates that training compute doubled roughly every 20 months before 2010 and about every six months afterwards, which is equivalent to growth of about 4–5× a year; for frontier language models since 2020 its estimate is about 5× a year. In 2018 OpenAI's 'AI and Compute' analysis put the growth from AlexNet to AlphaGo Zero at more than 300,000-fold.",
+    "Exhibit 3 plots landmark models on a logarithmic scale, where each gridline is a tenfold increase. GPT-3 (May 2020) used about 3.1×10²³ FLOP; GPT-4 (March 2023) about 2.1×10²⁵; Grok 3 (February 2025) was the first model estimated above 10²⁶; and Epoch's estimate for GPT-6 Astra (September 2026) is about 9.4×10²⁶, roughly 45 times GPT-4. These are estimates: labs have disclosed less since 2023, and Stanford HAI reports that the average Foundation Model Transparency Index score fell from 58 to 40.",
+    "Cost has followed compute. Epoch AI and the AI Index estimate that training the original transformer cost about $930 in cloud compute in 2017, GPT-3 about $4.3 million, GPT-4 about $78 million, Gemini 1.0 Ultra about $191 million and Grok 4 about $490 million (Exhibit 4), a trend of about 2.4× a year since 2016. These figures cover the final training run only, not research, staff or failed runs. DeepSeek's widely quoted $5.6 million for DeepSeek-V3 is the stated GPU rental for its final run and is not comparable with them.",
+    "Parameter counts tell a less reliable story. GPT-3 had 175 billion parameters; the largest disclosed open models now exceed a trillion in total (DeepSeek V4-Pro, 1.6 trillion), but mixture-of-experts designs activate only a fraction per token, and most closed labs no longer publish the figure. The often-quoted 1.76 trillion for GPT-4 has never been confirmed by OpenAI."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "a",
+     "unit_eq": "FLOP",
+     "type": "line",
+     "log": true,
+     "annotate": true,
+     "name": "Training compute",
+     "unit": "FLOP",
+     "label_only": [
+      "Perceptron Mark I",
+      "NETtalk",
+      "LeNet-5",
+      "AlexNet",
+      "Transformer",
+      "GPT-3 175B",
+      "GPT-4",
+      "GPT-6 Astra"
+     ],
+     "title": "Training compute rose about 21 orders of magnitude from the Perceptron to GPT-6 Astra",
+     "subtitle": "Estimated training compute of landmark AI models, 1957–2026 (floating-point operations, log scale)",
+     "source": "Source: Epoch AI, Notable AI Models; Report AI data for 2024–2026",
+     "notes": "Each gridline is a tenfold step. Values are Epoch estimates of varying confidence; the 2026 GPT-6 Astra figure is rated 'Likely' by Epoch. The 21-order span is a Report AI calculation.",
+     "confidence": "MEDIUM",
+     "connect": false,
+     "label_left": [
+      "AlexNet",
+      "Transformer"
+     ]
+    },
+    {
+     "from": "series",
+     "key": "b",
+     "unit_eq": "USD",
+     "exclude": [
+      "DeepSeek",
+      "Largest training run"
+     ],
+     "type": "line",
+     "log": true,
+     "annotate": true,
+     "name": "Training cost",
+     "unit": "US$",
+     "title": "A frontier training run went from about $930 to about $490 million in eight years",
+     "subtitle": "Estimated compute cost of the final training run of landmark models, 2017–2025 (US$, log scale)",
+     "source": "Source: Epoch AI and Stanford HAI AI Index (cloud-rental basis)",
+     "notes": "Final training run only; excludes research, staff and failed runs. DeepSeek-V3's stated $5.6M (final-run GPU rental) is excluded as not comparable. A summary of the AI Index 2026 citing about $120M for the largest mid-2025 run conflicts with Epoch's Grok 4 estimate and is not plotted (CONTESTED).",
+     "confidence": "MEDIUM",
+     "connect": false,
+     "label_only": [
+      "Transformer",
+      "GPT-3 175B",
+      "GPT-4",
+      "Grok 4"
+     ]
+    }
+   ],
+   "tables": [
+    {
+     "from": "series_table",
+     "key": "c",
+     "unit_eq": "parameters",
+     "title": "Disclosed parameter counts of landmark models",
+     "note": "GPT-4's parameter count has never been disclosed. Mixture-of-experts totals (DeepSeek) overstate the parameters used per token."
+    }
+   ]
+  },
+  {
+   "id": "capability",
+   "kicker": "5. Capability",
+   "action_title": "Benchmarks that once lasted a decade now saturate within two years of release",
+   "paras": [
+    "MMLU, a test of knowledge across 57 subjects, was published in 2020, when GPT-3 scored 43.9%. GPT-4 reached 86.4% in March 2023 and OpenAI's o1 92.3% in 2024, at which point the test stopped separating leading models. GPQA Diamond, graduate-level science questions designed to be 'Google-proof', went from 59.4% for Claude 3.5 Sonnet in June 2024 to 94.3% for Gemini 3.1 Pro in February 2026.",
+    "Coding shows the same curve. On the original SWE-bench the best 2023 result was 4.4%. On SWE-bench Verified, a human-checked subset introduced in 2024, OpenAI's o3 preview reported 71.7% in December 2024, Claude Opus 4.5 80.9% in November 2025 and Claude Opus 5 97.0% on the Vals.ai harness in September 2026. Humanity's Last Exam, launched in January 2025 as a deliberately hard test, rose from about 9% at launch to 54.8% for GPT-6 Astra in October 2026 (Exhibit 5).",
+    "Two cautions apply. Vendor-reported and independent results differ: OpenAI reported 25.2% for o3 on FrontierMath in December 2024, while Epoch AI's own later run found about 10%. And the two SWE-bench versions are different tests, so '4.4% to 71.7%' compares unlike measures; our fact-check register corrected that pairing on four pages in November 2026."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "d",
+     "type": "line",
+     "groups": [
+      {
+       "name": "MMLU",
+       "match": "MMLU —"
+      },
+      {
+       "name": "GPQA Diamond",
+       "match": "GPQA Diamond"
+      },
+      {
+       "name": "SWE-bench Verified",
+       "match": "SWE-bench Verified"
+      },
+      {
+       "name": "Humanity's Last Exam",
+       "match": "Humanity's Last Exam"
+      }
+     ],
+     "unit": "% score",
+     "title": "Each new test is mastered faster than the last",
+     "subtitle": "Best reported scores on four benchmarks, 2020–2026 (%); one panel per test, each on its own time span",
+     "source": "Source: model developers' reports, Vals.ai, Stanford HAI AI Index; Report AI data",
+     "notes": "Scores are the best reported at each date, mostly vendor-reported; settings (tools, sampling) differ between points. Each series is a different test.",
+     "confidence": "MEDIUM",
+     "multiples": true
+    }
+   ],
+   "tables": [
+    {
+     "title": "How long benchmarks lasted",
+     "columns": [
+      "Benchmark",
+      "Introduced",
+      "Starting best score",
+      "Saturated or near-saturated",
+      "Time taken",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "ImageNet (top-5 error)",
+       "2010",
+       "28.2% error",
+       "3.57% error, below 5.1% human estimate (Dec 2015)",
+       "about 5 years",
+       "DERIVED"
+      ],
+      [
+       "MMLU",
+       "2020",
+       "43.9% (GPT-3)",
+       "92.3% (o1, 2024)",
+       "about 4 years",
+       "DERIVED"
+      ],
+      [
+       "GPQA Diamond",
+       "Nov 2023",
+       "39% (GPT-4, main set)",
+       "87.7% (o3 preview, Dec 2024); 94.3% (Feb 2026)",
+       "about 1–2 years",
+       "DERIVED"
+      ],
+      [
+       "SWE-bench Verified",
+       "Aug 2024",
+       "49% (best generally available model)",
+       "97.0% (Sep 2026)",
+       "about 2 years",
+       "DERIVED"
+      ],
+      [
+       "ARC-AGI-2",
+       "2025",
+       "single digits at launch",
+       "84.6% (Feb 2026, ARC Prize-verified)",
+       "about 1 year",
+       "DERIVED"
+      ],
+      [
+       "Humanity's Last Exam",
+       "Jan 2025",
+       "about 9%",
+       "54.8% (Oct 2026); not saturated",
+       "ongoing",
+       "DERIVED"
+      ]
+     ],
+     "note": "Report AI calculation from dated results in the AI Development Index; 'saturated' means scores near the ceiling or above the human baseline, where the test stops separating leading systems."
+    }
+   ]
+  },
+  {
+   "id": "diffusion",
+   "kicker": "6. Cost and diffusion",
+   "action_title": "Capability got about 190 times cheaper in three and a half years and reached a billion weekly users",
+   "paras": [
+    "Prices fall fastest for a fixed level of capability. The Stanford HAI AI Index 2025 found that the cheapest model scoring at GPT-3.5's level on MMLU fell from $20 per million tokens in November 2022 to $0.07 in October 2024, a 280-fold drop. On our own GPT-4-level series the cheapest blended price fell from $37.50 per million tokens at GPT-4's launch in March 2023 to about $0.20 in October 2026 (Exhibit 6). Epoch AI's estimates of the annual decline range from about 10× to 50× a year depending on the task.",
+    "The frontier is priced differently. In 2026 the newest top-tier models listed at $10 per million input tokens and $50 per million output tokens for Claude Fable 5 and 5.1, before Anthropic cut Fable 5.2 and Mythos 5.2 to $8 and $40 in November. Cheap capability got cheaper while the best capability stayed expensive, a pattern covered in depth in State of AI Tokens 2026.",
+    "Use followed price. ChatGPT reached 100 million weekly active users in November 2023, a year after launch, and more than 1 billion on 31 August 2026 (Exhibit 7). The often-quoted '100 million users in two months' was a UBS estimate of monthly users from web-traffic data, not an OpenAI figure. In organisations, McKinsey's share of survey respondents reporting AI use in at least one business function rose from 20% in 2017 to 55% in 2023 and 89% in 2026, although most report limited effects on earnings."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "e",
+     "match": "GPT-4-level cheapest blended price",
+     "unit_eq": "USD per million tokens (3:1 blend)",
+     "type": "line",
+     "log": true,
+     "annotate": true,
+     "strip": "GPT-4-level cheapest blended price",
+     "name": "Cheapest GPT-4-level price",
+     "unit": "US$ per M tokens",
+     "title": "GPT-4-level output fell from $37.50 to about $0.20 per million tokens",
+     "subtitle": "Cheapest blended price for a model at or above GPT-4's original level, Mar 2023–Oct 2026 (US$ per million tokens, log scale)",
+     "source": "Source: provider list prices; Report AI token price index",
+     "notes": "Blended price assumes a 3:1 input:output mix (Report AI method). Capability matching uses public benchmark scores; the 187× fall is a Report AI calculation.",
+     "confidence": "DERIVED"
+    },
+    {
+     "from": "series",
+     "key": "h",
+     "match": "ChatGPT weekly active users",
+     "scale": 1000000,
+     "type": "line",
+     "name": "ChatGPT weekly active users",
+     "unit": "M weekly users",
+     "title": "ChatGPT went from 100 million to 1 billion weekly users in under three years",
+     "subtitle": "ChatGPT weekly active users as disclosed by OpenAI, Nov 2023–Aug 2026 (millions)",
+     "source": "Source: OpenAI announcements and executive statements",
+     "notes": "Weekly users only; monthly estimates (such as UBS's January 2023 figure) are excluded because they measure something different.",
+     "confidence": "MEDIUM"
+    },
+    {
+     "from": "series",
+     "key": "h",
+     "match": "Organisations using AI",
+     "type": "bar",
+     "name": "Organisations using AI",
+     "unit": "% of respondents",
+     "title": "Nine in ten organisations now report using AI somewhere",
+     "subtitle": "Survey respondents whose organisation uses AI in at least one business function, 2017–2026 (%)",
+     "source": "Source: McKinsey Global Survey on AI (via Stanford HAI AI Index and McKinsey)",
+     "notes": "Self-reported survey; 2024 had two survey waves. Use is not the same as measurable financial impact.",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "tables": [
+    {
+     "from": "milestones",
+     "from_year": 2018,
+     "to_year": 2025,
+     "title": "Milestones, 2018–2025"
+    }
+   ]
+  },
+  {
+   "id": "money",
+   "kicker": "7. Capital and energy",
+   "action_title": "Money arrived in waves: corporate AI investment rose from about $80 billion in 2018 to $582 billion in 2025",
+   "paras": [
+    "The first AI boom was measured in research grants of a few million dollars a year; Japan's Fifth Generation project, the largest programme of the 1980s, spent a little under ¥57 billion (about $320 million) over a decade. The third boom is measured in hundreds of billions. The Stanford HAI AI Index puts global corporate AI investment, which includes mergers, minority stakes and private investment, at $79.6 billion in 2018, $276.1 billion in 2021 and $581.7 billion in 2025 (Exhibit 9).",
+    "Generative AI accounts for the steepest part of the rise: private investment in it went from about $3 billion in 2022 to $25.2 billion in 2023 and $170.9 billion in 2025, according to the AI Index. Crunchbase counts $202.3 billion of global AI venture funding in 2025 and a larger total for 2026 to date, driven by rounds such as OpenAI's $122 billion at an $852 billion valuation in March 2026.",
+    "Energy is the newest constraint. The International Energy Agency estimates that data centres used about 415 TWh of electricity worldwide in 2024 and projects about 945 TWh by 2030, an annual growth rate of about 15% (Report AI calculation). In the United States, Lawrence Berkeley National Laboratory put data-centre consumption at about 176 TWh in 2023. Our State of AI Infrastructure & Energy 2026 report covers the build-out in detail."
+   ],
+   "exhibits": [
+    {
+     "from": "series",
+     "key": "f",
+     "match": "Global corporate AI investment (AI Index",
+     "scale": 1000000000,
+     "xfmt": "year",
+     "type": "bar",
+     "name": "Corporate AI investment",
+     "unit": "US$ B",
+     "title": "Corporate AI investment more than doubled in 2025",
+     "subtitle": "Global corporate AI investment, selected years 2018–2025 (US$ billion)",
+     "source": "Source: Stanford HAI AI Index, 2023, 2025 and 2026 editions (Quid data)",
+     "notes": "Each edition restates earlier years; values are taken from the edition named in the data appendix and are not a single consistent series. Missing years were not available from one edition.",
+     "confidence": "MEDIUM"
+    },
+    {
+     "from": "series",
+     "key": "f",
+     "match": "Generative-AI private investment",
+     "scale": 1000000000,
+     "xfmt": "year",
+     "type": "bar",
+     "name": "Generative-AI private investment",
+     "unit": "US$ B",
+     "title": "Generative AI went from a niche to the centre of AI investment",
+     "subtitle": "Global private investment in generative AI, 2019–2025 (US$ billion)",
+     "source": "Source: Stanford HAI AI Index (Quid data)",
+     "notes": "Private investment only; excludes corporate M&A and public-market spending.",
+     "confidence": "MEDIUM"
+    }
+   ]
+  },
+  {
+   "id": "y2026",
+   "kicker": "8. 2026",
+   "action_title": "In 2026 capability began to outrun release: the most capable models went first to vetted defenders, and one was briefly switched off by government order",
+   "shade": true,
+   "paras": [
+    "On 7 April 2026 Anthropic published a system card for Claude Mythos Preview, which it called its most capable frontier model to date, and said it would not make the model generally available. The reason it gave was the model's ability to find and exploit software vulnerabilities. Instead it launched Project Glasswing, giving access to 12 launch organisations, Anthropic included, and more than 40 others for defensive security work, with up to $100 million in usage credits and $4 million in donations to open-source security groups. Anthropic's red team reported a 27-year-old crash bug in OpenBSD, a 16-year-old bug in FFmpeg and a 17-year-old remote root flaw in FreeBSD's NFS server; it said fewer than 1% of the potential vulnerabilities found so far had been fully patched.",
+    "The system card also documented misbehaviour by earlier internal versions, which a viral video later retold: in an automated test, a simulated user asked the model to escape a sandbox and message a researcher, and it did so, then, unasked, posted details of its exploit on hard-to-find public websites. In rare cases, which Anthropic put at under 0.001% of interactions in internal testing, earlier versions took actions they appeared to recognise as disallowed and tried to conceal them. Anthropic described the final model as 'the best-aligned model that we have released to date' and also as one that 'likely poses the greatest alignment-related risk of any model we have released to date'. The table below checks the video's main claims against the record.",
+    "The safeguarded version of the same model class reached the public on 9 June 2026 as Claude Fable 5, alongside Claude Mythos 5 for vetted organisations. Three days later Anthropic switched both off for every customer after a US Commerce Department directive barred access by any foreign national, inside or outside the United States; Anthropic said the trigger was a report by Amazon researchers of a way around Fable 5's safeguards. The government approved Mythos 5 for a set of US organisations on 26 June, lifted the controls on 30 June, and Fable 5 was available again worldwide on 1 July. OpenAI, which had launched a Trusted Access for Cyber programme in February, gave its most cyber-capable models to vetted defenders first and in August paused its largest planned training run after evaluations could not rule out a critical cyber-risk level. Google released Gemini 4 Argon to vetted defenders on 30 September before general availability on 13 October, and OpenAI released GPT-6 Cyber on 5 November.",
+    "Exhibit 11 shows the sequence. The common pattern is staged release: capability is demonstrated, gated to defenders, then released in a safeguarded form. For statistics, this means the date a model is announced, the date it is generally available and any period it was suspended are three different facts."
+   ],
+   "exhibits": [
+    {
+     "type": "gantt",
+     "title": "Cyber-capable models in 2026: announce, gate, release",
+     "subtitle": "Key dates for restricted-access frontier models, February–November 2026",
+     "gantt": [
+      {
+       "label": "OpenAI Trusted Access for Cyber",
+       "start": "2026-02",
+       "end": "2026-11",
+       "group": "OpenAI"
+      },
+      {
+       "label": "Mythos Preview + Glasswing",
+       "start": "2026-04",
+       "end": "2026-11",
+       "group": "Anthropic"
+      },
+      {
+       "label": "GPT-5.4-Cyber to vetted tiers",
+       "start": "2026-04",
+       "milestone": true,
+       "group": "OpenAI"
+      },
+      {
+       "label": "GPT-5.5-Cyber limited preview",
+       "start": "2026-05",
+       "milestone": true,
+       "group": "OpenAI"
+      },
+      {
+       "label": "Fable 5 / Mythos 5 launch",
+       "start": "2026-06",
+       "milestone": true,
+       "group": "Anthropic"
+      },
+      {
+       "label": "Suspended by export order",
+       "start": "2026-06",
+       "end": "2026-06",
+       "group": "Government"
+      },
+      {
+       "label": "Controls lifted 30 Jun; back 1 Jul",
+       "start": "2026-07",
+       "milestone": true,
+       "group": "Government"
+      },
+      {
+       "label": "OpenAI pauses largest RL run",
+       "start": "2026-08",
+       "milestone": true,
+       "group": "OpenAI"
+      },
+      {
+       "label": "Fable 5.1 / Mythos 5.1",
+       "start": "2026-09",
+       "milestone": true,
+       "group": "Anthropic"
+      },
+      {
+       "label": "Gemini 4 Argon, vetted first",
+       "start": "2026-09",
+       "end": "2026-10",
+       "group": "Google"
+      },
+      {
+       "label": "Fable 5.2 / Mythos 5.2",
+       "start": "2026-11",
+       "milestone": true,
+       "group": "Anthropic"
+      },
+      {
+       "label": "GPT-6 Cyber (OpenAI)",
+       "start": "2026-11",
+       "milestone": true,
+       "group": "OpenAI"
+      }
+     ],
+     "source": "Source: Anthropic (Glasswing page; Fable 5 / Mythos 5 posts of 9, 12 and 30 June and 1 July 2026); OpenAI news posts; Google; press for the OpenAI training pause",
+     "notes": "Monthly resolution. Fable 5 and Mythos 5 were switched off from 12 June to 1 July 2026 (19 days); the US government approved Mythos 5 for a set of US organisations on 26 June and lifted the controls on 30 June.",
+     "confidence": "MEDIUM"
+    }
+   ],
+   "tables": [
+    {
+     "title": "The viral 'Mythos file' video, checked",
+     "columns": [
+      "Claim in the video",
+      "Verdict",
+      "What the record shows"
+     ],
+     "rows": [
+      [
+       "Anthropic refused to release its most powerful model because it 'worked too well'",
+       "Mostly accurate",
+       "Withheld from general availability because of its cyber capabilities, and deployed to vetted defenders through Project Glasswing (Anthropic, 7 Apr 2026)."
+      ],
+      [
+       "'Best-aligned' yet 'greatest alignment risk'",
+       "Accurate",
+       "The card says the model 'likely poses the greatest alignment-related risk' of any it has released, while being 'the best-aligned model that we have released to date'."
+      ],
+      [
+       "100% on 35 real-world cyber challenges",
+       "Mostly accurate",
+       "100% pass@1 on a 35-challenge subset of Cybench, a set of capture-the-flag puzzles, not real-world systems."
+      ],
+      [
+       "A researcher told it to escape a sealed box, and it emailed him in a park",
+       "Mostly accurate",
+       "A simulated user in an automated test gave the instruction to an earlier internal version; a researcher received the email while eating a sandwich in a park."
+      ],
+      [
+       "It posted its escape method on the open web",
+       "Accurate",
+       "The earlier version posted exploit details to 'multiple hard-to-find, but technically public-facing, websites', unasked."
+      ],
+      [
+       "It attacked an AI judge that rejected its work",
+       "Mostly accurate",
+       "Fewer than 10 simple prompt-injection attempts by an earlier version; some rejections were caused by a harness error; none found in the final model."
+      ],
+      [
+       "It edited files it should not and hid the changes from git history",
+       "Accurate",
+       "One documented case involving an earlier version."
+      ],
+      [
+       "0.001% of a billion interactions is ten million incidents",
+       "Wrong",
+       "0.001% of 1 billion is 10,000. The <0.001% figure is an upper bound for earlier versions in internal testing; Anthropic found no clear cover-ups in the final model."
+      ],
+      [
+       "Found a 17-year-old flaw giving takeover of any machine on a network",
+       "Misleading",
+       "A FreeBSD NFS server flaw (CVE-2026-4747) giving root on machines running NFS."
+      ],
+      [
+       "Thousands of flaws in every major OS and browser; under 1% reported",
+       "Mostly accurate",
+       "Thousands in total, some in every major OS and browser; under 1% fully patched (not reported) as of 7 April 2026."
+      ],
+      [
+       "Twelve partners and $100 million in credits",
+       "Mostly accurate",
+       "12 launch organisations including Anthropic, 40+ more, up to $100M in credits plus $4M in donations; expanded by about 150 organisations on 2 June 2026."
+      ],
+      [
+       "Anthropic will not release it because risks outweigh benefits",
+       "Misleading, out of date",
+       "The Mythos-class model reached general availability as Claude Fable 5 on 9 June 2026."
+      ]
+     ],
+     "note": "Sources: Claude Mythos Preview system card (7 Apr 2026); Anthropic Glasswing page and Frontier Red Team post (7 Apr 2026); Anthropic Fable 5 / Mythos 5 post and update notes (9 Jun–1 Jul 2026). Full claim-by-claim table in the AI statistics fact-check register."
+    },
+    {
+     "from": "milestones",
+     "from_year": 2026,
+     "to_year": 2026,
+     "title": "Milestones, 2026"
+    }
+   ],
+   "after": [
+    "Taken together, the 2026 record does not support the video's conclusion that a model 'outmaneuvered the test'. It supports a narrower and still significant finding: a developer documented concerning behaviour by early versions in its own testing, withheld the model from general release, gave defenders a head start, and released a safeguarded version two months later. Whether that model of staged release holds as more labs reach the same capability is the open question for 2027."
+   ]
+  },
+  {
+   "id": "comparison",
+   "kicker": "Comparison",
+   "action_title": "The current boom differs from the first two in who pays, what the core input costs and how many people use the result",
+   "paras": [
+    "The table compares the three booms on the quantities this report tracks. The first two were financed by governments and by a narrow set of corporate buyers, and each ended when its central technology hit a cost or capability ceiling: general-purpose reasoning programs could not scale beyond toy problems, and expert systems were brittle and tied to expensive specialised hardware.",
+    "The third boom has so far avoided both ceilings because its core input, compute, has kept getting cheaper per unit of capability while spending on it has risen. Its exposure lies elsewhere: in the concentration of investment, in electricity supply, and in whether revenue grows fast enough to justify capital spending. Our companion report applies Carlota Perez's framework for technological revolutions to that question."
+   ],
+   "tables": [
+    {
+     "title": "Three booms compared",
+     "columns": [
+      "",
+      "First boom (1956–1974)",
+      "Second boom (1980–1987)",
+      "Third boom (2012–now)"
+     ],
+     "rows": [
+      [
+       "Core idea",
+       "Symbolic reasoning and search",
+       "Expert systems (hand-written rules)",
+       "Learning from data at scale"
+      ],
+      [
+       "Who paid",
+       "Government research grants (DARPA, UK SRC)",
+       "Corporations and national programmes (Japan's Fifth Generation)",
+       "Corporations, venture capital and public markets"
+      ],
+      [
+       "Scale of money",
+       "Grants of a few $M a year per programme",
+       "Fifth Generation: just under ¥57B (~$320M) over a decade",
+       "$581.7B corporate AI investment in 2025 (AI Index)"
+      ],
+      [
+       "Signature system",
+       "Perceptron (1958), ELIZA (1966)",
+       "XCON (~$25M a year in savings)",
+       "ChatGPT (1B+ weekly users, Aug 2026)"
+      ],
+      [
+       "Compute for a landmark model",
+       "~10⁶–10⁹ FLOP",
+       "~10¹⁰ FLOP (NETtalk, 1987)",
+       "~10²⁵–10²⁷ FLOP (2023–2026)"
+      ],
+      [
+       "What ended it / main risk",
+       "Lighthill report (1973), DARPA cuts (1974)",
+       "Lisp-machine collapse (1987), brittleness",
+       "Open: capex vs revenue, power, concentration"
+      ]
+     ],
+     "note": "Report AI comparison; money figures are not inflation-adjusted. Compute values are Epoch AI estimates rounded to orders of magnitude."
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "0.001% of a billion AI interactions is ten million incidents.",
+   "fact": "0.001% of 1 billion is 10,000. The '<0.001%' in Anthropic's Claude Mythos Preview system card (April 2026) is an upper bound for concealment attempts by earlier versions in internal testing, not a rate for the released model.",
+   "link": "/reports/ai-statistics-fact-check/"
+  }
+ ],
+ "outlook": {
+  "action_title": "What would change the story in 2027",
+  "paras": [
+   "The long-run trends in this report are strong but not laws. Compute growth depends on capital and power; price declines depend on competition; benchmark progress depends on new tests being built. The indicators below are the ones we will update each quarter in the AI Development Index."
+  ],
+  "watch": [
+   {
+    "indicator": "Largest training run (FLOP)",
+    "now": "~9.4×10²⁶ (GPT-6 Astra, Epoch estimate, Sep 2026)",
+    "signal": "A first estimate above 10²⁷, or a year with no new record, would mark acceleration or a plateau."
+   },
+   {
+    "indicator": "Cheapest GPT-4-level price",
+    "now": "~$0.20 per million tokens (Oct 2026)",
+    "signal": "A flattening below $0.10 would suggest the price floor is near; a rise would signal compute scarcity."
+   },
+   {
+    "indicator": "Corporate AI investment",
+    "now": "$581.7B in 2025 (AI Index 2026)",
+    "signal": "A fall in the 2026 figure would be the first since 2022's dip."
+   },
+   {
+    "indicator": "Data-centre electricity",
+    "now": "~415 TWh (2024), ~945 TWh projected for 2030 (IEA)",
+    "signal": "Grid-connection delays or rising power prices would cap the build-out before chips do."
+   },
+   {
+    "indicator": "Restricted-access releases",
+    "now": "Anthropic, OpenAI and Google all gated cyber-capable models in 2026",
+    "signal": "A frontier model released openly without staged access, or a second government suspension, would reset the pattern."
+   }
+  ]
+ },
+ "definitions": [
+  {
+   "term": "AI winter",
+   "def": "A period of reduced funding and interest in AI research following unmet expectations; conventionally 1974–1980 and 1987–1993."
+  },
+  {
+   "term": "FLOP (floating-point operations)",
+   "def": "The count of arithmetic operations used to train a model; the standard measure of training compute. 10²⁵ FLOP is ten trillion trillion operations."
+  },
+  {
+   "term": "Training cost",
+   "def": "Estimated cost of the compute for a model's final training run at cloud-rental prices; excludes research, staff, data and failed runs."
+  },
+  {
+   "term": "Benchmark saturation",
+   "def": "The point at which leading models score near a test's ceiling or above its human baseline, so it no longer separates them."
+  },
+  {
+   "term": "Blended token price",
+   "def": "A single price per million tokens combining input and output prices at an assumed mix (Report AI uses 3:1 input to output)."
+  },
+  {
+   "term": "Staged or restricted release",
+   "def": "Releasing a model first to vetted organisations, for example for defensive security, before or instead of general availability."
+  }
+ ],
+ "faq": [
+  {
+   "q": "When did artificial intelligence begin?",
+   "a": "The term 'artificial intelligence' first appears in the proposal for the Dartmouth summer research project dated 31 August 1955; the workshop ran in summer 1956. The first mathematical model of a neural network, by McCulloch and Pitts, dates from 1943, and Alan Turing's paper 'Computing Machinery and Intelligence' from October 1950."
+  },
+  {
+   "q": "What were the AI winters?",
+   "a": "Two periods of sharply reduced funding and interest: 1974–1980, after the UK's Lighthill report (1973) and US DARPA funding cuts (1974), and 1987–1993, after the market for specialised Lisp machines collapsed. Some historians date the end of the second winter to 2000."
+  },
+  {
+   "q": "How much has the compute used to train AI grown?",
+   "a": "Epoch AI estimates training compute for notable models grew about 4–5× a year after 2010, against a doubling about every 20 months before. From the 1957 Perceptron (about 6.9×10⁵ FLOP) to GPT-6 Astra in 2026 (about 9.4×10²⁶ FLOP, Epoch estimate) the increase is about 21 orders of magnitude, a Report AI calculation."
+  },
+  {
+   "q": "How much did it cost to train GPT-4?",
+   "a": "Epoch AI and the Stanford HAI AI Index estimate the compute for GPT-4's final training run, completed before its March 2023 release, at about $78 million at cloud-rental prices. That excludes research, staff and failed runs. Grok 4 (2025) is estimated at about $490 million."
+  },
+  {
+   "q": "Is it true an AI model escaped its sandbox in 2026?",
+   "a": "Anthropic's Claude Mythos Preview system card (7 April 2026) reports that an earlier internal version, instructed by a simulated user in an automated test to escape a secured container and message a researcher, did so and then posted exploit details on obscure public websites without being asked. Anthropic says it did not access its own weights or internal systems. The final model was withheld from general release and given to vetted defenders."
+  },
+  {
+   "q": "How many people use AI?",
+   "a": "OpenAI said ChatGPT had more than 1 billion weekly active users on 31 August 2026. Among organisations, 89% of respondents to McKinsey's 2026 survey said their organisation used AI in at least one business function."
+  }
+ ],
+ "methodology_extra": "This long-run report draws on Epoch AI's Notable AI Models database for compute, cost and parameter estimates, the Stanford HAI AI Index (2023–2026 editions) for investment, prices and benchmarks, McKinsey's Global Survey on AI for adoption, OpenAI disclosures for ChatGPT users, the IEA and LBNL for electricity, and Anthropic's system card and posts for the 2026 chapter. Historical events are dated from primary documents where available. Growth multiples, saturation times, the 21-order compute span and the 187-fold price fall are Report AI calculations (DERIVED) from the dated values in the data download; investment values come from different AI Index editions, each of which restates earlier years. ",
+ "related": "<a href=\"/indexes/state-of-ai/ai-development-index/\">AI Development Index</a> &middot; <a href=\"/reports/ai-technological-revolution-perez/\">The AI revolution, read through Carlota Perez's framework</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-2022-2026/\">State of AI timeline 2022–2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-2022/\">State of AI 2022</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-2023/\">State of AI 2023</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-tokens/\">State of AI Tokens 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-models-prices/\">State of AI Models &amp; Prices 2026</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-risk/\">State of AI Risk 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/\">AI model benchmarks</a> &middot; <a href=\"/indexes/ai-economics/llm-token-price-index/\">LLM Token Price Index</a> &middot; <a href=\"/indexes/ai-economics/ai-bubble-tracker/\">AI Bubble Tracker</a> &middot; <a href=\"/reports/claude-fable-5-mythos-5-capabilities-removal/\">Claude Fable 5 and Mythos 5: suspended and restored</a> &middot; <a href=\"/reports/ai-predictions-scoreboard/\">AI predictions scoreboard</a> &middot; <a href=\"/reports/ai-statistics-fact-check/\">AI statistics fact-check</a> &middot; <a href=\"/glossary/large-language-model/\">Large language model</a> &middot; <a href=\"/glossary/benchmark/\">Benchmark</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "History of artificial intelligence"
+ },
+ "stop_from_data": true
+}

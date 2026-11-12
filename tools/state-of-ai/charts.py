@@ -173,9 +173,9 @@ def log_line_chart(ex):
     for e in range(lo, hi + 1, step):
         y = y1 - (e - lo) / (hi - lo) * (y1 - y0)
         out += f'<line x1="{x0}" x2="{x1}" y1="{y:.1f}" y2="{y:.1f}" stroke="{GRID}" stroke-width="1"/>'
-        out += f'<text x="{x0 - 8}" y="{y + 4:.1f}" font-size="11.5" fill="{AXIS}" text-anchor="end">10{str(e).translate(SUP)}</text>'
+        out += f'<text x="{x0 - 8}" y="{y + 4:.1f}" font-size="11.5" fill="{AXIS}" text-anchor="end">10<tspan dy="-5" font-size="8.5">{e}</tspan></text>'
     if ex.get('unit'):
-        out += f'<text x="{x0 - 8}" y="{y0 - 14}" font-size="11.5" fill="{MUTED}" text-anchor="end">{E(ex["unit"])} (log scale)</text>'
+        out += f'<text x="4" y="{y0 - 14}" font-size="11.5" fill="{MUTED}" text-anchor="start">{E(ex["unit"])} (log scale)</text>'
     y_a, y_b = int(t0 // 12), int(t1 // 12) + 1
     span = y_b - y_a
     yst = 10 if span > 40 else 5 if span > 15 else 2 if span > 6 else 1
@@ -193,16 +193,25 @@ def log_line_chart(ex):
             out += f'<path d="{d}" fill="none" stroke="{c}" stroke-width="1.6" stroke-opacity=".45" stroke-linejoin="round"/>'
         for k, (t, v, note) in enumerate(pts):
             out += f'<circle cx="{X(t):.1f}" cy="{Y(v):.1f}" r="4.5" fill="{c}" stroke="#fff" stroke-width="2"><title>{E(note or s["name"])}: {sci(v)} {E(ex.get("unit", ""))}</title></circle>'
-            if note:
+            if note and (not ex.get('label_only') or note in ex['label_only']):
                 above = k % 2 == 0
-                out += f'<text x="{X(t) + (7 if X(t) < x1 - 60 else -7):.1f}" y="{Y(v) + (-8 if above else 15):.1f}" font-size="10.5" fill="{INK}" text-anchor="{"start" if X(t) < x1 - 60 else "end"}">{E(str(note)[:24])}</text>'
+                left = note in ex.get('label_left', []) or X(t) >= x1 - 60
+                out += f'<text x="{X(t) + (-7 if left else 7):.1f}" y="{Y(v) + (-8 if above else 15):.1f}" font-size="10.5" fill="{INK}" text-anchor="{"end" if left else "start"}">{E(str(note)[:24])}</text>'
     return out + '</svg></div>'
 
 
 def line_chart(ex):
+    global H
     if ex.get('log'):
         return log_line_chart(ex)
     series = [s for s in ex.get('series', []) if s.get('points')]
+    if ex.get('multiples') and len(series) > 1:  # one small panel per series, each with its own time span
+        keep, H = H, 210
+        try:
+            parts = [f'<div class="tai-mm-t">{E(s["name"])}</div>' + line_chart(dict(ex, series=[s], multiples=False)) for s in series]
+        finally:
+            H = keep
+        return '<div class="tai-mm">' + ''.join(parts) + '</div>'
     labs = labels_of(series)
     vals = [num(p[1]) for s in series for p in s['points'] if num(p[1]) is not None]
     if not vals or len(labs) < 2:
