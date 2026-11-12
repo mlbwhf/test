@@ -44,12 +44,10 @@ export default async function ClassPage({ params }: { params: Promise<{ id: stri
         </p>
         {c.lessons.map((l, i) => (
           <div key={l.title} className="ly-lesson">
-            <h3>
-              Lesson {i + 1}: {l.title}
-            </h3>
+            <h3>{i === 0 && l.title.trim().toLowerCase() === "welcome" ? "Welcome" : `Lesson ${c.lessons[0] && c.lessons[0].title.trim().toLowerCase() === "welcome" ? i : i + 1}: ${l.title}`}</h3>
             <ul>
-              {l.exercises.map((e) => (
-                <li key={e.title}>
+              {l.exercises.map((e, j) => (
+                <li key={`${j}-${e.title}`}>
                   {e.title}
                   <span className="kind">{exerciseKindLabel[e.kind]}</span>
                   {e.kind === "pi-planning" ? ` · ${e.teams.length} teams` : ""}

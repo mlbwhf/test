@@ -12,17 +12,10 @@ import { classTemplates } from "./classes.js";
 import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
 import { PI_PLANNING_READINESS } from "./canvases.js";
 
-export type TemplateMethod = "safe" | "scrum" | "kanban" | "lean" | "six-sigma" | "manufacturing" | "general";
+import type { TemplateMethod } from "./template-methods.js";
+export type { TemplateMethod };
 
-export const TEMPLATE_METHODS: { id: TemplateMethod; label: string; blurb: string }[] = [
-  { id: "safe", label: "SAFe", blurb: "Scaled Agile Framework events and artifacts, named as SAFe names them." },
-  { id: "scrum", label: "Scrum", blurb: "The Scrum Guide's events and artifacts: Product Backlog, Sprint Planning, Sprint Backlog, Daily Scrum, Sprint Review, Sprint Retrospective." },
-  { id: "kanban", label: "Kanban", blurb: "The Kanban Method: visualise, limit WIP, manage flow, explicit policies, feedback loops (cadences), improve." },
-  { id: "lean", label: "Lean", blurb: "Lean thinking and the Toyota way: A3, PDCA, value stream mapping, kaizen, obeya, hoshin kanri." },
-  { id: "six-sigma", label: "Six Sigma", blurb: "DMAIC and its tools: project charter, SIPOC, voice of the customer, fishbone, FMEA, control plan." },
-  { id: "manufacturing", label: "Manufacturing", blurb: "Shop-floor management: SQDC tiered boards, andon, OEE, heijunka, 5S, gemba walks." },
-  { id: "general", label: "General", blurb: "Practices every method shares." },
-];
+export { TEMPLATE_METHODS } from "./template-methods.js";
 
 export interface TemplateInfo {
   id: string;
@@ -82,6 +75,7 @@ function template(info: TemplateInfo, build: (b: Board) => void): Board & { info
 }
 
 export const TEMPLATE_CATALOG: TemplateInfo[] = [
+  { id: "pi-planning-room", name: "PI planning room", blurb: "The multi-team planning room from the Leading SAFe design: a train per team with iterations as wagons, capacity gauges, planning poker, ROAM, PI objectives with business value, the yard view across teams and the program view of shared epics. Seed it with a simulation (ALICE, GeekBooks), your own backlog or Jira/Azure DevOps.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Setup: teams, PI calendar, backlog", "Yard · all teams", "One train per team: iterations, freight yard, risks, poker", "Program view: shared epics"], cardTypes: ["Feature", "Story", "Risk", "PI objective"], mapsTo: "Nothing yet (its own document)" },
   { id: "pi-planning", name: "PI Planning board", blurb: "Teams × iterations with features, dependencies and capacity.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Milestones", "Uncommitted", "Risks (ROAM)"], cardTypes: ["Feature", "Enabler", "Milestone"], mapsTo: "Items and dependencies" },
   { id: "team-breakout", name: "Team breakout", blurb: "Capacity and load per iteration, stories and features, IP iteration, PI objectives, risks, features backlog and planning poker for one team.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["Capacity · load", "Stories per iteration", "Features per iteration", "IP iteration", "PI objectives (BV · AV)", "Risks", "Features backlog", "Planning poker"], cardTypes: ["Story", "Feature", "Objective", "Risk"], mapsTo: "Items and objectives" },
   { id: "roam", name: "ROAM risk board", blurb: "Resolved, Owned, Accepted, Mitigated.", event: "PI Planning · ART Sync", method: "safe", tags: ["safe", "risk"], zones: ["Inbox", "Resolved", "Owned", "Accepted", "Mitigated"], cardTypes: ["Risk"], mapsTo: "Risks with ROAM state" },
@@ -146,6 +140,10 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
   const rowW = iterations.length * (W + GAP) - GAP;
 
   return [
+    // The planning room keeps its own document (planning-room:<boardId>); the board carries only the marker.
+    template(info("pi-planning-room"), (b) => {
+      b.fields = { room: "planning" };
+    }),
     template(info("pi-planning"), (b) => {
       const milestones = strip("Milestones and events", 0, rowW, 160);
       const body = grid(iterations, teams, { y: 200 });

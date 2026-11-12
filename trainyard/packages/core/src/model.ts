@@ -177,4 +177,6 @@ export interface Workspace {
   portfolio?: Portfolio;
   /** Boards and templates brought in from other tools, kept as they came. */
   boards?: Board[];
+  /** Whole-document planning pages saved as they stand (the roadmap, the OKR board, the planning room), by key. */
+  docs?: Record<string, unknown>;
 }

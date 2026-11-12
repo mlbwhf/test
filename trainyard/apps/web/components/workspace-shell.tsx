@@ -58,7 +58,7 @@ function Account() {
     return () => window.removeEventListener("pointerdown", close);
   }, [open]);
   const setup = SPACES.find((s) => s.id === "setup")!;
-  const subs = setup.subs.filter((l) => (l.href !== "/billing" || (me.data && !me.data.workspace.platform)) && (l.href !== "/admin" || me.data?.principal.platformAdmin));
+  const subs = setup.subs.filter((l) => (l.href !== "/billing" || (me.data && !me.data.workspace.platform)) && (l.href !== "/admin" || me.data?.principal.platformAdmin) && (l.href !== "/classroom/company" || me.data?.principal.role === "admin"));
   return (
     <div className="ws-account" ref={ref}>
       <button className="ws-btn" aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen(!open)}>
@@ -96,6 +96,9 @@ function Account() {
 }
 
 function SubRow({ space, current }: { space: Space; current: string | undefined }) {
+  const me = useMe();
+  // The company console is the admin's.
+  const subs = space.subs.filter((s) => s.href !== "/classroom/company" || me.data?.principal.role === "admin");
   // On a phone the chips scroll sideways; keep the current one in view.
   const chips = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -107,9 +110,9 @@ function SubRow({ space, current }: { space: Space; current: string | undefined 
     <nav className="ws-subrow" aria-label={`${space.label} views`}>
       <span className="ws-eyebrow">{space.eyebrow}</span>
       <div className="ws-chips" ref={chips}>
-        {space.subs.map((s, i) => (
+        {subs.map((s, i) => (
           <span key={s.href} className="ws-chip-wrap">
-            {s.group && s.group !== space.subs[i - 1]?.group ? <span className="ws-group">{s.group}</span> : null}
+            {s.group && s.group !== subs[i - 1]?.group ? <span className="ws-group">{s.group}</span> : null}
             <Link href={s.href} className="ws-chip" aria-current={current === s.href ? "page" : undefined}>
               {s.label}
             </Link>

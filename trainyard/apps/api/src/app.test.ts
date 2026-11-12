@@ -482,7 +482,7 @@ describe("built-in templates and board editing", () => {
   it("lists built-in templates sized to the workspace and creates editable boards from them", async () => {
     const { call, store } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.builtin.length).toBe(54);
+    expect(list.body.builtin.length).toBe(59);
     const pi = list.body.builtin.find((b: { id: string }) => b.id === "tpl-builtin-pi-planning");
     expect(pi.info.event).toBe("PI Planning");
     expect(pi.info.method).toBe("safe");
@@ -795,11 +795,11 @@ describe("website sign-ups", () => {
 });
 
 describe("class boards", () => {
-  it("lists the five classes and keeps them for signed-up trainers", async () => {
+  it("lists the nine classes and keeps them for signed-up trainers", async () => {
     const { call, app } = await setup();
     const list = await call("GET", "/v1/templates/boards");
     const classes = list.body.builtin.filter((b: { info: { tags: string[] } }) => b.info.tags.includes("class"));
-    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-rte"]);
+    expect(classes.map((b: { id: string }) => b.id)).toEqual(["tpl-builtin-class-leading-safe", "tpl-builtin-class-spc", "tpl-builtin-class-aspc", "tpl-builtin-class-popm", "tpl-builtin-class-aart", "tpl-builtin-class-aiva", "tpl-builtin-class-lpm", "tpl-builtin-class-lpm-ws", "tpl-builtin-class-rte"]);
     // Open mode is anonymous: classes and Miro imports refuse, planning boards do not.
     const denied = await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC cohort" });
     expect(denied.status).toBe(403);
@@ -980,7 +980,7 @@ describe("billing", () => {
       const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
       if (u.endsWith("/customers")) return json({ id: "cus_1" });
       if (u.endsWith("/subscriptions")) return json({ id: "sub_1", status: "incomplete", latest_invoice: { id: "in_1", amount_due: 3800, currency: "usd", payment_intent: { id: "pi_1", client_secret: "pi_1_secret_x" } } });
-      if (u.endsWith("/subscriptions/sub_1")) return json({ id: "sub_1", status: subStatus });
+      if (u.split("?")[0]!.endsWith("/subscriptions/sub_1")) return json({ id: "sub_1", status: subStatus });
       if (u.endsWith("/billing_portal/sessions")) return json({ id: "bps_1", url: "https://billing.stripe.com/p/session/x" });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
@@ -1185,7 +1185,7 @@ describe("workspaces", () => {
       if (u.endsWith("/customers")) return json({ id: "cus_9" });
       if (u.endsWith("/subscriptions")) return json({ id: "sub_9", status: "incomplete", latest_invoice: { amount_due: 1900, currency: "usd", payment_intent: { client_secret: "pi_9_secret" } } });
       if (u.endsWith("/subscriptions/sub_9") && init?.method === "POST") { quantity = Number(new URLSearchParams(String(init.body)).get("items[0][quantity]")); return json({ id: "sub_9", status: "active" }); }
-      if (u.endsWith("/subscriptions/sub_9")) return json({ id: "sub_9", status: subStatus, items: { data: [{ id: "si_9", quantity }] } });
+      if (u.split("?")[0]!.endsWith("/subscriptions/sub_9")) return json({ id: "sub_9", status: subStatus, items: { data: [{ id: "si_9", quantity }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const { call, store } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", prices: { "trainer-monthly": "price_tm" }, webUrl: "https://agileagilist.com", fetch: fakeFetch } });
@@ -1206,6 +1206,11 @@ describe("workspaces", () => {
     const second = await call("POST", "/v1/users", { name: "T2", email: "t2@example.io", role: "planner" }, key);
     expect(second.status).toBe(402);
     expect(second.body.error.details).toMatchObject({ kind: "staff", limit: 1 });
+    // A co-instructor takes no trainer seat: with the one seat in use, Ada still adds one to her class.
+    const cls = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM" }, key)).body.board.id as string;
+    const co = await call("POST", `/v1/boards/${cls}/instructors`, { name: "Sam", email: "sam@example.io" }, key);
+    expect(co.status).toBe(201);
+    expect(co.body.instructors.map((u: { role: string }) => u.role)).toEqual(["owner", "co-instructor"]);
     // Buy a seat, billed pro rata, then the second trainer fits.
     expect((await call("POST", "/v1/billing/seats", { quantity: 3 }, key)).body).toEqual({ seats: 3 });
     expect(quantity).toBe(3);
@@ -1274,7 +1279,7 @@ describe("trial, monthly start and the money-back guarantee", () => {
       }
       if (u.endsWith("/subscriptions/sub_t") && method === "DELETE") { subStatus = "canceled"; return json({ id: "sub_t", status: "canceled" }); }
       if (u.endsWith("/subscriptions/sub_t") && method === "POST") return json({ id: "sub_t", status: "active" });
-      if (u.endsWith("/subscriptions/sub_t")) return json({ id: "sub_t", status: subStatus, items: { data: [{ id: "si_t", price: { id: "price_tm" } }] } });
+      if (u.startsWith("https://api.stripe.com/v1/subscriptions/sub_t")) return json({ id: "sub_t", status: subStatus, default_payment_method: "pm_card", items: { data: [{ id: "si_t", price: { id: "price_tm" } }] } });
       if (u.endsWith("/refunds")) return json({ id: "re_t", amount: 3800 });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
@@ -1497,7 +1502,7 @@ describe("trial emails", () => {
       const method = init?.method ?? "GET";
       if (u.endsWith("/customers")) return json({ id: "cus_m" });
       if (u.endsWith("/subscriptions") && method === "POST") return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: "seti_m" } });
-      if (u.endsWith("/subscriptions/sub_m")) return json({ id: "sub_m", status: "trialing", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm" } }] } });
+      if (u.startsWith("https://api.stripe.com/v1/subscriptions/sub_m")) return json({ id: "sub_m", status: "trialing", default_payment_method: "pm_card", trial_end: trialEnd, items: { data: [{ id: "si_m", price: { id: "price_tm" } }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const mailer = new MemoryMailer();
@@ -1837,7 +1842,7 @@ describe("paid sign-up end to end on a closed server", () => {
     const mailer = new MemoryMailer();
     const codeIn = () => /\b(\d{6})\b/.exec(mailer.sent.filter((m) => /code/.test(m.subject)).at(-1)!.subject)![1]!;
     const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
-    let subs = 0;
+    let subs = 0, cardSaved = false;
     const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
       const u = String(url);
       const method = init?.method ?? "GET";
@@ -1846,7 +1851,7 @@ describe("paid sign-up end to end on a closed server", () => {
         subs++;
         return json({ id: `sub_e2e${subs}`, status: "trialing", trial_end: 1_800_000_000, items: { data: [{ id: "si", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: `seti_secret_${subs}` } });
       }
-      if (/\/subscriptions\/sub_e2e\d+$/.test(u)) return json({ id: u.split("/").at(-1), status: "trialing", items: { data: [{ id: "si", price: { id: "price_tm" } }] } });
+      if (/\/subscriptions\/sub_e2e\d+(\?|$)/.test(u)) return json({ id: u.split("/").at(-1)!.split("?")[0], status: "trialing", default_payment_method: cardSaved ? "pm_card" : null, items: { data: [{ id: "si", price: { id: "price_tm" } }] } });
       return new Response(JSON.stringify({ error: { message: `unexpected ${method} ${u}` } }), { status: 400 });
     }) as unknown as typeof fetch;
     const { call, store } = await setup({ bootstrapAdminKey: "boot", emailVerification: "required", billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
@@ -1869,7 +1874,12 @@ describe("paid sign-up end to end on a closed server", () => {
     const sub = await call("POST", "/v1/billing/subscribe", { signupId: id, interval: "monthly", quantity: 1 });
     expect(sub.status).toBe(200);
     expect(sub.body).toMatchObject({ mode: "setup", clientSecret: expect.stringMatching(/^seti_secret_/), amountDue: 0, recurringAmount: 1900, trialDays: 30 });
+    // Stripe already calls the subscription "trialing", but no card is saved yet: nothing is created, nothing is sent.
+    expect((await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId })).body).toEqual({ status: "open" });
+    expect(mailer.sent.some((m) => m.from === "billing")).toBe(false);
+    expect(store.state.users.some((u) => u.email === "ada@trainyard-test.io")).toBe(false);
     // After Stripe confirms the card, the page asks for the workspace.
+    cardSaved = true;
     const claim = await call("POST", "/v1/billing/claim", { purchaseId: sub.body.purchaseId });
     expect(claim.status).toBe(200);
     expect(claim.body).toMatchObject({ status: "paid", plan: "trainer", workspace: { plan: "trainer", seats: 1 } });
@@ -1888,6 +1898,119 @@ describe("paid sign-up end to end on a closed server", () => {
     expect(store.state.users.find((u) => u.email === "ada@trainyard-test.io")!.emailVerifiedAt).toBeTruthy();
     // A second sign-up for the same email is turned away to Sign in.
     expect((await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" })).body.error.code).toBe("EMAIL_TAKEN");
+  });
+});
+
+describe("payment service refusals reach the page", () => {
+  it("answers 503 with Stripe's reason when the key is wrong, so the proxy passes it through", async () => {
+    const refuse = (async () => new Response(JSON.stringify({ error: { message: "Invalid API key provided: mk_1***. This looks like the ID of an API key rather than the key itself." } }), { status: 401 })) as unknown as typeof fetch;
+    const { call } = await setup({ billing: { secretKey: "mk_1notakey", publishableKey: "pk_test", prices: { "trainer-monthly": "price_tm" }, fetch: refuse } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id });
+    expect(sub.status).toBe(503);
+    expect(sub.body.error).toMatchObject({ code: "STRIPE" });
+    expect(sub.body.error.message).toContain("ID of an API key");
+  });
+});
+
+describe("a trial is live only once the card is saved", () => {
+  it("ignores Stripe's early trialing event and fulfils on the one that carries the payment method", async () => {
+    const mailer = new MemoryMailer();
+    const json = (o: unknown) => new Response(JSON.stringify(o), { status: 200, headers: { "content-type": "application/json" } });
+    const fakeFetch = (async (url: string | URL | Request, init?: RequestInit) => {
+      const u = String(url);
+      if (u.endsWith("/customers")) return json({ id: "cus_w" });
+      if (u.endsWith("/subscriptions") && init?.method === "POST") return json({ id: "sub_w", status: "trialing", trial_end: 1_800_000_000, items: { data: [{ id: "si", price: { id: "price_tm", unit_amount: 1900, currency: "usd" } }] }, latest_invoice: { amount_due: 0, currency: "usd", payment_intent: null }, pending_setup_intent: { client_secret: "seti_w" } });
+      return new Response(JSON.stringify({ error: { message: `unexpected ${u}` } }), { status: 400 });
+    }) as unknown as typeof fetch;
+    const { call, store, app } = await setup({ billing: { secretKey: "sk_test", publishableKey: "pk_test", webhookSecret: "whsec_test", trialDays: 30, prices: { "trainer-monthly": "price_tm" }, webUrl: "https://trainyard.app", fetch: fakeFetch, mailer } });
+    const s = await call("POST", "/v1/signups", { name: "Ada", email: "ada@trainyard-test.io", plan: "trainer", audience: "trainer" });
+    const sub = await call("POST", "/v1/billing/subscribe", { signupId: s.body.signup.id });
+    const t = Math.floor(store.now().getTime() / 1000);
+    const send = async (event: object) => {
+      const payload = JSON.stringify(event);
+      const sig = `t=${t},v1=${createHmac("sha256", "whsec_test").update(`${t}.${payload}`).digest("hex")}`;
+      const res = await app.inject({ method: "POST", url: "/v1/webhooks/stripe", payload, headers: { "content-type": "application/json", "stripe-signature": sig } });
+      return JSON.parse(res.body);
+    };
+    // The event Stripe sends as soon as the subscription exists: trialing, no card yet.
+    expect(await send({ id: "evt_1", created: t, type: "customer.subscription.created", data: { object: { id: "sub_w", status: "trialing", trial_end: 1_800_000_000, default_payment_method: null, metadata: { signupId: s.body.signup.id } } } })).toMatchObject({ awaitingCard: true });
+    expect(store.state.users).toHaveLength(0);
+    expect(mailer.sent.filter((m) => m.from === "billing")).toHaveLength(0);
+    // The card form confirms: Stripe attaches the payment method and sends an update.
+    expect(await send({ id: "evt_2", created: t + 5, type: "customer.subscription.updated", data: { object: { id: "sub_w", status: "trialing", trial_end: 1_800_000_000, default_payment_method: "pm_card" } } })).toMatchObject({ ok: true });
+    expect(store.state.users.map((u) => u.email)).toEqual(["ada@trainyard-test.io"]);
+    expect(store.state.purchases!.find((p) => p.id === sub.body.purchaseId)!.status).toBe("paid");
+    await new Promise((r) => setTimeout(r, 50));
+    expect(mailer.sent.filter((m) => m.from === "billing").map((m) => m.subject)[0]).toContain("trial has started");
+  });
+});
+
+describe("planning documents", () => {
+  it("keeps the roadmap, OKR board and planning room per workspace, written by planners and read by members", async () => {
+    const { call } = await setup();
+    const admin = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const viewer = (await call("POST", "/v1/users", { name: "Vic", email: "vic@example.io", role: "viewer" }, admin)).body.apiKey as string;
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body).toMatchObject({ key: "roadmap", doc: null });
+    const doc = { lanes: [{ id: "a1", name: "ART 1", info: "Navigation" }], items: [{ id: "i1", title: "GPS", type: "epic", lane: "a1", start: 1, len: 1, committed: true, placed: true }], miles: [] };
+    expect((await call("PUT", "/v1/docs/roadmap", { doc }, viewer)).status).toBe(403);
+    const saved = await call("PUT", "/v1/docs/roadmap", { doc }, admin);
+    expect(saved.body.rev).toMatch(/^[a-z0-9]+$/);
+    const got = await call("GET", "/v1/docs/roadmap", undefined, viewer);
+    expect(got.body).toEqual({ key: "roadmap", doc, rev: saved.body.rev });
+    // A page that holds the current revision gets a one-word answer, not the document.
+    expect((await call("GET", `/v1/docs/roadmap?rev=${saved.body.rev}`, undefined, viewer)).body).toEqual({ key: "roadmap", rev: saved.body.rev, same: true });
+    expect((await call("GET", "/v1/docs/menu", undefined, admin)).status).toBe(400);
+    await call("PUT", "/v1/docs/roadmap", { doc: null }, admin);
+    expect((await call("GET", "/v1/docs/roadmap", undefined, viewer)).body.doc).toBeNull();
+  });
+
+  it("gives a class its own planning room that its students write by link, and nothing else", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "LSA class" }, root)).body.board.id as string;
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0].token as string;
+    const key = `planning-room%3A${id}`;
+    const t = (id: string, team: number, title: string) => ({ id, type: "story", title, team, iter: null, pts: 3 });
+    const room = { scn: "geek", teams: 2, caps: { "1:1": 10, "2:1": 12 }, kn: 102, tickets: [t("TY-101", 1, "A1"), t("TY-102", 2, "B1")] };
+    // The trainer sets the room up whole; a student sends their team's slice only, which is merged.
+    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, ana)).status).toBe(403);
+    expect((await call("PUT", `/v1/docs/${key}`, { doc: room }, root)).status).toBe(200);
+    const mine = await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-999", 1, "not mine")], caps: { "2:1": 14, "1:1": 99 }, teamCap: { rows: [], vac: 2 }, kn: 103 } }, ana);
+    expect(mine.status).toBe(200);
+    const after = (await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc;
+    expect(after.tickets.map((x: { id: string; title: string }) => [x.id, x.title])).toEqual([["TY-101", "A1"], ["TY-102", "B1 sized"], ["TY-103", "B2"]]);
+    expect(after.caps).toEqual({ "1:1": 10, "2:1": 14 });
+    expect(after).toMatchObject({ scn: "geek", teams: 2, kn: 103, teamCap: { "2": { rows: [], vac: 2 } } });
+    // A feature handed over to team 2 arrives in team 2's slice and leaves team 1.
+    await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-101", 2, "A1 now ours")] } }, ana);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc.tickets.map((x: { id: string; team: number }) => `${x.id}:${x.team}`).sort()).toEqual(["TY-101:2", "TY-102:2", "TY-103:2"]);
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1")] } }, root);
+    // The ART backlog (team 0) travels with any team's slice: team 1 releases a feature to it, team 2's next save keeps it there.
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 0, "A1 back in the ART backlog")] } }, root);
+    await call("PUT", `/v1/docs/${key}`, { team: 2, slice: { tickets: [t("TY-102", 2, "B1 sized"), t("TY-103", 2, "B2"), t("TY-101", 0, "A1 back in the ART backlog")] } }, ana);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, root)).body.doc.tickets.map((x: { id: string; team: number }) => `${x.id}:${x.team}`).sort()).toEqual(["TY-101:0", "TY-102:2", "TY-103:2"]);
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1")] } }, root);
+    // Two teams saving at once keep each other's work: team 1's slice leaves team 2's tickets alone.
+    await call("PUT", `/v1/docs/${key}`, { team: 1, slice: { tickets: [t("TY-101", 1, "A1 done"), t("TY-104", 1, "A2")] } }, root);
+    expect((await call("GET", `/v1/docs/${key}`, undefined, ana)).body.doc.tickets.map((x: { id: string }) => x.id).sort()).toEqual(["TY-101", "TY-102", "TY-103", "TY-104"]);
+    expect((await call("GET", "/v1/docs/planning-room", undefined, ana)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { team: 1, slice: {} }, ana)).status).toBe(403);
+    expect((await call("PUT", "/v1/docs/planning-room%3Ab-nothere", { doc: room }, root)).status).toBe(404);
+  });
+
+  it("turns uploaded handout files into a backlog for the planning room, and says when no tracker is connected", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const csv = (text: string) => Buffer.from(text).toString("base64");
+    const r = await call("POST", "/v1/planning/backlog", { files: [
+      { fileName: "Feature_2_Request_Delivery.csv", contentBase64: csv('Item Name,Item Description,Item Type\nPickup location,"As a requestor, I can enter the pickup location.\nSIZE: __\nFeature: #2 Request Delivery",User Story\nSave orders,"As a requestor, I can save orders.\nSIZE: 5\nFeature: #2 Request Delivery",User Story') },
+      { fileName: "Feature_3_Parallel_Park.csv", contentBase64: csv('Item Name,Item Description,Item Type\nDetect red curb,"As vehicle control, I can detect a red curb.\nSIZE: 1\nFeature: #3 Parallel Park",User Story') },
+    ] }, root);
+    expect(r.status).toBe(200);
+    expect(r.body.features.map((f: { n: number; title: string; stories: { pts: number }[] }) => [f.n, f.title, f.stories.map((s) => s.pts)])).toEqual([[2, "Request Delivery", [0, 5]], [3, "Parallel Park", [1]]]);
+    expect((await call("POST", "/v1/planning/backlog", { files: [{ fileName: "notes.csv", contentBase64: csv("just a line") }] }, root)).status).toBe(422);
+    expect((await call("GET", "/v1/planning/backlog/jira", undefined, root)).status).toBe(409);
   });
 });
 
@@ -2076,6 +2199,43 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect((await call("GET", "/v1/me", undefined, fresh.body.student.token)).status).toBe(401);
   });
 
+  it("splits a class into teams: students seated as they come, moved by the trainer, the teams on the board for every link", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const first = await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }, { name: "Ben", email: "ben@example.io" }, { name: "Cy", email: "cy@example.io" }] }, root);
+    const [ana, ben, cy] = first.body.students as { id: string; token: string }[];
+    const made = await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, root);
+    expect(made.status).toBe(200);
+    expect(made.body.teams).toEqual([{ id: "t1", name: "Team 1", members: [ana!.id, cy!.id] }, { id: "t2", name: "Team 2", members: [ben!.id] }]);
+    // A fourth student joins the smallest team; the students list and the board carry the teams.
+    const dee = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Dee", email: "dee@example.io" }] }, root)).body.students[0] as { id: string };
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.teams[1].members).toEqual([ben!.id, dee.id]);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana!.token)).body.board.fields.teams).toHaveLength(2);
+    // The trainer moves and renames; a student may not.
+    const moved = await call("PUT", `/v1/boards/${id}/teams`, { move: { studentId: cy!.id, teamId: "t2" }, names: { t1: "Red" } }, root);
+    expect(moved.body.teams).toEqual([{ id: "t1", name: "Red", members: [ana!.id] }, { id: "t2", name: "Team 2", members: [ben!.id, dee.id, cy!.id] }]);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 3 }, ana!.token)).status).toBe(403);
+    // A rotation every chapter: one seating per lesson, the first as it is, the same names, everyone seated in each.
+    const rot = await call("PUT", `/v1/boards/${id}/teams`, { policy: "chapter" }, root);
+    const lessons = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.fields.lessons as number;
+    expect(rot.body.teamRounds).toHaveLength(lessons);
+    expect(rot.body.teamRounds[0]).toEqual(moved.body.teams);
+    for (const round of rot.body.teamRounds as { name: string; members: string[] }[][]) {
+      expect(round.map((t) => t.name)).toEqual(["Red", "Team 2"]);
+      expect(round.flatMap((t) => t.members).sort()).toEqual([ana!.id, ben!.id, cy!.id, dee.id].sort());
+    }
+    // A move in round 2 leaves round 1 alone; back to "never" keeps the first seating only.
+    const r2 = await call("PUT", `/v1/boards/${id}/teams`, { round: 1, move: { studentId: ana!.id, teamId: "t2" } }, root);
+    expect(r2.body.teamRounds[1][1].members).toContain(ana!.id);
+    expect(r2.body.teamRounds[0]).toEqual(moved.body.teams);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { policy: "never" }, root)).body.teamRounds).toEqual([moved.body.teams]);
+    // Removing a student takes them out of their team; no teams clears the lot.
+    await call("DELETE", `/v1/boards/${id}/students/${ben!.id}`, undefined, root);
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.teams[1].members).toEqual([dee.id, cy!.id]);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 0 }, root)).body.teams).toEqual([]);
+  });
+
   it("renames, wipes back to the class as it started, saves a custom class template that keeps its cards, and deletes", async () => {
     const { call: raw } = await setup();
     const key = (await raw("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
@@ -2096,5 +2256,302 @@ describe("classes: students by link, wipe and custom templates", () => {
     expect(tpl.fields.class).toBe("rte");
     expect((await call("POST", `/v1/boards/${id}/reset`, { to: "empty" })).body.board.counts.nodes).toBe(0);
     expect((await call("DELETE", `/v1/boards/${id}`)).status).toBe(204);
+  });
+});
+
+describe("storage in shards", () => {
+  it("saves each board and planning document on its own, only when it changed, and loads them back", async () => {
+    const persistence = new MemoryPersistence<StoreState>();
+    const { call, store } = await setup({ persistence });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    const ws = store.workspaceId;
+    const shards = async () => (await persistence.loadShards(ws)).map((s) => `${s.kind}/${s.key}`);
+    expect(await shards()).toContain(`board/${id}`);
+    // The core row carries no boards or documents.
+    const core = (await persistence.load(ws))!.state;
+    expect(core.workspace.boards).toBeUndefined();
+    expect(core.workspace.docs).toBeUndefined();
+    // A sticky on the board rewrites that board's shard and nothing else; the room document gets its own.
+    const frame = ((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; parentId?: string }[]).find((f) => f.parentId)!;
+    const before = (await persistence.loadShards(ws)).find((s) => s.key === id)!.data as { frames: { id: string; state?: Record<string, unknown> }[] };
+    expect(before.frames.find((f) => f.id === frame.id)!.state).toBeUndefined();
+    await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(frame.id)}/state`, { key: "lane:0", op: "push", value: { text: "Hello" } }, root);
+    await call("PUT", `/v1/docs/planning-room%3A${id}`, { doc: { teams: 2, caps: {}, kn: 100, tickets: [] } }, root);
+    const after = await persistence.loadShards(ws);
+    expect((after.find((s) => s.key === id)!.data as typeof before).frames.find((f) => f.id === frame.id)!.state).toMatchObject({ "lane:0": [{ text: "Hello" }] });
+    expect(after.find((s) => s.kind === "doc" && s.key === `planning-room:${id}`)!.data).toMatchObject({ teams: 2 });
+    // A fresh store on the same persistence sees the board, its state and the document.
+    const again = new Store({ persistence });
+    expect(await again.open()).toBe("loaded");
+    const b = again.state.workspace.boards!.find((x) => x.id === id)!;
+    expect(b.frames.find((f) => f.id === frame.id)!.state).toMatchObject({ "lane:0": [{ text: "Hello" }] });
+    expect(again.state.workspace.docs![`planning-room:${id}`]).toMatchObject({ teams: 2 });
+    // Deleting the board removes its shard.
+    await call("DELETE", `/v1/boards/${id}`, undefined, root);
+    expect(await shards()).not.toContain(`board/${id}`);
+  });
+
+  it("moves a workspace saved whole (before the split) into shards on its first commit", async () => {
+    const persistence = new MemoryPersistence<StoreState>();
+    const first = new Store({ persistence });
+    await first.open();
+    // As an older server left it: the board inside the core row.
+    first.state.workspace.boards = [{ id: "b-old", name: "Old", origin: { system: "trainyard", externalId: "x", importedAt: "2026-01-01T00:00:00.000Z" }, isTemplate: false, frames: [], nodes: [], edges: [], columns: [], groups: [], rows: [] }];
+    first.state.workspace.docs = { roadmap: { lanes: [] } };
+    await persistence.save(first.workspaceId, first.state, first.version);
+    const second = new Store({ persistence });
+    expect(await second.open()).toBe("loaded");
+    expect(second.state.workspace.boards!.map((b) => b.id)).toEqual(["b-old"]);
+    expect(second.state.workspace.docs).toEqual({ roadmap: { lanes: [] } });
+    await second.commit({ userId: "u1", name: "U", role: "admin", anonymous: false, workspaceId: second.workspaceId, platformAdmin: false }, "workspace.touch");
+    expect((await persistence.loadShards(second.workspaceId)).map((s) => `${s.kind}/${s.key}`).sort()).toEqual(["board/b-old", "doc/roadmap"]);
+    expect((await persistence.load(second.workspaceId))!.state.workspace.boards).toBeUndefined();
+  });
+});
+
+describe("class records and retention", () => {
+  it("exports a class, archives it away from its students, emails its record before a delete, and sweeps old classes", async () => {
+    let clock = Date.parse("2026-11-04T09:00:00.000Z");
+    const mailer = new MemoryMailer();
+    const { call, store, app } = await setup({ now: () => new Date(clock), billing: { mailer, webUrl: "https://trainyard.app" }, retention: { archiveDays: 30, deleteDays: 60, everyMs: 0 } });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE Nov" }, root)).body.board.id as string;
+    const ana = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, root)).body.students[0] as { id: string; token: string };
+    await call("PUT", `/v1/boards/${id}/teams`, { count: 1 }, root);
+    const frame = ((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames as { id: string; parentId?: string; activity?: unknown }[]).find((f) => f.parentId && f.activity)!;
+    await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(frame.id)}/state`, { key: "t1|lane:0", op: "push", value: { text: "Ana wrote this" } }, ana.token);
+    await call("PUT", `/v1/docs/planning-room%3A${id}`, { doc: { scn: "geek", teams: 1, caps: {}, kn: 101, tickets: [{ id: "TY-101", type: "story", title: "First story", team: 1, iter: 1, pts: 3 }] } }, root);
+    // Export: JSON with everything, and the readable report; students may not.
+    const json = await call("GET", `/v1/boards/${id}/export`, undefined, root);
+    expect(json.status).toBe(200);
+    expect(json.headers["content-disposition"]).toContain(".json");
+    expect(json.body).toMatchObject({ format: "trainyard-class/1", students: [{ name: "Ana", email: "ana@example.io", team: "Team 1" }], teams: [{ id: "t1" }], planningRoom: { teams: 1 } });
+    expect(JSON.stringify(json.body.board)).toContain("Ana wrote this");
+    const html = await app.inject({ method: "GET", url: `/v1/boards/${id}/export?format=html`, headers: { authorization: `Bearer ${root}` } });
+    expect(html.headers["content-type"]).toContain("text/html");
+    expect(html.body).toContain("Ana wrote this");
+    expect(html.body).toContain("First story");
+    expect((await call("GET", `/v1/boards/${id}/export`, undefined, ana.token)).status).toBe(403);
+    // Archive: the student's link is closed with a clear answer; the trainer still opens it; reopening lets the student back.
+    expect((await call("POST", `/v1/boards/${id}/archive`, { archived: true }, root)).body.archived).toBe("2026-11-04T09:00:00.000Z");
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(410);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).status).toBe(200);
+    expect((await call("GET", "/v1/boards", undefined, root)).body.boards.find((b: { id: string }) => b.id === id).archived).toBeTruthy();
+    await call("POST", `/v1/boards/${id}/archive`, { archived: false }, root);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, ana.token)).status).toBe(200);
+    // Delete by the trainer: the record goes to the trainer by mail first, the room and the links go with the board.
+    expect((await call("DELETE", `/v1/boards/${id}`, undefined, root)).status).toBe(204);
+    const mail = mailer.sent.at(-1)!;
+    expect(mail.to).toBe("root@example.io");
+    expect(mail.subject).toBe("Your class record: RTE Nov");
+    expect(mail.attachments!.map((a) => a.filename.split(".").pop())).toEqual(["html", "json"]);
+    expect(String(mail.attachments![1]!.content)).toContain("Ana wrote this");
+    expect((await call("GET", "/v1/me", undefined, ana.token)).status).toBe(401);
+    expect(store.state.workspace.docs?.[`planning-room:${id}`]).toBeUndefined();
+    // The sweep: a class idle for 31 days is archived; 61 days after that it is emailed out and deleted.
+    const id2 = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE Old" }, root)).body.board.id as string;
+    const ben = (await call("POST", `/v1/boards/${id2}/students`, { students: [{ name: "Ben", email: "ben@example.io" }] }, root)).body.students[0] as { token: string };
+    clock += 31 * 24 * 3600 * 1000;
+    const first = await call("POST", "/v1/admin/retention/sweep", {}, root);
+    expect(first.body).toEqual({ archived: [id2], deleted: [], emailed: [] });
+    expect((await call("GET", `/v1/boards/${id2}`, undefined, ben.token)).status).toBe(410);
+    clock += 61 * 24 * 3600 * 1000;
+    const second = await call("POST", "/v1/admin/retention/sweep", {}, root);
+    expect(second.body).toEqual({ archived: [], deleted: [id2], emailed: [id2] });
+    expect(mailer.sent.at(-1)!.text).toContain("retention policy");
+    expect((await call("GET", `/v1/boards/${id2}`, undefined, root)).status).toBe(404);
+    expect((await call("GET", "/v1/me", undefined, ben.token)).status).toBe(401);
+    expect((await call("GET", "/v1/admin/retention", undefined, root)).body).toMatchObject({ archiveDays: 30, deleteDays: 60, mail: true });
+  });
+});
+
+describe("co-instructors and team copies", () => {
+  it("copies every canvas exercise per team when teams are set up, and shows a student their team's copies", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-spc/create", { name: "SPC" }, root)).body.board.id as string;
+    const [ana] = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }, { name: "Ben", email: "ben@example.io" }] }, root)).body.students as { id: string; token: string }[];
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, root)).status).toBe(200);
+    const b = (await call("GET", `/v1/boards/${id}`, undefined, ana!.token)).body.board as { frames: { id: string; copyOf?: string; team?: string; title: string; parentId?: string }[] };
+    const copies = b.frames.filter((f) => f.copyOf);
+    expect(copies.length).toBeGreaterThan(20);
+    expect(copies.filter((f) => f.team === "t1").length).toBe(copies.length / 2);
+    expect(copies.every((f) => !f.parentId && /· Team [12]$/.test(f.title))).toBe(true);
+    // The welcome area is not copied; a reshuffle adds nothing; a third team gets its copies.
+    expect(copies.some((f) => /Board intro|Icebreaker/i.test(f.title))).toBe(false);
+    await call("PUT", `/v1/boards/${id}/teams`, { shuffle: true }, root);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames.length).toBe(b.frames.length);
+    await call("PUT", `/v1/boards/${id}/teams`, { count: 3 }, root);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, root)).body.board.frames.filter((f: { team?: string; copyOf?: string }) => f.team === "t3" && f.copyOf).length).toBe(copies.length / 2);
+  });
+
+  it("adds a co-instructor by email, who then runs the class too, and takes them off again", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM" }, root)).body.board.id as string;
+    const none = await call("GET", `/v1/boards/${id}/instructors`, undefined, root);
+    expect(none.body.instructors.map((u: { role: string }) => u.role)).toEqual(["owner"]);
+    // A new colleague: a workspace user is created for them (mail is off in tests, so nothing is emailed).
+    const added = await call("POST", `/v1/boards/${id}/instructors`, { name: "Sam", email: "sam@example.io" }, root);
+    expect(added.status).toBe(201);
+    expect(added.body).toMatchObject({ created: true, emailed: false });
+    expect(added.body.instructors.map((u: { name: string; role: string; hasPassword: boolean }) => [u.name, u.role, u.hasPassword])).toEqual([["Root", "owner", false], ["Sam", "co-instructor", false]]);
+    const sam = (await call("GET", "/v1/users", undefined, root)).body.users.find((u: { email: string }) => u.email === "sam@example.io") as { id: string; role: string };
+    // A co-instructor takes no trainer seat: they join as a viewer and run this class only.
+    expect(sam.role).toBe("viewer");
+    // Adding again is idempotent; an existing user is simply named.
+    const again = await call("POST", `/v1/boards/${id}/instructors`, { name: "Sam", email: "SAM@example.io" }, root);
+    expect(again.body).toMatchObject({ created: false });
+    expect(again.body.instructors).toHaveLength(2);
+    // Sam manages the class: students and teams.
+    const key = (await call("POST", `/v1/users/${sam.id}/rotate-key`, undefined, root)).body.apiKey as string;
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, key)).status).toBe(200);
+    expect((await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, key)).status).toBe(201);
+    expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, key)).status).toBe(200);
+    expect((await call("PATCH", `/v1/boards/${id}`, { name: "LPM · spring" }, key)).status).toBe(200);
+    // Elsewhere Sam is a viewer: another class stays read-only, and no new classes.
+    const other = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
+    expect((await call("GET", `/v1/boards/${other}`, undefined, key)).status).toBe(200);
+    expect((await call("GET", `/v1/boards/${other}/students`, undefined, key)).status).toBe(403);
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "Mine" }, key)).status).toBe(403);
+    // Students may not manage instructors; removal leaves Sam's sign-in alone.
+    const ana = (await call("GET", `/v1/boards/${id}/students`, undefined, root)).body.students[0] as { id: string };
+    const link = await call("POST", `/v1/boards/${id}/students/${ana.id}/link`, {}, root);
+    expect((await call("GET", `/v1/boards/${id}/instructors`, undefined, link.body.student.token)).status).toBe(403);
+    expect((await call("DELETE", `/v1/boards/${id}/instructors/${sam.id}`, undefined, root)).status).toBe(200);
+    expect((await call("GET", `/v1/boards/${id}/instructors`, undefined, root)).body.instructors).toHaveLength(1);
+    expect((await call("GET", "/v1/me", undefined, key)).status).toBe(200);
+  });
+});
+
+describe("what a student's link may write", () => {
+  it("refuses script links on cards, another team's part of an exercise, and the trainer's setup", async () => {
+    const { call } = await setup();
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM" }, root)).body.board.id as string;
+    const [ana, ben] = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }, { name: "Ben", email: "ben@example.io" }] }, root)).body.students as { id: string; token: string }[];
+    await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, root);
+    // A card's link is a web address or a page of the site, never a script.
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "javascript:alert(1)" } }, ana!.token)).status).toBe(400);
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "//evil.example" } }, ana!.token)).status).toBe(400);
+    expect((await call("POST", `/v1/boards/${id}/nodes`, { text: "x", x: 1, y: 1, fields: { link: "https://scaledagile.com" } }, ana!.token)).status).toBe(201);
+    // Ana is in team 1: her team's keys are hers, team 2's and the budgeting setup are not.
+    const b = (await call("GET", `/v1/boards/${id}`, undefined, root)).body.board as { frames: { id: string; activity?: { board?: string } }[] };
+    const f = b.frames.find((x) => x.activity?.board === "lpm")!.id;
+    const put = (key: string, token: string) => call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(f)}/state`, { key, op: "set", value: { a: 1 } }, token);
+    expect((await put("t1|org", ana!.token)).status).toBe(200);
+    expect((await put("t2|org", ana!.token)).status).toBe(403);
+    expect((await put("t2|org", ben!.token)).status).toBe(200);
+    expect((await put("pbcfg", ana!.token)).status).toBe(403);
+    expect((await put("pbbids:t1", ana!.token)).status).toBe(200);
+    expect((await put("pbbids:t2", ana!.token)).status).toBe(403);
+    // The trainer writes anywhere.
+    expect((await put("t2|org", root)).status).toBe(200);
+    expect((await put("pbcfg", root)).status).toBe(200);
+  });
+});
+
+describe("platform admins by email", () => {
+  it("gives a listed email the support console and every workspace, on top of its own", async () => {
+    const { call } = await setup({ platformAdminEmails: ["Owner@Example.io"] });
+    const root = (await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" })).body.apiKey as string;
+    const platformId = (await call("GET", "/v1/me", undefined, root)).body.principal.workspaceId as string;
+    const owner = (await call("POST", "/v1/signups", { name: "Owner", email: "owner@example.io", plan: "practice" })).body.apiKey as string;
+    const other = (await call("POST", "/v1/signups", { name: "Other", email: "other@example.io", plan: "practice" })).body.apiKey as string;
+    const me = (await call("GET", "/v1/me", undefined, owner)).body;
+    expect(me.principal.platformAdmin).toBe(true);
+    expect(me.principal.workspaceId).not.toBe(platformId);
+    expect((await call("GET", "/v1/admin/workspaces", undefined, owner)).status).toBe(200);
+    // The platform's own workspace, as an admin; and someone else's, as support.
+    const plat = await call("GET", "/v1/me", undefined, owner, { "x-trainyard-workspace": platformId });
+    expect(plat.body.principal).toMatchObject({ workspaceId: platformId, role: "admin" });
+    const otherWs = (await call("GET", "/v1/me", undefined, other)).body.principal.workspaceId as string;
+    expect((await call("GET", "/v1/me", undefined, owner, { "x-trainyard-workspace": otherWs })).body.principal).toMatchObject({ workspaceId: otherWs, support: true });
+    // Anyone not listed stays in their own workspace.
+    expect((await call("GET", "/v1/me", undefined, other)).body.principal.platformAdmin).toBe(false);
+    expect((await call("GET", "/v1/admin/workspaces", undefined, other)).status).toBe(403);
+    expect((await call("GET", "/v1/me", undefined, other, { "x-trainyard-workspace": platformId })).status).toBe(403);
+  });
+});
+
+describe("company accounts", () => {
+  it("signs a company up, lets its admin build the instructor roster, assign classes and read progress", async () => {
+    const { call, app } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    expect((await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company" })).body.error.code).toBe("COMPANY_NAME");
+    const owner = (await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company", company: "Acme Training" })).body.apiKey as string;
+    expect((await call("GET", "/v1/me", undefined, owner)).body.workspace).toMatchObject({ name: "Acme Training", kind: "company" });
+    // The roster: a trainer who teaches LPM, and a co-instructor who uses no seat.
+    const bo = await call("POST", "/v1/instructors", { name: "Bo", email: "bo@acme.io", kind: "trainer", courses: ["lpm", "leading-safe"] }, owner);
+    expect(bo.status).toBe(201);
+    expect(bo.body.instructor).toMatchObject({ kind: "trainer", courses: ["lpm", "leading-safe"] });
+    const cy = (await call("POST", "/v1/instructors", { name: "Cy", email: "cy@acme.io", kind: "co-instructor", courses: ["rte"] }, owner)).body.instructor as { id: string };
+    expect((await call("POST", "/v1/instructors", { name: "X", email: "x@acme.io", courses: ["not-a-course"] }, owner)).status).toBe(400);
+    const roster = (await call("GET", "/v1/instructors", undefined, owner)).body;
+    expect(roster).toMatchObject({ canManage: true, company: true });
+    expect(roster.instructors.map((i: { name: string }) => i.name).sort()).toEqual(["Ana", "Bo", "Cy"]);
+    expect((await call("PATCH", `/v1/instructors/${cy.id}`, { courses: ["rte", "lpm"] }, owner)).body.instructor.courses).toEqual(["rte", "lpm"]);
+    // A class: the picker lists the company's instructors, those who teach the course first.
+    const cls = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM · March" }, owner)).body.board.id as string;
+    const pick = (await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body;
+    expect(pick.course).toBe("lpm");
+    expect(pick.candidates.map((c: { name: string; teaches: boolean }) => [c.name, c.teaches])).toEqual([["Bo", true], ["Cy", true]]);
+    expect((await call("POST", `/v1/boards/${cls}/instructors`, { userId: cy.id }, owner)).body.instructors.map((i: { name: string }) => i.name)).toEqual(["Ana", "Cy"]);
+    // The admin hands the class to Bo; Ana stays on as co-instructor. A co-instructor-only person cannot lead.
+    expect((await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: cy.id }, owner)).body.error.code).toBe("NOT_A_TRAINER");
+    const lead = await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: bo.body.instructor.id }, owner);
+    expect(lead.body.lead.name).toBe("Bo");
+    expect((await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body.instructors.map((i: { name: string; role: string }) => [i.name, i.role])).toEqual([["Bo", "owner"], ["Cy", "co-instructor"], ["Ana", "co-instructor"]]);
+    // Students, a contribution and an exercise done: the report sees them.
+    const [st] = (await call("POST", `/v1/boards/${cls}/students`, { students: [{ name: "Dee", email: "dee@acme.io" }, { name: "Eve", email: "eve@acme.io" }] }, owner)).body.students as { id: string; token: string }[];
+    await call("GET", "/v1/me", undefined, st!.token);
+    await call("POST", `/v1/boards/${cls}/nodes`, { text: "Our flow", x: 1, y: 1 }, st!.token);
+    const board = (await call("GET", `/v1/boards/${cls}`, undefined, owner)).body.board as { frames: { id: string; parentId?: string; title: string }[] };
+    const lessons = new Set(board.frames.filter((f) => !f.parentId && /^Lesson \d/.test(f.title)).map((f) => f.id));
+    const ex = board.frames.find((f) => f.parentId && lessons.has(f.parentId))!;
+    await call("PATCH", `/v1/boards/${cls}/frames/${encodeURIComponent(ex.id)}`, { done: true }, owner);
+    const rep = (await call("GET", "/v1/company/report", undefined, owner)).body;
+    expect(rep.totals).toMatchObject({ classes: 1, live: 1, instructors: 3, students: 2, joined: 1 });
+    const row = rep.classes[0];
+    expect(row).toMatchObject({ name: "LPM · March", course: "lpm", lead: { name: "Bo" }, students: 2, joined: 1, done: 1, contributions: 1 });
+    expect(row.exercises).toBeGreaterThan(20);
+    expect(row.roster.find((s: { name: string }) => s.name === "Dee")).toMatchObject({ joined: true, contributions: 1 });
+    expect(rep.byInstructor.find((i: { name: string }) => i.name === "Bo")).toMatchObject({ led: 1, students: 2 });
+    expect(rep.byCourse[0]).toMatchObject({ course: "lpm", classes: 1, students: 2 });
+    const csv = await app.inject({ method: "GET", url: "/v1/company/report.csv", headers: { authorization: `Bearer ${owner}` } });
+    expect(csv.statusCode).toBe(200);
+    expect(csv.body.split("\r\n").filter(Boolean)).toHaveLength(3); // header + one row per student
+    expect(csv.body).toContain('"LPM · March","Lean Portfolio Management (LPM)","Bo"');
+    // Only the company admin reads reports and assigns leads.
+    const boKey = (await call("POST", `/v1/users/${bo.body.instructor.id}/rotate-key`, undefined, owner)).body.apiKey as string;
+    expect((await call("GET", "/v1/company/report", undefined, boKey)).status).toBe(403);
+    expect((await call("POST", "/v1/instructors", { name: "Z", email: "z@acme.io" }, boKey)).status).toBe(403);
+    expect((await call("GET", "/v1/instructors", undefined, boKey)).body.canManage).toBe(false);
+    expect((await call("GET", "/v1/company/report", undefined, st!.token)).status).toBe(403);
+  });
+});
+
+describe("the free plan for a company", () => {
+  it("runs one class at a time, with every instructor it needs; archiving the class frees the slot", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const owner = (await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company", company: "Acme" })).body.apiKey as string;
+    // Far more than the free plan's five people: a company adds every instructor it needs.
+    for (const n of [1, 2, 3, 4, 5, 6, 7]) expect((await call("POST", "/v1/instructors", { name: `I${n}`, email: `i${n}@acme.io`, kind: n % 2 ? "trainer" : "co-instructor" }, owner)).status).toBe(201);
+    const first = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM · March" }, owner)).body.board.id as string;
+    const second = await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner);
+    expect(second.status).toBe(402);
+    expect(second.body.error.message).toContain("one class or board at a time");
+    // Archive the finished class: the next one starts.
+    expect((await call("POST", `/v1/boards/${first}/archive`, { archived: true }, owner)).status).toBeLessThan(300);
+    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner)).status).toBe(201);
+  });
+  it("keeps the five-person limit for an individual on the free plan", async () => {
+    const { call } = await setup();
+    await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
+    const solo = (await call("POST", "/v1/signups", { name: "Sol", email: "sol@solo.io", plan: "practice" })).body.apiKey as string;
+    for (const n of [1, 2, 3, 4]) expect((await call("POST", "/v1/instructors", { name: `P${n}`, email: `p${n}@solo.io` }, solo)).status).toBe(201);
+    expect((await call("POST", "/v1/instructors", { name: "P5", email: "p5@solo.io" }, solo)).status).toBe(402);
   });
 });

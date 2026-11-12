@@ -14,10 +14,13 @@ export const metadata: Metadata = {
 
 export default async function AppLayout({ children }: { children: ReactNode }) {
   // Inside the Jira app or the Azure DevOps extension (see proxy.ts): no side navigation.
-  if ((await headers()).get("x-embed") === "1") {
+  const h = await headers();
+  if (h.get("x-embed") === "1") {
+    // The planning room inside a class exercise is the whole frame: no bar at all.
+    const bare = h.get("x-pathname") === "/embed/planning-room";
     return (
       <div className="shell embed">
-        <EmbedBar />
+        {bare ? null : <EmbedBar />}
         <main id="main" className="main">{children}</main>
       </div>
     );

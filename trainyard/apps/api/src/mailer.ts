@@ -16,6 +16,10 @@ export interface Mail {
   subject: string;
   text: string;
   html?: string;
+  /** Where a reply goes when not the sending address (a class invitation replies to the trainer). */
+  replyTo?: string;
+  /** Files sent with the mail (a class's record before it is deleted). */
+  attachments?: { filename: string; content: string | Buffer; contentType: string }[];
 }
 
 export interface Mailer {
@@ -36,8 +40,8 @@ export class SmtpMailer implements Mailer {
   }
   async send(mail: Mail): Promise<void> {
     const from = this.from[mail.from ?? "support"];
-    // Replies go back to the address the mail came from.
-    await this.transport.sendMail({ from, replyTo: from, to: mail.to, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}) });
+    // Replies go back to the address the mail came from, unless the mail names someone (the trainer).
+    await this.transport.sendMail({ from, replyTo: mail.replyTo ?? from, to: mail.to, subject: mail.subject, text: mail.text, ...(mail.html ? { html: mail.html } : {}), ...(mail.attachments?.length ? { attachments: mail.attachments } : {}) });
   }
 }
 

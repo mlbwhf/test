@@ -11,14 +11,16 @@ envval() { sed -nE "s/^$1=([^#]*).*/\1/p" .env | head -n1 | sed -E "s/^[[:space:
 pin_env() { local var=$1 val=$2; if grep -qE "^$var=" .env; then sed -i -E "s|^$var=.*|$var=$val|" .env; else printf '\n%s=%s\n' "$var" "$val" >> .env; fi; }
 # The canonical hosts and aliases can come from CI (the repository variables), so moving the
 # site to a new domain is a change of variables and a deploy, not an edit on the server.
-for pair in TRAINYARD_WEB_HOST:TRAINYARD_CI_WEB_HOST TRAINYARD_API_HOST:TRAINYARD_CI_API_HOST TRAINYARD_WEB_ALIASES:TRAINYARD_CI_WEB_ALIASES TRAINYARD_API_ALIASES:TRAINYARD_CI_API_ALIASES STRIPE_TRIAL_DAYS:TRAINYARD_CI_TRIAL_DAYS; do
+for pair in TRAINYARD_WEB_HOST:TRAINYARD_CI_WEB_HOST TRAINYARD_API_HOST:TRAINYARD_CI_API_HOST TRAINYARD_WEB_ALIASES:TRAINYARD_CI_WEB_ALIASES TRAINYARD_API_ALIASES:TRAINYARD_CI_API_ALIASES STRIPE_TRIAL_DAYS:TRAINYARD_CI_TRIAL_DAYS TRAINYARD_PLATFORM_ADMINS:TRAINYARD_CI_PLATFORM_ADMINS; do
   var=${pair%%:*}; src=${pair##*:}; val=${!src:-}
   [ -n "$val" ] || continue
-  [ "$(envval "$var")" = "$val" ] || { echo "== .env $var: '$(envval "$var")' -> '$val'"; pin_env "$var" "$val"; }
+  shown=$val; [ "$var" = TRAINYARD_PLATFORM_ADMINS ] && shown="(hidden)"
+  [ "$(envval "$var")" = "$val" ] || { echo "== .env $var -> $shown"; pin_env "$var" "$val"; }
 done
 TRAEFIK_NETWORK=$(envval TRAEFIK_NETWORK)
 BACKUP_S3_BUCKET=$(envval BACKUP_S3_BUCKET)
 LLM_PROFILE=$(envval LLM_PROFILE)
+FLOWISE_HOST=$(envval FLOWISE_HOST)
 
 opts=(-f docker-compose.yml)
 case "${TRAEFIK_NETWORK:-host}" in host|"") ;; *) opts+=(-f docker-compose.traefik-bridge.yml);; esac
@@ -72,6 +74,25 @@ for name in $(envval TRAINYARD_API_ALT) $(envval TRAINYARD_API_ALIASES); do
 "
   else echo "== alias $name skipped: its DNS does not point to this server yet"; fi
 done
+# The mirror host (TRAINYARD_WEB_MIRROR, e.g. an older domain) serves the class paths as itself
+# instead of redirecting, for networks that block the main domain as newly registered. Its API
+# twin (TRAINYARD_API_MIRROR) must already answer as the API (an API alias). Higher priority than
+# the alias redirect for the same host; every other path still redirects to the canonical site.
+mirror=$(envval TRAINYARD_WEB_MIRROR); mirror_api=$(envval TRAINYARD_API_MIRROR)
+if [ -n "$mirror" ]; then
+  if [ -z "$mirror_api" ]; then echo "== mirror $mirror skipped: set TRAINYARD_API_MIRROR (an API alias, e.g. api.$mirror)"
+  elif points_here "$mirror" && points_here "$mirror_api"; then
+    echo "== mirror $mirror serves class links and boards as itself (API at $mirror_api)"
+    web_labels+="      traefik.http.routers.trainyard-web-mirror.rule: Host(\`$mirror\`) && (PathPrefix(\`/join\`) || PathPrefix(\`/boards\`) || PathPrefix(\`/embed\`) || PathPrefix(\`/planning-room\`) || PathPrefix(\`/login\`) || PathPrefix(\`/_next\`) || PathPrefix(\`/fonts\`) || PathPrefix(\`/courses\`) || PathPrefix(\`/icon.svg\`) || PathPrefix(\`/favicon.ico\`))
+      traefik.http.routers.trainyard-web-mirror.priority: \"200\"
+      traefik.http.routers.trainyard-web-mirror.entrypoints: \${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.trainyard-web-mirror.tls: \"true\"
+      traefik.http.routers.trainyard-web-mirror.tls.certresolver: \${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.trainyard-web-mirror.middlewares: trainyard-web-headers
+      traefik.http.routers.trainyard-web-mirror.service: trainyard-web
+"
+  else echo "== mirror $mirror skipped: $mirror or $mirror_api does not point to this server yet"; fi
+fi
 if [ -n "$web_labels$api_labels" ]; then
   {
     echo "# Written by deploy.sh on every deploy; do not edit."
@@ -81,11 +102,20 @@ if [ -n "$web_labels$api_labels" ]; then
   } > "$alias_file"
   opts+=(-f "$alias_file")
 fi
+# Flowise joins the stack once FLOWISE_HOST is set and its DNS points here (a name that does not
+# resolve yet would make Let's Encrypt retry and the container start for nothing).
+if [ -n "${FLOWISE_HOST:-}" ]; then
+  if [ -z "$(envval FLOWISE_SECRET)" ]; then echo "== flowise skipped: set FLOWISE_SECRET in .env (openssl rand -hex 24)"
+  elif points_here "$FLOWISE_HOST"; then echo "== flowise at https://$FLOWISE_HOST"; opts+=(--profile flowise)
+  else echo "== flowise skipped: the DNS of $FLOWISE_HOST does not point to this server yet"; fi
+fi
 compose() { docker compose "${opts[@]}" "$@"; }
 
 for required in TRAINYARD_DOMAIN POSTGRES_PASSWORD TRAINYARD_ADMIN_KEY; do
   [ -n "$(envval $required)" ] || { echo "set $required in .env before deploying" >&2; exit 1; }
 done
+# .env must belong to the deploy user: editing it as root (mv, cp) hands it to root and the deploy can no longer read or pin it.
+[ -w .env ] || { echo "== .env is owned by $(stat -c %U .env) and not writable by $(id -un). On the server run: sudo chown $(id -un) /opt/trainyard/.env && sudo chmod 600 /opt/trainyard/.env" >&2; exit 1; }
 [ "$(stat -c %a .env)" = "600" ] || chmod 600 .env
 
 # This box also runs EnrollClass (gate). Never start the local model when it would push the

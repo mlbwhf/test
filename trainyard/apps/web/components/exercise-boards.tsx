@@ -3,10 +3,11 @@
 // Purpose-built exercise boards (an activity's `board`): each keeps what people add in its frame's
 // shared state, one change at a time (push, update, remove, set), so a whole class can add at once.
 
-import { useCallback, useEffect, useRef, useState, type ReactNode } from "react";
+import dynamic from "next/dynamic";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { STUDIO_KINDS } from "@/components/studio-model";
+import { LSA_KINDS } from "@/components/studio-model-lsa";
 import type React from "react";
-import { STUDIO_KINDS, studioModel } from "@/components/studio-model";
-import * as Views from "@/components/studio-views";
 import { applyStateOp, type Board, type Frame, type StateOp } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
 
@@ -19,6 +20,8 @@ export interface BoardProps {
   op: Op;
   readOnly: boolean;
   trainer: boolean;
+  /** The team this person works in (their table), also on a class-wide exercise; null when the class has no teams. */
+  team?: string | null;
 }
 
 /** The frame's state with this person's changes applied at once, saved one by one. */
@@ -228,31 +231,48 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 }
 
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
+// The Class Studio boards and their logic arrive as their own bundle, the first time one is opened.
+const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: false, loading: () => <div className="studio-board faint" style={{ padding: 24 }}>Loading the exercise…</div> });
+
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
-  return STUDIO_KINDS.has(props.kind) ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
+  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} />;
+  return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
-const VIEWS: Record<string, (p: { v: Record<string, unknown> }) => ReactNode> = {
-  talk: Views.TalkView, quad: Views.QuadView, check: Views.CheckView, connect: Views.ConnectView, trust: Views.TrustView, bound: Views.BoundView, next: Views.NextView, vsm: Views.VsmView, ba: Views.BaView, rca: Views.RcaView,
-  metrics: Views.MetView, ctx: Views.CtxView, accel: Views.AccView, wheel: Views.WheelView, evt: Views.EvtView, kanban: Views.KanView, pitch: Views.PitchView, disc: Views.DiscView, bv: Views.BvView, roam: Views.RoamView, art: Views.ArtView,
-};
-
-/** A board from the Class Studio design: its generated layout, driven by the ported logic (studio-model.ts). */
-function StudioBoard({ kind, board, frame, config, st, op, readOnly, trainer }: BoardProps & { kind: string }) {
-  const [ui, setUiState] = useState<Record<string, unknown>>({});
-  const setUi = useCallback((p: Record<string, unknown>) => setUiState((u) => ({ ...u, ...p })), []);
-  const ask = useCallback(async (prompt: string) => {
+/** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
+const PI_ROOM_KINDS = new Set(["cap", "pib", "pcs", "ppr", "pbv", "prm"]);
+function PiRoomEmbed({ boardId, trainer }: { boardId: string; trainer: boolean }) {
+  const q = `?doc=${encodeURIComponent(boardId)}&mode=class`;
+  // The class has a planning room of its own. A trainer who set the simulation up under Plan →
+  // Planning room instead can bring that room in here, for the students' links to reach it.
+  const [gen, setGen] = useState(0);
+  const [msg, setMsg] = useState<string | null>(null);
+  const adopt = async () => {
+    if (!window.confirm("Bring the room you set up under Plan → Planning room into this class? It replaces whatever this class's room holds.")) return;
     try {
-      return (await api<{ lines: string[] }>("POST", `/v1/boards/${encodeURIComponent(board.id)}/suggest`, { prompt })).lines;
-    } catch {
-      return [];
+      const r = await api<{ teams: number; tickets: number }>("POST", `/v1/boards/${encodeURIComponent(boardId)}/planning-room/adopt`, {});
+      setMsg(`Brought in: ${r.teams} teams, ${r.tickets} tickets.`);
+      setGen((g) => g + 1);
+    } catch (e) {
+      setMsg((e as ApiFailure).message);
     }
-  }, [board.id]);
-  const v = studioModel({ kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask });
-  const View = VIEWS[kind]!;
+  };
   return (
-    <div className="studio-board">
-      <View v={v} />
+    <div className="studio-board" style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <span className="ex-mono" style={{ color: "#4d5a52" }}>PI PLANNING BOARD · THIS CLASS&apos;S OWN ROOM · SET IT UP HERE ONCE, THEN EVERY TEAM WORKS THE EXERCISES ON IT</span>
+        <span style={{ flex: 1 }} />
+        {trainer ? (
+          <button onClick={() => void adopt()} title="Copy the room you set up under Plan → Planning room into this class" style={{ font: "700 12px 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#0d1815", border: "2px solid #0d1815", borderRadius: 8, padding: "4px 10px", background: "#ffd37a", cursor: "pointer" }}>
+            Bring in the room from Plan
+          </button>
+        ) : null}
+        {msg ? <span className="faint">{msg}</span> : null}
+        <a href={`/planning-room${q}`} target="_blank" rel="noreferrer" style={{ font: "700 12px 'Helvetica Neue', Helvetica, Arial, sans-serif", color: "#0d1815", border: "2px solid #0d1815", borderRadius: 8, padding: "4px 10px", background: "#fff", textDecoration: "none" }}>
+          Open full screen ↗
+        </a>
+      </div>
+      <iframe key={gen} src={`/embed/planning-room${q}`} title="PI planning board" style={{ width: "100%", height: "calc(100vh - 250px)", minHeight: 640, border: "2px solid #0d1815", borderRadius: 12, background: "#f4f1ea" }} />
     </div>
   );
 }

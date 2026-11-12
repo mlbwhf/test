@@ -113,10 +113,86 @@ export interface Me {
   principal: { userId: string; name: string; role: string; personId?: string; anonymous: boolean; workspaceId: string; platformAdmin: boolean; support?: boolean; guestBoardId?: string };
   open: boolean;
   permissions: Record<string, boolean>;
-  workspace: { id: string; name: string; plan: "practice" | "trainer" | "academy" | "insights" | "platform"; seats: number; status: "active" | "frozen"; frozenReason?: string; platform: boolean };
+  workspace: { id: string; name: string; plan: "practice" | "trainer" | "academy" | "insights" | "platform"; kind?: "individual" | "company"; seats: number; status: "active" | "frozen"; frozenReason?: string; platform: boolean };
 }
 
 /** Who the current key belongs to and what they may do. */
 export function useMe() {
   return useApi<Me>("/v1/me");
+}
+
+/** Fetches a file from the API with this person's key and hands it to the browser to save. */
+export async function download(path: string, filename: string): Promise<void> {
+  const key = getApiKey();
+  const res = await fetch(`${BASE}${path}`, { headers: { ...(key ? { Authorization: `Bearer ${key}` } : {}), ...(getSupportWorkspace() ? { "x-trainyard-workspace": getSupportWorkspace()! } : {}) } });
+  if (!res.ok) {
+    const json = await res.json().catch(() => ({}));
+    throw new ApiFailure(res.status, json?.error?.code ?? "ERROR", json?.error?.message ?? res.statusText);
+  }
+  const url = URL.createObjectURL(await res.blob());
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 10_000);
+}
+
+/**
+ * Live push: holds a streaming connection to an `/events` route and calls `onChange` for every
+ * change notice. Plain fetch, so the API key travels in the header as everywhere else. Reconnects
+ * with a growing pause when the stream drops; `onState` says whether a stream is up, so a page can
+ * poll only while it is not. Returns a function that closes the stream.
+ */
+export function subscribe(path: string, onChange: (data: Record<string, unknown>) => void, onState?: (connected: boolean) => void): () => void {
+  let stopped = false;
+  let ctrl: AbortController | null = null;
+  let pause = 1000;
+  const run = async () => {
+    while (!stopped) {
+      ctrl = new AbortController();
+      try {
+        const key = getApiKey();
+        const res = await fetch(`${BASE}${path}`, { headers: { accept: "text/event-stream", ...(key ? { Authorization: `Bearer ${key}` } : {}), ...(getSupportWorkspace() ? { "x-trainyard-workspace": getSupportWorkspace()! } : {}) }, signal: ctrl.signal, cache: "no-store" });
+        if (!res.ok || !res.body) throw new Error(`events ${res.status}`);
+        onState?.(true);
+        pause = 1000;
+        const reader = res.body.getReader();
+        const dec = new TextDecoder();
+        let buf = "";
+        for (;;) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buf += dec.decode(value, { stream: true });
+          let i: number;
+          while ((i = buf.indexOf("\n\n")) >= 0) {
+            const chunk = buf.slice(0, i);
+            buf = buf.slice(i + 2);
+            const ev = /^event: (.+)$/m.exec(chunk)?.[1];
+            const data = /^data: (.+)$/m.exec(chunk)?.[1];
+            if (ev === "change" && data) {
+              try {
+                onChange(JSON.parse(data) as Record<string, unknown>);
+              } catch {
+                onChange({});
+              }
+            }
+          }
+        }
+      } catch {
+        /* dropped: reconnect below */
+      }
+      onState?.(false);
+      if (stopped) break;
+      await new Promise((r) => setTimeout(r, pause));
+      pause = Math.min(pause * 2, 30_000);
+    }
+  };
+  void run();
+  return () => {
+    stopped = true;
+    ctrl?.abort();
+    onState?.(false);
+  };
 }

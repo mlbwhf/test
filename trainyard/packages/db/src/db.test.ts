@@ -91,3 +91,23 @@ if (url) {
 } else {
   it.skip("PgPersistence (set DATABASE_URL to run)", () => {});
 }
+
+describe("shards", () => {
+  it("keeps boards and documents in their own rows, written only when named, and removed with null", async () => {
+    const store = new MemoryPersistence<{ n: number }>();
+    const id = `ws-${Date.now()}`;
+    expect(await store.save(id, { n: 1 }, 0, [{ kind: "board", key: "b-1", data: { id: "b-1", nodes: [1] } }, { kind: "doc", key: "planning-room:b-1", data: { teams: 2 } }])).toBe(1);
+    expect((await store.loadShards(id)).map((s) => `${s.kind}/${s.key}`).sort()).toEqual(["board/b-1", "doc/planning-room:b-1"]);
+    await store.save(id, { n: 2 }, 1, [{ kind: "board", key: "b-1", data: null }]);
+    expect(await store.loadShards(id)).toEqual([{ kind: "doc", key: "planning-room:b-1", data: { teams: 2 } }]);
+  });
+  it("round-trips shards through files, keys with colons included", async () => {
+    const dir = await mkdtemp(path.join(os.tmpdir(), "ty-shards-"));
+    const store = new FilePersistence<{ n: number }>(dir);
+    await store.save("ws1", { n: 1 }, 0, [{ kind: "doc", key: "planning-room:b-x", data: { a: 1 } }, { kind: "board", key: "b-x", data: { id: "b-x" } }]);
+    expect((await store.loadShards("ws1")).sort((a, b) => a.kind.localeCompare(b.kind))).toEqual([{ kind: "board", key: "b-x", data: { id: "b-x" } }, { kind: "doc", key: "planning-room:b-x", data: { a: 1 } }]);
+    await store.save("ws1", { n: 2 }, 1, [{ kind: "board", key: "b-x", data: null }]);
+    expect(await store.loadShards("ws1")).toEqual([{ kind: "doc", key: "planning-room:b-x", data: { a: 1 } }]);
+    await rm(dir, { recursive: true, force: true });
+  });
+});

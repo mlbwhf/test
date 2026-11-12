@@ -4,7 +4,7 @@ How Trainyard is protected, what you must do when you host it, and how to report
 
 ## Reporting
 
-Email security@agile-agilist.com with the steps to reproduce. You will get an answer within three working days. Please do not open a public issue for a vulnerability until a fix has shipped.
+Email support@trainyard.app with the steps to reproduce. You will get an answer within three working days. Please do not open a public issue for a vulnerability until a fix has shipped.
 
 ## What the software does
 

@@ -14,6 +14,10 @@
 import { emptyBoard, instantiate, type Board, type BoardNode, type Frame } from "./boards.js";
 import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from "./activities.js";
 import { RTE_COURSE } from "./courses/rte.js";
+import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
+import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
+import { AI_NATIVE_VALUE_ARCHITECT_COURSE } from "./courses/ai-native-value-architect.js";
+import { LPM_COURSE, LPM_WORKSHOP_COURSE } from "./courses/lpm.js";
 import type { TemplateInfo } from "./templates.js";
 import { CANVAS_TYPES, PI_PLANNING_READINESS } from "./canvases.js";
 import { EPIC_STATES } from "./portfolio.js";
@@ -31,7 +35,7 @@ export type Exercise =
   | { kind: "stickies"; title: string; lanes: string[]; hint?: string; color?: string; rows?: number }
   /** Sorting zones, e.g. Not applicable / Work as-is / Requires rethinking. */
   | { kind: "zones"; title: string; zones: string[]; items?: string[]; color?: string }
-  /** A kanban: lanes left to right, the items as cards in the first lane, to drag across. */
+  /** A kanban (the agenda board): columns left to right, the items as tickets in the first, dragged one column at a time. */
   | { kind: "kanban"; title: string; lanes: string[]; items: string[] }
   /** A grid of cards; the first row is the header. Empty cells become blank cards. */
   | { kind: "table"; title: string; columns: string[]; rows: string[][]; blankRows?: number }
@@ -78,8 +82,8 @@ class Builder {
   id(p: string) {
     return `${p}-${++this.n}`;
   }
-  frame(title: string, x: number, y: number, width: number, height: number, parentId?: string): Frame {
-    const f: Frame = { id: this.id(slug(title).slice(0, 40)), title, x, y, width, height, ...(parentId ? { parentId } : {}) };
+  frame(title: string, x: number, y: number, width: number, height: number, parentId?: string, extra: Partial<Frame> = {}): Frame {
+    const f: Frame = { id: this.id(slug(title).slice(0, 40)), title, x, y, width, height, ...(parentId ? { parentId } : {}), ...extra };
     this.frames.push(f);
     return f;
   }
@@ -129,15 +133,20 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
       return { w, h };
     }
     case "kanban": {
-      const laneW = 360;
-      const cardH = 64;
-      const w = ex.lanes.length * (laneW + 20) + 20;
-      const h = Math.max(320, 110 + ex.items.length * (cardH + 14) + PAD);
-      const f = b.frame(ex.title, x, y, w, h, parentId);
-      ex.lanes.forEach((lane, i) => {
-        const lf = b.frame(lane, x + 20 + i * (laneW + 20), y + 50, laneW, h - 70, f.id);
-        if (i === 0) ex.items.forEach((it, k) => b.node("card", it, lf.x + 16, lf.y + 44 + k * (cardH + 14), laneW - 32, cardH, lf.id, { color: COLORS.yellow, fields: { fontSize: 18 } }));
+      // The agenda is a Class Studio kanban (apps/web agenda board): To do, WIP and Done columns with
+      // their counts, each lesson a ticket dragged one column at a time. On the canvas the frame only
+      // points to it; the tickets and their columns live in the frame's state, so they stay put.
+      const w = 1060;
+      const h = 220;
+      const used = new Set<string>();
+      const items = ex.items.map((t) => {
+        let id = slug(t.replace(/^\d+\s+/, "")).slice(0, 40) || "item";
+        while (used.has(id)) id += "-";
+        used.add(id);
+        return { id, t };
       });
+      const f = b.frame(`Activity: ${ex.title}`, x, y, w, h, parentId, { activity: { kind: "Activity", steps: `Step 1: When a lesson starts, drag its ticket from ${ex.lanes[0]} to ${ex.lanes[1] ?? "the next column"}.\nStep 2: When it ends, drag it on to ${ex.lanes[ex.lanes.length - 1]}.\nStep 3: One column at a time: the counts show how far the day has come.`, board: "agenda", config: { lanes: ex.lanes, items } } });
+      b.node("text", `${ex.title}: a kanban with ${ex.lanes.join(" · ")}. Open it from the menu on the left; each lesson is a ticket to drag from ${ex.lanes[0]} to ${ex.lanes[ex.lanes.length - 1]} as the day goes on.`, x + PAD, y + 56, w - 2 * PAD, 110, f.id, { fields: { fontSize: 18 } });
       return { w, h };
     }
     case "table": {
@@ -267,7 +276,7 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
   };
   const welcome: Exercise[] = [
     { kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] },
-    { kind: "kanban", title: "Quick agenda", lanes: ["To start", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
+    { kind: "kanban", title: "Quick agenda", lanes: ["To do", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
     { kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] },
     { kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 },
     { kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 },
@@ -283,7 +292,12 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
 }
 
 /** Builds the class board: start strip, then one frame per lesson with its exercises in rows. */
-export function classBoard(spec: ClassSpec, now = "2026-01-01T00:00:00.000Z"): Board {
+/** A course's opening chapter: not numbered (the design shows it as "·" / ★), and part of the Welcome strip. */
+export const isWelcomeLesson = (l: { title: string }) => l.title.trim().toLowerCase() === "welcome";
+
+export function classBoard(spec0: ClassSpec, now = "2026-01-01T00:00:00.000Z"): Board {
+  // Chapter numbers follow the design: Welcome is unnumbered, the lessons count from 1 after it.
+  const spec = { ...spec0, lessons: spec0.lessons.filter((l, i) => !(i === 0 && isWelcomeLesson(l))) };
   const b = new Builder();
   let y = 0;
   y += startHere(b, spec, 0, 0) + GAP * 2;
@@ -340,7 +354,23 @@ function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[
     l.height = 160;
     y += l.height + 80;
   }
-  lessons.forEach((l, i) => addActivities(b, l.id, course[i]?.activities ?? [], `${l.id}-x`));
+  // The course's own Welcome chapter joins the Welcome strip, under the start-here exercises.
+  const strip = welcome.find((f) => f.title === "Welcome");
+  let rest = course;
+  if (course[0] && isWelcomeLesson(course[0]) && strip) {
+    rest = course.slice(1);
+    const nf = b.frames.length, nn = b.nodes.length, top = strip.height;
+    addActivities(b, strip.id, course[0].activities, `${strip.id}-x`);
+    const added = b.frames.slice(nf), addedNodes = b.nodes.slice(nn);
+    const first = Math.min(...added.map((f) => f.y));
+    const dy = strip.y + top - first + 40;
+    for (const f of added) f.y += dy;
+    for (const n of addedNodes) n.y += dy;
+    strip.height = Math.max(top, Math.max(...added.map((f) => f.y + f.height)) - strip.y + 40);
+    const shift = strip.height - top;
+    if (shift > 0) for (const l of lessons) l.y += shift;
+  }
+  lessons.forEach((l, i) => addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
 }
 
 function isInside(b: Board, f: Frame, ancestor: string): boolean {
@@ -368,7 +398,7 @@ export function classInfo(spec: ClassSpec): TemplateInfo {
     event: `${spec.days}-day class`,
     method: "safe",
     tags: ["class", "safe"],
-    zones: ["Welcome", ...spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
+    zones: ["Welcome", ...spec.lessons.filter((l, i) => !(i === 0 && isWelcomeLesson(l))).map((l, i) => `Lesson ${i + 1}: ${l.title}`)],
     cardTypes: ["Sticky", "Slide", "Story", "Vote"],
     mapsTo: "Nothing (a class is run, not synced)",
   };
@@ -546,17 +576,12 @@ const RAW_CLASSES: ClassSpec[] = [
     id: "leading-safe",
     name: "Leading SAFe",
     short: "LS",
-    blurb: "Two days: business agility, the mindset and principles, team and technical agility, Agile Product Delivery with a PI planning simulation, Lean Portfolio Management, leading the change.",
+    blurb: "Two days, chapter by chapter: business agility, the mindset and principles, team and technical agility, Agile Product Delivery with the PI Planning simulation, Lean Portfolio Management, leading the change. Each exercise on its own Class Studio board with its timing and steps.",
     days: 2,
-    challenge: "We're running this class to solve: problem #1, issue #2, concern #3. By the end: outcome #1, outcome #2, outcome #3.",
-    lessons: [
-      { title: "Thriving in the Digital Age with Business Agility", exercises: [{ kind: "stickies", title: "What brought you here", lanes: ["What I want from the class", "A challenge I bring"], hint: "One sticky each. Examples from past classes: 'How to square line management with multidisciplinary teams', 'Can Agile and fixed-price contracts be friends?', 'How to reduce the overhead of scaled agile'.", rows: 3 }, { kind: "zones", title: "Potential for improvement × ease of implementation", zones: ["High potential · easy", "High potential · difficult", "Low potential · easy", "Low potential · difficult"] }] },
-      LEADING_SAFE_LESSONS[2],
-      { title: "Establishing Team and Technical Agility", exercises: [{ kind: "stickies", title: "Built-in quality in your teams", lanes: ["Practices we have", "Practices we lack", "First step"], rows: 2, color: COLORS.green }] },
-      LEADING_SAFE_LESSONS[4],
-      LEADING_SAFE_LESSONS[5],
-      { title: "Leading the Change", exercises: [{ kind: "table", title: "The leader's call to action (one page)", columns: ["Part", "Your draft"], rows: [["Organisation leadership: what we need", "Need to improve timeliness of delivery."], ["Business language: the issue", "We are unable to predict what will get done by when; we miss commitments and blow through estimates."], ["Impacts", ""], ["Call to action", "Fully adopt SAFe to shape teams, create accurate estimates and achieve milestones predictably: outcomes understood and measured; backlog mature; teams have the skills; delivery on a measurable cadence."], ["End with an ask", "More time to help leaders learn."]] }, { kind: "stickies", title: "Who do we need? Guiding coalition", lanes: ["Sponsors", "Change agents", "Who might resist"], rows: 2 }] },
-    ],
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: LEADING_SAFE_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LEADING_SAFE_COURSE,
   },
   {
     id: "spc",
@@ -665,6 +690,47 @@ const RAW_CLASSES: ClassSpec[] = [
     ],
   },
   {
+    id: "aart",
+    name: "Launching AI-Native ARTs",
+    short: "ART Leader",
+    blurb: "Assess your ART against three success factors: outcome-driven product development, portfolio and investment strategy, and curated data. Rate, compare, reach consensus, then turn every gap into a launch plan on the roadmap.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: AI_NATIVE_ARTS_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: AI_NATIVE_ARTS_COURSE,
+  },
+  {
+    id: "aiva",
+    name: "The AI-Native Value Architect",
+    short: "Value Architect",
+    blurb: "Shape AI-native solutions that deliver value and hold up to scrutiny. Lesson 3's Mini Lab builds a multi-agent flow in Flowise with Groq that puts the HR Navigator chatbot proposal in front of three skeptics: a technologist, a P&L owner and an ethicist.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: AI_NATIVE_VALUE_ARCHITECT_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: AI_NATIVE_VALUE_ARCHITECT_COURSE,
+  },
+  {
+    id: "lpm",
+    name: "Lean Portfolio Management (LPM)",
+    short: "LPM",
+    blurb: "Strategy to execution: eight lessons with Terrific Transport Corporation (TTC) as the running case. Every exercise has a working template, from the portfolio process flow map and the portfolio canvas to participatory budgeting, the portfolio Kanban and WSJF, each team with its own copy.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: LPM_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LPM_COURSE,
+  },
+  {
+    id: "lpm-ws",
+    name: "Getting Started with LPM workshop",
+    short: "LPM workshop",
+    blurb: "The one-day workshop run after the two-day LPM class. Build the actionable artifacts for your LPM journey: the pitch, the portfolio scope, the LPM team, the events, the CoP and the next steps to the kickoff.",
+    days: 1,
+    welcome: ["Quick agenda", "Icebreaker"],
+    lessons: LPM_WORKSHOP_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: LPM_WORKSHOP_COURSE,
+  },
+  {
     id: "rte",
     name: "Release Train Engineer (RTE)",
     short: "RTE",
@@ -767,7 +833,6 @@ export const CLASS_TOOLS = {
 
 /** Which chapter (1-based lesson number) of which class is built from which tool. */
 export const CLASS_TOOL_CHAPTERS: Record<string, Record<number, (keyof typeof CLASS_TOOLS)[]>> = {
-  "leading-safe": { 4: ["piPlanning"] },
   spc: { 4: ["piPlanning"], 9: ["valueStreams"], 10: ["readiness"], 11: ["inspectAdapt"] },
   rte: { 3: ["readiness"], 6: ["inspectAdapt"] },
   popm: { 2: ["readiness", "features"], 3: ["piPlanning"], 5: ["inspectAdapt"] },
@@ -873,9 +938,13 @@ export function needsTemplateUpgrade(board: Board, template: Board): boolean {
 export function upgradeFromTemplate(old: Board, template: Board, now: string): Board {
   const fresh = instantiate(template, old.id, old.name, now);
   const prefix = `${old.id}:`;
+  // Chapter numbers are not part of a frame's identity: a class made when the Welcome chapter was
+  // "Lesson 1" and the rest counted from 2 must find its exercises in a template that numbers them
+  // from 1 (and keeps Welcome unnumbered), or a running class would lose its work on the next open.
+  const norm = (f: Frame) => (f.parentId ? f.title : f.title.replace(/^Lesson\s+\d+:\s*/i, ""));
   const pathOf = (b: Board) => {
     const byId = new Map(b.frames.map((f) => [f.id, f]));
-    const path = (f: Frame): string => `${f.parentId && byId.get(f.parentId) ? `${path(byId.get(f.parentId)!)}/` : ""}${f.title}`;
+    const path = (f: Frame): string => `${f.parentId && byId.get(f.parentId) ? `${path(byId.get(f.parentId)!)}/` : ""}${norm(f)}`;
     return path;
   };
   const oldPath = pathOf(old);
@@ -905,7 +974,13 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
   const nodes = new Map(fresh.nodes.map((n) => [n.id, n]));
   const claimed = new Set<string>();
   const renamed = new Map<string, string>();
+  // Teams' copies of canvas exercises (teams.ts) are the class's own: they come along as they are.
+  const copyFrames = new Set(old.frames.filter((f) => f.copyOf).map((f) => f.id));
   for (const n of old.nodes) {
+    if (n.frameId && copyFrames.has(n.frameId)) {
+      nodes.set(n.id, structuredClone(n));
+      continue;
+    }
     const fromTemplate = n.id.startsWith(prefix);
     // Template backgrounds (pictures, grid cells, labels) always come from the new version.
     if (fromTemplate && (n.fields.locked || (!freshIds.has(n.id) && !n.text.trim()))) continue;
@@ -943,5 +1018,6 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
   const fields: Record<string, unknown> = { ...(old.fields ?? {}), ...(fresh.fields ?? {}), templateRev: templateRevision(template) };
   const timer = old.fields?.timer as { frameId?: string } | undefined;
   if (timer?.frameId) fields.timer = { ...timer, frameId: map.get(timer.frameId)?.id ?? timer.frameId };
-  return { ...old, frames: fresh.frames, nodes: [...nodes.values()], edges: [...edges.values()], columns: fresh.columns, groups: fresh.groups, fields };
+  const copies = old.frames.filter((f) => f.copyOf).map((f) => ({ ...structuredClone(f), copyOf: map.get(f.copyOf!)?.id ?? f.copyOf! }));
+  return { ...old, frames: [...fresh.frames, ...copies], nodes: [...nodes.values()], edges: [...edges.values()], columns: fresh.columns, groups: fresh.groups, fields };
 }

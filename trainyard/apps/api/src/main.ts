@@ -10,6 +10,7 @@ import { Store, type StoreState } from "./store.js";
 // end up in a config file:
 //   DATABASE_URL                 Postgres; else TRAINYARD_DATA_DIR for JSON files; else memory
 //   TRAINYARD_ADMIN_KEY          bootstrap admin API key (turns auth on)
+//   TRAINYARD_PLATFORM_ADMINS    comma-separated emails of platform admins (support console, every workspace)
 //   TRAINYARD_SECRET             encrypts Miro/Lucid/Mural/monday/Trello tokens at rest (falls back to the admin key)
 //   ANTHROPIC_API_KEY            AI facilitation through Claude (model: TRAINYARD_AI_MODEL)
 //   TRAINYARD_LLM_URL            or any OpenAI-compatible server, e.g. http://ollama:11434/v1
@@ -71,6 +72,12 @@ async function main() {
   }
   console.log(assist ? `[assist] ${assist.name}` : "[assist] off (set ANTHROPIC_API_KEY, or TRAINYARD_LLM_URL for a local model)");
 
+  const platformAdminEmails = (process.env.TRAINYARD_PLATFORM_ADMINS ?? "").split(",").map((e) => e.trim()).filter(Boolean);
+  if (platformAdminEmails.length) {
+    const known = platformAdminEmails.filter((e) => store.state.users.some((u) => u.email.toLowerCase() === e.toLowerCase()));
+    console.log(`[auth] platform admins by email: ${platformAdminEmails.length} listed, ${known.length} with an account`);
+  }
+
   const secret = process.env.TRAINYARD_SECRET ?? adminKey;
   if (!secret) console.log("[connections] no TRAINYARD_SECRET: board connections will not survive a restart");
   else if (!process.env.TRAINYARD_SECRET && env === "production") console.log("[connections] TRAINYARD_SECRET not set: tokens are sealed with the admin key; set a separate secret so rotating one does not break the other");
@@ -78,6 +85,7 @@ async function main() {
   const app = await buildApp({
     store,
     ...(adminKey ? { bootstrapAdminKey: adminKey } : {}),
+    ...(platformAdminEmails.length ? { platformAdminEmails } : {}),
     ...(secret ? { secret } : {}),
     ...(assist ? { assist } : {}),
     ...(process.env.TRAINYARD_WEBHOOK_SECRET ? { webhookSecret: process.env.TRAINYARD_WEBHOOK_SECRET } : {}),
@@ -90,6 +98,8 @@ async function main() {
     trustProxy: process.env.TRAINYARD_TRUST_PROXY === "1" ? true : env === "production" ? proxyTrust(process.env.TRAINYARD_TRUSTED_PROXIES ? process.env.TRAINYARD_TRUSTED_PROXIES.split(",") : undefined) : false,
     rateLimitPerMinute: Number(process.env.TRAINYARD_RATE_LIMIT ?? 600),
     ...(process.env.TRAINYARD_SIGNUP_WEBHOOK ? { signupWebhook: process.env.TRAINYARD_SIGNUP_WEBHOOK } : {}),
+    // Retention: days idle before a class is archived, days archived before it is emailed out and deleted; 0 turns either off.
+    retention: { archiveDays: Number(process.env.TRAINYARD_RETENTION_ARCHIVE_DAYS ?? 180), deleteDays: Number(process.env.TRAINYARD_RETENTION_DELETE_DAYS ?? 365) },
     billing: {
       ...(process.env.STRIPE_SECRET_KEY ? { secretKey: process.env.STRIPE_SECRET_KEY } : {}),
       ...(process.env.STRIPE_PUBLISHABLE_KEY ? { publishableKey: process.env.STRIPE_PUBLISHABLE_KEY } : {}),
@@ -104,6 +114,7 @@ async function main() {
       },
       // Stripe sends people back to the website: the first (canonical) origin.
       ...(process.env.TRAINYARD_WEB_URL ? { webUrl: process.env.TRAINYARD_WEB_URL.split(",")[0]!.trim() } : {}),
+      ...(process.env.TRAINYARD_WEB_MIRROR_URL?.trim() ? { webMirrorUrl: process.env.TRAINYARD_WEB_MIRROR_URL.trim() } : {}),
       // Every paid plan starts with a free trial; 0 turns it off.
       trialDays: Number(process.env.STRIPE_TRIAL_DAYS ?? 30),
       // Trainyard's own customer portal when the Stripe account also bills other products.
@@ -126,6 +137,19 @@ async function main() {
       () => console.log(`[mail] logged in to ${where}: mail can be sent`),
       (e: Error) => console.error(`[mail] cannot log in to ${where}: ${e.message}`),
     );
+  }
+  // Catch pasted look-alikes (a key's ID, a placeholder) at start instead of on the first customer.
+  const keyShape: [string, RegExp, string][] = [
+    ["STRIPE_SECRET_KEY", /^(sk|rk)_(live|test)_/, "sk_live_… (Developers → API keys → Secret key; mk_… is the key's ID, not the key)"],
+    ["STRIPE_PUBLISHABLE_KEY", /^pk_(live|test)_/, "pk_live_…"],
+    ["STRIPE_WEBHOOK_SECRET", /^whsec_/, "whsec_… (Webhooks → your endpoint → Signing secret; we_… is the endpoint's ID)"],
+  ];
+  for (const [name, shape, want] of keyShape) {
+    const v = process.env[name];
+    if (v && !shape.test(v.trim())) console.error(`[billing] ${name} does not look right: it should start with ${want}`);
+  }
+  for (const [name, v] of Object.entries(process.env)) {
+    if (name.startsWith("STRIPE_PRICE_") && v && !/^price_[A-Za-z0-9]{8,}$/.test(v.trim())) console.error(`[billing] ${name} does not look right ("${v.slice(0, 14)}…"): use the price ID from Stripe → Product catalog, price_…`);
   }
   console.log(process.env.STRIPE_SECRET_KEY ? `[billing] Stripe on, ${process.env.STRIPE_PUBLISHABLE_KEY ? "paid in page" : "hosted Checkout (set STRIPE_PUBLISHABLE_KEY to pay in page)"}${process.env.STRIPE_WEBHOOK_SECRET ? "" : "; no STRIPE_WEBHOOK_SECRET: renewals and cancellations will not be tracked"}` : "[billing] off (set STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET and the STRIPE_PRICE_* ids)");
   const shutdown = async () => {

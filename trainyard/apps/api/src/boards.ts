@@ -5,11 +5,12 @@
 import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
-import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer } from "@trainyard/core";
+import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer, classTeams, teamRounds } from "@trainyard/core";
 import { TEMPLATE_CATALOG, TEMPLATE_PACKAGES, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, needsTemplateUpgrade, templateFrom, templateRevision, upgradeFromTemplate, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
+import { stream } from "./events.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
 import type { Store } from "./store.js";
@@ -74,7 +75,7 @@ const MappingBody = z.object({
   createMissingTeams: z.boolean().optional(),
 });
 
-export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
+export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void>; /** Runs before a board is removed (a class's record is emailed to its trainer). */ beforeDelete?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
   const s = () => store.state;
   const boards = () => (s().workspace.boards ??= []);
   const findBoard = (id: string) => boards().find((b) => b.id === id) ?? (() => { throw notFound("Board"); })();
@@ -89,7 +90,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       throw e;
     }
   };
-  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, roomId: b.roomId ?? null, shape: boardShape(b), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
+  const summary = (b: Board) => ({ id: b.id, name: b.name, origin: b.origin, isTemplate: b.isTemplate, templateId: b.templateId, roomId: b.roomId ?? null, shape: boardShape(b), ...(b.fields?.class ? { class: b.fields.class } : {}), ...(typeof b.fields?.archived === "string" ? { archived: b.fields.archived } : {}), ...(typeof b.fields?.touchedAt === "string" ? { touchedAt: b.fields.touchedAt } : {}), counts: { frames: b.frames.length, nodes: b.nodes.length, edges: b.edges.length, columns: b.columns.length, rows: b.rows.length } });
 
   // ---- connections -------------------------------------------------------------------
   app.get("/v1/connections", async () => ({ connections: s().connections.map(publicConnection), sources: CONNECTION_FIELDS, persistent: secrets.persistent }));
@@ -271,6 +272,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = findBoard(id);
     const a = boardAccess(b, s().rooms ?? [], roomViewer(req.principal));
     if (!canView(a)) throw notFound("Board");
+    // An archived class is closed to its students; the trainer still opens it, to export or to reopen.
+    if (req.principal.guestBoardId && b.fields?.archived) throw new ApiError(410, "CLASS_ARCHIVED", "This class has ended and its board is archived. Ask your trainer for a copy of the work.");
     if (need === "edit" && !canEdit(a)) throw new ApiError(403, "FORBIDDEN", "This board's room lets you look but not change it.");
     return b;
   };
@@ -311,8 +314,12 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   });
   app.delete("/v1/boards/:id", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
     require(req, "plan");
-    reach(req, req.params.id, "edit");
+    const gone = reach(req, req.params.id, "edit");
+    await hooks.beforeDelete?.(req, gone);
     s().workspace.boards = boards().filter((b) => b.id !== req.params.id);
+    // Its planning room goes with it.
+    const docs = s().workspace.docs;
+    if (docs) delete docs[`planning-room:${req.params.id}`];
     await store.commit(req.principal, "board.delete", { id: req.params.id });
     return reply.code(204).send();
   });
@@ -339,7 +346,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     require(req, "plan");
     const t = reach(req, req.params.id, "view");
     if (!t.isTemplate) throw new ApiError(422, "NOT_A_TEMPLATE", "Only templates can be instantiated. Save this board as a template first.");
-    const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
+    const b = owned(req, instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString()));
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
     return reply.code(201).send({ board: summary(b) });
@@ -397,6 +404,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     if (t.fields?.class) requireSignup(req, "Running a class board");
     const b = instantiate(t, `b-${Date.now().toString(36)}`, req.body.name, store.now().toISOString());
     if (t.fields?.class) b.fields = { ...b.fields, templateRev: templateRevision(t) };
+    owned(req, b);
     if (req.body.roomId) b.roomId = intoRoom(req, req.body.roomId);
     boards().push(b);
     await store.commit(req.principal, "board.instantiate", { id: b.id, template: t.id });
@@ -406,6 +414,13 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   const editable = (req: FastifyRequest, id: string) => {
     const b = reach(req, id, "edit");
     if (b.isTemplate) throw new ApiError(422, "TEMPLATE_READ_ONLY", "Templates are not edited in place. Create a board from it first.");
+    // When the board was last worked on: what the retention sweep goes by (retention.ts).
+    b.fields = { ...(b.fields ?? {}), touchedAt: store.now().toISOString() };
+    return b;
+  };
+  /** The person a class belongs to: who made it, for the emailed record when it goes. */
+  const owned = (req: FastifyRequest, b: Board) => {
+    if (!req.principal.guestBoardId && !req.principal.anonymous) b.fields = { ...(b.fields ?? {}), ownerId: req.principal.userId };
     return b;
   };
 
@@ -461,7 +476,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     /** A picture for an image card (data URL). */
     src: ImageData.optional(),
     /** Typed card fields, merged into the card's fields. */
-    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").optional(),
+    fields: z.record(z.string().max(60), z.union([z.string().max(4000), z.number(), z.boolean(), z.null()])).refine((f) => Object.keys(f).length <= 50, "At most 50 fields").refine((f) => f.link == null || (typeof f.link === "string" && /^(https?:\/\/|\/(?!\/))/i.test(f.link)), "A card's link is an http(s) address or a page of this site").optional(),
   });
   const asRef = (r: { kind: RefKind; id: string; boardId?: string | undefined }): Ref => ({ kind: r.kind, id: r.id, ...(r.boardId ? { boardId: r.boardId } : {}) });
   const checkRef = (ref: Ref) => {
@@ -618,6 +633,18 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = editable(req, req.params.id);
     const f = b.frames.find((x) => x.id === req.params.frameId);
     if (!f) throw notFound("Frame");
+    // A student's link writes their own team's part of the exercise only (teams.ts prefixes a team's
+    // keys with its id), and never the class's own setup of an exercise (participatory budgeting).
+    if (req.principal.guestBoardId) {
+      const sid = req.principal.userId.replace(/^guest:/, "");
+      const rounds = [classTeams(b), ...teamRounds(b)];
+      const all = new Set(rounds.flat().map((t) => t.id));
+      const mine = new Set(rounds.flat().filter((t) => t.members.includes(sid)).map((t) => t.id));
+      const key = req.body.key;
+      const prefix = key.includes("|") ? key.slice(0, key.indexOf("|")) : "";
+      const table = /^pbbids:(.+)$/.exec(key)?.[1];
+      if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
+    }
     const state = (f.state ??= {});
     const before = JSON.stringify(state).length;
     const value = applyStateOp(state, req.body as StateOp, () => `s${Date.now().toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`);
@@ -640,6 +667,11 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     const b = reach(req, req.params.id, "view");
     const t = b.fields?.timer as ClassTimer | undefined;
     return { timer: t ?? null, left: t ? timerLeft(t, store.now()) : 0, now: store.now().toISOString(), rev: boardRevision(b) };
+  });
+  // Live push: one stream per open board; a change notice arrives on every commit that touched it.
+  app.get("/v1/boards/:id/events", { schema: { params: z.object({ id: Id }) } }, async (req, reply) => {
+    const b = reach(req, req.params.id, "view");
+    stream(req, reply, `board:${b.id}`, { rev: boardRevision(b) });
   });
   app.put("/v1/boards/:id/timer", { schema: { params: z.object({ id: Id }), body: z.discriminatedUnion("action", [z.object({ action: z.literal("start"), label: z.string().min(1).max(120), seconds: z.number().int().min(5).max(6 * 3600), frameId: Id.optional() }), z.object({ action: z.enum(["pause", "resume", "stop"]) }), z.object({ action: z.literal("add"), seconds: z.number().int().min(-3600).max(3600) })]) } }, async (req) => {
     require(req, "plan");

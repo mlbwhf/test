@@ -24,6 +24,8 @@ export interface Signup {
   email: string;
   plan: Plan;
   audience: "trainer" | "enterprise";
+  /** Signing up as one trainer, or as a company that manages its instructors. */
+  account?: "individual" | "company";
   company?: string;
   /** Trains (Academy) or trainers (Trainer) the person expects to need. */
   seats?: number;
@@ -66,6 +68,7 @@ const Body = z.object({
   email: z.string().trim().email().max(200),
   plan: z.enum(PLANS),
   audience: z.enum(["trainer", "enterprise"]).default("trainer"),
+  account: z.enum(["individual", "company"]).default("individual"),
   company: z.string().trim().max(120).optional(),
   seats: z.number().int().min(1).max(100_000).optional(),
   note: z.string().trim().max(1000).optional(),
@@ -107,7 +110,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
     const key = newKey();
     const user: User = { id: `u-${store.now().getTime().toString(36)}-${Math.random().toString(36).slice(2, 5)}`, name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}), ...(signup.emailVerifiedAt ? { emailVerifiedAt: signup.emailVerifiedAt } : {}) };
     store.state.users.push(user);
-    const ws = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: "practice", seats: 1, ownerUserId: user.id }, actor);
+    const ws = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: "practice", seats: 1, ownerUserId: user.id, ...(signup.account === "company" ? { kind: "company" as const } : {}) }, actor);
     user.workspaceId = ws.id;
     signup.status = "invited";
     signup.userId = user.id;
@@ -130,6 +133,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
     const { website, ...body } = req.body;
     if (website) return reply.code(202).send({ ok: true });
     if (BLOCKED_DOMAINS.test(body.email)) throw new ApiError(422, "BAD_EMAIL", "Use the email address you read.");
+    if (body.account === "company" && !body.company) throw new ApiError(422, "COMPANY_NAME", "Give the company's name.");
     const email = body.email.toLowerCase();
     // Every sign-in is made once per email. Paying for a plan on an email that already signs in
     // happens from Billing, signed in, so a sign-up can never take over someone's account.
@@ -140,7 +144,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
       // so it is issued afresh to whoever asked last and the earlier one stops working.
       const id = signupId();
       for (const p of store.state.purchases ?? []) if (p.signupId === existing.id) p.signupId = id;
-      Object.assign(existing, { id, plan: body.plan, audience: body.audience, ...(body.company ? { company: body.company } : {}), ...(body.seats ? { seats: body.seats } : {}), ...(body.note ? { note: body.note } : {}) });
+      Object.assign(existing, { id, plan: body.plan, audience: body.audience, account: body.account, ...(body.company ? { company: body.company } : {}), ...(body.seats ? { seats: body.seats } : {}), ...(body.note ? { note: body.note } : {}) });
       if (body.password) existing.passwordHash = hashPassword(body.password);
       else delete existing.passwordHash;
       // Whoever asked again proves the address again.
@@ -154,6 +158,7 @@ export function registerSignupRoutes(app: App, tenants: Tenants, opts: SignupOpt
       email,
       plan: body.plan,
       audience: body.audience,
+      account: body.account,
       ...(body.company ? { company: body.company } : {}),
       ...(body.seats ? { seats: body.seats } : {}),
       ...(body.note ? { note: body.note } : {}),

@@ -22,6 +22,7 @@ interface BoardSummary {
   templateId?: string;
   isTemplate?: boolean;
   origin: { system?: string; importedAt: string };
+  archived?: string;
 }
 
 const ROLES = ["Release train engineer", "Product owner", "Scrum master", "Developer", "Business owner", "System architect", "Product manager", "UX lead"];
@@ -126,7 +127,7 @@ function ClassLibrary({ running, busy, anonymous, onStart, reload }: { running: 
                 </header>
                 <ol className="lib-card-lessons">
                   {c.lessons.map((l, k) => (
-                    <li key={l.title}>
+                    <li key={`${k}:${l.title}`}>
                       <b>{String(k + 1).padStart(2, "0")}</b> {l.title}
                     </li>
                   ))}
@@ -144,7 +145,7 @@ function ClassLibrary({ running, busy, anonymous, onStart, reload }: { running: 
           })}
         </div>
 
-        <BoardList title="Your classes" boards={mine.map((b) => ({ id: b.id, name: b.name, templateId: b.templateId, importedAt: b.origin.importedAt }))} onChanged={reload} empty="None yet. Start a class above." />
+        <BoardList title="Your classes" boards={mine.map((b) => ({ id: b.id, name: b.name, templateId: b.templateId, importedAt: b.origin.importedAt, archived: b.archived }))} onChanged={reload} empty="None yet. Start a class above." />
       </div>
     </div>
   );

@@ -1,12 +1,12 @@
 // Each class has its own icon: the certification badge where the class earns one (RTE), otherwise
 // a shield with the class's short name in the class's own tint.
 
-import { CLASSES } from "@trainyard/core";
+import { CLASS_META } from "@trainyard/core";
 
-const BADGES: Record<string, string> = { rte: "/courses/rte/badge.png" };
-const TINTS: Record<string, string> = { "leading-safe": "#cfe8d4", spc: "#cde0f2", aspc: "#f6b9ae", popm: "#ffd37a", rte: "#ffd37a" };
+const BADGES: Record<string, string> = { rte: "/courses/rte/badge.png", "leading-safe": "/courses/lsa/badge-leading-safe.webp", aart: "/courses/aart/badge.png", lpm: "/courses/lpm/badge.png", "lpm-ws": "/courses/lpm/badge.png" };
+const TINTS: Record<string, string> = { "leading-safe": "#cfe8d4", spc: "#cde0f2", aspc: "#f6b9ae", popm: "#ffd37a", rte: "#ffd37a", aiva: "#d9cdf0" };
 
-export const classSpec = (classId: unknown) => CLASSES.find((c) => c.id === classId);
+export const classSpec = (classId: unknown) => CLASS_META.find((c) => c.id === classId);
 export const classShort = (classId: unknown, name: string) => classSpec(classId)?.short ?? name.replace(/[^A-Z0-9]/g, "").slice(0, 4) ?? "CL";
 
 export function ClassIcon({ classId, name, size = 64, locked = false }: { classId: unknown; name: string; size?: number; locked?: boolean }) {

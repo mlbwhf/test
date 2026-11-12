@@ -123,9 +123,21 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const purchases = () => (store.state.purchases ??= []);
   const signups = () => store.state.signups ?? [];
   const stripe = async (path: string, body?: Record<string, string | number | undefined>, method: "GET" | "POST" | "DELETE" = body ? "POST" : "GET"): Promise<StripeObject> => {
-    const res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` } } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}) });
-    const json = (await res.json()) as { error?: { message?: string } } & StripeObject;
-    if (!res.ok) throw new ApiError(502, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
+    // A time limit, so a slow Stripe gives a readable answer before the proxy in front gives up silently.
+    const signal = AbortSignal.timeout(20_000);
+    let res: Response;
+    try {
+      res = await f(`https://api.stripe.com/v1/${path}`, method === "GET" || method === "DELETE" ? { method, headers: { authorization: `Bearer ${opts.secretKey}` }, signal } : { method, headers: { authorization: `Bearer ${opts.secretKey}`, "content-type": "application/x-www-form-urlencoded" }, body: form(body ?? {}), signal });
+    } catch (e) {
+      console.error(`[billing] Stripe ${method} ${path} did not answer: ${(e as Error).message}`);
+      throw new ApiError(503, "STRIPE_TIMEOUT", "The payment service did not answer in time. Try again in a moment.");
+    }
+    const json = (await res.json().catch(() => ({}))) as { error?: { message?: string } } & StripeObject;
+    if (!res.ok) {
+      console.error(`[billing] Stripe ${method} ${path} refused (${res.status}): ${json.error?.message ?? "no message"}`);
+      // 503, not 502: the proxy in front (Cloudflare) swaps 502 and 504 answers for its own page, and the browser could not read the reason.
+      throw new ApiError(503, "STRIPE", json.error?.message ?? `Stripe answered ${res.status}.`);
+    }
     return json;
   };
   const web = () => (opts.webUrl ?? "").replace(/\/$/, "");
@@ -245,6 +257,19 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
   const newId = (p: string) => `${p}-${store.now().getTime().toString(36)}-${randomBytes(9).toString("base64url")}`;
 
   /** Payment is in. New customer: user + workspace, key kept for one pickup. Existing workspace: plan and seats applied. */
+  /**
+   * Stripe calls a subscription with a free trial "trialing" the moment it exists, before the
+   * card is saved. It is live for us once it is active, or trialing with a payment method on it
+   * (set when the card form confirms) or on its customer.
+   */
+  const isLive = (sub: StripeObject) => {
+    const status = String(sub.status ?? "");
+    if (status === "active") return true;
+    if (status !== "trialing") return false;
+    const customer = sub.customer as StripeObject | string | null | undefined;
+    const onCustomer = typeof customer === "object" && customer ? (customer.invoice_settings as StripeObject | undefined)?.default_payment_method : undefined;
+    return !!(sub.default_payment_method ?? onCustomer ?? sub.default_source);
+  };
   const fulfil = async (purchase: Purchase, patch: Partial<Purchase> = {}) => {
     if (purchase.workspaceId) {
       const record = tenants.record(purchase.workspaceId);
@@ -273,7 +298,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const key = newKey();
     const user: User = { id: newId("u"), name: signup.name, email: signup.email, role: "admin", keyHash: hashKey(key), createdAt: store.now().toISOString(), ...(signup.passwordHash ? { passwordHash: signup.passwordHash } : {}), ...(signup.emailVerifiedAt ? { emailVerifiedAt: signup.emailVerifiedAt } : {}) };
     store.state.users.push(user);
-    const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id }, STRIPE_ACTOR);
+    const record = await tenants.create({ name: signup.company ?? `${signup.name}'s workspace`, plan: purchase.plan, seats: purchase.quantity, ownerUserId: user.id, ...(signup.account === "company" ? { kind: "company" as const } : {}) }, STRIPE_ACTOR);
     user.workspaceId = record.id;
     Object.assign(purchase, patch, { status: "paid" as const, paidAt: store.now().toISOString(), userId: user.id, workspaceId: record.id, pendingKey: key });
     signup.status = "invited";
@@ -359,7 +384,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const invoice = sub.latest_invoice as StripeObject | null;
     const intent = (invoice?.payment_intent as StripeObject | null) ?? (sub.pending_setup_intent as StripeObject | null);
     const clientSecret = intent?.client_secret as string | undefined;
-    if (!clientSecret) throw new ApiError(502, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
+    if (!clientSecret) throw new ApiError(503, "STRIPE", "Stripe returned a subscription without a payment to confirm.");
     const trialEnd = typeof sub.trial_end === "number" ? new Date(sub.trial_end * 1000).toISOString() : undefined;
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
     const unitAmount = Number((item?.price as StripeObject | undefined)?.unit_amount ?? 0);
@@ -396,7 +421,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     if (req.body.quantity < inUse) throw new ApiError(422, "SEATS_IN_USE", `${inUse} ${record.plan === "academy" ? "trains" : "trainers"} are in use; remove some before going below that.`);
     const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
-    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    if (!item?.id) throw new ApiError(503, "STRIPE", "The subscription has no item to change.");
     await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][quantity]": req.body.quantity, proration_behavior: "always_invoice" });
     p.quantity = req.body.quantity;
     record.seats = req.body.quantity;
@@ -416,7 +441,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const price = priceFor(record.plan, req.body.interval);
     const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`);
     const item = ((sub.items as { data?: StripeObject[] } | undefined)?.data ?? [])[0];
-    if (!item?.id) throw new ApiError(502, "STRIPE", "The subscription has no item to change.");
+    if (!item?.id) throw new ApiError(503, "STRIPE", "The subscription has no item to change.");
     await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId!)}`, { "items[0][id]": String(item.id), "items[0][price]": price, "items[0][quantity]": p.quantity, proration_behavior: "always_invoice" });
     p.interval = req.body.interval;
     await store.commit(req.principal, "billing.interval", { purchase: p.id, workspaceId: record.id, interval: p.interval });
@@ -463,7 +488,7 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
       ...(enabled && opts.publishableKey ? { publishableKey: opts.publishableKey } : {}),
       plans: enabled ? Object.fromEntries(Object.entries(opts.prices ?? {}).map(([k, v]) => [k, !!v])) : {},
       workspace: record ?? null,
-      limits: record ? limitsFor(record.plan, record.seats) : null,
+      limits: record ? limitsFor(record.plan, record.seats, record.kind) : null,
       usage,
       subscription: latest ? { id: latest.id, status: latest.status, plan: latest.plan, interval: latest.interval, quantity: latest.quantity, paidAt: latest.paidAt, trialEndsAt: latest.trialEndsAt, firstPaidAt: latest.firstPaidAt, refundedAt: latest.refundedAt, lastInvoiceAt: latest.lastInvoiceAt, lastFailureAt: latest.lastFailureAt, cancelledAt: latest.cancelledAt, hasSubscription: !!latest.subscriptionId, guaranteeUntil: latest.firstPaidAt ? new Date(Date.parse(latest.firstPaidAt) + GUARANTEE_DAYS * 86_400_000).toISOString() : null, trialDays: opts.trialDays ?? 0 } : null,
       trialDays: opts.trialDays ?? 0,
@@ -590,7 +615,12 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
               p.amountCents = Number(subPrice.unit_amount) * Number(subItem?.quantity ?? p.quantity);
               p.currency = String(subPrice.currency ?? p.currency ?? "usd");
             }
-            if ((status === "trialing" || status === "active") && p.status === "open") await fulfil(p);
+            if (isLive(obj) && p.status === "open") await fulfil(p);
+            else if (status === "trialing" && p.status === "open") {
+              // Card not saved yet: nothing is created or sent until it is.
+              await store.commit(STRIPE_ACTOR, "billing.awaiting-card", { purchase: p.id });
+              return reply.code(200).send({ ok: true, awaitingCard: true });
+            }
             else if (status === "past_due" || status === "unpaid") {
               p.status = status === "unpaid" ? "cancelled" : "past_due";
               p.lastFailureAt = store.now().toISOString();
@@ -644,9 +674,8 @@ export async function registerBillingRoutes(app: App, tenants: Tenants, opts: Bi
     const p = purchases().find((x) => (req.body.purchaseId && x.id === req.body.purchaseId) || (req.body.sessionId && x.checkoutSessionId === req.body.sessionId));
     if (!p) throw notFound("Purchase");
     if (p.status === "open" && p.subscriptionId && enabled) {
-      const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId)}`);
-      const status = String(sub.status ?? "");
-      if (status === "active" || status === "trialing") await fulfil(p);
+      const sub = await stripe(`subscriptions/${encodeURIComponent(p.subscriptionId)}?expand[]=customer`);
+      if (isLive(sub)) await fulfil(p);
     }
     if (p.status !== "paid") return { status: p.status };
     const key = p.pendingKey;

@@ -47,13 +47,19 @@ import {
 import { registerAssistRoutes } from "./assist.js";
 import { registerBoardRoutes } from "./boards.js";
 import { SecretBox } from "./secrets.js";
-import { registerPasswordReset } from "./password-reset.js";
+import { registerPasswordReset, ResetCodes } from "./password-reset.js";
+import { registerInstructorRoutes } from "./instructors.js";
+import { registerCompanyRoutes } from "./company.js";
 import { registerAuth, registerUserRoutes, require, type AuthOptions, type Principal } from "./auth.js";
 import { clientIp, type ProxyTrust } from "./proxies.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import { registerPortfolioRoutes } from "./portfolio.js";
 import { registerValueStreamRoutes } from "./valuestreams.js";
 import { registerCanvasRoutes } from "./canvases.js";
+import { registerDocRoutes } from "./docs.js";
+import { onCommit as liveOnCommit } from "./events.js";
+import { DEFAULT_RETENTION, registerRetention, type RetentionOptions } from "./retention.js";
+import { registerPlanningRoutes } from "./planning.js";
 import { registerBillingRoutes, type BillingOptions } from "./billing.js";
 import { registerAdminRoutes } from "./admin.js";
 import { registerRefRoutes } from "./refs.js";
@@ -99,6 +105,8 @@ export interface AppOptions extends AuthOptions {
   signupWebhook?: string;
   /** Stripe Checkout for the paid plans; without a secret key sign-ups stay requests handled by hand. */
   billing?: BillingOptions;
+  /** How long classes are kept (retention.ts); unset means the defaults, with mail from `billing`. */
+  retention?: Partial<RetentionOptions>;
 }
 
 // Loose schemas: the domain functions do the real validation and return readable issues.
@@ -162,6 +170,8 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   // The platform store is the operator's own workspace plus everything that spans workspaces;
   // `store` below is a proxy that resolves to the request's workspace (see tenants.ts).
   const tenants = new Tenants(opts.store ?? new Store());
+  // Live push: pages watching a board or document hear about every commit that touched it (events.ts).
+  tenants.platform.onCommit = liveOnCommit;
   const store = tenants.handle;
   const metrics = new MetricRegistry();
   for (const m of [...PORTFOLIO_METRICS, ...AI_METRICS]) metrics.register(m);
@@ -707,7 +717,7 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
     allowance: (req) => {
       const record = tenants.record(req.principal.workspaceId);
       if (!record) return null;
-      const l = limitsFor(record.plan, record.seats);
+      const l = limitsFor(record.plan, record.seats, record.kind);
       return { rooms: l.rooms, privateRooms: l.privateRooms };
     },
   });
@@ -756,15 +766,21 @@ export async function buildApp(opts: AppOptions = {}): Promise<FastifyInstance &
   registerPortfolioRoutes(app, store, metrics);
   registerValueStreamRoutes(app, store);
   registerCanvasRoutes(app, store);
+  registerDocRoutes(app, store);
+  registerPlanningRoutes(app, store);
   registerOutcomeRoutes(app, store);
   registerAiNativeRoutes(app, store);
   await registerBillingRoutes(app, tenants, { ...opts.billing, emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.fetch ? {} : opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}) });
   registerSignupRoutes(app, tenants, { ...(opts.signupWebhook ? { webhookUrl: opts.signupWebhook } : {}), ...(opts.importFetch ? { fetch: opts.importFetch as typeof fetch } : {}), emailVerification: opts.emailVerification ?? "off", ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}) });
   registerIdentityRoutes(app, { emailVerification: opts.emailVerification ?? "off", sso: opts.sso ?? [] });
   registerAssistRoutes(app, store, metrics, opts.assist);
-  registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store) });
-  registerPasswordReset(app, tenants, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
-  registerStudentRoutes(app, tenants, store, { ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  const retention = registerRetention(app, tenants, store, { ...DEFAULT_RETENTION, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}), ...(opts.retention ?? {}) });
+  registerBoardRoutes(app, store, new SecretBox(opts.secret), opts.importFetch, { afterReset: seatClass(tenants, store), beforeDelete: retention.beforeDelete });
+  const codes = new ResetCodes();
+  registerPasswordReset(app, tenants, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  registerCompanyRoutes(app, tenants, store);
+  registerInstructorRoutes(app, tenants, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
+  registerStudentRoutes(app, tenants, store, { codes, ...(opts.billing?.mailer ? { mailer: opts.billing.mailer } : {}), ...(opts.billing?.webUrl ? { webUrl: opts.billing.webUrl } : {}) });
 
   return Object.assign(app, { sync });
 }

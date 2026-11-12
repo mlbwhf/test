@@ -114,7 +114,7 @@ export function registerInsightRoutes(app: App, store: Store, tenants: Tenants) 
     const existed = s.sources.some((x) => x.id === id);
     const record = tenants.record(req.principal.workspaceId);
     if (record && !existed) {
-      const limit = limitsFor(record.plan, record.seats).sources;
+      const limit = limitsFor(record.plan, record.seats, record.kind).sources;
       const current = usageOf(s2(), []).sources;
       if (limit !== null && current + 1 > limit) throw planLimitError(record, "sources", limit, current);
     }

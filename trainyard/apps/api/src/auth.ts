@@ -40,6 +40,8 @@ export interface User {
    * sign-on through OIDC or SAML adds one entry per provider, keyed by its subject id.
    */
   identities?: { provider: string; subject: string; linkedAt: string }[];
+  /** In a company: the courses (class ids, e.g. "leading-safe", "lpm") this instructor teaches. */
+  courses?: string[];
 }
 
 export interface Principal {
@@ -57,7 +59,24 @@ export interface Principal {
   support?: boolean;
   /** A student who joined by link: the one class board they may work on (students.ts). */
   guestBoardId?: string;
+  /** A co-instructor (a viewer, using no trainer seat) running this class: planner on its routes only. */
+  coInstructorOf?: string;
 }
+
+/** The class board a request is about: /v1/boards/<id>… or the class's planning room document. */
+export function classBoardOfUrl(url: string): string | undefined {
+  const path = url.split("?")[0] ?? url;
+  const m = /^\/v1\/boards\/([^/]+)/.exec(path) ?? /^\/v1\/docs\/planning-room(?::|%3A)([^/]+)/i.exec(path);
+  if (!m) return undefined;
+  try {
+    return decodeURIComponent(m[1]!);
+  } catch {
+    return undefined;
+  }
+}
+
+/** Whether the user is named a co-instructor on the board (students.ts adds them). */
+export const isCoInstructor = (b: { fields?: Record<string, unknown> } | undefined, userId: string): boolean => !!b && Array.isArray(b.fields?.instructors) && (b.fields!.instructors as unknown[]).includes(userId);
 
 /** What each role may do. Reads are open to every role. */
 export const PERMISSIONS = {
@@ -123,6 +142,11 @@ declare module "fastify" {
 export interface AuthOptions {
   /** Key for a bootstrap admin, usually from TRAINYARD_ADMIN_KEY. */
   bootstrapAdminKey?: string;
+  /**
+   * Emails of people who run the platform (TRAINYARD_PLATFORM_ADMINS), wherever their own account
+   * lives: they keep their workspace and also get the support console and every workspace.
+   */
+  platformAdminEmails?: string[];
 }
 
 /** Failed sign-ins per client before a 10-minute lockout. Keys are 192-bit random, so this only slows a guesser; it mostly keeps logs readable. */
@@ -132,6 +156,7 @@ const LOCKOUT_MS = 10 * 60 * 1000;
 export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {}) {
   const platform = tenants.platform;
   const bootstrapHash = opts.bootstrapAdminKey ? hashKey(opts.bootstrapAdminKey) : undefined;
+  const platformAdmins = new Set((opts.platformAdminEmails ?? []).map((e) => e.trim().toLowerCase()).filter(Boolean));
   const open = () => platform.state.users.length === 0 && !bootstrapHash;
   const failures = new Map<string, { count: number; since: number }>();
   const failed = (ip: string) => {
@@ -194,7 +219,8 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
       throw new ApiError(401, "UNAUTHORIZED", key.startsWith("ts_") ? "This session has ended; sign in again." : "This API key is not valid.");
     }
     const home = user.workspaceId ?? tenants.platformId;
-    return { userId: user.id, name: user.name, role: user.role, anonymous: false, workspaceId: home, platformAdmin: home === tenants.platformId && user.role === "admin", ...(user.personId ? { personId: user.personId } : {}) };
+    const named = platformAdmins.has(user.email.toLowerCase());
+    return { userId: user.id, name: user.name, role: user.role, anonymous: false, workspaceId: home, platformAdmin: (home === tenants.platformId && user.role === "admin") || named, ...(user.personId ? { personId: user.personId } : {}) };
   };
 
   // ---- email and password sign-in ---------------------------------------------------------
@@ -228,6 +254,13 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
         let target = principal.workspaceId;
         if (typeof asked === "string" && asked && asked !== principal.workspaceId) {
           if (!principal.platformAdmin) throw new ApiError(403, "FORBIDDEN", "Only platform admins can open another workspace.");
+          // A platform admin whose own account lives in a customer workspace opens the platform's as an admin.
+          if (asked === tenants.platformId) {
+            target = asked;
+            principal = { ...principal, workspaceId: asked, role: "admin" };
+            req.principal = principal;
+            return platform;
+          }
           const record = tenants.record(asked);
           if (!record) throw notFound("Workspace");
           target = asked;
@@ -240,7 +273,17 @@ export function registerAuth(app: App, tenants: Tenants, opts: AuthOptions = {})
         req.principal = principal;
         return target === tenants.platformId ? platform : tenants.get(target);
       })
-      .then((store) => tenants.run(store, done), done);
+      .then((store) => {
+        // A co-instructor joins as a viewer (no trainer seat) and runs the classes they are named
+        // on: for requests about such a class, they act as a planner; everywhere else, a viewer.
+        const p = req.principal;
+        if (p.role === "viewer" && !p.guestBoardId && !p.anonymous) {
+          const id = classBoardOfUrl(req.url);
+          const b = id ? (store.state.workspace.boards ?? []).find((x) => x.id === id) : undefined;
+          if (b && isCoInstructor(b, p.userId)) req.principal = { ...p, role: "planner", coInstructorOf: b.id };
+        }
+        tenants.run(store, done);
+      }, done);
   });
 }
 
@@ -307,7 +350,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       principal: req.principal,
       open: platform.state.users.length === 0,
       permissions: Object.fromEntries(Object.entries(PERMISSIONS).map(([k, roles]) => [k, (roles as readonly Role[]).includes(req.principal.role)])),
-      workspace: { id: ws.id, name: record?.name ?? ws.name, plan: record?.plan ?? "platform", seats: record?.seats ?? 0, status: record?.status ?? "active", ...(record?.frozenReason ? { frozenReason: record.frozenReason } : {}), platform: here(req) === tenants.platformId },
+      workspace: { id: ws.id, name: record?.name ?? ws.name, plan: record?.plan ?? "platform", kind: record?.kind ?? "individual", seats: record?.seats ?? 0, status: record?.status ?? "active", ...(record?.frozenReason ? { frozenReason: record.frozenReason } : {}), platform: here(req) === tenants.platformId },
     };
   });
 
@@ -326,7 +369,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       if (req.body.personId && !tenants.handle.state.workspace.people.some((p) => p.id === req.body.personId)) throw notFound("Person");
       const record = recordOf(req);
       if (record) {
-        const limits = limitsFor(record.plan, record.seats);
+        const limits = limitsFor(record.plan, record.seats, record.kind);
         const usage = usageOf(tenants.handle.state, members(req));
         if (limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
         if (limits.staff !== null && req.body.role !== "viewer" && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);
@@ -351,7 +394,7 @@ export function registerUserRoutes(app: App, tenants: Tenants) {
       // Turning someone back on counts against the plan like adding them; so does lifting a viewer.
       const enabling = !!u.disabled && req.body.disabled === false;
       const role = req.body.role ?? u.role;
-      const limits = limitsFor(record.plan, record.seats);
+      const limits = limitsFor(record.plan, record.seats, record.kind);
       const usage = usageOf(tenants.handle.state, members(req));
       if (enabling && limits.members !== null && usage.members + 1 > limits.members) throw planLimitError(record, "members", limits.members, usage.members);
       if (role !== "viewer" && (enabling || u.role === "viewer") && (enabling || !u.disabled) && limits.staff !== null && usage.staff + 1 > limits.staff) throw planLimitError(record, "staff", limits.staff, usage.staff);

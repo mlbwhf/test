@@ -7,11 +7,15 @@ import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type Ma
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
-import { ClassStudents } from "@/components/class-students";
-import { ImportActivities } from "@/components/activity-editor";
-import { AssistButton } from "@/components/assist";
+import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
-import { api, useApi, useMe, type ApiFailure } from "@/lib/api";
+import { api, download, useApi, useMe, type ApiFailure } from "@/lib/api";
+
+// Loaded when needed, not with the page: the planning room (its own bundle), and the trainer's panels.
+const PlanningRoomPage = dynamic(() => import("@/components/planning-pages").then((m) => m.PlanningRoomPage), { ssr: false, loading: () => <Loading error={null} /> });
+const ClassStudents = dynamic(() => import("@/components/class-students").then((m) => m.ClassStudents), { ssr: false });
+const ImportActivities = dynamic(() => import("@/components/activity-editor").then((m) => m.ImportActivities), { ssr: false });
+const AssistButton = dynamic(() => import("@/components/assist").then((m) => m.AssistButton as React.ComponentType<React.ComponentProps<typeof m.AssistButton<BoardReview>>>), { ssr: false });
 
 const SOURCE_LABEL: Record<string, string> = { miro: "Miro", lucid: "Lucid", mural: "Mural", monday: "monday.com", trello: "Trello", iobeya: "iObeya", csv: "CSV", json: "JSON", trainyard: "Trainyard" };
 
@@ -37,6 +41,8 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   const { board, shape } = view.data;
   // A class board shows a tab per lesson; a student who joined by link sees only that.
   const isClass = !!board.fields?.class;
+  // A board made from the "PI planning room" template is the planning room with its own document.
+  const isRoom = board.fields?.room === "planning";
   const guest = !!me.data?.principal.guestBoardId;
   if (guest) {
     return (
@@ -126,10 +132,34 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
                 <option value="template">Start fresh: remove learners&apos; work</option>
                 <option value="empty">Clear the whole board</option>
               </select>
+              <select
+                className="select"
+                aria-label="Download the class record"
+                value=""
+                onChange={(e) => {
+                  const f = e.target.value as "json" | "html" | "";
+                  if (!f) return;
+                  const stem = board.name.replace(/[^\w.-]+/g, "-").replace(/^-|-$/g, "").slice(0, 60) || "class";
+                  void download(`/v1/boards/${encodeURIComponent(board.id)}/export?format=${f}`, `${stem}.${f}`).then(() => (setErr(null), setDone(f === "html" ? "The printable report is downloading." : "The class record is downloading.")), (x: ApiFailure) => setErr(x.message));
+                }}
+              >
+                <option value="">Download record…</option>
+                <option value="html">Printable report (HTML)</option>
+                <option value="json">Full record (JSON, for keeping or importing)</option>
+              </select>
+              <button
+                className="btn"
+                onClick={() => {
+                  const archived = typeof board.fields?.archived === "string";
+                  if (archived || window.confirm("Archive this class? Students' links close and the class leaves your list; you keep it, can download it, and can reopen it. Archived classes are deleted after the retention period, with the record emailed to you first.")) void run(archived ? "The class is open again." : "The class is archived.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/archive`, { archived: !archived })).then(() => view.reload());
+                }}
+              >
+                {typeof board.fields?.archived === "string" ? "Reopen class" : "Archive class"}
+              </button>
               <button
                 className="btn ghost"
                 onClick={() => {
-                  if (window.confirm(`Delete "${board.name}"? Students' links stop working.`)) void api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}`).then(() => router.push("/classroom"), (e: ApiFailure) => setErr(e.message));
+                  if (window.confirm(`Delete "${board.name}"? Students' links stop working and the planning room goes with it. A copy of the class record is emailed to you first; use "Download record" if you want it on this computer too.`)) void api("DELETE", `/v1/boards/${encodeURIComponent(board.id)}`).then(() => router.push("/classroom"), (e: ApiFailure) => setErr(e.message));
                 }}
               >
                 Delete
@@ -149,7 +179,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
       {done ? <div className="notice" role="status">{done}</div> : null}
       {isClass && showStudents && !board.isTemplate ? <ClassStudents boardId={board.id} /> : null}
       {!board.isTemplate && !isClass ? (
-        <AssistButton<BoardReview>
+        <AssistButton
           label="Review this board"
           path={`/v1/assist/boards/${encodeURIComponent(board.id)}`}
           small
@@ -211,11 +241,17 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
 
       {tab === "board" ? (
         <>
-          {isClass ? (
+          {isRoom ? (
+            board.isTemplate ? (
+              <div className="panel panel-body faint">Create a board from this template: it opens as the planning room, with its own teams, PI calendar and backlog.</div>
+            ) : (
+              <PlanningRoomPage docKey={`planning-room:${board.id}`} mode="template" />
+            )
+          ) : isClass ? (
             <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
           {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
-          {shape === "empty" && board.isTemplate ? <div className="panel panel-body faint">This board is empty.</div> : null}
+          {shape === "empty" && board.isTemplate && !isRoom ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
       ) : (
         <Mapper board={board} shape={shape} levels={model.data?.model.workLevels ?? []} onApplied={(r) => setDone(`Added ${r.items.length} items, ${r.risks.length} risks, ${r.dependencies.length} dependencies${r.newTeams.length ? ` and ${r.newTeams.length} teams` : ""} to the plan.`)} onError={(e) => setErr(e)} />

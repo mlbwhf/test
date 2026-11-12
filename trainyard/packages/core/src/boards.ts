@@ -32,6 +32,11 @@ export interface Frame {
   done?: boolean;
   /** What people added on a purpose-built exercise board (activities.ts `board`), by key. */
   state?: Record<string, unknown>;
+  /** "stack": a kanban lane; its cards sit in one column from the top and a dropped card snaps into place (stack.ts). */
+  layout?: "stack";
+  /** A team's copy of a canvas exercise (teams.ts): the exercise it copies and the team it belongs to. */
+  copyOf?: string;
+  team?: string;
 }
 
 export type NodeKind = "sticky" | "card" | "text" | "shape" | "image" | "view" | "other";

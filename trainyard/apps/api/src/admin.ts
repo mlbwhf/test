@@ -43,7 +43,7 @@ export function registerAdminRoutes(app: App, tenants: Tenants) {
       owner: owner ? { id: owner.id, name: owner.name, email: owner.email, disabled: !!owner.disabled } : null,
       members: members.length,
       usage,
-      limits: limitsFor(r.plan, r.seats),
+      limits: limitsFor(r.plan, r.seats, r.kind),
       subscription: purchase ? { status: purchase.status, interval: purchase.interval, quantity: purchase.quantity, paidAt: purchase.paidAt, lastInvoiceAt: purchase.lastInvoiceAt, lastFailureAt: purchase.lastFailureAt, cancelledAt: purchase.cancelledAt, subscriptionId: purchase.subscriptionId } : null,
       lastActivityAt: last?.at ?? null,
       lastAction: last?.action ?? null,
@@ -62,7 +62,7 @@ export function registerAdminRoutes(app: App, tenants: Tenants) {
     return { workspace: await view(req.params.id), audit: await (await tenants.get(req.params.id)).recentAudit(30) };
   });
 
-  app.patch("/v1/admin/workspaces/:id", { schema: { params: Id, body: z.object({ name: z.string().min(1).max(120).optional(), plan: z.enum(PLANS).optional(), seats: z.number().int().min(1).max(10_000).optional(), status: z.enum(["active", "frozen"]).optional(), frozenReason: z.string().max(200).optional(), note: z.string().max(500).optional() }) } }, async (req) => {
+  app.patch("/v1/admin/workspaces/:id", { schema: { params: Id, body: z.object({ name: z.string().min(1).max(120).optional(), kind: z.enum(["individual", "company"]).optional(), plan: z.enum(PLANS).optional(), seats: z.number().int().min(1).max(10_000).optional(), status: z.enum(["active", "frozen"]).optional(), frozenReason: z.string().max(200).optional(), note: z.string().max(500).optional() }) } }, async (req) => {
     const me = requirePlatformAdmin(req);
     const r = record(req.params.id);
     const { status, frozenReason, ...rest } = req.body;

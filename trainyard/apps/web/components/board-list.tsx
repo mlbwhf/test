@@ -16,6 +16,8 @@ export interface ListedBoard {
   name: string;
   templateId?: string | undefined;
   importedAt?: string | undefined;
+  /** When the class was archived: closed to students, kept for the trainer, hidden unless asked for. */
+  archived?: string | undefined;
 }
 
 const BUILTIN = "tpl-builtin-class-";
@@ -24,6 +26,9 @@ export const isClassBoard = (b: ListedBoard) => !!b.templateId && (b.templateId.
 const classIdOf = (b: ListedBoard) => (b.templateId?.startsWith(BUILTIN) ? b.templateId.slice(BUILTIN.length) : undefined);
 
 export function BoardList({ boards, onChanged, title, empty, icon, extra, canEdit = true }: { boards: ListedBoard[]; onChanged: () => void; title?: ReactNode; empty?: ReactNode; /** The icon of a board that is not a class (a class shows its own). */ icon?: (b: ListedBoard) => ReactNode; /** More actions on a row, e.g. take it out of a room. */ extra?: (b: ListedBoard) => ReactNode; canEdit?: boolean }) {
+  const [showArchived, setShowArchived] = useState(false);
+  const archivedCount = boards.filter((b) => b.archived).length;
+  const listed = showArchived ? boards : boards.filter((b) => !b.archived);
   const [picked, setPicked] = useState<Set<string>>(new Set());
   const [inviting, setInviting] = useState<string | null>(null);
   const [working, setWorking] = useState(false);
@@ -61,6 +66,11 @@ export function BoardList({ boards, onChanged, title, empty, icon, extra, canEdi
         <header>
           {title ? <b className="blist-title">{title}</b> : null}
           <span className="grow" />
+          {archivedCount ? (
+            <label className="row" style={{ gap: 6, fontSize: 13 }}>
+              <input type="checkbox" checked={showArchived} onChange={(e) => setShowArchived(e.target.checked)} /> Show archived ({archivedCount})
+            </label>
+          ) : null}
           {canEdit && boards.length ? (
             <>
               <label className="row" style={{ gap: 6, fontSize: 13 }}>
@@ -74,8 +84,8 @@ export function BoardList({ boards, onChanged, title, empty, icon, extra, canEdi
         </header>
       ) : null}
       {err ? <ErrorList title="That did not work" items={[{ message: err }]} /> : null}
-      {boards.length ? (
-        boards.map((b) => {
+      {listed.length ? (
+        listed.map((b) => {
           const cls = isClassBoard(b);
           return (
             <div key={b.id} className="blist-row">
@@ -86,6 +96,7 @@ export function BoardList({ boards, onChanged, title, empty, icon, extra, canEdi
                   {b.name}
                 </Link>
                 {b.importedAt ? <span className="train-mono">{b.importedAt.slice(0, 10)}</span> : null}
+                {b.archived ? <span className="train-mono" title={`Archived ${b.archived.slice(0, 10)}: closed to students, kept for you`}>ARCHIVED</span> : null}
                 <span className="grow" />
                 <Link className="train-btn small primary" href={`/boards/${encodeURIComponent(b.id)}`}>
                   Open

@@ -24,6 +24,8 @@ export interface StudioCtx {
   frame: Frame;
   /** Asks the AI for a few lines; empty when AI is off or fails. */
   ask: (prompt: string) => Promise<string[]>;
+  /** The team this person works in, also on a class-wide exercise; null without teams. */
+  team?: string | null;
 }
 
 export const STK = ["#ffd37a", "#f6b9ae", "#cfe8d4", "#cde0f2"];
