@@ -137,7 +137,7 @@ Two further passages:
   2. "handling the powerful, in the sense of regulating the monopolistic giants as well as getting finance to recouple with production";
   3. "the fostering of the common good."
 - **What golden ages are.** Lebdioui (2025) [HIGH]: "they give direction to the available technological potential by setting up a win-win game between business and society."
-- **Synergy as the hallmark.** Perez (2016) [HIGH]: "these synergies between the new technologies, industries and infrastructures ... are the hallmark of a technological revolution."
+- **Synergy as the hallmark.** Perez (2016) [HIGH]: "It is these synergies between the new technologies, industries and infrastructures that are the hallmark of a technological revolution."
 
 ### 1f. Typical durations (her words)
 
