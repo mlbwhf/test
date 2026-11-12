@@ -43,6 +43,9 @@
 | State of AI Work 2026 | 3626 | 3688 | draft (IDENTICAL 130,584 bytes), 12 Nov |
 | State of AI Models & Prices 2026 | 3628 | 3699 | draft (IDENTICAL 135,141 bytes), 12 Nov |
 | State of AI Tokens 2026 | 3633 | 3700 | draft (IDENTICAL 142,438 bytes), 12 Nov |
+| State of AI Infrastructure & Energy 2026 | 3695 | 3752 | draft (IDENTICAL 131,203 bytes), 12 Nov |
+| State of AI Geography 2026 | 3704 | 3753 | draft (IDENTICAL 122,149 bytes, old build) → patch 3704-geography-20261112.json |
+| State of AI Industries 2026 | 3705 | 3754 | draft (IDENTICAL 134,267 bytes), 12 Nov |
 
 Corrections A1–A9 done 11 Nov (agent report): 376, 1100, 92, 89, 386, 413, 498, 374, 954, 930; ten rows on 3229.
 12 Nov: the owner's accidentally rejected edit was redone — 376 JSON-LD citation "Gartner Worldwide AI
@@ -56,3 +59,14 @@ Before publishing: replace the truncated excerpts on 3521/3524/3526 with the sen
 
 WAF note: a wp_alter_post whose search began with `"><div` and whose replacement inserted `<svg` was
 403'd; anchoring on `<div class="tai-ex-n">` instead passed.
+
+## E. Fable 5 / Mythos 5 restoration (found 12 Nov by the Mythos fact-check)
+
+Our pages said both models were "withdrawn within a week" and never mentioned that Anthropic restored them on
+1 July 2026 (Commerce ended the order 30 June; Mythos 5 back for US organisations only; 5.1 on 1 Sep).
+- Sources fixed: data/models.json, data/geography.json, narrative/models.json, narrative/geography.json (commit 329b647).
+- Drafts 3628 (Models) and 3704 (Geography) patched via content-ops/state-of-ai/patches/*.json; models CSV
+  re-issued as report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv (media 3699 left unlinked).
+- 2026 edition and YoY were rebuilt before upload (not yet on site).
+- Live: 1654 Chinese AI Models (correction + 3229 row), 566 Fable 5 report (update block).
+- Still to check: price ladder "$10/$50 Fable 5.1" vs Fable/Mythos 5.2 at $8/$40 (9 Nov 2026).
