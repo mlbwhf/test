@@ -11,6 +11,7 @@ import { useEffect } from "react";
 export const CLASS_LANGUAGES: { id: string; name: string }[] = [
   { id: "en", name: "English" },
   { id: "fr-CA", name: "Français (Québec)" },
+  { id: "fr-FR", name: "Français (France)" },
 ];
 
 type Catalogue = { exact: Map<string, string>; patterns: { re: RegExp; fr: string }[] };

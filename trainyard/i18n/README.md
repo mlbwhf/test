@@ -10,7 +10,7 @@ node i18n/sync.cjs fr-CA                   # update fr-CA.json: keep translation
 node i18n/sync.cjs fr-CA --check              # fails when texts are waiting for a translation (for CI)
 ```
 
-- `fr-CA.json` — French (Quebec). `{ "<English>": { fr, status, phase, where, note? } }`. Status: `draft` (machine first pass),
+- `fr-CA.json` — French (Quebec); `fr-FR.json` — French (France), started from it. `{ "<English>": { fr, status, phase, where, note? } }`. Status: `draft` (machine first pass),
   `approved`, `new` (no French yet), `stale` (no longer in the code; kept for reuse), `course` (Scaled Agile wording).
 - `glossary-fr-CA.tsv` — SAFe terms: official SAFe French (fr-ca) glossary, with the choices made for SAFe 6 renames.
 - `style-fr-CA.md` — tone and typography rules every translation follows.

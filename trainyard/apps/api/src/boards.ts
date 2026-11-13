@@ -323,7 +323,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     await store.commit(req.principal, "board.delete", { id: req.params.id });
     return reply.code(204).send();
   });
-  app.patch("/v1/boards/:id", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional(), lang: z.enum(["en", "fr-CA"]).optional() }) } }, async (req) => {
+  app.patch("/v1/boards/:id", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional(), lang: z.enum(["en", "fr-CA", "fr-FR"]).optional() }) } }, async (req) => {
     require(req, "plan");
     const b = reach(req, req.params.id, "edit");
     if (req.body.name) b.name = req.body.name;
