@@ -187,6 +187,13 @@ export class StripePaymentsAdapter implements PaymentsPort {
     return { refundRef: refund.id, status: mapRefundStatus(refund.status) };
   }
 
+  /** Where a payment stands, read from Stripe (for when its webhook never arrived). */
+  async getPayment(paymentRef: string, accountRef?: string) {
+    const pi = await this.stripe.paymentIntents.retrieve(paymentRef, {}, accountRef ? { stripeAccount: accountRef } : undefined);
+    const status = pi.status === "succeeded" ? ("succeeded" as const) : pi.status === "processing" ? ("processing" as const) : pi.status === "canceled" ? ("canceled" as const) : ("requires_payment" as const);
+    return { status, amountMinor: pi.amount_received, currency: pi.currency.toUpperCase() };
+  }
+
   /** Verify the signature and normalize. Throws on a bad signature. */
   parseWebhook(rawBody: string | Buffer, signature: string): PaymentEvent {
     const secrets = [this.config.webhookSecret, this.config.connectWebhookSecret].filter((s): s is string => Boolean(s));

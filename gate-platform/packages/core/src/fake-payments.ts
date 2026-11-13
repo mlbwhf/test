@@ -45,7 +45,15 @@ export class FakePaymentsAdapter implements PaymentsPort {
     return { refundRef: `re_fake_${input.idempotencyKey}`, status: "succeeded" as const };
   }
 
+  /** Payments the provider has taken, whether or not their webhook was delivered. */
+  readonly settled = new Map<string, { amountMinor: number; currency: string }>();
+  async getPayment(paymentRef: string) {
+    const paid = this.settled.get(paymentRef);
+    return paid ? { status: "succeeded" as const, ...paid } : { status: "requires_payment" as const, amountMinor: 0, currency: "USD" };
+  }
+
   succeed(paymentRef: string, amountMinor: number, currency: string): PaymentEvent {
+    this.settled.set(paymentRef, { amountMinor, currency });
     return { type: "payment.succeeded", paymentRef, amountMinor, currency, providerEventId: `evt_fake_${this.run}_${++this.seq}` };
   }
   fail(paymentRef: string, reason = "card_declined"): PaymentEvent {

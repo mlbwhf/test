@@ -919,7 +919,62 @@ export class Core {
 
   // ---------- Provider events (webhooks) ----------
 
+  /** One payment at a time: a webhook and a status check for the same payment never both mark it paid. */
+  private readonly paymentLocks = new Map<string, Promise<unknown>>();
+  private lastPaymentCheck = new Map<string, number>();
+
   async handlePaymentEvent(event: PaymentEvent): Promise<{ handled: boolean; reason?: string }> {
+    if (event.type === "account.updated" || event.type === "ignored") return this.handlePaymentEventLocked(event);
+    const key = event.paymentRef;
+    const before = this.paymentLocks.get(key) ?? Promise.resolve();
+    const run = before.catch(() => undefined).then(() => this.handlePaymentEventLocked(event));
+    this.paymentLocks.set(key, run);
+    try {
+      return await run;
+    } finally {
+      if (this.paymentLocks.get(key) === run) this.paymentLocks.delete(key);
+    }
+  }
+
+  /**
+   * A pending order whose payment Stripe already took: confirm it as the webhook would have.
+   * Covers a webhook that is missing, misconfigured or blocked. Checks a payment at most every
+   * 3 seconds; errors from the provider leave the order as it is.
+   */
+  async syncOrderPayment(order: Order): Promise<Order> {
+    if (order.status !== "pending" || !order.paymentRef || !this.payments.getPayment) return order;
+    const now = this.clock.now().getTime();
+    if (now - (this.lastPaymentCheck.get(order.paymentRef) ?? 0) < 3_000) return order;
+    this.lastPaymentCheck.set(order.paymentRef, now);
+    if (this.lastPaymentCheck.size > 5_000) this.lastPaymentCheck = new Map([...this.lastPaymentCheck].slice(-1_000));
+    try {
+      const p = await this.payments.getPayment(order.paymentRef, order.chargeAccountRef);
+      if (p.status !== "succeeded") return order;
+      await this.handlePaymentEvent({ type: "payment.succeeded", paymentRef: order.paymentRef, amountMinor: p.amountMinor, currency: p.currency, providerEventId: `sync:${order.paymentRef}` });
+    } catch {
+      return order;
+    }
+    return (await this.repos.orders.get(order.id)) ?? order;
+  }
+
+  /** Scheduler: confirm recent pending orders whose payment went through without a webhook. */
+  async reconcilePendingPayments(maxAgeMs = 3 * 86_400_000): Promise<{ checked: number; confirmed: number }> {
+    if (!this.payments.getPayment) return { checked: 0, confirmed: 0 };
+    const now = this.clock.now().getTime();
+    let checked = 0;
+    let confirmed = 0;
+    for (const org of await this.repos.organizations.list()) {
+      for (const o of await this.repos.orders.listByOrganization(org.id, 200)) {
+        const age = now - o.createdAt.getTime();
+        if (o.status !== "pending" || !o.paymentRef || age < 120_000 || age > maxAgeMs) continue;
+        checked++;
+        if ((await this.syncOrderPayment(o)).status === "paid") confirmed++;
+      }
+    }
+    return { checked, confirmed };
+  }
+
+  private async handlePaymentEventLocked(event: PaymentEvent): Promise<{ handled: boolean; reason?: string }> {
     if (event.type === "account.updated") {
       const org = (await this.repos.organizations.list()).find((o) => o.paymentsAccountRef === event.accountRef || o.directAccountRef === event.accountRef);
       if (!org) return { handled: false, reason: "unknown account" };
@@ -2276,7 +2331,8 @@ export class Core {
   async publicOrder(orderId: string, buyerEmail: string): Promise<Order> {
     const o = await this.repos.orders.get(orderId);
     if (!o || o.buyerEmail.toLowerCase() !== buyerEmail.trim().toLowerCase()) throw notFound("order", orderId);
-    return o;
+    // The checkout polls this after paying: if the webhook is late or lost, ask the provider.
+    return this.syncOrderPayment(o);
   }
 
   /** Everything needed to render a seat's calendar or ticket; seat ids are unguessable. */

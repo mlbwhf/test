@@ -238,3 +238,49 @@ describe("payments setup status", () => {
   });
 });
 
+
+describe("payment confirmed without its webhook", () => {
+  const clearingBalance = async () => (await core.platformBalances()).find((b) => b.code === codes.clearing("USD"))?.balanceMinor;
+
+  it("the checkout's status check confirms a payment the provider took; a late webhook changes nothing", async () => {
+    const { org, ticket } = await setup();
+    const { order } = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
+    expect((await core.getOrder(org.id, order.id)).status).toBe("pending");
+    // The card is charged, but the webhook never reaches us.
+    const late = payments.succeed(order.paymentRef!, order.pricing.totalMinor, order.currency);
+    expect((await core.publicOrder(order.id, "a@b.co")).status).toBe("paid");
+    // The webhook turns up after all: no second payment is recorded.
+    expect(await core.handlePaymentEvent(late)).toEqual({ handled: false, reason: "order is paid" });
+    expect(await clearingBalance()).toBe(order.pricing.totalMinor);
+  });
+
+  it("a webhook and a status check arriving together record the payment once", async () => {
+    const { org, ticket } = await setup();
+    const { order } = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
+    const event = payments.succeed(order.paymentRef!, order.pricing.totalMinor, order.currency);
+    const results = await Promise.all([core.handlePaymentEvent(event), core.publicOrder(order.id, "a@b.co")]);
+    expect(results[0]).toEqual({ handled: true });
+    expect(results[1].status).toBe("paid");
+    expect(await clearingBalance()).toBe(order.pricing.totalMinor);
+  });
+
+  it("the scheduler confirms orders whose learner closed the page before the check", async () => {
+    let now = new Date("2026-10-01T10:00:00Z");
+    payments = new FakePaymentsAdapter();
+    ledger = new Ledger({ store: new InMemoryLedgerStore() });
+    core = new Core({ repos: createInMemoryRepos(), ledger, payments, clock: { now: () => now } });
+    const { organization } = await core.createOrganization({ releasePolicy: "immediate", name: "AA", country: "US", currency: "USD" });
+    await core.connectPayments(organization.id);
+    const event = await core.createEvent(organization.id, { name: "Leading SAFe", startsAt: new Date("2026-11-01T09:00:00Z") });
+    const ticket = await core.createTicketType(organization.id, event.id, { name: "Standard", priceMinor: 100_000, quantity: 10 });
+    const { order: paid } = await core.createOrder(organization.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
+    const { order: unpaid } = await core.createOrder(organization.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "b@b.co" });
+    payments.succeed(paid.paymentRef!, paid.pricing.totalMinor, paid.currency);
+    // Too fresh: the webhook may still be on its way.
+    expect(await core.reconcilePendingPayments()).toEqual({ checked: 0, confirmed: 0 });
+    now = new Date("2026-10-01T10:05:00Z");
+    expect(await core.reconcilePendingPayments()).toEqual({ checked: 2, confirmed: 1 });
+    expect((await core.getOrder(organization.id, paid.id)).status).toBe("paid");
+    expect((await core.getOrder(organization.id, unpaid.id)).status).toBe("pending");
+  });
+});

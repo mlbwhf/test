@@ -68,6 +68,11 @@ export interface PaymentsPort {
     /** The organizer's account that took a direct charge; the application fee is returned pro rata. */
     accountRef?: string | undefined;
   }): Promise<{ refundRef: string; status: "pending" | "succeeded" | "failed" }>;
+  /**
+   * Ask the provider where a payment stands, for when its webhook never arrived. `accountRef` is
+   * the organizer's account for a direct charge. Optional: without it, only webhooks confirm payments.
+   */
+  getPayment?(paymentRef: string, accountRef?: string | undefined): Promise<{ status: "succeeded" | "processing" | "requires_payment" | "canceled"; amountMinor: MinorUnits; currency: Currency }>;
 }
 
 /** Video meeting provider (Zoom, Teams). Adapters live in @gate/meetings; core only needs this surface. */
