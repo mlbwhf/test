@@ -27,6 +27,11 @@ function load(lang: string): Promise<Catalogue> {
       .then((d) => {
         const exact = new Map<string, string>(), patterns: Catalogue["patterns"] = [];
         const both = new Map(Object.entries(d.b ?? {}).map(([en, fr]) => [norm(en), fr]));
+        // An exercise's steps are written "Step 2: …" and shown without the prefix: both forms match.
+        for (const [en, fr] of [...both]) {
+          const m = /^Step\s*\d+\s*:\s*(.+)$/s.exec(en);
+          if (m && !both.has(m[1]!)) both.set(m[1]!, fr.replace(/^[ÉE]tape\s*\d+\s*[\u00a0\u202f ]?:\s*/i, ""));
+        }
         for (const [en, fr] of Object.entries(d.t ?? {})) {
           if (/\{\d+\}/.test(en)) {
             // "Remove {0} students?" matches the text with anything in the holes.
