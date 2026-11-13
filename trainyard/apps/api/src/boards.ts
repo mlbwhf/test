@@ -644,7 +644,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       const mine = new Set(rounds.flat().filter((t) => t.members.includes(sid)).map((t) => t.id));
       const key = req.body.key;
       const prefix = key.includes("|") ? key.slice(0, key.indexOf("|")) : "";
-      const table = /^pbbids:(.+)$/.exec(key)?.[1];
+      const table = /^pb(?:bids|table):(.+)$/.exec(key)?.[1];
       if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
     }
     const state = (f.state ??= {});
