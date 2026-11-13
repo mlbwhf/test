@@ -5,7 +5,7 @@
 /* eslint-disable */
 import { Fragment } from "react";
 import { LpmHorizons } from "./studio-views-lpm-horizons";
-import { LpmBudgetResults, LpmBudgetTable } from "./studio-views-lpm-budget";
+import { LpmBudgetResults, LpmBudgetSetup, LpmBudgetTable } from "./studio-views-lpm-budget";
 
 export function LpmView({ v }: { v: any }) {
   return (
@@ -214,12 +214,12 @@ export function LpmView({ v }: { v: any }) {
 </div></>) : null}
 
 {v.k_pb ? (<><div style={{ display: "flex", flexDirection: "column", gap: "12px" } as any}>
-{v.pb.canPickTable ? (<div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}><span style={{ font: "700 11px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" }}>TABLE</span>{(v.pb.tableChips || []).map((g: any, g_n: number) => (<button key={g_n} onClick={g.go} style={{ border: "2px solid #14123a", borderRadius: "99px", padding: "4px 12px", fontWeight: 700, fontSize: "13px", cursor: "pointer", background: g.bg, color: g.fg }}>{g.n}</button>))}</div>) : null}
+{v.pb.canPickTable ? (<div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" }}><span style={{ font: "700 11px ui-monospace,Menlo,monospace", color: "#5b5b6e", letterSpacing: ".1em" }}>TABLE</span>{(v.pb.tableChips || []).map((g: any, g_n: number) => (<button key={g_n} onClick={g.go} style={{ border: "2px solid #14123a", borderRadius: "99px", padding: "4px 12px", fontWeight: 700, fontSize: "13px", cursor: "pointer", background: g.bg, color: g.fg }}>{g.n}</button>))}{v.pb.tableAdmin?.can ? <button onClick={v.pb.tableAdmin.add} style={{ border: "2px dashed #14123a", borderRadius: "99px", padding: "4px 12px", fontWeight: 700, fontSize: "13px", cursor: "pointer", background: "#ffe14d" }}>+ Add a table</button> : null}</div>) : null}
 <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", background: "#03383f", color: "#fff", borderRadius: "14px", padding: "10px 14px" } as any}><b style={{ font: "800 16px 'Instrument Sans'" } as any}>SAFe CoFund is the recommended tool.</b><span style={{ fontSize: "13.5px", opacity: ".85", flex: "1 1 240px" } as any}>No CoFund in the room? Run the handout’s spreadsheet alternative right here.</span><a href={v.pb.cofund} target="_blank" rel="noopener" style={{ background: "#ffe14d", color: "#14123a", borderRadius: "99px", padding: "8px 16px", fontWeight: "800", textDecoration: "none" } as any}>Open SAFe CoFund ↗</a></div>
 <div style={{ display: "flex", gap: "6px", flexWrap: "wrap", alignItems: "center" } as any}>{(v.pb.tabs || []).map((t: any, t_n: number) => (<Fragment key={t_n}><button onClick={t.go} style={{ border: "2px solid #14123a", borderRadius: "99px", padding: "7px 16px", fontWeight: "800", background: `${t.bg}`, color: `${t.fg}`, cursor: "pointer" } as any}>{t.l}</button></Fragment>))}<span style={{ flex: "1" } as any}></span><span style={{ font: "700 12px 'JetBrains Mono'", color: "#4d5a52" } as any}>Each table: {v.pb.budget} · portfolio asks {v.pb.need}</span></div>
 {v.pb.isBid ? <LpmBudgetTable pb={v.pb} /> : null}
 {v.pb.isRes ? <LpmBudgetResults pb={v.pb} /> : null}
-{v.pb.isCfg ? (<><div style={{ display: "flex", flexDirection: "column", gap: "12px" } as any}>
+{v.pb.isCfg ? (<><LpmBudgetSetup pb={v.pb} /><div style={{ display: "flex", flexDirection: "column", gap: "12px" } as any}>
 <div style={{ background: "#fff4c2", border: "2px solid #14123a", borderRadius: "12px", padding: "8px 12px", fontSize: "13px" } as any}>Set this up before class. Defaults come from the TTC handout. Tables are the class groups. Rules: an Epic needs its value stream’s Solutions fully funded first; “requires” needs the named item fully funded; “excludes” means only one of the pair can be funded.</div>
 <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(100%,240px),1fr))", gap: "10px" } as any}>
 <label style={{ background: "#fff", border: "2px solid #14123a", borderRadius: "12px", padding: "10px", display: "flex", flexDirection: "column", gap: "4px" } as any}><b style={{ font: "700 11px 'JetBrains Mono'", letterSpacing: ".1em", color: "#4d5a52" } as any}>BUDGET PER TABLE</b><input key={"v.pb.cBudget#31|" + String(v.pb.cBudget ?? "")} defaultValue={v.pb.cBudget} onBlur={v.pb.setBudget} inputMode="numeric" style={{ border: "2px solid #14123a", borderRadius: "8px", padding: "5px 8px", font: "800 18px 'JetBrains Mono'", background: "#fbf9f4", minWidth: "0" } as any} /><span style={{ fontSize: "12px", color: "#5b5b6e" } as any}>{v.pb.budget} · portfolio asks {v.pb.need} ({v.pb.gap})</span></label>

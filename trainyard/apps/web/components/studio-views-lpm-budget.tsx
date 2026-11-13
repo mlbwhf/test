@@ -8,6 +8,8 @@
 // what every table funded, and the budget summary (portfolio budget, project costs, need).
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { useState } from "react";
+
 const INK = "#14123a", HEAD = "#1f3f8f";
 const cell: React.CSSProperties = { padding: "5px 8px", borderBottom: "1px solid #fff", verticalAlign: "top", fontSize: 13, lineHeight: 1.3 };
 const num: React.CSSProperties = { ...cell, textAlign: "right", whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" };
@@ -170,6 +172,47 @@ export function LpmBudgetResults({ pb }: { pb: any }) {
       </div>
       <BudgetBox s={s} />
       <div style={{ fontSize: 12.5, color: "#5b5b6e" }}>Live across all tables. Debrief: what got funded, what did not, and what caused debate?</div>
+    </div>
+  );
+}
+
+/** For the trainer, on the setup tab: the tables of this exercise, and loading a list of Solutions and Epics. */
+export function LpmBudgetSetup({ pb }: { pb: any }) {
+  const a = pb?.tableAdmin;
+  const [text, setText] = useState("");
+  const [msg, setMsg] = useState("");
+  if (!a?.can) return null;
+  const load = (t: string) => setMsg(pb.importList(t));
+  const box: React.CSSProperties = { background: "#fff", border: `2px solid ${INK}`, borderRadius: 12, padding: "12px 14px", display: "flex", flexDirection: "column", gap: 8 };
+  const btn: React.CSSProperties = { border: `2px solid ${INK}`, background: "#ffe14d", borderRadius: 99, padding: "6px 14px", fontWeight: 700, fontSize: 13, cursor: "pointer" };
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+      <div style={box}>
+        <b style={{ font: "800 16px 'Familjen Grotesk',sans-serif" }}>Tables</b>
+        <span style={{ fontSize: 13, color: "#5b5b6e" }}>Each table gets its own sheet. {a.teams.length ? `The class's teams are tables already (${a.teams.join(", ")}); add more here if you need them.` : "Add one per group in the room, and name them."}</span>
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          {a.own.map((t: any) => (
+            <span key={t.id} style={{ display: "inline-flex", gap: 4, alignItems: "center", border: `2px solid ${INK}`, borderRadius: 99, padding: "3px 6px 3px 12px", background: "#fbf9f4" }}>
+              <input key={`${t.id}|${t.name}`} defaultValue={t.name} onBlur={t.rename} aria-label={`Name of ${t.name}`} style={{ border: 0, background: "transparent", font: "700 13px 'Instrument Sans',sans-serif", width: 110 }} />
+              <button onClick={() => window.confirm(`Remove ${t.name} and what it funded?`) && t.remove()} aria-label={`Remove ${t.name}`} style={{ border: 0, background: "none", cursor: "pointer", fontWeight: 800 }}>×</button>
+            </span>
+          ))}
+          <button onClick={a.add} style={btn}>+ Add a table</button>
+        </div>
+      </div>
+      <div style={box}>
+        <b style={{ font: "800 16px 'Familjen Grotesk',sans-serif" }}>Load your own list of Solutions and Epics</b>
+        <span style={{ fontSize: 13, color: "#5b5b6e" }}>Copy the rows from your spreadsheet and paste them here, or upload a CSV file. Columns, in this order: Value Stream, Epic, Horizon, Epic Description, Est. Cost. A row whose name contains “Solution” is a Solution; the others are Epics. This replaces the current list; you can still edit every row below.</span>
+        <textarea value={text} onChange={(e) => setText(e.target.value)} rows={5} placeholder={"Commercial\tC Solution 1: Autonomous Commercial Delivery via vans\tH2\t\t$2,000,000\n\tC1: Extend to more languages\t\tExtend the delivery services to other languages\t$100,000"} aria-label="Paste the list of Solutions and Epics" style={{ border: `2px solid ${INK}`, borderRadius: 8, padding: 8, font: "500 12.5px ui-monospace,Menlo,monospace", background: "#fbf9f4", whiteSpace: "pre" }} />
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+          <button onClick={() => load(text)} disabled={!text.trim()} style={{ ...btn, opacity: text.trim() ? 1 : 0.5 }}>Load the pasted list</button>
+          <label style={{ ...btn, background: "#fff" }}>
+            Upload a CSV file
+            <input type="file" accept=".csv,.tsv,.txt,text/csv,text/plain" style={{ display: "none" }} onChange={(e) => { const f = e.target.files?.[0]; if (f) void f.text().then(load); e.target.value = ""; }} />
+          </label>
+          {msg ? <span style={{ fontSize: 13, fontWeight: 600 }}>{msg}</span> : null}
+        </div>
+      </div>
     </div>
   );
 }

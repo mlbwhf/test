@@ -321,7 +321,17 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
 
   /* 4-28 participatory budgeting: one event for the class, each team a table */
   if (K === "pb") {
-    const teams = classTeams(c.board), tables = teams.length ? teams.map((t) => ({ id: t.id, name: t.name })) : [{ id: "class", name: "The class" }];
+    // Tables: the class's teams, plus the tables the trainer creates here (a class without teams starts with "Group 1").
+    const teams = classTeams(c.board);
+    const own: { id: string; name: string }[] = Array.isArray(S.pbtables) ? (S.pbtables as { id: string; name: string }[]) : teams.length ? [] : [{ id: "class", name: "Group 1" }];
+    const tables = [...teams.map((t) => ({ id: t.id, name: t.name })), ...own];
+    const setOwn = (list: { id: string; name: string }[]) => op({ key: "pbtables", op: "set", value: list });
+    const tableAdmin = {
+      can: c.trainer && !c.readOnly,
+      own: own.map((t) => ({ id: t.id, name: t.name, rename: val((v) => { if (v.trim() && v.trim() !== t.name) setOwn(own.map((x) => (x.id === t.id ? { ...x, name: v.trim() } : x))); }), remove: () => { setOwn(own.filter((x) => x.id !== t.id)); op({ key: "pbbids:" + t.id, op: "set", value: null }); op({ key: "pbtable:" + t.id, op: "set", value: null }); } })),
+      teams: teams.map((t) => t.name),
+      add: () => { const n = tables.length + 1, id = "g" + Date.now().toString(36); setOwn([...own, { id, name: "Group " + n }]); setUi({ table: id, pbWho: 0 }); },
+    };
     const tid: string = tables.some((t) => t.id === ui.table) ? ui.table : tables.some((t) => t.id === c.team) ? (c.team as string) : tables[0]!.id;
     const gName = (g: string) => tables.find((t) => t.id === g)?.name ?? g;
     const CF = { ...PB_DEFCFG(), ...rec("pbcfg") }, VIEW: string = ui.pbView === "cfg" && !c.trainer ? "bid" : ui.pbView || "bid";
@@ -359,8 +369,31 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
       results: CF.vs.map((v: any) => ({ name: v.n, color: v.c, rows: v.items.map((i: any) => { const cells = tables.map((t) => { const tt = tot(t.id, i.id), f = tt >= i.c && i.c > 0; return { amount: tt ? dollars(tt) : "", state: f ? "Full" : tt ? "Partial" : "" }; }); return { id: i.id, name: i.name ?? i.n, sol: !!i.sol, hz: i.hz || "", desc: i.sol ? "" : i.d, cost: dollars(+i.c || 0), cells, full: cells.filter((x) => x.state === "Full").length, partial: cells.filter((x) => x.state === "Partial").length }; }) })),
     };
     const view = (k: string) => setUi({ pbView: k });
+    // A list of Solutions and Epics pasted or uploaded as in the handout: Value Stream, Epic, Horizon,
+    // Epic Description, Est. Cost (tab- or comma-separated, with or without the header row).
+    const importList = (text: string): string => {
+      const split = (line: string) => { if (line.includes("\t")) return line.split("\t"); const out: string[] = []; let cur = "", q = false; for (let i = 0; i < line.length; i++) { const ch = line[i]!; if (q) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; } else if (ch === '"') q = true; else if (ch === ",") { out.push(cur); cur = ""; } else cur += ch; } out.push(cur); return out; };
+      const vs: any[] = []; let cur: any = null; const seen = new Set<string>(); const old: Record<string, any> = Object.fromEntries(ITEMS.map((i: any) => [i.id, i]));
+      for (const line of text.replace(/\r/g, "").split("\n")) {
+        const [a = "", b = "", hz = "", d = "", cost = ""] = split(line).map((x) => x.trim());
+        const cnum = Math.round(parseFloat(cost.replace(/[^0-9.]/g, "")) || 0);
+        if (!b || !cnum || /^epic$/i.test(b) || /^budget$/i.test(b)) continue;
+        if (a || !cur) { cur = { id: uid("v"), n: a || "Value stream", c: VS_COLS[vs.length % 8], items: [] }; vs.push(cur); }
+        const sol = /solution/i.test(b);
+        let id = (/^([A-Za-z]{1,3}\d{1,3})\s*:/.exec(b)?.[1] ?? (sol ? (b[0] ?? "S").toUpperCase() + "S" : "E" + (seen.size + 1))).toUpperCase();
+        while (seen.has(id)) id += "x";
+        seen.add(id);
+        cur.items.push({ id, n: b, d: d || (sol ? "Run the business: operating cost of the solution plus local development below the epic threshold." : ""), c: cnum, sol, hz, req: old[id]?.req ?? "", ex: old[id]?.ex ?? "" });
+      }
+      const n = vs.reduce((x, v) => x + v.items.length, 0);
+      if (!n) return "No rows found. Each row needs an Epic name and an Est. Cost; columns are Value Stream, Epic, Horizon, Epic Description, Est. Cost.";
+      const ids = new Set(vs.flatMap((v) => v.items.map((i: any) => i.id)));
+      for (const v of vs) for (const i of v.items) { if (!ids.has(i.req)) i.req = ""; if (!ids.has(i.ex)) i.ex = ""; }
+      setCF({ vs });
+      return `Loaded ${n} rows in ${vs.length} value stream${vs.length === 1 ? "" : "s"}. Check “requires” and “excludes” below if your list has such rules.`;
+    };
     const money2 = (n: number) => money(n);
-    T.pb = { sheet, gName: gName(tid), tableChips: tables.map((t) => ({ n: t.name, bg: t.id === tid ? "#14123a" : "#fff", fg: t.id === tid ? "#fff" : "#14123a", go: () => setUi({ table: t.id, pbWho: 0 }) })), canPickTable: c.trainer || !c.team || tables.length === 1,
+    T.pb = { sheet, tableAdmin, importList, gName: gName(tid), tableChips: tables.map((t) => ({ n: t.name, bg: t.id === tid ? "#14123a" : "#fff", fg: t.id === tid ? "#fff" : "#14123a", go: () => setUi({ table: t.id, pbWho: 0 }) })), canPickTable: c.trainer || !c.team || tables.length === 1,
       tabs: [["bid", "Bid as a table"], ["res", "Consolidated results"], ...(c.trainer ? [["cfg", "⚙ Set up template"]] : [])].map(([k, l]) => ({ l, bg: VIEW === k ? "#14123a" : "#fff", fg: VIEW === k ? "#fff" : "#14123a", go: () => view(k!) })), isBid: VIEW === "bid", isRes: VIEW === "res", isCfg: VIEW === "cfg",
       budget: money2(+CF.budget || 0), need: money2(need), gap: money2((+CF.budget || 0) - need), ppl, setPpl: val((s) => { const v = Math.max(1, Math.min(12, +s || 1)); setCF((c0: any) => ({ mem: { ...(c0.mem || {}), [tid]: v } })); }),
       people: Array.from({ length: ppl }, (_, p) => ({ n: pname(tid, p), bg: me === p ? "#ffe14d" : "#fff", left: money2(per - spent(tid, p)), lc: per - spent(tid, p) < 0 ? "#c8372d" : "#5b5b6e", go: () => setUi({ pbWho: p }) })),

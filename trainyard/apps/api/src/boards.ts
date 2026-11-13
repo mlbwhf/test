@@ -645,7 +645,7 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       const key = req.body.key;
       const prefix = key.includes("|") ? key.slice(0, key.indexOf("|")) : "";
       const table = /^pb(?:bids|table):(.+)$/.exec(key)?.[1];
-      if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
+      if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || key === "pbtables" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
     }
     const state = (f.state ??= {});
     const before = JSON.stringify(state).length;

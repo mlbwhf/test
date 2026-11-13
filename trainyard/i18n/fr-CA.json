@@ -516,7 +516,7 @@
   "fr": "— limite dépassée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:398"
+  "where": "apps/web/components/studio-model-lpm.ts:431"
  },
  "— Unlinked —": {
   "fr": "— Non lié —",
@@ -577,7 +577,7 @@
   "fr": ", minmax(70px,1fr)) 90px",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:374",
+  "where": "apps/web/components/studio-model-lpm.ts:407",
   "note": "not UI text (CSS grid template)"
  },
  ", now in band": {
@@ -701,7 +701,7 @@
   "fr": " : financée alors que la solution",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:339",
+  "where": "apps/web/components/studio-model-lpm.ts:349",
   "note": "Split sentence; French moves \"solution\" before the inserted name, so item 352 drops the word \"Solution\". Gender assumes \"épopée\" (f.)."
  },
  ": give the smallest one a 1 and size the rest against it, or that part outweighs the others.": {
@@ -1423,7 +1423,7 @@
   "fr": "(Remplacez « Personne » par le nom d’une personne)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:45"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:47"
  },
  "(result)": {
   "fr": "(résultat)",
@@ -2473,6 +2473,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcomes/page.tsx:508"
  },
+ "+ Add a table": {
+  "fr": "+ Ajouter une table",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:200 apps/web/components/studio-views-lpm.tsx:217"
+ },
  "+ add an action to the Backlog, Enter": {
   "fr": "+ ajoutez une action au carnet, Entrée",
   "status": "draft",
@@ -3094,7 +3100,7 @@
   "fr": "⚙ Configurer le modèle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:364"
+  "where": "apps/web/components/studio-model-lpm.ts:397"
  },
  "⛓ LINKED TO ·": {
   "fr": "⛓ LIÉ À ·",
@@ -3167,7 +3173,7 @@
   "fr": "✓ Visionné",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:473"
+  "where": "apps/web/components/studio-model-lpm.ts:506"
  },
  "✕ Drop": {
   "fr": "✕ Abandonner",
@@ -5085,7 +5091,7 @@
   "fr": "actions planifiées",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:469",
+  "where": "apps/web/components/studio-model-lpm.ts:502",
   "note": "Fragment after a number."
  },
  "Active": {
@@ -5622,7 +5628,7 @@
   "fr": "Ajoutez une réponse ou un résultat…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:489"
+  "where": "apps/web/components/studio-model-lpm.ts:522"
  },
  "Add an ART outcome": {
   "fr": "",
@@ -5773,6 +5779,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:478"
+ },
+ "Add one per group in the room, and name them.": {
+  "fr": "Ajoutez-en une par groupe dans la salle, et nommez-les.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:192"
  },
  "Add or remove tables with + Table and − Table.": {
   "fr": "",
@@ -6976,7 +6988,7 @@
   "fr": "Montant",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:483 apps/web/components/studio-views-lpm-budget.tsx:23"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:483 apps/web/components/studio-views-lpm-budget.tsx:25"
  },
  "an action with an owner and a date": {
   "fr": "",
@@ -7606,7 +7618,7 @@
   "fr": "sont toutes deux financées : choisissez-en une.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:341",
+  "where": "apps/web/components/studio-model-lpm.ts:351",
   "note": "Gender assumes two épopées/solutions (f.)."
  },
  "are in the room?": {
@@ -9207,7 +9219,7 @@
   "fr": "Pose les questions et garde la conversation ouverte",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "ASPC": {
   "fr": "ASPC",
@@ -9585,7 +9597,7 @@
   "fr": "Livraison autonome de soins de santé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:102 apps/web/components/studio-model-lpm.ts:454"
+  "where": "apps/web/components/studio-model-lpm.ts:102 apps/web/components/studio-model-lpm.ts:487"
  },
  "Autonomous Healthcare Delivery": {
   "fr": "Livraison autonome de soins de santé",
@@ -9870,7 +9882,7 @@
   "fr": "Solde",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:58 apps/web/components/studio-views-lpm-budget.tsx:164"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:60 apps/web/components/studio-views-lpm-budget.tsx:166"
  },
  "Balance the whole portfolio against the strategic themes.": {
   "fr": "Équilibrer l’ensemble du portefeuille au regard des thèmes stratégiques.",
@@ -10187,13 +10199,13 @@
   "fr": "Mise",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:57"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:59"
  },
  "Bid as a table": {
   "fr": "Enchérir en tant que table",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:364"
+  "where": "apps/web/components/studio-model-lpm.ts:397"
  },
  "Bid what is still needed, up to your balance": {
   "fr": "Enchérissez ce qui manque encore, dans la limite de votre solde",
@@ -11184,7 +11196,7 @@
   "fr": "Responsables d’affaires",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:94 apps/web/components/studio-model-lpm.ts:441 packages/core/src/outcomes.ts:325"
+  "where": "apps/web/components/studio-model-lpm.ts:94 apps/web/components/studio-model-lpm.ts:474 packages/core/src/outcomes.ts:325"
  },
  "Business Owners are frustrated that planned PI Objectives are rarely achieved even though teams feel productive. The RTE sees mismatched cadence and inconsistent sync practices.": {
   "fr": "Les responsables d’affaires sont frustrés que les objectifs de PI planifiés soient rarement atteints alors que les équipes se sentent productives. Le RTE constate une cadence désalignée et des pratiques de synchronisation incohérentes.",
@@ -11301,6 +11313,13 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:90"
+ },
+ "C1: Extend to more languages Extend the delivery services to other languages $100,000": {
+  "fr": "C1: Extend to more languages Extend the delivery services to other languages $100,000",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:206",
+  "note": "not UI text (example in a placeholder)"
  },
  "C2: Gamification for deliveries": {
   "fr": "C2 : ludification des livraisons",
@@ -11462,7 +11481,7 @@
   "fr": "ne peut être financée que si",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:340",
+  "where": "apps/web/components/studio-model-lpm.ts:350",
   "note": "Split sentence; gender assumes épopée/solution (f.)."
  },
  "Can the AI Engine team use the curated household data for retraining before the privacy review completes?": {
@@ -11699,7 +11718,7 @@
   "fr": "Notez ce que votre groupe a dit…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:489"
+  "where": "apps/web/components/studio-model-lpm.ts:522"
  },
  "Capture your current portfolio process: what is the portfolio intake process?": {
   "fr": "Décrivez votre processus de portefeuille actuel : quel est le processus d’admission du portefeuille?",
@@ -11717,7 +11736,7 @@
   "fr": "Consigne les citations et observations mot pour mot",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "Capturing decisions and action items in real time": {
   "fr": "Consigner en temps réel les décisions et les actions à entreprendre",
@@ -12226,7 +12245,7 @@
   "fr": "Vérifiez les règles (",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:109"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:111"
  },
  "Check the video length and update the duration. Learners need SAFe Studio access for the LPM resources and the Getting Started workshop.": {
   "fr": "Vérifiez la longueur de la vidéo et mettez à jour la durée. Les participants ont besoin d’un accès à SAFe Studio pour les ressources LPM et l’atelier « Getting Started ».",
@@ -12762,7 +12781,7 @@
   "fr": "Effacer les montants de cette table",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:113"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:115"
  },
  "Clear track. Suspicious. Add a risk.": {
   "fr": "Voie libre. Suspect. Ajoutez un risque.",
@@ -13209,7 +13228,7 @@
   "fr": "Colonne",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:780 apps/web/components/studio-model-lpm.ts:425"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:780 apps/web/components/studio-model-lpm.ts:458"
  },
  "Column chart": {
   "fr": "",
@@ -13283,11 +13302,18 @@
   "phase": "2",
   "where": "packages/core/src/insights.ts:569"
  },
+ "Commercial C Solution 1: Autonomous Commercial Delivery via vans H2 $2,000,000": {
+  "fr": "Commercial C Solution 1: Autonomous Commercial Delivery via vans H2 $2,000,000",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:206",
+  "note": "not UI text (example in a placeholder)"
+ },
  "Commercial delivery value stream": {
   "fr": "Flux de valeur Livraison commerciale",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:454"
+  "where": "apps/web/components/studio-model-lpm.ts:487"
  },
  "Commit": {
   "fr": "Engager",
@@ -13915,13 +13941,13 @@
   "fr": "Résultats consolidés",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:364"
+  "where": "apps/web/components/studio-model-lpm.ts:397"
  },
  "Consolidated Results": {
   "fr": "Résultats consolidés",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:124"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:126"
  },
  "Consultant and supplier coaching and training management": {
   "fr": "Gestion du coaching et de la formation des consultants et fournisseurs",
@@ -14236,6 +14262,12 @@
   "phase": "1",
   "where": "apps/web/components/exercise-boards.tsx:266",
   "note": "menu path must match the translated menu labels"
+ },
+ "Copy the rows from your spreadsheet and paste them here, or upload a CSV file. Columns, in this order: Value Stream, Epic, Horizon, Epic Description, Est. Cost. A row whose name contains “Solution” is a Solution; the others are Epics. This replaces the current list; you can still edit every row below.": {
+  "fr": "Copiez les lignes de votre tableur et collez-les ici, ou téléversez un fichier CSV. Colonnes, dans cet ordre : flux de valeur, épopée, horizon, description de l’épopée, coût estimé. Une ligne dont le nom contient « Solution » est une solution; les autres sont des épopées. Cela remplace la liste actuelle; vous pouvez encore modifier chaque ligne ci-dessous.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:205"
  },
  "COPY THIS TEMPLATE": {
   "fr": "COPIEZ CE MODÈLE",
@@ -17623,7 +17655,7 @@
   "fr": "Déposez une idée sur « Portefeuille » pour la sélectionner",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:452",
+  "where": "apps/web/components/studio-model-lpm.ts:485",
   "note": "\"Portfolio\" must match the target label."
  },
  "Drop here ↓": {
@@ -17908,6 +17940,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/outcome-roadmap.tsx:28"
+ },
+ "Each table gets its own sheet.": {
+  "fr": "Chaque table a sa propre feuille.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:192"
  },
  "Each table:": {
   "fr": "Chaque table :",
@@ -18685,7 +18723,7 @@
   "fr": "ÉPOPÉE · DÉVELOPPER L’ENTREPRISE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:368"
+  "where": "apps/web/components/studio-model-lpm.ts:401"
  },
  "EPIC · HYPOTHESIS STATEMENT": {
   "fr": "ÉPOPÉE · ÉNONCÉ D’HYPOTHÈSE",
@@ -18758,7 +18796,7 @@
   "fr": "Description de l’épopée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:73 apps/web/components/studio-views-lpm-budget.tsx:63 apps/web/components/studio-views-lpm-budget.tsx:132"
+  "where": "apps/web/components/studio-model-lpm.ts:73 apps/web/components/studio-views-lpm-budget.tsx:65 apps/web/components/studio-views-lpm-budget.tsx:134"
  },
  "Epic description (elevator pitch)": {
   "fr": "Description de l’épopée (pitch éclair)",
@@ -19048,7 +19086,7 @@
   "fr": "Coût est.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:64 apps/web/components/studio-views-lpm-budget.tsx:133"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:66 apps/web/components/studio-views-lpm-budget.tsx:135"
  },
  "Establishing Investment Funding": {
   "fr": "Établir le financement des investissements",
@@ -19683,7 +19721,7 @@
   "fr": "Sponsor exécutif",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:441"
+  "where": "apps/web/components/studio-model-lpm.ts:474"
  },
  "Executive, Business Owner": {
   "fr": "Dirigeants, responsables d’affaires",
@@ -19774,7 +19812,7 @@
   "fr": "S’étendre au commerce de détail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:454"
+  "where": "apps/web/components/studio-model-lpm.ts:487"
  },
  "Expected information gain per unit of cost and time (not framework-published).": {
   "fr": "",
@@ -20665,7 +20703,7 @@
   "fr": "Finance",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:84 apps/web/components/studio-model-lpm.ts:94 apps/web/components/studio-model-lpm.ts:441"
+  "where": "apps/web/components/studio-model-lpm.ts:84 apps/web/components/studio-model-lpm.ts:94 apps/web/components/studio-model-lpm.ts:474"
  },
  "Finance / ERP": {
   "fr": "",
@@ -21801,7 +21839,7 @@
   "fr": "Complet",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:354 apps/web/components/studio-model-lpm.ts:359 apps/web/components/studio-model-lpm.ts:359"
+  "where": "apps/web/components/studio-model-lpm.ts:364 apps/web/components/studio-model-lpm.ts:369 apps/web/components/studio-model-lpm.ts:369"
  },
  "Full agreement. Ask how you got there so fast.": {
   "fr": "Accord total. Demandez comment vous y êtes arrivés si vite.",
@@ -21843,7 +21881,7 @@
   "fr": "Complet ou partiel?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:67"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:69"
  },
  "Full record (JSON, for keeping or importing)": {
   "fr": "Dossier complet (JSON, à conserver ou importer)",
@@ -21873,7 +21911,7 @@
   "fr": "ENTIÈREMENT FINANCÉE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:368"
+  "where": "apps/web/components/studio-model-lpm.ts:401"
  },
  "Fully in place": {
   "fr": "Entièrement en place",
@@ -22440,6 +22478,18 @@
   "where": "apps/web/components/studio-model-lab.ts:36 packages/core/src/courses/ai-native-value-architect.ts:26",
   "note": "Brand name."
  },
+ "Group": {
+  "fr": "Groupe",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-lpm.ts:333"
+ },
+ "Group 1": {
+  "fr": "Groupe 1",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-lpm.ts:326"
+ },
  "Group A to E: links on this board": {
   "fr": "Groupes A à E : liens sur ce tableau",
   "status": "draft",
@@ -22861,7 +22911,7 @@
   "fr": "Masquer le débriefing",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:461"
+  "where": "apps/web/components/studio-model-lpm.ts:494"
  },
  "High": {
   "fr": "Élevé",
@@ -22952,7 +23002,7 @@
   "fr": "Horizon",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:62 apps/web/components/studio-views-lpm-budget.tsx:131 packages/core/src/canvases.ts:104"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:64 apps/web/components/studio-views-lpm-budget.tsx:133 packages/core/src/canvases.ts:104"
  },
  "Horizon 0": {
   "fr": "Horizon 0",
@@ -25195,7 +25245,7 @@
   "fr": "Intervieweur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "intrinsic motivation": {
   "fr": "motivation intrinsèque",
@@ -25391,7 +25441,7 @@
   "fr": "est entièrement financée.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:340"
+  "where": "apps/web/components/studio-model-lpm.ts:350"
  },
  "Is it free for independent trainers?": {
   "fr": "",
@@ -27610,7 +27660,7 @@
   "fr": "En direct pour toutes les tables. Bilan : qu’est-ce qui a été financé, qu’est-ce qui ne l’a pas été, et qu’est-ce qui a fait débat?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:172"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:174"
  },
  "Live example": {
   "fr": "Exemple en direct",
@@ -27692,6 +27742,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:375"
  },
+ "Load the pasted list": {
+  "fr": "Charger la liste collée",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:208"
+ },
  "Load TTC example ideas": {
   "fr": "Charger les idées d’exemple de TTC",
   "status": "draft",
@@ -27710,12 +27766,24 @@
   "phase": "1",
   "where": "packages/core/src/coachsync.ts:63"
  },
+ "Load your own list of Solutions and Epics": {
+  "fr": "Chargez votre propre liste de solutions et d’épopées",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:204"
+ },
  "Loaded": {
   "fr": "Chargé",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/outcomes/page.tsx:914 apps/web/components/planning-pages.tsx:705",
   "note": "check: may be a value"
+ },
+ "Loaded {0} rows in {1} value stream{2}. Check “requires” and “excludes” below if your list has such rules.": {
+  "fr": "{0} lignes chargées dans {1} flux de valeur{2}. Vérifiez « requiert » et « exclut » ci-dessous si votre liste a de telles règles.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-lpm.ts:393"
  },
  "Loading the exercise…": {
   "fr": "Chargement de l’exercice…",
@@ -28421,7 +28489,7 @@
   "fr": "Marquer comme visionné",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:473"
+  "where": "apps/web/components/studio-model-lpm.ts:506"
  },
  "Mark complete": {
   "fr": "Marquer comme terminé",
@@ -29504,7 +29572,7 @@
   "fr": "MVP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:508 apps/web/components/studio-model-lpm.ts:396 packages/core/src/templates.ts:90"
+  "where": "apps/web/components/planning-pages.tsx:508 apps/web/components/studio-model-lpm.ts:429 packages/core/src/templates.ts:90"
  },
  "MVP cost": {
   "fr": "Coût du MVP",
@@ -29691,13 +29759,13 @@
   "fr": "ART Navigation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:454"
+  "where": "apps/web/components/studio-model-lpm.ts:487"
  },
  "Need": {
   "fr": "Besoin",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:27"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:29"
  },
  "Need a hand?": {
   "fr": "",
@@ -29959,7 +30027,7 @@
   "fr": "Nouvelle épopée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:382"
+  "where": "apps/web/components/studio-model-lpm.ts:415"
  },
  "New event…": {
   "fr": "Nouvel événement…",
@@ -30159,7 +30227,7 @@
   "fr": "Nouvelle solution",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:382"
+  "where": "apps/web/components/studio-model-lpm.ts:415"
  },
  "New specification": {
   "fr": "",
@@ -30208,7 +30276,7 @@
   "fr": "Nouveau flux de valeur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:383"
+  "where": "apps/web/components/studio-model-lpm.ts:416"
  },
  "New work": {
   "fr": "",
@@ -30772,6 +30840,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/page.tsx:128"
  },
+ "No rows found. Each row needs an Epic name and an Est. Cost; columns are Value Stream, Epic, Horizon, Epic Description, Est. Cost.": {
+  "fr": "Aucune ligne trouvée. Chaque ligne doit avoir un nom d’épopée et un coût estimé; les colonnes sont : flux de valeur, épopée, horizon, description de l’épopée, coût estimé.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-lpm.ts:389"
+ },
  "No schedule set (TRAINYARD_SYNC_EVERY_MINUTES).": {
   "fr": "",
   "status": "new",
@@ -31125,7 +31199,7 @@
   "fr": "NON FINANCÉE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:368"
+  "where": "apps/web/components/studio-model-lpm.ts:401"
  },
  "Not held yet": {
   "fr": "",
@@ -31356,7 +31430,7 @@
   "fr": "Preneur de notes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "Note text": {
   "fr": "Texte de la note",
@@ -31719,7 +31793,7 @@
   "fr": "Nombre de personnes dans le groupe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:45"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:47"
  },
  "Number of practitioners and geographic locations": {
   "fr": "Nombre de praticiens et sites géographiques",
@@ -31937,7 +32011,7 @@
   "fr": "Observateur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "Obstacle detection": {
   "fr": "Détection d’obstacles",
@@ -32538,13 +32612,13 @@
   "fr": "Une personne de moins",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:47"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:49"
  },
  "One person more": {
   "fr": "Une personne de plus",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:47"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:49"
  },
  "One planning room for every": {
   "fr": "",
@@ -33879,7 +33953,7 @@
   "fr": "Plus de trois minutes : allez à l’essentiel.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:440"
+  "where": "apps/web/components/studio-model-lpm.ts:473"
  },
  "Overall": {
   "fr": "",
@@ -34060,7 +34134,7 @@
   "fr": "PAGE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:487"
+  "where": "apps/web/components/studio-model-lpm.ts:520"
  },
  "Page not found": {
   "fr": "",
@@ -34171,13 +34245,13 @@
   "fr": "Partiel",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:354 apps/web/components/studio-model-lpm.ts:359 apps/web/components/studio-model-lpm.ts:359"
+  "where": "apps/web/components/studio-model-lpm.ts:364 apps/web/components/studio-model-lpm.ts:369 apps/web/components/studio-model-lpm.ts:369"
  },
  "PARTIAL ·": {
   "fr": "PARTIELLE ·",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:368"
+  "where": "apps/web/components/studio-model-lpm.ts:401"
  },
  "Partially in place": {
   "fr": "Partiellement en place",
@@ -34370,6 +34444,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/imports/page.tsx:427"
+ },
+ "Paste the list of Solutions and Epics": {
+  "fr": "Collez la liste des solutions et des épopées",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:206"
  },
  "Paths used to reach each customer segment": {
   "fr": "Canaux utilisés pour atteindre chaque segment de clientèle",
@@ -34741,7 +34821,7 @@
   "fr": "Persévérer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:396",
+  "where": "apps/web/components/studio-model-lpm.ts:429",
   "note": "check: may be a value."
  },
  "Persistent shopping cart": {
@@ -36163,13 +36243,13 @@
   "fr": "Budget du portefeuille",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:100"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:102"
  },
  "Portfolio Budget": {
   "fr": "Budget du portefeuille",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:25 apps/web/components/studio-views-lpm-budget.tsx:56"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:27 apps/web/components/studio-views-lpm-budget.tsx:58"
  },
  "portfolio canvas": {
   "fr": "",
@@ -37576,7 +37656,7 @@
   "fr": "Coûts des projets : épopées et exploitation des solutions",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:26"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:28"
  },
  "Project planning and reporting, OKR and risk widgets": {
   "fr": "",
@@ -37618,7 +37698,7 @@
   "fr": "Coût projeté des solutions et des épopées",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:92"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:94"
  },
  "Projects": {
   "fr": "Projets",
@@ -39160,6 +39240,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/card-types/page.tsx:160 apps/web/app/(app)/imports/page.tsx:228 apps/web/app/(app)/outcome-planning/page.tsx:620"
  },
+ "Remove {0} and what it funded?": {
+  "fr": "Retirer {0} et ce qu’elle a financé?",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:197"
+ },
  "Remove {0} as co-instructor? They keep their sign-in, but no longer run this class.": {
   "fr": "Retirer {0} comme co-formateur? Cette personne garde sa connexion, mais n’anime plus cette formation.",
   "status": "draft",
@@ -39964,7 +40050,7 @@
   "fr": "Pile trois minutes.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:440"
+  "where": "apps/web/components/studio-model-lpm.ts:473"
  },
  "Risk": {
   "fr": "",
@@ -40245,7 +40331,7 @@
   "fr": "Il reste de la place pour un exemple ou une preuve de plus.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:440"
+  "where": "apps/web/components/studio-model-lpm.ts:473"
  },
  "Room limit reached": {
   "fr": "",
@@ -40422,7 +40508,7 @@
   "fr": "Valeur RR | OE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:413",
+  "where": "apps/web/components/studio-model-lpm.ts:446",
   "note": "RR | OE (risk reduction | opportunity enablement) kept as in WSJF; check SAFe fr abbreviation."
  },
  "RR | OE Value": {
@@ -40478,13 +40564,13 @@
   "fr": "Faire tourner l’entreprise",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:382"
+  "where": "apps/web/components/studio-model-lpm.ts:415"
  },
  "Run the business: operating cost of the solution plus local development below the epic threshold.": {
   "fr": "Faire tourner l’activité : coût d’exploitation de la solution plus le développement local sous le seuil des épopées.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:90 apps/web/components/studio-model-lpm.ts:91"
+  "where": "apps/web/components/studio-model-lpm.ts:90 apps/web/components/studio-model-lpm.ts:91 apps/web/components/studio-model-lpm.ts:386"
  },
  "Run the class.": {
   "fr": "",
@@ -41137,7 +41223,7 @@
   "fr": "Notez chaque colonne pour voir la séquence.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:413"
+  "where": "apps/web/components/studio-model-lpm.ts:446"
  },
  "Score every option 1 to 5 on each criterion; cost and risk count the other way round. The weighted score ranks them, the room decides. Selecting an option makes it the future-state portfolio canvas and drafts the portfolio vision from it.": {
   "fr": "",
@@ -41775,7 +41861,7 @@
   "fr": "Séquence :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:413"
+  "where": "apps/web/components/studio-model-lpm.ts:446"
  },
  "Sequenced using WSJF": {
   "fr": "Séquencées avec le WSJF",
@@ -42304,7 +42390,7 @@
   "fr": "Afficher le débriefing : stratégies de conduite du changement",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:461"
+  "where": "apps/web/components/studio-model-lpm.ts:494"
  },
  "Show full board": {
   "fr": "Afficher le tableau complet",
@@ -42724,7 +42810,7 @@
   "fr": "DIAPO",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:487"
+  "where": "apps/web/components/studio-model-lpm.ts:520"
  },
  "Slide 1-18": {
   "fr": "Diapositive 1-18",
@@ -42938,7 +43024,7 @@
   "fr": "Solution",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/value-streams/page.tsx:468 apps/web/components/studio-model-lpm.ts:69 apps/web/components/studio-model-lpm.ts:381"
+  "where": "apps/web/app/(app)/value-streams/page.tsx:468 apps/web/components/studio-model-lpm.ts:69 apps/web/components/studio-model-lpm.ts:414"
  },
  "Solution · 6 PIs": {
   "fr": "Solution · 6 PI",
@@ -42950,7 +43036,7 @@
   "fr": "SOLUTION · FAIRE TOURNER L’ENTREPRISE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:368"
+  "where": "apps/web/components/studio-model-lpm.ts:401"
  },
  "Solution / Epic": {
   "fr": "Solution / épopée",
@@ -43010,7 +43096,7 @@
   "fr": "n’est pas entièrement financée. Financez les solutions avant les épopées.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:339",
+  "where": "apps/web/components/studio-model-lpm.ts:349",
   "note": "English starts with \"Solution\", moved into item 351 for French word order."
  },
  "SOLUTION KANBAN": {
@@ -43882,7 +43968,7 @@
   "fr": "Commencez à écrire : la jauge estime le temps de parole.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:440"
+  "where": "apps/web/components/studio-model-lpm.ts:473"
  },
  "Start: first discipline": {
   "fr": "Début : première discipline",
@@ -46508,6 +46594,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:223"
  },
+ "Tables": {
+  "fr": "Tables",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:191"
+ },
  "TABLES (CLASS GROUPS) AND MEMBERS": {
   "fr": "TABLES (GROUPES DE LA FORMATION) ET MEMBRES",
   "status": "draft",
@@ -46518,7 +46610,7 @@
   "fr": "Tables qui financent",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:135"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:137"
  },
  "Tables of four for the class you pick; a full table refuses a fifth person.": {
   "fr": "",
@@ -47744,11 +47836,11 @@
   "fr": "la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:484"
+  "where": "apps/web/components/studio-model-lpm.ts:517"
  },
  "The class": {
   "fr": "La formation",
-  "status": "draft",
+  "status": "stale",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:324",
   "note": "\"The class\" = the whole training group; could also be \"Le groupe\"."
@@ -47776,6 +47868,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/help.ts:87"
+ },
+ "The class's teams are tables already ({0}); add more here if you need them.": {
+  "fr": "Les équipes de la formation sont déjà des tables ({0}); ajoutez-en d’autres ici au besoin.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:192"
  },
  "The classroom for": {
   "fr": "",
@@ -49107,7 +49205,7 @@
   "fr": "Urgence temporelle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/studio-model-lpm.ts:413 apps/web/components/studio-views-lsa.tsx:164",
+  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/studio-model-lpm.ts:446 apps/web/components/studio-views-lsa.tsx:164",
   "note": "Time criticality: WSJF; official fr-ca may differ"
  },
  "Time Criticality": {
@@ -49297,7 +49395,7 @@
   "fr": "à vérifier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:165"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:167"
  },
  "To do": {
   "fr": "À faire",
@@ -49560,7 +49658,7 @@
   "fr": "Total",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:66 apps/web/components/studio-views-lsa.tsx:105"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:68 apps/web/components/studio-views-lsa.tsx:105"
  },
  "Total (0–2 centralize · 4–6 decentralize)": {
   "fr": "Total (0–2 centraliser · 4–6 décentraliser)",
@@ -50069,7 +50167,7 @@
   "fr": "Portefeuille TTC Autonomous Mobility",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:454",
+  "where": "apps/web/components/studio-model-lpm.ts:487",
   "note": "Portfolio name kept in English as a company name; check."
  },
  "TTC built for grocers, but hospitals adopt it first.": {
@@ -50236,7 +50334,7 @@
   "fr": "Tapez un montant dans votre colonne (par exemple 250000, 250k ou 1.5m) et appuyez sur Entrée. Financez les solutions avant les épopées.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:106"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:108"
  },
  "Type here": {
   "fr": "Saisissez ici",
@@ -50675,6 +50773,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/imports/page.tsx:54"
  },
+ "Upload a CSV file": {
+  "fr": "Téléverser un fichier CSV",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:210"
+ },
  "UPLOAD OR CONNECT": {
   "fr": "IMPORTER OU CONNECTER",
   "status": "draft",
@@ -50945,7 +51049,7 @@
   "fr": "Valeur utilisateur-affaires",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:413 apps/web/components/studio-views-lsa.tsx:164 packages/core/src/classes.ts:478",
+  "where": "apps/web/components/studio-model-lpm.ts:446 apps/web/components/studio-views-lsa.tsx:164 packages/core/src/classes.ts:478",
   "note": "WSJF component; SAFe fr may use \"valeur métier/utilisateur\"; check."
  },
  "User-Business Value": {
@@ -51214,7 +51318,7 @@
   "fr": "Flux de valeur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views-lpm-budget.tsx:60 apps/web/components/studio-views-lpm-budget.tsx:129"
+  "where": "apps/web/components/studio-views-lpm-budget.tsx:62 apps/web/components/studio-views-lpm-budget.tsx:131"
  },
  "Value stream and ART identification": {
   "fr": "Identification des flux de valeur et des ART",
@@ -51268,7 +51372,7 @@
   "fr": "Leaders des flux de valeur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:441"
+  "where": "apps/web/components/studio-model-lpm.ts:474"
  },
  "Value stream map": {
   "fr": "",
@@ -51834,7 +51938,7 @@
   "fr": "Observe le langage corporel et les non-dits",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:432"
+  "where": "apps/web/components/studio-model-lpm.ts:465"
  },
  "WAYBILL ·": {
   "fr": "LETTRE DE VOITURE ·",
@@ -53723,7 +53827,7 @@
   "fr": "WIP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-agenda.ts:23 apps/web/components/studio-model-lpm.ts:398 apps/web/components/studio-views-lpm.tsx:247",
+  "where": "apps/web/components/studio-model-agenda.ts:23 apps/web/components/studio-model-lpm.ts:431 apps/web/components/studio-views-lpm.tsx:247",
   "note": "Kept as acronym (glossary: travail en cours (WIP)); used as label and placeholder."
  },
  "WIP limit": {
