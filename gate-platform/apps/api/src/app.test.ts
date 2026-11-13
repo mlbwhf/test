@@ -538,3 +538,21 @@ describe("turnstile", () => {
     expect(seen).toEqual([undefined, undefined, "forged", "good", "forged", undefined, undefined, "good"]);
   });
 });
+
+describe("event overview", () => {
+  it("Preview page opens the date's EnrollClass page, not the organizer's website", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", webUrl: "https://app.enrollclass.test", publicPageUrl: (_o, slug) => `https://agile-agilist.test/training/${slug}/` });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json();
+    const J = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const orgId = created.organization.id as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "leading-safe", name: "Leading SAFe" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Dec", sessions: [{ startsAt: "2099-12-01T14:00:00Z", endsAt: "2099-12-01T22:00:00Z" }] } })).json();
+    const base = `https://app.enrollclass.test/c/${orgId}/leading-safe`;
+    // On sale: that date's own page.
+    expect((await im.inject({ url: `/v1/events/${ev.id}/overview`, headers: J })).json().publicUrl).toBe(`${base}/2099-12-01`);
+    // Cancelled, so no longer listed: the course page.
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/cancel`, headers: J, payload: { reason: "test" } });
+    expect((await im.inject({ url: `/v1/events/${ev.id}/overview`, headers: J })).json().publicUrl).toBe(base);
+  });
+});

@@ -507,7 +507,15 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     });
     api.get("/v1/events/:id/overview", { schema: { tags: ["events"], params: z.object({ id: z.string() }) } }, async (req) => {
       const o = await eventOverview(deps.core, org(req).id, req.params.id, { money: can(req.role!, "money:read") });
-      return { ...(JSON.parse(JSON.stringify(o)) as object), publicUrl: o.course && deps.publicPageUrl ? deps.publicPageUrl(org(req).id, o.course.slug) : null };
+      // Preview and Share open this date's own EnrollClass page (the course page while the date is not
+      // on sale), never the organizer's website: that is what learners see when the link is shared.
+      let publicUrl: string | null = null;
+      if (o.course) {
+        const base = `${deps.webUrl ?? "http://localhost:3000"}/c/${encodeURIComponent(org(req).id)}/${encodeURIComponent(o.course.slug)}`;
+        const date = (await deps.core.publicCourse(org(req).id, o.course.slug).catch(() => null))?.cohorts.find((c) => c.event.id === req.params.id)?.dateSlug;
+        publicUrl = date ? `${base}/${encodeURIComponent(date)}` : base;
+      }
+      return { ...(JSON.parse(JSON.stringify(o)) as object), publicUrl };
     });
 
     api.patch("/v1/organizations/me/pricing", { schema: { tags: ["organizations"], body: S.UpdatePricingBody, response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => S.toOrganization(await deps.core.updatePricing(org(req).id, req.body)));
