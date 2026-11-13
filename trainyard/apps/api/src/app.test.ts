@@ -2499,10 +2499,16 @@ describe("company accounts", () => {
     expect(pick.candidates.map((c: { name: string; teaches: boolean }) => [c.name, c.teaches])).toEqual([["Bo", true], ["Cy", true]]);
     expect((await call("POST", `/v1/boards/${cls}/instructors`, { userId: cy.id }, owner)).body.instructors.map((i: { name: string }) => i.name)).toEqual(["Ana", "Cy"]);
     // The admin hands the class to Bo; Ana stays on as co-instructor. A co-instructor-only person cannot lead.
-    expect((await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: cy.id }, owner)).body.error.code).toBe("NOT_A_TRAINER");
+    // Anyone on the roster can be given a class, seat or not: Cy leads it, then it goes to Bo.
+    expect((await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: cy.id }, owner)).body.lead.name).toBe("Cy");
+    const cyKey = (await call("POST", `/v1/users/${cy.id}/rotate-key`, undefined, owner)).body.apiKey as string;
+    expect((await call("GET", `/v1/boards/${cls}/students`, undefined, cyKey)).status).toBe(200);
+    expect((await call("PATCH", `/v1/boards/${cls}`, { lang: "fr-CA" }, cyKey)).status).toBe(200);
+    expect((await call("GET", `/v1/boards/${cls}`, undefined, owner)).body.board.fields.lang).toBe("fr-CA");
+    expect((await call("PATCH", `/v1/boards/${cls}`, { lang: "de" }, owner)).status).toBe(400);
     const lead = await call("PUT", `/v1/company/classes/${cls}/lead`, { userId: bo.body.instructor.id }, owner);
     expect(lead.body.lead.name).toBe("Bo");
-    expect((await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body.instructors.map((i: { name: string; role: string }) => [i.name, i.role])).toEqual([["Bo", "owner"], ["Cy", "co-instructor"], ["Ana", "co-instructor"]]);
+    expect((await call("GET", `/v1/boards/${cls}/instructors`, undefined, owner)).body.instructors.map((i: { name: string; role: string }) => [i.name, i.role])).toEqual([["Bo", "owner"], ["Ana", "co-instructor"], ["Cy", "co-instructor"]]);
     // Students, a contribution and an exercise done: the report sees them.
     const [st] = (await call("POST", `/v1/boards/${cls}/students`, { students: [{ name: "Dee", email: "dee@acme.io" }, { name: "Eve", email: "eve@acme.io" }] }, owner)).body.students as { id: string; token: string }[];
     await call("GET", "/v1/me", undefined, st!.token);

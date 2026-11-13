@@ -53,7 +53,8 @@ export default function CompanyPage() {
   if (me.data.principal.role !== "admin") return <div className="notice warn">The company console is for the company&apos;s admin.</div>;
   if (!report.data || !roster.data) return <Loading error={report.error ?? roster.error} />;
   const r = report.data, people = roster.data.instructors, courses = roster.data.courses;
-  const trainers = people.filter((p) => p.kind === "trainer" && !p.disabled);
+  // Anyone on the roster can be given a class to lead, trainer seat or not.
+  const trainers = people.filter((p) => !p.disabled);
   const courseName = (id: string) => courses.find((c) => c.id === id)?.short ?? id;
   const run = async (fn: () => Promise<unknown>, done?: string) => {
     setErr(null);
@@ -153,7 +154,7 @@ export default function CompanyPage() {
               </tbody>
             </table>
           </div>
-          <p className="faint" style={{ fontSize: 13, margin: 0 }}>✓ marks instructors who teach the class&apos;s course. Add students from a class&apos;s own page (Open → Students). Co-instructors only (no trainer seat) can help run a class but not lead it.</p>
+          <p className="faint" style={{ fontSize: 13, margin: 0 }}>✓ marks instructors who teach the class&apos;s course. Pick any instructor as a class&apos;s lead; the one replaced stays on as co-instructor. Add students from a class&apos;s own page (Open → Students).</p>
         </section>
       ) : null}
 
@@ -220,7 +221,7 @@ function Roster({ people, courses, canManage, run }: { people: Instructor[]; cou
   const toggle = (list: string[], id: string) => (list.includes(id) ? list.filter((x) => x !== id) : [...list, id]);
   return (
     <section className="panel panel-body stack" style={{ gap: 14 }}>
-      <p className="faint" style={{ margin: 0 }}>Instructors lead classes and use a trainer seat each. Co-instructors only help run the classes they are added to, and use no seat. Tick the courses each person teaches: classes for that course list them first.</p>
+      <p className="faint" style={{ margin: 0 }}>Instructors can create classes and use a trainer seat each. Co-instructors use no seat: they run only the classes you assign them, as lead or as co-instructor. Tick the courses each person teaches: classes for that course list them first.</p>
       <div style={{ overflowX: "auto" }}>
         <table className="table" style={{ width: "100%", minWidth: 760 }}>
           <thead><tr><th>Name</th><th>Role</th><th>Courses they teach</th><th>Sign-in</th></tr></thead>

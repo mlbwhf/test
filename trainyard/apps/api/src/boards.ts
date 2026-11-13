@@ -323,11 +323,13 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     await store.commit(req.principal, "board.delete", { id: req.params.id });
     return reply.code(204).send();
   });
-  app.patch("/v1/boards/:id", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120) }) } }, async (req) => {
+  app.patch("/v1/boards/:id", { schema: { params: z.object({ id: Id }), body: z.object({ name: z.string().min(1).max(120).optional(), lang: z.enum(["en", "fr-CA"]).optional() }) } }, async (req) => {
     require(req, "plan");
     const b = reach(req, req.params.id, "edit");
-    b.name = req.body.name;
-    await store.commit(req.principal, "board.rename", { id: b.id });
+    if (req.body.name) b.name = req.body.name;
+    // The language the class is shown in, to its trainers and its students (the catalogues in i18n/).
+    if (req.body.lang) b.fields = { ...(b.fields ?? {}), lang: req.body.lang };
+    await store.commit(req.principal, req.body.lang ? "board.language" : "board.rename", { id: b.id, ...(req.body.lang ? { lang: req.body.lang } : {}) });
     return { board: summary(b) };
   });
 

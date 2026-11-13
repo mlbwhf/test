@@ -9,6 +9,7 @@ import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
 import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
+import { CLASS_LANGUAGES, useClassLanguage } from "@/lib/translate";
 import { api, download, useApi, useMe, type ApiFailure } from "@/lib/api";
 
 // Loaded when needed, not with the page: the planning room (its own bundle), and the trainer's panels.
@@ -37,6 +38,9 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   const [showStudents, setShowStudents] = useState(false);
   const me = useMe();
   const router = useRouter();
+  // A class shows in its own language, to its trainers and its students.
+  const lang = typeof view.data?.board.fields?.lang === "string" ? view.data.board.fields.lang : undefined;
+  useClassLanguage(lang);
   if (!view.data || (!model.data && !me.data?.principal.guestBoardId)) return <Loading error={view.error ?? (me.data?.principal.guestBoardId ? null : model.error)} />;
   const { board, shape } = view.data;
   // A class board shows a tab per lesson; a student who joined by link sees only that.
@@ -114,6 +118,20 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
               >
                 Rename
               </button>
+              <label className="row" style={{ gap: 6, alignItems: "center" }} data-no-i18n>
+                <span className="faint" style={{ fontSize: 13 }}>Language</span>
+                <select
+                  aria-label="Class language"
+                  value={lang ?? "en"}
+                  onChange={(e) => void run("", () => api("PATCH", `/v1/boards/${encodeURIComponent(board.id)}`, { lang: e.target.value })).then(() => window.location.reload())}
+                >
+                  {CLASS_LANGUAGES.map((l) => (
+                    <option key={l.id} value={l.id}>
+                      {l.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
               <ImportActivities board={board} onDone={(m) => (setErr(null), setDone(m), void view.reload())} onError={setErr} />
               <button className="btn" onClick={() => run("Saved as your own class template: start new classes from it under Classes.", () => api("POST", `/v1/boards/${encodeURIComponent(board.id)}/template`, { name: `${board.name} (my template)`, keepCards: true }))}>
                 Save as my class template
