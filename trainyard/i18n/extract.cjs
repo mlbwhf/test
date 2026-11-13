@@ -25,6 +25,8 @@ const notText = (s) =>
 const looksUi = (s) => /\s/.test(s.trim()) || /^[A-Z][a-z]/.test(s) || /^[A-Z]{2,}( |$)/.test(s);
 const out = new Map();
 const add = (text, file, kind, line) => {
+  // A text written over several lines (an exercise's steps) is shown line by line: one entry per line.
+  if (kind === "string" && /\n/.test(text.trim())) return text.split(/\n+/).forEach((l) => add(l, file, kind, line));
   const t = text.replace(/\s+/g, " ").trim();
   if (t.length < 2 || notText(t) || (kind === "string" && !looksUi(t))) return;
   const rel = path.relative(root, file);

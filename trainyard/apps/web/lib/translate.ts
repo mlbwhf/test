@@ -14,7 +14,7 @@ export const CLASS_LANGUAGES: { id: string; name: string }[] = [
   { id: "fr-FR", name: "Français (France)" },
 ];
 
-type Catalogue = { exact: Map<string, string>; patterns: { re: RegExp; fr: string }[] };
+type Catalogue = { exact: Map<string, string>; patterns: { re: RegExp; fr: string }[]; /** Course wording: kept in English, with the translation beneath. */ both: Map<string, string> };
 const loaded = new Map<string, Promise<Catalogue>>();
 const ATTRS = ["placeholder", "title", "aria-label"];
 const norm = (s: string) => s.replace(/\s+/g, " ").trim();
@@ -23,10 +23,11 @@ function load(lang: string): Promise<Catalogue> {
   let p = loaded.get(lang);
   if (!p) {
     p = fetch(`/i18n/${encodeURIComponent(lang)}.json`, { cache: "no-cache" })
-      .then((r): Promise<Record<string, string>> => (r.ok ? (r.json() as Promise<Record<string, string>>) : Promise.resolve({})))
+      .then((r): Promise<{ t?: Record<string, string>; b?: Record<string, string> }> => (r.ok ? r.json() : Promise.resolve({})))
       .then((d) => {
         const exact = new Map<string, string>(), patterns: Catalogue["patterns"] = [];
-        for (const [en, fr] of Object.entries(d)) {
+        const both = new Map(Object.entries(d.b ?? {}).map(([en, fr]) => [norm(en), fr]));
+        for (const [en, fr] of Object.entries(d.t ?? {})) {
           if (/\{\d+\}/.test(en)) {
             // "Remove {0} students?" matches the text with anything in the holes.
             const src = norm(en).replace(/[.*+?^${}()|[\]\\]/g, "\\$&").replace(/\\\{(\d+)\\\}/g, "(?<p$1>.+?)");
@@ -37,9 +38,9 @@ function load(lang: string): Promise<Catalogue> {
             }
           } else exact.set(norm(en), fr);
         }
-        return { exact, patterns };
+        return { exact, patterns, both };
       })
-      .catch(() => ({ exact: new Map(), patterns: [] }));
+      .catch(() => ({ exact: new Map(), patterns: [], both: new Map() }));
     loaded.set(lang, p);
   }
   return p;
@@ -84,9 +85,43 @@ export function useClassLanguage(lang: string | undefined) {
       const done = new WeakMap<Node, string>();
       const doneAttr = new WeakMap<Element, Record<string, string>>();
       const skip = (el: Element | null) => !el || !!el.closest("script,style,textarea,[contenteditable='true'],[data-no-i18n]");
+      // Course wording stays in English with the translation beneath it (a line added by CSS from an
+      // attribute, so the page's own elements are never changed). In tight places (buttons, links,
+      // menus, drawings) there is no room for two lines: the translation alone is shown.
+      if (!document.getElementById("i18n-alt-style")) {
+        const st = document.createElement("style");
+        st.id = "i18n-alt-style";
+        st.textContent = "[data-i18n-alt]::after{content:attr(data-i18n-alt);display:block;font-style:italic;font-weight:500;font-size:.88em;line-height:1.3;opacity:.8;margin-top:.15em;text-transform:none;letter-spacing:0}";
+        document.head.appendChild(st);
+      }
+      const alts = new WeakMap<Element, Map<Text, string>>();
+      const setAlt = (el: Element, n: Text, fr: string | null) => {
+        const m = alts.get(el) ?? new Map<Text, string>();
+        if (fr === null) m.delete(n);
+        else m.set(n, fr);
+        alts.set(el, m);
+        for (const k of [...m.keys()]) if (k.parentElement !== el) m.delete(k);
+        const v = [...m.values()].join(" ");
+        if (v) el.setAttribute("data-i18n-alt", v);
+        else el.removeAttribute("data-i18n-alt");
+      };
       const text = (n: Text) => {
         const v = n.nodeValue ?? "";
         if (done.get(n) === v || skip(n.parentElement)) return;
+        const par = n.parentElement!;
+        const two = cat.both.get(norm(v));
+        if (two !== undefined) {
+          if (par instanceof HTMLElement && !par.closest("button,a,option,select,summary,nav,svg,[role='tab']")) {
+            done.set(n, v);
+            setAlt(par, n, two);
+            return;
+          }
+          const o = (/^\s/.test(v) ? " " : "") + two + (/\s$/.test(v) ? " " : "");
+          done.set(n, o);
+          n.nodeValue = o;
+          return;
+        }
+        if (alts.get(par)?.has(n)) setAlt(par, n, null);
         const out = tr(v);
         if (out === null || out === v) return;
         // An <option> without a value uses its text as the value: keep the value as written.
@@ -100,7 +135,7 @@ export function useClassLanguage(lang: string | undefined) {
         for (const a of ATTRS) {
           const v = el.getAttribute(a);
           if (!v || doneAttr.get(el)?.[a] === v) continue;
-          const out = tr(v);
+          const out = cat.both.get(norm(v)) ?? tr(v);
           if (out === null || out === v) continue;
           doneAttr.set(el, { ...(doneAttr.get(el) ?? {}), [a]: out });
           el.setAttribute(a, out);
