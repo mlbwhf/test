@@ -134,11 +134,14 @@ dashboard picks it up. `https://app.enrollclass.com/dashboard` now shows the org
    events `payment_intent.succeeded`, `payment_intent.payment_failed`, `refund.updated` and
    `charge.refund.updated` (the adapter ignores anything else). Put the signing secret in
    `.env` as `STRIPE_WEBHOOK_SECRET` and run `./deploy.sh`.
-2. Add a second endpoint with the same URL, choosing **Events on Connected accounts**, event
-   `account.updated`. Put its signing secret in `.env` as `STRIPE_CONNECT_WEBHOOK_SECRET`.
-   It keeps each organizer's "Stripe connected" status current when Stripe approves or
-   restricts their account; without it the status still refreshes whenever they open the
-   dashboard.
+2. Add a second endpoint with the same URL, choosing **Events on Connected accounts**, events
+   `account.updated`, `payment_intent.succeeded`, `payment_intent.payment_failed`,
+   `refund.updated` and `charge.refund.updated`. Put its signing secret in `.env` as
+   `STRIPE_CONNECT_WEBHOOK_SECRET`. `account.updated` keeps each organizer's "Stripe
+   connected" status current. The payment events are required for Direct mode: those charges
+   are made on the organizer's own Stripe account, so Stripe reports them only to this
+   endpoint, and without it a Direct-mode order stays pending after the learner pays.
+   Choose the **Snapshot** payload style on both endpoints (the handler reads the full object).
 3. Organizers connect from the dashboard checklist. A Stripe account counts as connected
    only when Stripe enables both charges and payouts; until then the checklist offers
    "Finish Stripe setup" with a fresh link. Stripe redirects back to
