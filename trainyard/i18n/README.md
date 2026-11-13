@@ -10,7 +10,7 @@ node i18n/sync.cjs fr-CA                   # update fr-CA.json: keep translation
 node i18n/sync.cjs fr-CA --check              # fails when texts are waiting for a translation (for CI)
 ```
 
-- `fr-CA.json` — French (Quebec). `{ "<English>": { fr, status, phase, where, note? } }`. Status: `draft` (machine first pass),
+- `fr-CA.json` — French (Quebec); `fr-FR.json` — French (France), started from it. `{ "<English>": { fr, status, phase, where, note? } }`. Status: `draft` (machine first pass),
   `approved`, `new` (no French yet), `stale` (no longer in the code; kept for reuse), `course` (Scaled Agile wording).
 - `glossary-fr-CA.tsv` — SAFe terms: official SAFe French (fr-ca) glossary, with the choices made for SAFe 6 renames.
 - `style-fr-CA.md` — tone and typography rules every translation follows.
@@ -23,4 +23,9 @@ Status (Approved, Changed, Rejected), then upload it back here (Add file → Upl
 `python3 i18n/workbook.py import fr-CA` applies it, glossary included; `export` rebuilds the workbook.
 A new language starts with `node i18n/sync.cjs <lang>` (e.g. `es`, `de`) and then `export <lang>`.
 
-Not yet wired into the screens: the next step reads these catalogues at display time, per class language.
+## How a class shows its language
+
+A class has a Language setting on its page. `node i18n/build.cjs fr-CA` writes the translated class texts to
+`apps/web/public/i18n/fr-CA.json`; the screens load it for a class in that language and show every text the
+catalogue knows in it (apps/web/lib/translate.ts). Only the display changes, never what is saved, so a class
+can switch language at any time. Run `build.cjs` after every catalogue change, then deploy.

@@ -97,14 +97,14 @@ export function registerCompanyRoutes(app: App, tenants: Tenants, store: Store) 
     return "﻿" + lines.join("\r\n") + "\r\n";
   });
 
-  // Assign a class's lead instructor; the one they replace stays on as a co-instructor.
+  // Assign a class's lead instructor: anyone on the roster (someone without a trainer seat leads the classes
+  // they are assigned, and only those); the one they replace stays on as a co-instructor.
   app.put("/v1/company/classes/:id/lead", { schema: { params: z.object({ id: z.string().max(200) }), body: z.object({ userId: z.string().max(80) }) } }, async (req) => {
     admin(req);
     const b = classes().find((x) => x.id === req.params.id);
     if (!b) throw notFound("Class");
     const u = people(req).find((x) => x.id === req.body.userId && !x.disabled);
     if (!u) throw notFound("Instructor");
-    if (u.role === "viewer") throw new ApiError(422, "NOT_A_TRAINER", `${u.name} is a co-instructor only (no trainer seat). Make them a trainer on the Instructors tab to lead classes.`);
     const before = typeof b.fields?.ownerId === "string" ? b.fields.ownerId : undefined;
     const co = ids(b).filter((x) => x !== u.id);
     if (before && before !== u.id && !co.includes(before)) co.push(before);

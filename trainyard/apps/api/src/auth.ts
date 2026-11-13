@@ -76,7 +76,7 @@ export function classBoardOfUrl(url: string): string | undefined {
 }
 
 /** Whether the user is named a co-instructor on the board (students.ts adds them). */
-export const isCoInstructor = (b: { fields?: Record<string, unknown> } | undefined, userId: string): boolean => !!b && Array.isArray(b.fields?.instructors) && (b.fields!.instructors as unknown[]).includes(userId);
+export const isCoInstructor = (b: { fields?: Record<string, unknown> } | undefined, userId: string): boolean => !!b && (b.fields?.ownerId === userId || (Array.isArray(b.fields?.instructors) && (b.fields!.instructors as unknown[]).includes(userId)));
 
 /** What each role may do. Reads are open to every role. */
 export const PERMISSIONS = {

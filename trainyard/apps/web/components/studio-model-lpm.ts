@@ -89,7 +89,7 @@ const PB_THEMES = ["Increase revenue for the new Value Stream for Autonomous Com
 const PBI = (id: string, vs: string, n: string, d: string, c: number, sol?: number, hz?: string) => ({ id, vs, n, d, c, sol: !!sol, hz: hz || "" });
 const PB_ITEMS = [PBI("CS", "Commercial", "C Solution 1: Autonomous Commercial Delivery via vans", "Run the business: operating cost of the solution plus local development below the epic threshold.", 2000000, 1, "H2"), PBI("C1", "Commercial", "C1: Extend to more languages", "Extend the delivery services to other languages", 100000), PBI("C2", "Commercial", "C2: Gamification for deliveries", "Provide gamification for ordering process to encourage orders", 500000), PBI("C3", "Commercial", "C3: Drone delivery platform", "Provide a capability for delivery of groceries with drones", 900000), PBI("C4", "Commercial", "C4: Support Apple Pay", "Support Apple Pay as a payment method for delivery", 100000), PBI("C5", "Commercial", "C5: Build an Alexa service", "Allow voice ordering through Alexa-capable devices", 200000), PBI("C6", "Commercial", "C6: Local Farm delivery of perishable goods", "Test the ability to deliver perishable goods within a certain time and distance range", 100000), PBI("C7", "Commercial", "C7: Image recognition system", "Improve the advanced image control and recognition systems to interpret sensory information for identifying appropriate navigation paths with 90%", 700000),
   PBI("TS", "Transport", "T Solution 1: Autonomous Public Transport via Buses", "Run the business: operating cost of the solution plus local development below the epic threshold.", 1000000, 1, "H2"), PBI("T1", "Transport", "T1: Move to autonomous Level 5", "Enable Level 5 autonomy which will allow deliveries for government customers in off road conditions, opening a huge market for the company", 600000), PBI("T2", "Transport", "T2: Upgrade sensors", "Upgrade the sensors of the vehicle to ensure faster recognition of dynamic road situations", 500000), PBI("T3", "Transport", "T3: Enhance navigation", "Enhance navigation capabilities to shorten drive time", 300000), PBI("T4", "Transport", "T4: Edge Detection capability", "Improve the image recognition system to enable edge detection in low light and low contrast settings", 800000),
-  PBI("P1", "Crossing VSs", "P1: Delivery platform partnership", "Partner with a company that has a delivery platform. If funded, P2 and P3 cannot be funded.", 700000), PBI("P2", "Crossing VSs", "P2: Delivery platform development", "Build an in-house delivery platform to support all delivery needs. If funded, P1 cannot be funded.", 800000), PBI("P3", "Crossing VSs", "P3: Fleet management delivery platform integration", "Integrate the new delivery platform with the fleet management suite. Only if P2 is funded.", 200000), PBI("P4", "Crossing VSs", "P4: Continuous Delivery Pipeline", "Allow Release on Demand on new features", 300000)];
+  PBI("P1", "Crossing VSs", "P1: Delivery platform partnership", "Partner with a company that has a delivery platform. Note: If you fund ‘Delivery Platform Partnership’ you cannot fund ‘Delivery Platform Development’ and cannot fund ‘Fleet Management Integration’", 700000), PBI("P2", "Crossing VSs", "P2: Delivery platform development", "Build an in-house delivery platform to support all delivery needs. Note: If you fund ‘Delivery Platform Development’ you cannot fund ‘Delivery Platform Partnership’", 800000), PBI("P3", "Crossing VSs", "P3: Fleet management delivery platform integration", "Integrate the new delivery platform with the fleet management suite. Note: You can only fund this if ‘Delivery platform development’ is funded", 200000), PBI("P4", "Crossing VSs", "P4: Continuous Delivery Pipeline", "Allow Release on Demand on new features", 300000)];
 const PB_VSC: Record<string, string> = { Commercial: "#2f6fd0", Transport: "#1fb89a", "Crossing VSs": "#7b44f5" };
 const PB_ROLES: [string, string][] = [["LPM members", "Balance the whole portfolio against the strategic themes."], ["Product and Solution Management", "Protect the roadmap and the features customers are waiting for."], ["Epic Owners", "Champion their Epic’s business case and MVP."], ["Enterprise and Solution Architects", "Fund enablers, platforms and the delivery pipeline."], ["Business Owners", "Maximize business value and ROI across value streams."], ["Sales and Marketing", "Fund what customers will buy and the market will notice."], ["Finance", "Stay inside the budget and fund run-the-business first."]];
 const money = (n: number) => (!n ? "$0" : (n < 0 ? "−" : "") + "$" + (Math.abs(n) >= 1e6 ? (Math.abs(n) / 1e6).toFixed(Math.abs(n) % 1e6 ? 2 : 0).replace(/\.?0+$/, "") + "M" : Math.round(Math.abs(n) / 1000) + "K"));
@@ -321,13 +321,26 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
 
   /* 4-28 participatory budgeting: one event for the class, each team a table */
   if (K === "pb") {
-    const teams = classTeams(c.board), tables = teams.length ? teams.map((t) => ({ id: t.id, name: t.name })) : [{ id: "class", name: "The class" }];
+    // Tables: the class's teams, plus the tables the trainer creates here (a class without teams starts with "Group 1").
+    const teams = classTeams(c.board);
+    const own: { id: string; name: string }[] = Array.isArray(S.pbtables) ? (S.pbtables as { id: string; name: string }[]) : teams.length ? [] : [{ id: "class", name: "Group 1" }];
+    const tables = [...teams.map((t) => ({ id: t.id, name: t.name })), ...own];
+    const setOwn = (list: { id: string; name: string }[]) => op({ key: "pbtables", op: "set", value: list });
+    const tableAdmin = {
+      can: c.trainer && !c.readOnly,
+      own: own.map((t) => ({ id: t.id, name: t.name, rename: val((v) => { if (v.trim() && v.trim() !== t.name) setOwn(own.map((x) => (x.id === t.id ? { ...x, name: v.trim() } : x))); }), remove: () => { setOwn(own.filter((x) => x.id !== t.id)); op({ key: "pbbids:" + t.id, op: "set", value: null }); op({ key: "pbtable:" + t.id, op: "set", value: null }); } })),
+      teams: teams.map((t) => t.name),
+      add: () => { const n = tables.length + 1, id = "g" + Date.now().toString(36); setOwn([...own, { id, name: "Group " + n }]); setUi({ table: id, pbWho: 0 }); },
+    };
     const tid: string = tables.some((t) => t.id === ui.table) ? ui.table : tables.some((t) => t.id === c.team) ? (c.team as string) : tables[0]!.id;
     const gName = (g: string) => tables.find((t) => t.id === g)?.name ?? g;
     const CF = { ...PB_DEFCFG(), ...rec("pbcfg") }, VIEW: string = ui.pbView === "cfg" && !c.trainer ? "bid" : ui.pbView || "bid";
     const setCF = (f: any) => { const c0 = { ...PB_DEFCFG(), ...rec("pbcfg") }; op({ key: "pbcfg", op: "set", value: { ...c0, ...(typeof f === "function" ? f(c0) : f) } }); };
     const ITEMS = CF.vs.flatMap((v: any) => v.items.map((it: any) => ({ ...it, vsId: v.id, vsN: v.n, vsC: v.c })));
-    const memOf = (g: string) => Math.max(1, Math.min(12, +((CF.mem || {})[g] ?? CF.members) || 1)), perOf = (g: string) => (+CF.budget || 0) / memOf(g);
+    // A table's own sheet (who sits at it): kept by the table, so its participants can set it up themselves.
+    const sheetOf = (g: string): { n?: number; names?: string[] } => rec("pbtable:" + g);
+    const teamSize = (g: string) => teams.find((t) => t.id === g)?.members.length ?? 0;
+    const memOf = (g: string) => Math.max(1, Math.min(12, +(sheetOf(g).n ?? (CF.mem || {})[g] ?? (teamSize(g) || CF.members)) || 1)), perOf = (g: string) => (+CF.budget || 0) / memOf(g);
     const bidsOf = (g: string): Record<string, number> => rec("pbbids:" + g), tot = (g: string, id: string) => Array.from({ length: memOf(g) }, (_, p) => +(bidsOf(g)[p + ":" + id] || 0)).reduce((a, x) => a + x, 0), spent = (g: string, p: number) => ITEMS.reduce((a: number, it: any) => a + +(bidsOf(g)[p + ":" + it.id] || 0), 0);
     const full = (g: string, id: string) => { const it = ITEMS.find((i: any) => i.id === id); return !!it && tot(g, id) >= it.c; };
     const ppl = memOf(tid), per = perOf(tid), me = Math.min(+(ui.pbWho || 0), ppl - 1), mine = (id: string) => +(bidsOf(tid)[me + ":" + id] || 0);
@@ -338,10 +351,49 @@ export function lpmModel(c: StudioCtx): Record<string, any> {
         if (i.ex && tot(g, i.id) > 0 && tot(g, i.ex) > 0) { const k2 = [i.id, i.ex].sort().join("|"); if (!seen[k2]) { seen[k2] = 1; const r = ITEMS.find((z: any) => z.id === i.ex); w.push(i.n + " and " + (r ? r.n : i.ex) + " are both funded: choose one."); } } });
       return w; };
     const warn = warnOf(tid), myLeft = per - spent(tid, me), grpSpent = ITEMS.reduce((a: number, it: any) => a + tot(tid, it.id), 0), need = ITEMS.reduce((a: number, it: any) => a + (+it.c || 0), 0);
-    const pname = (g: string, p: number) => ((CF.names || {})[g] || [])[p] || "P" + (p + 1);
+    const pname = (g: string, p: number) => (sheetOf(g).names || [])[p] || ((CF.names || {})[g] || [])[p] || "P" + (p + 1);
+    const bidP = (p: number, id: string, v: number) => op({ key: "pbbids:" + tid, op: "set", value: { ...bidsOf(tid), [p + ":" + id]: Math.max(0, v) } });
+    const setSheet = (patch: { n?: number; names?: string[] }) => op({ key: "pbtable:" + tid, op: "set", value: { ...sheetOf(tid), ...patch } });
+    const amount = (s: string) => { const t = String(s).trim().toLowerCase().replace(/[$,\s]/g, ""); const m = /^([0-9]*\.?[0-9]+)(k|m)?$/.exec(t); return m ? Math.round(parseFloat(m[1]!) * (m[2] === "m" ? 1e6 : m[2] === "k" ? 1e3 : 1)) : 0; };
+    const dollars = (n: number) => "$" + Math.round(n).toLocaleString("en-US");
+    // The handout's sheet: one row per Solution or Epic, one column per participant at this table.
+    const sheet = {
+      table: gName(tid), ppl, per: dollars(per), canEdit: !c.readOnly,
+      addPerson: () => setSheet({ n: Math.min(12, ppl + 1) }), removePerson: () => setSheet({ n: Math.max(1, ppl - 1) }),
+      people: Array.from({ length: ppl }, (_, p) => { const left = per - spent(tid, p); return { name: pname(tid, p), raw: (sheetOf(tid).names || [])[p] || "", ph: "P" + (p + 1), setName: val((v) => { const names = [...(sheetOf(tid).names || [])]; names[p] = v.trim(); setSheet({ names }); }), spent: dollars(spent(tid, p)), left: dollars(left), over: left < 0 }; }),
+      groups: CF.vs.map((v: any) => ({ name: v.n, color: v.c, rows: v.items.map((i: any) => { const t = tot(tid, i.id), f = t >= i.c && i.c > 0; return { id: i.id, name: i.n, sol: !!i.sol, hz: i.hz || "", desc: i.sol ? "" : i.d, cost: dollars(+i.c || 0), cells: Array.from({ length: ppl }, (_, p) => { const x = +(bidsOf(tid)[p + ":" + i.id] || 0); return { v: x ? String(x) : "", set: val((sv) => { const nv = amount(sv); if (nv !== x) bidP(p, i.id, nv); }) }; }), total: t ? dollars(t) : "", status: f ? "Full" : t ? "Partial" : "", funded: f, partial: !f && t > 0 }; }) })),
+      totalCost: dollars(need), tableTotal: dollars(grpSpent), tableLeft: dollars((+CF.budget || 0) - grpSpent), tableOver: grpSpent > (+CF.budget || 0),
+      budget: dollars(+CF.budget || 0), need: dollars(Math.max(0, need - (+CF.budget || 0))),
+      // Consolidated results: every Solution and Epic with what each table funded.
+      tables: tables.map((t) => { const sp = ITEMS.reduce((a: number, it: any) => a + tot(t.id, it.id), 0); return { name: t.name, total: dollars(sp), balance: dollars((+CF.budget || 0) - sp), over: sp > (+CF.budget || 0), warn: warnOf(t.id).length }; }),
+      results: CF.vs.map((v: any) => ({ name: v.n, color: v.c, rows: v.items.map((i: any) => { const cells = tables.map((t) => { const tt = tot(t.id, i.id), f = tt >= i.c && i.c > 0; return { amount: tt ? dollars(tt) : "", state: f ? "Full" : tt ? "Partial" : "" }; }); return { id: i.id, name: i.name ?? i.n, sol: !!i.sol, hz: i.hz || "", desc: i.sol ? "" : i.d, cost: dollars(+i.c || 0), cells, full: cells.filter((x) => x.state === "Full").length, partial: cells.filter((x) => x.state === "Partial").length }; }) })),
+    };
     const view = (k: string) => setUi({ pbView: k });
+    // A list of Solutions and Epics pasted or uploaded as in the handout: Value Stream, Epic, Horizon,
+    // Epic Description, Est. Cost (tab- or comma-separated, with or without the header row).
+    const importList = (text: string): string => {
+      const split = (line: string) => { if (line.includes("\t")) return line.split("\t"); const out: string[] = []; let cur = "", q = false; for (let i = 0; i < line.length; i++) { const ch = line[i]!; if (q) { if (ch === '"' && line[i + 1] === '"') { cur += '"'; i++; } else if (ch === '"') q = false; else cur += ch; } else if (ch === '"') q = true; else if (ch === ",") { out.push(cur); cur = ""; } else cur += ch; } out.push(cur); return out; };
+      const vs: any[] = []; let cur: any = null; const seen = new Set<string>(); const old: Record<string, any> = Object.fromEntries(ITEMS.map((i: any) => [i.id, i]));
+      for (const line of text.replace(/\r/g, "").split("\n")) {
+        const [a = "", b = "", hz = "", d = "", cost = ""] = split(line).map((x) => x.trim());
+        const cnum = Math.round(parseFloat(cost.replace(/[^0-9.]/g, "")) || 0);
+        if (!b || !cnum || /^epic$/i.test(b) || /^budget$/i.test(b)) continue;
+        if (a || !cur) { cur = { id: uid("v"), n: a || "Value stream", c: VS_COLS[vs.length % 8], items: [] }; vs.push(cur); }
+        const sol = /solution/i.test(b);
+        let id = (/^([A-Za-z]{1,3}\d{1,3})\s*:/.exec(b)?.[1] ?? (sol ? (b[0] ?? "S").toUpperCase() + "S" : "E" + (seen.size + 1))).toUpperCase();
+        while (seen.has(id)) id += "x";
+        seen.add(id);
+        cur.items.push({ id, n: b, d: d || (sol ? "Run the business: operating cost of the solution plus local development below the epic threshold." : ""), c: cnum, sol, hz, req: old[id]?.req ?? "", ex: old[id]?.ex ?? "" });
+      }
+      const n = vs.reduce((x, v) => x + v.items.length, 0);
+      if (!n) return "No rows found. Each row needs an Epic name and an Est. Cost; columns are Value Stream, Epic, Horizon, Epic Description, Est. Cost.";
+      const ids = new Set(vs.flatMap((v) => v.items.map((i: any) => i.id)));
+      for (const v of vs) for (const i of v.items) { if (!ids.has(i.req)) i.req = ""; if (!ids.has(i.ex)) i.ex = ""; }
+      setCF({ vs });
+      return `Loaded ${n} rows in ${vs.length} value stream${vs.length === 1 ? "" : "s"}. Check “requires” and “excludes” below if your list has such rules.`;
+    };
     const money2 = (n: number) => money(n);
-    T.pb = { gName: gName(tid), tableChips: tables.map((t) => ({ n: t.name, bg: t.id === tid ? "#14123a" : "#fff", fg: t.id === tid ? "#fff" : "#14123a", go: () => setUi({ table: t.id, pbWho: 0 }) })), canPickTable: c.trainer || !c.team || tables.length === 1,
+    T.pb = { sheet, tableAdmin, importList, gName: gName(tid), tableChips: tables.map((t) => ({ n: t.name, bg: t.id === tid ? "#14123a" : "#fff", fg: t.id === tid ? "#fff" : "#14123a", go: () => setUi({ table: t.id, pbWho: 0 }) })), canPickTable: c.trainer || !c.team || tables.length === 1,
       tabs: [["bid", "Bid as a table"], ["res", "Consolidated results"], ...(c.trainer ? [["cfg", "⚙ Set up template"]] : [])].map(([k, l]) => ({ l, bg: VIEW === k ? "#14123a" : "#fff", fg: VIEW === k ? "#fff" : "#14123a", go: () => view(k!) })), isBid: VIEW === "bid", isRes: VIEW === "res", isCfg: VIEW === "cfg",
       budget: money2(+CF.budget || 0), need: money2(need), gap: money2((+CF.budget || 0) - need), ppl, setPpl: val((s) => { const v = Math.max(1, Math.min(12, +s || 1)); setCF((c0: any) => ({ mem: { ...(c0.mem || {}), [tid]: v } })); }),
       people: Array.from({ length: ppl }, (_, p) => ({ n: pname(tid, p), bg: me === p ? "#ffe14d" : "#fff", left: money2(per - spent(tid, p)), lc: per - spent(tid, p) < 0 ? "#c8372d" : "#5b5b6e", go: () => setUi({ pbWho: p }) })),

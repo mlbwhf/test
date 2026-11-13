@@ -235,14 +235,14 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
 const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: false, loading: () => <div className="studio-board faint" style={{ padding: 24 }}>Loading the exercise…</div> });
 
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
-  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} />;
+  if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} lang={typeof props.board.fields?.lang === "string" ? props.board.fields.lang : undefined} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 
 /** The PI Planning preparation and simulation exercises (capacity, board, Coach Sync, draft plan review, business value, risks) all run on the class's own planning room. */
 const PI_ROOM_KINDS = new Set(["cap", "pib", "pcs", "ppr", "pbv", "prm"]);
-function PiRoomEmbed({ boardId, trainer }: { boardId: string; trainer: boolean }) {
-  const q = `?doc=${encodeURIComponent(boardId)}&mode=class`;
+function PiRoomEmbed({ boardId, trainer, lang }: { boardId: string; trainer: boolean; lang?: string | undefined }) {
+  const q = `?doc=${encodeURIComponent(boardId)}&mode=class${lang && lang !== "en" ? `&lang=${encodeURIComponent(lang)}` : ""}`;
   // The class has a planning room of its own. A trainer who set the simulation up under Plan →
   // Planning room instead can bring that room in here, for the students' links to reach it.
   const [gen, setGen] = useState(0);
