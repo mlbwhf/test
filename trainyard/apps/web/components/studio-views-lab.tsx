@@ -43,7 +43,7 @@ export function LabView({ v }: { v: any }) {
       {v.step === "agent" ? (
         <div style={card}>
           <div style={mono}>THE AGENT&apos;S ASSESSMENT · PASTE IT HERE (SHARED WITH YOUR GROUP)</div>
-          <textarea key={"v.answer|" + String(v.answer ?? "")} defaultValue={v.answer} onBlur={v.saveAnswer} disabled={v.readOnly} rows={10} placeholder="Run the agent on the proposal in Flowise, then paste its brutally honest assessment here." style={{ ...field, marginTop: 8, resize: "vertical" }} />
+          <textarea key={"v.answer#1|" + String(v.answer ?? "")} defaultValue={v.answer} onBlur={v.saveAnswer} disabled={v.readOnly} rows={10} placeholder="Run the agent on the proposal in Flowise, then paste its brutally honest assessment here." style={{ ...field, marginTop: 8, resize: "vertical" }} />
         </div>
       ) : null}
       {v.step === "register" ? (
@@ -73,10 +73,10 @@ export function LabView({ v }: { v: any }) {
                   {v.rows.map((r: any) => (
                     <Fragment key={r.id}>
                       <tr style={{ borderTop: "1px solid #0d181822", verticalAlign: "top" }}>
-                        <td style={{ padding: "6px" }}><textarea key={"r.risk|" + String(r.risk ?? "")} defaultValue={r.risk} onBlur={(e) => r.save({ risk: e.target.value })} disabled={v.readOnly} rows={2} style={{ ...field, resize: "vertical" }} placeholder="The risk, in one line" /></td>
+                        <td style={{ padding: "6px" }}><textarea key={"r.risk#2|" + String(r.risk ?? "")} defaultValue={r.risk} onBlur={(e) => r.save({ risk: e.target.value })} disabled={v.readOnly} rows={2} style={{ ...field, resize: "vertical" }} placeholder="The risk, in one line" /></td>
                         <td style={{ padding: "6px" }}><select value={r.lens} onChange={(e) => r.save({ lens: e.target.value })} disabled={v.readOnly} style={field}>{LENSES.map((l) => <option key={l}>{l}</option>)}</select></td>
                         <td style={{ padding: "6px" }}><select value={r.sev} onChange={(e) => r.save({ sev: e.target.value })} disabled={v.readOnly} style={{ ...field, background: r.sev === "High" ? "#f8a08a" : r.sev === "Medium" ? "#ffe14d" : "#cfe8d4" }}>{SEVERITY.map((l) => <option key={l}>{l}</option>)}</select></td>
-                        <td style={{ padding: "6px" }}><textarea key={"r.fix|" + String(r.fix ?? "")} defaultValue={r.fix} onBlur={(e) => r.save({ fix: e.target.value })} disabled={v.readOnly} rows={2} style={{ ...field, resize: "vertical" }} placeholder="Mitigation, owner, decision" /></td>
+                        <td style={{ padding: "6px" }}><textarea key={"r.fix#3|" + String(r.fix ?? "")} defaultValue={r.fix} onBlur={(e) => r.save({ fix: e.target.value })} disabled={v.readOnly} rows={2} style={{ ...field, resize: "vertical" }} placeholder="Mitigation, owner, decision" /></td>
                         <td style={{ padding: "6px" }}>{!v.readOnly ? <button onClick={r.del} aria-label="Remove risk" style={{ ...btn, padding: "4px 9px" }}>×</button> : null}</td>
                       </tr>
                     </Fragment>
