@@ -3,7 +3,7 @@ import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } 
 import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
 import { addDays, dateSlugs, planScheduleDates, type ScheduleRule } from "./schedule.js";
-import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, normalizeCoursePage } from "./class-page.js";
+import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, isProfileSlug, normalizeCoursePage, normalizeProfile } from "./class-page.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -16,7 +16,7 @@ import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { InvoiceReminderStep } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, CoursePage, ReadyChecks, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, CoursePage, OrganizationProfile, ReadyChecks, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -159,8 +159,15 @@ export class Core {
     return { organization, apiKey };
   }
 
-  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined; logoUrl?: string | null | undefined; accentColor?: string | null | undefined; checkoutInvoices?: boolean | undefined }): Promise<Organization> {
+  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined; logoUrl?: string | null | undefined; accentColor?: string | null | undefined; checkoutInvoices?: boolean | undefined; slug?: string | null | undefined; profile?: OrganizationProfile | undefined }): Promise<Organization> {
     const org = await this.getOrganization(organizationId);
+    let slug: string | null | undefined = patch.slug === undefined ? undefined : patch.slug ? patch.slug.trim().toLowerCase() : null;
+    if (slug) {
+      if (!isProfileSlug(slug)) throw new DomainError("VALIDATION", "the profile address uses 3 to 40 lowercase letters, numbers and dashes");
+      const taken = await this.repos.organizations.getBySlug(slug);
+      if (taken && taken.id !== org.id) throw new DomainError("CONFLICT", `enrollclass.com/o/${slug} is taken`, "try another address");
+    }
+    if (slug === org.slug) slug = undefined;
     if (patch.logoUrl && !/^https?:\/\//.test(patch.logoUrl)) throw new DomainError("VALIDATION", "logoUrl must be an http(s) URL");
     if (patch.accentColor && !isAccentColor(patch.accentColor)) throw new DomainError("VALIDATION", "accentColor must be a hex colour like #2F45E8");
     if (patch.releaseGraceHours !== undefined && (!Number.isFinite(patch.releaseGraceHours) || patch.releaseGraceHours < 0 || patch.releaseGraceHours > 24 * 30)) throw new DomainError("VALIDATION", "releaseGraceHours must be 0..720");
@@ -177,7 +184,14 @@ export class Core {
       ...(patch.logoUrl ? { logoUrl: patch.logoUrl } : {}),
       ...(patch.accentColor ? { accentColor: patch.accentColor.toUpperCase() } : {}),
       ...(patch.checkoutInvoices !== undefined ? { checkoutInvoices: patch.checkoutInvoices } : {}),
+      ...(slug ? { slug } : {}),
     };
+    if (slug === null) delete next.slug;
+    if (patch.profile) {
+      const profile = normalizeProfile(org.profile, patch.profile);
+      if (Object.keys(profile).length) next.profile = profile;
+      else delete next.profile;
+    }
     if (patch.logoUrl === null || patch.logoUrl === "") delete next.logoUrl;
     if (patch.accentColor === null || patch.accentColor === "") delete next.accentColor;
     await this.repos.organizations.update(next);
@@ -807,7 +821,7 @@ export class Core {
       });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id },
       course, cohorts: out,
       sections: coursePageSections(course, { logo: Boolean(org.logoUrl), instructors: out.some((c) => c.instructors.length > 0) }),
     };
@@ -1574,6 +1588,51 @@ export class Core {
     const next: Seat = { ...seat, attendee: { ...seat.attendee, ...(merged ? { readyChecks: merged } : {}) } };
     await this.repos.seats.update(next);
     return next;
+  }
+
+  /**
+   * The organizer's public profile (by profile address or organization id): who they are, their
+   * upcoming classes with seats and prices, their instructors, and what they've delivered so far.
+   */
+  async publicProfile(handle: string) {
+    const org = (await this.repos.organizations.getBySlug(handle.toLowerCase())) ?? (handle.startsWith("org_") ? await this.repos.organizations.get(handle) : undefined);
+    if (!org) throw notFound("organization", handle);
+    const now = this.clock.now();
+    const pricing = this.pricingOf(org);
+    const classes = [];
+    let delivered = 0;
+    let learners = 0;
+    for (const course of await this.repos.courses.listByOrganization(org.id)) {
+      const events = await this.repos.events.listByCourse(course.id);
+      const live = events.filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
+      const slugs = dateSlugs(live, localDate);
+      for (const e of events) {
+        if (e.status === "cancelled" || e.status === "draft" || (e.endsAt ?? e.startsAt) >= now) continue;
+        delivered++;
+        learners += (await this.repos.seats.listByEvent(e.id)).filter((x) => x.status === "confirmed").length;
+      }
+      for (const e of live) {
+        const tts = await this.repos.ticketTypes.listByEvent(e.id);
+        const prices: number[] = [];
+        for (const t of tts) {
+          try {
+            if (t.quantity - t.sold > 0) prices.push(this.resolveUnitPrice(t, e, e.currency, now, pricing));
+          } catch { /* not sold in this currency */ }
+        }
+        classes.push({
+          courseSlug: course.slug, courseName: course.name, topic: course.category ?? inferCategory(course.name, course.certificationBody), imageUrl: course.imageUrl,
+          eventId: e.id, dateSlug: slugs.get(e.id)!, startsAt: e.startsAt, endsAt: e.endsAt, timezone: e.timezone, format: e.format, currency: e.currency,
+          priceMinor: prices.length ? Math.min(...prices) : null,
+          capacity: tts.reduce((a, t) => a + t.quantity, 0), seatsLeft: tts.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0),
+        });
+      }
+    }
+    classes.sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+    const instructors = (await this.repos.parties.listByOrganization(org.id)).filter((p) => p.kind === "instructor").map((p) => ({ id: p.id, name: p.name, title: p.title ?? null, photoUrl: p.photoUrl ?? null }));
+    // "Verified": Stripe has checked the organizer's identity and enabled charges and payouts.
+    const status = org.paymentMode === "direct" ? org.directStatus : org.paymentsStatus;
+    const verified = Boolean(status?.chargesEnabled && status.payoutsEnabled);
+    return { organization: org, verified, classes, instructors, stats: { classesDelivered: delivered, learnersTrained: learners } };
   }
 
   /** Everything the post-checkout page shows, for the buyer who placed the order. */

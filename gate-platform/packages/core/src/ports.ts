@@ -109,6 +109,7 @@ export interface OrganizationRepo {
   update(org: Organization): Promise<void>;
   get(id: string): Promise<Organization | undefined>;
   getByApiKeyHash(hash: string): Promise<Organization | undefined>;
+  getBySlug(slug: string): Promise<Organization | undefined>;
   list(): Promise<Organization[]>;
 }
 export interface PartyRepo {

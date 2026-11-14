@@ -415,6 +415,17 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
       });
     });
 
+    // The organizer's public profile: enrollclass.com/o/<slug> (an organization id works too).
+    pub.get("/public/v1/profiles/:handle", { schema: { tags: ["public"], security: [], params: z.object({ handle: z.string().max(80) }), response: { 200: S.PublicProfileSchema, 404: S.ErrorSchema } } }, async (req) => {
+      const r = await deps.core.publicProfile(req.params.handle);
+      const o = r.organization;
+      return {
+        organization: { id: o.id, name: o.name, slug: o.slug ?? null, country: o.country, logoUrl: o.logoUrl ?? null, accentColor: o.accentColor ?? null, profile: o.profile ?? {} },
+        classes: r.classes.map((c) => ({ ...c, imageUrl: c.imageUrl ?? null, startsAt: c.startsAt.toISOString(), endsAt: c.endsAt?.toISOString() ?? null })),
+        verified: r.verified, instructors: r.instructors, stats: r.stats,
+      };
+    });
+
     // The learner's "ready for class" answers (seat id + their email, like the seat page).
     pub.patch("/public/v1/seats/:seatId/ready", { schema: { tags: ["public"], security: [], params: z.object({ seatId: z.string() }), body: z.object({ email: z.string().email(), readyChecks: S.ReadyChecksSchema }), response: { 200: z.object({ readyChecks: S.ReadyChecksSchema }), 404: S.ErrorSchema } } }, async (req) => {
       const seat = await deps.core.updateSeatReadyChecks(req.params.seatId, req.body.email, req.body.readyChecks);

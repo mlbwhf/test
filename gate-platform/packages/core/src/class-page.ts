@@ -1,7 +1,7 @@
 // The public class page: optional sections, their content, and the learner details a checkout
 // collects. Validation lives here so the API, the importers and the dashboard agree on limits.
 
-import { COURSE_PAGE_MODULES, type Attendee, type Course, type CoursePage, type CoursePageModule, type ReadyChecks } from "./types.js";
+import { COURSE_PAGE_MODULES, type Attendee, type Course, type CoursePage, type CoursePageModule, type OrganizationProfile, type ReadyChecks } from "./types.js";
 import { DomainError } from "./errors.js";
 
 const clip = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -112,5 +112,50 @@ export function cleanAttendee(a: Attendee): Attendee {
   if (a.timeZone && isTimeZone(a.timeZone)) out.timeZone = a.timeZone;
   const ready = cleanReadyChecks(a.readyChecks);
   if (ready) out.readyChecks = ready;
+  return out;
+}
+
+/** Profile address: 3–40 lowercase letters, digits and dashes, not starting or ending with a dash. */
+export const isProfileSlug = (v: string) => /^[a-z0-9](?:[a-z0-9-]{1,38})[a-z0-9]$/.test(v) && !v.includes("--");
+
+/** "Agile Agilist Inc." -> "agile-agilist-inc" (a starting point; the organizer can change it). */
+export function suggestProfileSlug(name: string): string {
+  const s = name.normalize("NFKD").replace(/[\u0300-\u036f]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 40).replace(/-+$/g, "");
+  return s.length >= 3 ? s : `${s || "org"}-training`;
+}
+
+/** Trims and checks a profile patch; empty strings clear a field. */
+export function normalizeProfile(current: OrganizationProfile | undefined, patch: OrganizationProfile): OrganizationProfile {
+  const out: OrganizationProfile = { ...current };
+  const text = (k: "about" | "partnerLevel" | "basedIn" | "teachesIn", max: number) => {
+    const v = patch[k];
+    if (v === undefined) return;
+    const t = v.trim().slice(0, max);
+    if (t) out[k] = t;
+    else delete out[k];
+  };
+  text("about", 1200);
+  text("partnerLevel", 120);
+  text("basedIn", 120);
+  text("teachesIn", 300);
+  if (patch.coverUrl !== undefined) {
+    const v = patch.coverUrl.trim();
+    if (v && !/^https?:\/\//.test(v)) throw new DomainError("VALIDATION", "the cover image must be an http(s) URL");
+    if (v) out.coverUrl = v;
+    else delete out.coverUrl;
+  }
+  if (patch.website !== undefined) {
+    let v = patch.website.trim();
+    if (v && !/^https?:\/\//i.test(v)) v = `https://${v}`;
+    if (v) {
+      try {
+        const u = new URL(v);
+        if (!u.hostname.includes(".")) throw new Error("no dot");
+      } catch {
+        throw new DomainError("VALIDATION", "the website must be a web address like agile-agilist.com");
+      }
+      out.website = v.slice(0, 300);
+    } else delete out.website;
+  }
   return out;
 }

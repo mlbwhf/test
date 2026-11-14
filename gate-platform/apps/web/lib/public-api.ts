@@ -17,6 +17,7 @@ import {
   type Attendee,
   type EventFormat,
   type EventStatus,
+  type OrganizationProfile,
   type SeatStatus,
   type Session,
 } from "@/lib/api";
@@ -173,12 +174,21 @@ async function fetchSvg(path: string): Promise<string | null> {
 export type PublicTicketType = { id: string; name: string; quantity: number; remaining: number; prices: Record<string, number>; converted: string[]; earlyBirdUntil: string | null };
 export type PublicInstructor = { id: string; name: string; title: string | null; bio: string | null; photoUrl: string | null };
 export type PublicCoursePage = {
-  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null };
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null; profileHandle?: string };
   course: Course;
   /** Optional class page sections to show. */
   sections: Record<"banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor", boolean>;
   /** dateSlug: the date's own page, /c/:org/:course/:dateSlug. */
   cohorts: { event: Event; dateSlug: string; ticketTypes: PublicTicketType[]; instructors: PublicInstructor[]; invoiceAvailable: boolean }[];
+};
+
+/** An organizer's public profile: /o/<slug>. */
+export type PublicProfile = {
+  organization: { id: string; name: string; slug: string | null; country: string; logoUrl: string | null; accentColor: string | null; profile: OrganizationProfile };
+  verified: boolean;
+  classes: { courseSlug: string; courseName: string; topic: string; imageUrl: string | null; eventId: string; dateSlug: string; startsAt: string; endsAt: string | null; timezone: string; format: EventFormat; currency: string; priceMinor: number | null; capacity: number; seatsLeft: number }[];
+  instructors: { id: string; name: string; title: string | null; photoUrl: string | null }[];
+  stats: { classesDelivered: number; learnersTrained: number };
 };
 
 /** What the page after checkout shows: tickets, sessions, where the money is. */
@@ -238,6 +248,9 @@ export const publicApi = {
   getCertificate: (code: string) => request<CertificateView>("GET", `/public/v1/certificates/${enc(code)}`),
   /** A course's public page data: upcoming live cohorts with seats left and prices. */
   getCourse: (orgId: string, slug: string) => request<PublicCoursePage>("GET", `/public/v1/organizations/${enc(orgId)}/courses/${enc(slug)}`),
+
+  /** An organizer's public profile by its address or organization id; 404 when there's none. */
+  getProfile: (handle: string) => request<PublicProfile>("GET", `/public/v1/profiles/${enc(handle)}`),
 
   /** The post-checkout summary for the buyer who placed the order; 404 when the email doesn't match. */
   getOrderSummary: (orderId: string, buyerEmail: string) => request<OrderSummary>("GET", `/public/v1/orders/${enc(orderId)}/summary?buyerEmail=${enc(buyerEmail)}`),

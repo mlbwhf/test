@@ -99,14 +99,15 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
   const show = data.sections;
   const accent = data.organization.accentColor ?? undefined;
   const style = accent ? ({ "--rx-accent": accent } as React.CSSProperties) : undefined;
+  const profileHref = `/o/${encodeURIComponent(data.organization.profileHandle ?? data.organization.id)}`;
   const orgRow = (
-    <span className="rx-org">
+    <a className="rx-org" href={profileHref}>
       {show.logo && data.organization.logoUrl && <img className="rx-org-logo" src={data.organization.logoUrl} alt="" />}
       <span>
         <span className="rx-org-name">{data.organization.name}</span>
         {data.course.certificationBody && <span className="rx-org-sub" style={{ display: "block" }}>{data.course.certificationBody} certification</span>}
       </span>
-    </span>
+    </a>
   );
 
   if (!sel) {
@@ -323,6 +324,9 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
                   {lead.title && <div className="sub">{lead.title}</div>}
                   {lead.bio && <p>{lead.bio}</p>}
                 </div>
+                <a href={profileHref} style={{ color: "#fff", fontWeight: 600, border: "1px solid #5a6070", borderRadius: 10, padding: "12px 16px", textDecoration: "none" }}>
+                  All classes by {data.organization.name}
+                </a>
               </section>
             )}
 

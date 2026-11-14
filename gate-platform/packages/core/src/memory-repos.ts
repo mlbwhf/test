@@ -10,6 +10,7 @@ class MemOrganizations implements OrganizationRepo {
   async update(org: Organization) { this.byId.set(org.id, structuredClone(org)); }
   async get(id: string) { const o = this.byId.get(id); return o && structuredClone(o); }
   async getByApiKeyHash(hash: string) { for (const o of this.byId.values()) if (o.apiKeyHash === hash) return structuredClone(o); return undefined; }
+  async getBySlug(slug: string) { for (const o of this.byId.values()) if (o.slug === slug) return structuredClone(o); return undefined; }
   async list() { return [...this.byId.values()].map((o) => structuredClone(o)); }
 }
 class MemParties implements PartyRepo {

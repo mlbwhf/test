@@ -41,6 +41,13 @@ export type Organization = {
   flexibleTickets: boolean;
   /** Company logo shown in Find a class, on course pages and in the schedule widget. */
   logoUrl: string | null;
+  /** Brand colour for class pages and checkout (#RRGGBB). */
+  accentColor?: string | null;
+  /** Learners may ask for an invoice at checkout. */
+  checkoutInvoices?: boolean;
+  /** Public profile address: /o/<slug>. */
+  slug?: string | null;
+  profile?: OrganizationProfile | null;
 };
 
 export type PaymentMode = "protected" | "direct";
@@ -151,6 +158,8 @@ export type Course = {
   page?: CoursePage | null;
   createdAt: string;
 };
+
+export type OrganizationProfile = { coverUrl?: string; about?: string; website?: string; partnerLevel?: string; basedIn?: string; teachesIn?: string };
 
 export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor";
 export type CoursePage = {

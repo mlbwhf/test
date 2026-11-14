@@ -40,6 +40,10 @@ export interface Organization {
   accentColor?: string;
   /** Learners may ask for an invoice at checkout (seats held until it's due). Default on. */
   checkoutInvoices?: boolean;
+  /** Public profile address: enrollclass.com/o/<slug>. Unique, lowercase. */
+  slug?: string;
+  /** What the public profile shows about the organizer. */
+  profile?: OrganizationProfile;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */
@@ -101,6 +105,18 @@ export interface Course {
   /** What the public class page shows beyond the basics, and the extra content for it. */
   page?: CoursePage;
   createdAt: Date;
+}
+
+export interface OrganizationProfile {
+  /** Wide cover image (1600×440); also the default class banner. */
+  coverUrl?: string | undefined;
+  about?: string | undefined;
+  website?: string | undefined;
+  /** e.g. "SAFe® Platinum SPCT Partner". */
+  partnerLevel?: string | undefined;
+  basedIn?: string | undefined;
+  /** e.g. "Online, Toronto, Montreal". */
+  teachesIn?: string | undefined;
 }
 
 /** Optional sections of the class page. Unset means: on when there is something to show. */

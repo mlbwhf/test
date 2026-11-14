@@ -689,3 +689,43 @@ describe("class page and checkout", () => {
     expect(seatsLeft).toBe(24);
   });
 });
+
+describe("organizer profile", () => {
+  it("organizers pick a profile address and fill their profile; anyone can open it with upcoming classes", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter(), clock: { now: () => new Date("2099-01-01T12:00:00Z") } });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test" });
+    const mk = async (name: string) => {
+      const c = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name, country: "CA", currency: "USD" } })).json();
+      return { id: c.organization.id as string, J: { "x-api-key": c.apiKey as string, "content-type": "application/json" } };
+    };
+    const aa = await mk("Agile Agilist");
+    const other = await mk("Other Co");
+    const patch = (who: { J: Record<string, string> }, payload: object) => im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: who.J, payload });
+
+    expect((await patch(aa, { slug: "Agile Agilist" })).statusCode).toBe(400);
+    expect((await patch(aa, { slug: "-aa" })).statusCode).toBe(400);
+    const saved = await patch(aa, { slug: "agile-agilist", profile: { about: "SAFe Platinum partner.", website: "agile-agilist.com", partnerLevel: "SAFe® Platinum SPCT Partner", basedIn: "Toronto, ON", teachesIn: "Online, Toronto", coverUrl: "https://cdn.example/cover.jpg" } });
+    expect(saved.statusCode).toBe(200);
+    expect(saved.json()).toMatchObject({ slug: "agile-agilist", profile: { website: "https://agile-agilist.com", basedIn: "Toronto, ON" } });
+    expect((await patch(other, { slug: "agile-agilist" })).statusCode).toBe(409);
+    expect((await patch(aa, { profile: { website: "not a site" } })).statusCode).toBe(400);
+    expect((await patch(aa, { profile: { basedIn: "" } })).json().profile.basedIn).toBeUndefined();
+
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: aa.J, payload: { slug: "rte", name: "SAFe RTE" } })).json();
+    const teacher = (await im.inject({ method: "POST", url: "/v1/parties", headers: aa.J, payload: { name: "Mark Saymen", kind: "instructor" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: aa.J, payload: { name: "Jan", sessions: [{ startsAt: "2099-01-20T14:00:00Z", endsAt: "2099-01-20T22:00:00Z" }] } })).json();
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: aa.J, payload: { name: "Seat", priceMinor: 220_000, quantity: 24 } });
+
+    const page = await im.inject("/public/v1/profiles/agile-agilist");
+    expect(page.statusCode).toBe(200);
+    const body = page.json();
+    expect(body.organization).toMatchObject({ name: "Agile Agilist", slug: "agile-agilist", profile: { partnerLevel: "SAFe® Platinum SPCT Partner" } });
+    expect(body.classes).toEqual([expect.objectContaining({ courseSlug: "rte", topic: "agile", priceMinor: 220_000, seatsLeft: 24, capacity: 24, dateSlug: "2099-01-20" })]);
+    expect(body.instructors).toEqual([{ id: teacher.id, name: "Mark Saymen", title: null, photoUrl: null }]);
+    expect(body.stats).toEqual({ classesDelivered: 0, learnersTrained: 0 });
+    expect((await im.inject(`/public/v1/profiles/${aa.id}`)).json().organization.slug).toBe("agile-agilist");
+    expect((await im.inject("/public/v1/profiles/nobody-here")).statusCode).toBe(404);
+    expect((await im.inject(`/public/v1/organizations/${aa.id}/courses/rte`)).json().organization.profileHandle).toBe("agile-agilist");
+    expect((await im.inject(`/public/v1/organizations/${other.id}/courses/rte`)).statusCode).toBe(404);
+  });
+});
