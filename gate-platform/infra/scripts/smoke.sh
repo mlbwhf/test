@@ -32,7 +32,8 @@ expect "https://$d/terms" 200 'Terms of service' || fail=1
 expect "https://www.$d/" 308 "https://$d/" || fail=1
 expect "https://app.$d/login" 200 'Sign in to EnrollClass' || fail=1
 expect "https://app.$d/login?mode=signup" 200 'Create your free EnrollClass account' || fail=1
-expect "https://$d/classes" 200 'Search classes, providers, certifications' || fail=1
+expect "https://$d/classes" 200 'Find a live class. Earn the badge.' || fail=1
+expect "https://$d/classes/compare" 200 'Which certification fits you?' || fail=1
 expect "https://app.$d/help/promote-a-class" 200 'Promote a course' || fail=1
 expect "https://app.$d/help/schedule-builder" 200 'Schedule many dates at once' || fail=1
 expect "https://app.$d/verify" 200 'Verify a badge' || fail=1
