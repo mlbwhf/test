@@ -7,7 +7,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // Legal pages, the FAQ, the class finder and the product pages (/terms, /privacy, /refunds, /faq,
 // /classes, /how-it-works, /pricing, /instructors) resolve on
 // every host so links from emails and the learner portal work wherever they are opened.
-const LEGAL = new Set(["/terms", "/privacy", "/refunds", "/faq", "/classes", "/how-it-works", "/pricing", "/instructors"]);
+const LEGAL = new Set(["/terms", "/privacy", "/refunds", "/faq", "/classes", "/classes/compare", "/how-it-works", "/pricing", "/instructors"]);
 
 function marketingHosts(): Set<string> {
   const domain = (process.env.GATE_DOMAIN ?? "enrollclass.com").toLowerCase();
@@ -29,13 +29,13 @@ export function proxy(request: NextRequest) {
   }
 
   if (LEGAL.has(url.pathname)) {
-    return NextResponse.rewrite(new URL(`/site${url.pathname}`, request.url));
+    return NextResponse.rewrite(new URL(`/site${url.pathname}${url.search}`, request.url));
   }
 
   if (hosts.has(host)) {
-    if (url.pathname === "/") return NextResponse.rewrite(new URL("/site", request.url));
+    if (url.pathname === "/") return NextResponse.rewrite(new URL(`/site${url.search}`, request.url));
     // The app host has its own /badges (the organizer page), so this one lives on the marketing host only.
-    if (url.pathname === "/badges") return NextResponse.rewrite(new URL("/site/badges", request.url));
+    if (url.pathname === "/badges") return NextResponse.rewrite(new URL(`/site/badges${url.search}`, request.url));
     if (url.pathname === "/help" || url.pathname.startsWith("/help/") || url.pathname.startsWith("/fonts/") || url.pathname.startsWith("/site") || url.pathname.startsWith("/_next") || PUBLIC_FILES.has(url.pathname)) {
       return NextResponse.next();
     }

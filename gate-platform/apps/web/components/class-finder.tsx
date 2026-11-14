@@ -1,132 +1,66 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { keyOf, type CatalogCategory, type CatalogItem } from "@/lib/catalog-types";
+import type { CatalogCategory, CatalogItem } from "@/lib/catalog-types";
+import { COMMON_ZONES, detectedZone, zoneName } from "@/lib/class-time";
+import {
+  classUrl, dayTimes, formatLabel, fromPrice, groupCertifications, isInPerson, isLow, isOnline, langName, languagesOf, lengthOf, majorUnits, money, monthLabel, monthOf,
+  nextOpen, registerUrl, seatsShort, shortRange, whereOf, type Cert, type Cohort,
+} from "@/lib/finder";
 
 export type FinderState = {
   q: string;
-  view: "cards" | "table";
-  sort: "soonest" | "price";
-  cats: string[];
-  modes: string[];
-  badges: string[];
+  quick: string;
+  cat: string;
+  month: string;
+  format: "any" | "online" | "in_person";
+  lang: string;
   provs: string[];
-  /** Upper price bound in major units; null = any. */
-  max: number | null;
+  sort: "soonest" | "seats" | "price";
   sel: string | null;
+  cmp: string[];
 };
 
-const FORMAT_LABELS: Record<string, string> = { live_virtual: "Live virtual", in_person: "In person", hybrid: "Hybrid", self_paced: "Self-paced" };
-const BADGE_LABELS: Record<string, string> = { accredited: "Accredited", selling_fast: "Selling fast", new: "New", early_bird: "Early bird" };
-const BADGE_ORDER = ["accredited", "selling_fast", "new", "early_bird"];
-const LOGO_TINTS = ["oklch(0.45 0.14 20)", "oklch(0.22 0.05 260)", "oklch(0.5 0.12 240)", "oklch(0.35 0.08 300)", "oklch(0.5 0.1 155)", "oklch(0.55 0.15 60)"];
-const LOGO_SHAPES = ["12px", "50%", "12px 50% 12px 50%", "50% 50% 12px 12px"];
+export const EMPTY_FILTERS = { quick: "", cat: "", month: "", format: "any", lang: "", provs: [] as string[] } satisfies Partial<FinderState>;
 const MAX_COMPARE = 3;
-
-
-function hash(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = (h * 31 + s.charCodeAt(i)) >>> 0;
-  return h;
-}
-
-/** Monogram tile until providers can upload a logo: initials, with tint and shape fixed per provider. */
-function ProviderLogo({ c, size }: { c: CatalogItem; size: number }) {
-  const words = c.organizationName.replace(/[^\p{L}\p{N} ]/gu, "").split(/\s+/).filter(Boolean);
-  const mono = (words.length > 1 ? words[0]![0]! + words[1]![0]! : (words[0] ?? "?").slice(0, 1)).toUpperCase();
-  const h = hash(c.organizationId);
-  if (c.logoUrl) {
-    return (
-      <span className="fc-logo fc-logo-img" style={{ width: size, height: size }}>
-        <img src={c.logoUrl} alt={`${c.organizationName} logo`} loading="lazy" />
-      </span>
-    );
-  }
-  return (
-    <span className="fc-logo" aria-hidden="true" style={{ width: size, height: size, borderRadius: LOGO_SHAPES[h % LOGO_SHAPES.length], background: LOGO_TINTS[h % LOGO_TINTS.length], fontSize: Math.round(size * 0.38) }}>
-      {mono}
-    </span>
-  );
-}
-
-const PLATFORM_LABELS: Record<string, string> = { own: "Verified badge", credly: "Credly badge", accredible: "Accredible badge", badgr: "Badgr badge", certopus: "Certopus badge", other: "Digital badge" };
-
-/** The digital badge learners earn: image when there is one, else a seat-green seal. */
-function DigitalBadge({ c, size, label }: { c: CatalogItem; size: number; label?: boolean }) {
-  const b = c.digitalBadge;
-  if (!b) return null;
-  return (
-    <span className="fc-dbadge" title={`Earns: ${b.name}`}>
-      {b.imageUrl ? <img src={b.imageUrl} alt="" width={size} height={size} loading="lazy" /> : <span className="fc-dbadge-seal" style={{ width: size, height: size }} aria-hidden="true">★</span>}
-      {label && (
-        <span className="fc-dbadge-text">
-          <span>{PLATFORM_LABELS[b.platform] ?? "Digital badge"}</span>
-          <strong>{b.name}</strong>
-        </span>
-      )}
-    </span>
-  );
-}
-
-function Badge({ c, big }: { c: CatalogItem; big?: boolean }) {
-  if (!c.badge && !c.promoted) return null;
-  return (
-    <span className="fc-badges">
-      {c.badge && <span className={`fc-badge fc-badge-${c.badge}${big ? " fc-badge-big" : ""}`}>{BADGE_LABELS[c.badge]}</span>}
-      {c.promoted && <span className={`fc-badge fc-badge-sponsored${big ? " fc-badge-big" : ""}`}>Sponsored</span>}
-    </span>
-  );
-}
-
-function money(minor: number | null | undefined, currency: string | undefined): string {
-  if (minor === null || minor === undefined || !currency) return "Sold out";
-  if (minor === 0) return "Free";
-  const digits = new Intl.NumberFormat("en", { style: "currency", currency }).resolvedOptions().maximumFractionDigits ?? 2;
-  const major = minor / 10 ** digits;
-  return new Intl.NumberFormat("en-US", { style: "currency", currency, maximumFractionDigits: Number.isInteger(major) ? 0 : digits, minimumFractionDigits: Number.isInteger(major) ? 0 : digits }).format(major);
-}
-
-function major(c: CatalogItem): number | null {
-  if (c.priceMinor === null || c.priceMinor === undefined || !c.currency) return null;
-  const digits = new Intl.NumberFormat("en", { style: "currency", currency: c.currency }).resolvedOptions().maximumFractionDigits ?? 2;
-  return c.priceMinor / 10 ** digits;
-}
-
-const day = (iso: string) => new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", timeZone: "UTC" }).format(new Date(iso));
-const fullDay = (iso: string) => new Intl.DateTimeFormat("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric", timeZone: "UTC" }).format(new Date(iso));
-const dateOf = (c: CatalogItem) => (c.format === "self_paced" ? "On demand" : day(c.nextStartsAt));
-const formatOf = (c: CatalogItem) => FORMAT_LABELS[c.format ?? ""] ?? "Class";
-const short = (t: string) => t.split(/\s+/).slice(0, 2).join(" ");
-
-function toggle(list: string[], v: string): string[] {
-  return list.includes(v) ? list.filter((x) => x !== v) : [...list, v];
-}
 
 function queryOf(s: FinderState): string {
   const p = new URLSearchParams();
   if (s.q) p.set("q", s.q);
-  if (s.cats.length) p.set("category", s.cats.join(","));
-  if (s.modes.length) p.set("format", s.modes.join(","));
-  if (s.badges.length) p.set("badge", s.badges.join(","));
+  if (s.quick) p.set("quick", s.quick);
+  if (s.cat) p.set("category", s.cat);
+  if (s.month) p.set("month", s.month);
+  if (s.format !== "any") p.set("format", s.format);
+  if (s.lang) p.set("lang", s.lang);
   if (s.provs.length) p.set("provider", s.provs.join(","));
-  if (s.max !== null) p.set("max", String(s.max));
   if (s.sort !== "soonest") p.set("sort", s.sort);
-  if (s.view !== "cards") p.set("view", s.view);
   if (s.sel) p.set("class", s.sel);
+  if (s.cmp.length) p.set("compare", s.cmp.join(","));
   const qs = p.toString();
   return qs ? `?${qs}` : "";
 }
 
+/** Badge ring: the badge artwork when the organizer uploaded one, else its short code. */
+function Ring({ cert, size, on }: { cert: Cert; size: number; on?: boolean }) {
+  return (
+    <span className={`cf-ring${on ? " is-on" : ""}${cert.badgeImage ? " has-img" : ""}`} style={{ width: size, height: size, fontSize: Math.round(size * 0.22) }} aria-hidden="true">
+      {cert.badgeImage ? <img src={cert.badgeImage} alt="" loading="lazy" /> : cert.code}
+    </span>
+  );
+}
+
+type Quick = { id: string; label: string; cohort?: (c: Cohort) => boolean; cert?: (c: Cert, matching: Cohort[]) => boolean };
+
 export function ClassFinder({ items, categories, initial, appUrl }: { items: CatalogItem[]; categories: CatalogCategory[]; initial: FinderState; appUrl: string }) {
   const [s, setS] = useState<FinderState>(initial);
-  const [showFilters, setShowFilters] = useState(true);
+  const [tz, setTz] = useState<string | null>(null);
+  const [pickZone, setPickZone] = useState(false);
   const [sheet, setSheet] = useState(false);
-  const [cmp, setCmp] = useState<string[]>([]);
-  const [showCmp, setShowCmp] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
   const set = useCallback((patch: Partial<FinderState>) => setS((prev) => ({ ...prev, ...patch })), []);
 
-  // Filters, sort, view and the open class live in the URL so a filtered page can be shared.
+  useEffect(() => setTz(detectedZone()), []);
+  // Filters, sort, the previewed class and the compare list live in the URL so a search can be shared.
   useEffect(() => {
     window.history.replaceState(null, "", `${window.location.pathname}${queryOf(s)}`);
   }, [s]);
@@ -136,490 +70,475 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
     return () => clearTimeout(t);
   }, [toast]);
 
-  const byKey = useMemo(() => new Map(items.map((c) => [keyOf(c), c])), [items]);
-  const providers = useMemo(() => {
-    const m = new Map<string, { id: string; name: string; n: number }>();
-    for (const c of items) m.set(c.organizationId, { id: c.organizationId, name: c.organizationName, n: (m.get(c.organizationId)?.n ?? 0) + 1 });
-    return [...m.values()].sort((a, b) => a.name.localeCompare(b.name));
-  }, [items]);
-  const priceCap = useMemo(() => Math.max(50, Math.ceil(Math.max(0, ...items.map((c) => major(c) ?? 0)) / 50) * 50), [items]);
+  const certs = useMemo(() => groupCertifications(items), [items]);
+  const byId = useMemo(() => new Map(certs.map((c) => [c.id, c])), [certs]);
+  const catLabel = useCallback((id: string) => categories.find((c) => c.id === id)?.label ?? "Other", [categories]);
+  const allCohorts = useMemo(() => certs.flatMap((c) => c.cohorts), [certs]);
+
+  // Quick picks follow what is actually on offer.
+  const quicks = useMemo<Quick[]>(() => {
+    const out: Quick[] = [];
+    if (allCohorts.some(isLow)) out.push({ id: "soon", label: "Filling fast", cohort: isLow });
+    if (allCohorts.some(isOnline)) out.push({ id: "online", label: "Live online", cohort: isOnline });
+    if (allCohorts.some((c) => c.format === "in_person")) out.push({ id: "in_person", label: "In person", cohort: isInPerson });
+    const NATIVE: Record<string, string> = { FR: "En français", ES: "En español", DE: "Auf Deutsch", PT: "Em português" };
+    for (const l of [...new Set(allCohorts.map((c) => c.lang))].filter((l) => l && l !== "EN")) out.push({ id: `lang-${l}`, label: NATIVE[l] ?? `In ${langName(l)}`, cohort: (c) => c.lang === l });
+    const prices = certs.map((c) => fromPrice(c.cohorts)).filter((p): p is number => p !== null && p > 0);
+    const ccy = new Set(certs.map((c) => c.currency));
+    if (prices.length >= 3 && ccy.size === 1) {
+      const cur = [...ccy][0]!;
+      const sorted = prices.map((p) => majorUnits(p, cur)).sort((a, b) => a - b);
+      const cap = Math.ceil(sorted[Math.floor(sorted.length / 2)]! / 500) * 500;
+      const label = new Intl.NumberFormat("en-US", { style: "currency", currency: cur, currencyDisplay: "narrowSymbol", maximumFractionDigits: 0 }).format(cap);
+      if (cap > sorted[0]!) out.push({ id: "under", label: `Under ${label}`, cert: (_c, m) => { const p = fromPrice(m); return p !== null && majorUnits(p, cur) <= cap; } });
+    }
+    return out;
+  }, [allCohorts, certs]);
+  const quick = quicks.find((q) => q.id === s.quick);
 
   const needle = s.q.trim().toLowerCase();
-  const catLabel = useCallback((id: string | undefined) => categories.find((c) => c.id === id)?.label ?? "Other", [categories]);
-  const matches = useCallback(
-    (c: CatalogItem, skip?: "cats" | "modes" | "badges" | "provs") =>
-      (!needle || `${c.name} ${c.organizationName} ${catLabel(c.category)} ${c.certificationBody ?? ""}`.toLowerCase().includes(needle)) &&
-      (skip === "cats" || !s.cats.length || s.cats.includes(c.category ?? "other")) &&
-      (skip === "modes" || !s.modes.length || s.modes.includes(c.format ?? "")) &&
-      (skip === "badges" || !s.badges.length || (c.badge !== null && c.badge !== undefined && s.badges.includes(c.badge))) &&
-      (skip === "provs" || !s.provs.length || s.provs.includes(c.organizationId)) &&
-      (s.max === null || (major(c) ?? 0) <= s.max),
-    [needle, s.cats, s.modes, s.badges, s.provs, s.max, catLabel],
+  type Skip = "cat" | "month" | "format" | "lang" | "provs";
+  const matching = useCallback(
+    (c: Cert, skip?: Skip): Cohort[] | null => {
+      if (needle && !`${c.title} ${c.orgName} ${c.code} ${c.badgeName ?? ""} ${c.certificationBody ?? ""} ${catLabel(c.category)} ${c.courses.map((x) => x.name).join(" ")}`.toLowerCase().includes(needle)) return null;
+      if (skip !== "cat" && s.cat && c.category !== s.cat) return null;
+      if (skip !== "provs" && s.provs.length && !s.provs.includes(c.orgId)) return null;
+      const m = c.cohorts.filter(
+        (x) =>
+          (skip === "month" || !s.month || monthOf(x) === s.month) &&
+          (skip === "format" || s.format === "any" || (s.format === "online" ? isOnline(x) : isInPerson(x))) &&
+          (skip === "lang" || !s.lang || x.lang === s.lang) &&
+          (!quick?.cohort || quick.cohort(x)),
+      );
+      if (!m.length) return null;
+      if (quick?.cert && !quick.cert(c, m)) return null;
+      return m;
+    },
+    [needle, s.cat, s.provs, s.month, s.format, s.lang, quick, catLabel],
   );
 
   const list = useMemo(() => {
-    const out = items.filter((c) => matches(c));
-    if (s.sort === "price") out.sort((a, b) => (major(a) ?? Infinity) - (major(b) ?? Infinity));
-    else out.sort((a, b) => a.nextStartsAt.localeCompare(b.nextStartsAt));
-    // Paid placements lead the default view (Featured) or their topic; they are labelled Sponsored.
-    if (s.sort === "soonest") {
-      const lead = (c: CatalogItem) => c.promoted === "top" || (c.promoted === "category" && s.cats.length > 0 && s.cats.includes(c.category ?? ""));
-      return [...out.filter(lead), ...out.filter((c) => !lead(c))];
-    }
-    return out;
-  }, [items, matches, s.sort, s.cats]);
+    const rows = certs.map((c) => ({ c, m: matching(c) })).filter((r): r is { c: Cert; m: Cohort[] } => r.m !== null);
+    const minSeats = (m: Cohort[]) => Math.min(...m.map((x) => (x.capacity ? x.seatsLeft : Infinity)));
+    rows.sort((a, b) =>
+      s.sort === "price" ? (fromPrice(a.m) ?? Infinity) - (fromPrice(b.m) ?? Infinity) : s.sort === "seats" ? minSeats(a.m) - minSeats(b.m) : a.m[0]!.startsAt.localeCompare(b.m[0]!.startsAt),
+    );
+    if (s.sort !== "soonest") return rows;
+    // Paid placements lead the default order (and their topic); they are labelled Sponsored.
+    const lead = (r: { c: Cert }) => r.c.promoted === "top" || (r.c.promoted === "category" && s.cat !== "" && r.c.category === s.cat);
+    return [...rows.filter(lead), ...rows.filter((r) => !lead(r))];
+  }, [certs, matching, s.sort, s.cat]);
 
-  const count = (skip: "cats" | "modes" | "badges" | "provs", pred: (c: CatalogItem) => boolean) => items.filter((c) => matches(c, skip) && pred(c)).length;
-  const groups = [
-    { key: "cats" as const, title: "CATEGORY", round: false, opts: categories.map((c) => ({ id: c.id, label: c.label, n: count("cats", (x) => x.category === c.id) })) },
-    { key: "modes" as const, title: "FORMAT", round: false, opts: Object.entries(FORMAT_LABELS).map(([id, label]) => ({ id, label, n: count("modes", (x) => x.format === id) })) },
-    { key: "badges" as const, title: "BADGE", round: false, opts: BADGE_ORDER.map((id) => ({ id, label: BADGE_LABELS[id]!, n: count("badges", (x) => x.badge === id) })) },
-    { key: "provs" as const, title: "PROVIDER", round: true, opts: providers.map((p) => ({ id: p.id, label: p.name, n: count("provs", (x) => x.organizationId === p.id) })) },
-  ].map((g) => ({ ...g, opts: g.opts.filter((o) => o.n > 0 || s[g.key].includes(o.id)) }));
-  const active = s.cats.length + s.modes.length + s.badges.length + s.provs.length + (s.max !== null ? 1 : 0);
+  const count = (skip: Skip, pred: (c: Cert, m: Cohort[]) => boolean) =>
+    certs.reduce((n, c) => {
+      const m = matching(c, skip);
+      return m && pred(c, m) ? n + 1 : n;
+    }, 0);
+  const months = useMemo(() => [...new Set(allCohorts.map(monthOf))].sort().slice(0, 6), [allCohorts]);
+  const langs = useMemo(() => [...new Set(allCohorts.map((c) => c.lang).filter(Boolean))].sort(), [allCohorts]);
+  const providers = useMemo(() => {
+    const m = new Map<string, { id: string; name: string; logo: string | null }>();
+    for (const c of certs) m.set(c.orgId, { id: c.orgId, name: c.orgName, logo: c.logoUrl });
+    return [...m.values()].sort((a, b) => a.name.localeCompare(b.name));
+  }, [certs]);
+  const active = (s.cat ? 1 : 0) + (s.month ? 1 : 0) + (s.format !== "any" ? 1 : 0) + (s.lang ? 1 : 0) + s.provs.length + (s.quick ? 1 : 0);
+  const reset = () => set({ ...EMPTY_FILTERS, q: "" });
 
-  const sel = s.sel ? byKey.get(s.sel) ?? null : null;
-  const selIndex = sel ? list.findIndex((c) => keyOf(c) === s.sel) : -1;
-  const step = (d: number) => {
-    if (!list.length) return;
-    const i = selIndex < 0 ? 0 : (selIndex + d + list.length) % list.length;
-    set({ sel: keyOf(list[i]!) });
+  const selRow = (s.sel ? list.find((r) => r.c.id === s.sel) : undefined) ?? list[0];
+  const sel = selRow?.c ?? null;
+  const selCohorts = selRow?.m ?? [];
+  const zone = tz ?? selCohorts[0]?.timezone ?? "UTC";
+
+  const toggleCmp = (id: string) => {
+    if (s.cmp.includes(id)) return set({ cmp: s.cmp.filter((x) => x !== id) });
+    if (s.cmp.length >= MAX_COMPARE) return setToast(`Compare up to ${MAX_COMPARE} certifications. Remove one first.`);
+    set({ cmp: [...s.cmp, id] });
   };
+  const tray = s.cmp.map((id) => byId.get(id)).filter((c): c is Cert => Boolean(c));
+  const compareHref = `/classes/compare?ids=${tray.map((c) => encodeURIComponent(c.id)).join(",")}`;
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") {
-        if (showCmp) setShowCmp(false);
-        else if (sheet) setSheet(false);
-        else set({ sel: null });
-      }
+      if (e.key !== "Escape") return;
+      if (sheet) setSheet(false);
+      else if (s.sel) set({ sel: null });
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [showCmp, sheet, set]);
+  }, [sheet, s.sel, set]);
 
-  const pageUrl = (c: CatalogItem) => `${appUrl}/c/${encodeURIComponent(c.organizationId)}/${encodeURIComponent(c.slug)}?via=enrollclass`;
-  const openTab = (c: CatalogItem) => window.open(pageUrl(c), "_blank", "noopener");
-  const toggleCmp = (c: CatalogItem) => {
-    const k = keyOf(c);
-    if (cmp.includes(k)) return setCmp(cmp.filter((x) => x !== k));
-    if (cmp.length >= MAX_COMPARE) return setToast(`Compare up to ${MAX_COMPARE} classes. Remove one first.`);
-    setCmp([...cmp, k]);
-  };
-  const cmpItems = cmp.map((k) => byKey.get(k)).filter((c): c is CatalogItem => Boolean(c));
-  const providerCount = (c: CatalogItem) => providers.find((p) => p.id === c.organizationId)?.n ?? 1;
+  const zones = useMemo(() => {
+    const l = COMMON_ZONES.map((z) => ({ id: z.id, label: z.label }));
+    const d = detectedZone();
+    for (const extra of [tz, d]) if (extra && !l.some((z) => z.id === extra)) l.unshift({ id: extra, label: zoneName(extra) });
+    return l;
+  }, [tz]);
 
   const filters = (
     <>
-      {groups.map((g) =>
-        g.opts.length === 0 ? null : (
-          <fieldset key={g.key} className="fc-group">
-            <legend>{g.title}</legend>
-            {g.opts.map((o) => {
-              const on = s[g.key].includes(o.id);
-              return (
-                <label key={o.id} className="fc-opt">
-                  <input type="checkbox" checked={on} onChange={() => set({ [g.key]: toggle(s[g.key], o.id) })} />
-                  <span className={`fc-check${g.round ? " fc-check-round" : ""}`} aria-hidden="true">
-                    {on ? "✓" : ""}
-                  </span>
-                  <span className="fc-opt-label">{o.label}</span>
-                  <span className="fc-opt-n">{o.n}</span>
-                </label>
-              );
-            })}
-          </fieldset>
-        ),
-      )}
-      <div className="fc-group">
-        <label className="fc-range-head" htmlFor="fc-max">
-          <span>MAX PRICE</span>
-          <span>{s.max === null ? "Any" : s.max.toLocaleString("en-US")}</span>
-        </label>
-        <input
-          id="fc-max"
-          type="range"
-          min={0}
-          max={priceCap}
-          step={50}
-          value={s.max ?? priceCap}
-          onChange={(e) => {
-            const v = Number(e.target.value);
-            set({ max: v >= priceCap ? null : v });
-          }}
-        />
+      <div className="cf-group">
+        <div className="cf-label">CATEGORY</div>
+        {[{ id: "", label: "All" }, ...categories].map((c) => {
+          const n = count("cat", (x) => !c.id || x.category === c.id);
+          if (c.id && n === 0 && s.cat !== c.id) return null;
+          return (
+            <button key={c.id || "all"} type="button" className="cf-row" aria-pressed={s.cat === c.id} onClick={() => set({ cat: c.id })}>
+              <span>{c.label}</span>
+              <span className="cf-n">{n}</span>
+            </button>
+          );
+        })}
       </div>
+      {months.length > 1 && (
+        <div className="cf-group">
+          <div className="cf-label">STARTS</div>
+          <div className="cf-months">
+            {months.map((m) => (
+              <button key={m} type="button" className="cf-pill" aria-pressed={s.month === m} onClick={() => set({ month: s.month === m ? "" : m })} title={m}>
+                {monthLabel(m)}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      <div className="cf-group">
+        <div className="cf-label">FORMAT</div>
+        {(
+          [
+            ["any", "Any format"],
+            ["online", "Live online"],
+            ["in_person", "In person"],
+          ] as const
+        ).map(([id, label]) => (
+          <button key={id} type="button" className="cf-row" aria-pressed={s.format === id} onClick={() => set({ format: id })}>
+            <span>{label}</span>
+            {id !== "any" && <span className="cf-n">{count("format", (_c, m) => m.some(id === "online" ? isOnline : isInPerson))}</span>}
+          </button>
+        ))}
+      </div>
+      {langs.length > 1 && (
+        <div className="cf-group">
+          <div className="cf-label">LANGUAGE</div>
+          <div className="cf-wrap">
+            {["", ...langs].map((l) => (
+              <button key={l || "all"} type="button" className="cf-pill" aria-pressed={s.lang === l} onClick={() => set({ lang: l })} title={l ? langName(l) : "All languages"}>
+                {l || "All"}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+      {providers.length > 0 && (
+        <div className="cf-group">
+          <div className="cf-label">PROVIDER</div>
+          {providers.map((p) => {
+            const on = s.provs.includes(p.id);
+            return (
+              <button key={p.id} type="button" className="cf-prov" aria-pressed={on} onClick={() => set({ provs: on ? s.provs.filter((x) => x !== p.id) : [...s.provs, p.id] })}>
+                {p.logo ? <img src={p.logo} alt="" /> : <span className="cf-mono">{p.name.split(/\s+/).slice(0, 2).map((w) => w[0]).join("").toUpperCase()}</span>}
+                <span>{p.name}</span>
+              </button>
+            );
+          })}
+        </div>
+      )}
     </>
   );
 
-  const cmpButton = (c: CatalogItem, size: "sm" | "md" = "sm") => {
-    const on = cmp.includes(keyOf(c));
-    return (
-      <button
-        type="button"
-        className={`fc-cmp fc-cmp-${size}${on ? " is-on" : ""}`}
-        aria-pressed={on}
-        onClick={(e) => {
-          e.stopPropagation();
-          toggleCmp(c);
-        }}
-      >
-        {on ? "✓ Added" : "+ Compare"}
-      </button>
-    );
-  };
-
   return (
-    <div className={`fc${sel ? " fc-has-sel" : ""}`}>
-      <div className="fc-top">
-        <input className="fc-search" type="search" value={s.q} onChange={(e) => set({ q: e.target.value })} placeholder="Search classes, providers, certifications" aria-label="Search classes" />
-      </div>
-      <div className="fc-toolbar">
-        <h1>Find a class</h1>
-        <span className="fc-count" aria-live="polite">
-          {list.length} result{list.length === 1 ? "" : "s"}
-        </span>
-        <button
-          type="button"
-          className={`fc-filters-btn${active ? " is-on" : ""}`}
-          aria-expanded={showFilters}
-          onClick={() => {
-            if (window.matchMedia("(max-width: 899px)").matches) setSheet(true);
-            else setShowFilters(!showFilters);
-          }}
-        >
-          Filters{active ? ` · ${active}` : ""}
-        </button>
-        {active > 0 && (
-          <button type="button" className="fc-clear" onClick={() => set({ cats: [], modes: [], badges: [], provs: [], max: null })}>
-            Clear all
-          </button>
-        )}
-        <span className="fc-spacer" />
-        <div className="fc-seg" role="group" aria-label="Sort">
-          {(
-            [
-              ["soonest", "Soonest"],
-              ["price", "Price"],
-            ] as const
-          ).map(([k, l]) => (
-            <button key={k} type="button" aria-pressed={s.sort === k} onClick={() => set({ sort: k })}>
-              {l}
-            </button>
-          ))}
+    <div className="cf">
+      <section className="cf-hero">
+        <div className="cf-in">
+          <h1>Find a live class. Earn the badge.</h1>
+          <div className="cf-searchrow">
+            <label className="cf-search">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" />
+                <path d="m20 20-3.5-3.5" />
+              </svg>
+              <span className="cf-sr">Search</span>
+              <input type="search" value={s.q} onChange={(e) => set({ q: e.target.value })} placeholder="Certification, skill or provider, e.g. RTE, SPC, AI-Native" />
+            </label>
+            <span className="cf-zone">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+              {pickZone ? (
+                <select
+                  aria-label="Show times in"
+                  value={zone}
+                  autoFocus
+                  onChange={(e) => {
+                    setTz(e.target.value);
+                    setPickZone(false);
+                  }}
+                  onBlur={() => setPickZone(false)}
+                >
+                  {zones.map((z) => (
+                    <option key={z.id} value={z.id}>
+                      {z.label} time
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <>
+                  Times in {tz ? zoneName(tz) : "each class's zone"} ·{" "}
+                  <button type="button" onClick={() => setPickZone(true)}>
+                    change
+                  </button>
+                </>
+              )}
+            </span>
+          </div>
+          {quicks.length > 0 && (
+            <div className="cf-quick" role="group" aria-label="Quick picks">
+              {quicks.map((q) => (
+                <button key={q.id} type="button" aria-pressed={s.quick === q.id} onClick={() => set({ quick: s.quick === q.id ? "" : q.id })}>
+                  {q.label}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
-        <div className="fc-seg" role="group" aria-label="View">
-          {(
-            [
-              ["cards", "Cards"],
-              ["table", "Table"],
-            ] as const
-          ).map(([k, l]) => (
-            <button key={k} type="button" aria-pressed={s.view === k} onClick={() => set({ view: k })}>
-              {l}
-            </button>
-          ))}
-        </div>
-      </div>
+      </section>
 
-      <div className="fc-body">
-        {showFilters && (
-          <aside className="fc-rail" aria-label="Filters">
-            {filters}
-          </aside>
-        )}
+      <div className="cf-main">
+        <aside className="cf-filters" aria-label="Filters">
+          {filters}
+        </aside>
 
-        <section className="fc-results" aria-label="Classes">
-          {list.length === 0 ? (
-            <p className="fc-empty">{items.length ? "No classes match. Loosen a filter." : "No upcoming classes are listed right now."}</p>
-          ) : s.view === "cards" ? (
-            <ul className="fc-cards">
-              {list.map((c, i) => {
-                const k = keyOf(c);
-                return (
-                  <li key={k} style={{ animationDelay: `${Math.min(i, 12) * 30}ms` }}>
-                    <article className={`fc-card${s.sel === k ? " is-sel" : ""}`} onClick={() => set({ sel: k })}>
-                      <div className="fc-card-head">
-                        <ProviderLogo c={c} size={42} />
-                        <div className="fc-prov">
-                          <span className="fc-prov-name">{c.organizationName}</span>
-                          <Badge c={c} />
-                        </div>
-                        <span className="fc-card-meta">
-                          {c.hours ? `${c.hours}h` : ""}
-                          {c.hours ? <br /> : null}
-                          {c.classes} date{c.classes === 1 ? "" : "s"}
-                        </span>
-                      </div>
-                      <h2 className="fc-title">
-                        <button type="button" onClick={() => set({ sel: k })}>
-                          {c.name}
-                        </button>
-                      </h2>
-                      <p className="fc-when">
-                        {dateOf(c)} · {formatOf(c)}
-                      </p>
-                      {c.digitalBadge && (
-                        <div className="fc-earns">
-                          <DigitalBadge c={c} size={30} />
-                          <span>
-                            Earns <strong>{c.digitalBadge.name}</strong>
-                          </span>
-                        </div>
-                      )}
-                      <div className="fc-card-foot">
-                        <span className="fc-price">{money(c.priceMinor, c.currency)}</span>
-                        <a
-                          className="fc-newtab"
-                          href={pageUrl(c)}
-                          target="_blank"
-                          rel="noopener"
-                          title="Open in new tab"
-                          aria-label={`Open ${c.name} in a new tab`}
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          ↗
-                        </a>
-                        {cmpButton(c)}
-                      </div>
-                    </article>
-                  </li>
-                );
-              })}
-            </ul>
-          ) : (
-            <div className="fc-table-wrap">
-              <table className="fc-table">
-                <thead>
-                  <tr>
-                    <th aria-label="Provider logo" />
-                    <th>CLASS</th>
-                    <th>PROVIDER</th>
-                    <th>START</th>
-                    <th>FORMAT</th>
-                    <th>SEATS</th>
-                    <th className="fc-num">PRICE</th>
-                    <th aria-label="Compare" />
-                  </tr>
-                </thead>
-                <tbody>
-                  {list.map((c) => {
-                    const k = keyOf(c);
-                    return (
-                      <tr key={k} className={s.sel === k ? "is-sel" : undefined} onClick={() => set({ sel: k })}>
-                        <td>
-                          <ProviderLogo c={c} size={36} />
-                        </td>
-                        <td className="fc-t-title">
-                          <span className="fc-t-title-row">
-                            <button type="button" onClick={() => set({ sel: k })}>
-                              {c.name}
-                            </button>
-                            <DigitalBadge c={c} size={22} />
-                          </span>
-                        </td>
-                        <td>
-                          <div className="fc-prov">
-                            <span className="fc-prov-name fc-prov-sm">{c.organizationName}</span>
-                            <Badge c={c} />
-                          </div>
-                        </td>
-                        <td className="fc-mono">{dateOf(c)}</td>
-                        <td>{formatOf(c)}</td>
-                        <td className="fc-mono">{c.capacity ? c.seatsLeft : "—"}</td>
-                        <td className="fc-mono fc-num">{money(c.priceMinor, c.currency)}</td>
-                        <td>{cmpButton(c)}</td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
+        <section className="cf-results" aria-label="Results">
+          <div className="cf-bar">
+            <div aria-live="polite">
+              <strong>{list.length}</strong>{" "}
+              <span className="rx-muted">
+                certification{list.length === 1 ? "" : "s"} · {list.reduce((n, r) => n + r.m.length, 0)} upcoming class{list.reduce((n, r) => n + r.m.length, 0) === 1 ? "" : "es"}
+              </span>
+            </div>
+            <div className="cf-sort" role="group" aria-label="Sort">
+              {(
+                [
+                  ["soonest", "Soonest"],
+                  ["seats", "Seats left"],
+                  ["price", "Price"],
+                ] as const
+              ).map(([k, l]) => (
+                <button key={k} type="button" aria-pressed={s.sort === k} onClick={() => set({ sort: k })}>
+                  {l}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {list.map(({ c, m }) => {
+            const on = sel?.id === c.id;
+            const ls = languagesOf(c.cohorts);
+            const open = nextOpen(m)!;
+            const price = fromPrice(m);
+            const compared = s.cmp.includes(c.id);
+            return (
+              <article key={c.id} className={`cf-card${on ? " is-sel" : ""}`}>
+                <div className="cf-card-top">
+                  <button type="button" className="cf-ring-btn" onClick={() => set({ sel: c.id })} aria-label={`Preview ${c.title}`}>
+                    <Ring cert={c} size={76} on={on} />
+                  </button>
+                  <div className="cf-card-main">
+                    <div className="cf-meta">
+                      <strong>{c.orgName}</strong>
+                      <span aria-hidden="true">·</span>
+                      <span>{catLabel(c.category)}</span>
+                      {m.some(isLow) && <span className="cf-hot">Filling fast</span>}
+                      {c.promoted && <span className="cf-spons">Sponsored</span>}
+                    </div>
+                    <h2>
+                      <button type="button" onClick={() => set({ sel: c.id })}>
+                        {c.title}
+                      </button>
+                    </h2>
+                    <div className="cf-tags">
+                      <span>{lengthOf(c)}</span>
+                      <span>{formatLabel(c.cohorts)}</span>
+                      {ls.length > 0 && <span className="cf-tag-lang">{ls.map(langName).join(" · ")}</span>}
+                      {c.badgeName && <span className="cf-tag-badge">Badge included</span>}
+                    </div>
+                  </div>
+                  <div className="cf-price">
+                    {price !== null && price > 0 && <span className="rx-muted">from</span>}
+                    <strong>{money(price, c.currency)}</strong>
+                  </div>
+                </div>
+                <div className="cf-next">
+                  <span className="cf-label">NEXT CLASSES</span>
+                  {m.slice(0, 3).map((x) => (
+                    <a key={x.key} className="cf-date" href={classUrl(appUrl, c, x)}>
+                      <strong>{shortRange(x)}</strong>
+                      <span className={isLow(x) ? "is-low" : undefined}>
+                        {whereOf(x)}
+                        {x.lang ? ` · ${x.lang}` : ""} · {seatsShort(x)}
+                      </span>
+                    </a>
+                  ))}
+                  {m.length > 3 && (
+                    <button type="button" className="cf-more" onClick={() => set({ sel: c.id })}>
+                      +{m.length - 3} more
+                    </button>
+                  )}
+                  <span className="cf-grow" />
+                  <label className="cf-cmp">
+                    <input type="checkbox" checked={compared} onChange={() => toggleCmp(c.id)} />
+                    Compare
+                  </label>
+                  <a className="cf-reg" href={registerUrl(appUrl, c, open)}>
+                    Register
+                  </a>
+                </div>
+              </article>
+            );
+          })}
+
+          {list.length === 0 && (
+            <div className="cf-empty">
+              <strong>{certs.length ? "No classes match these filters." : "No upcoming classes are listed right now."}</strong>
+              <span className="rx-muted">{certs.length ? "Try another month, format or language: organizers add classes every week." : "Organizers add classes every week; check back soon."}</span>
+              {certs.length > 0 && (
+                <button type="button" onClick={reset}>
+                  Clear filters
+                </button>
+              )}
             </div>
           )}
         </section>
 
         {sel && (
-          <aside className="fc-preview" aria-label="Quick preview">
-            <div className="fc-preview-head">
-              <span>QUICK PREVIEW</span>
-              <button type="button" className="fc-round" onClick={() => step(-1)} aria-label="Previous class">
-                ↑
-              </button>
-              <button type="button" className="fc-round" onClick={() => step(1)} aria-label="Next class">
-                ↓
-              </button>
-              <button type="button" className="fc-round fc-round-ink" onClick={() => set({ sel: null })} aria-label="Close preview">
-                ✕
-              </button>
-            </div>
-            <div className="fc-preview-body">
-              <div className="fc-preview-prov">
-                <ProviderLogo c={sel} size={52} />
-                <div className="fc-prov">
-                  <span className="fc-prov-name">{sel.organizationName}</span>
-                  <Badge c={sel} big />
-                  <span className="fc-prov-note">
-                    {providerCount(sel)} course{providerCount(sel) === 1 ? "" : "s"} on EnrollClass
-                  </span>
+          <aside className={`cf-preview${s.sel ? " is-open" : ""}`} aria-label="Quick preview">
+            <div className="cf-pv">
+              <div className="cf-pv-head">
+                <Ring cert={sel} size={64} on />
+                <div>
+                  <div className="cf-pv-eyebrow">{sel.badgeName ? "YOU EARN" : sel.certificationBody ? "CERTIFICATION" : "CLASS BY"}</div>
+                  <div className="cf-pv-badge">{sel.badgeName ?? sel.certificationBody ?? sel.orgName}</div>
                 </div>
+                <button type="button" className="cf-pv-close" onClick={() => set({ sel: null })} aria-label="Close preview">
+                  ✕
+                </button>
               </div>
-              <h2>{sel.name}</h2>
-              {sel.imageUrl && <img className="fc-preview-img" src={sel.imageUrl} alt="" />}
-              {sel.description && <p className="fc-blurb">{sel.description.length > 420 ? `${sel.description.slice(0, 420).trimEnd()}…` : sel.description}</p>}
-              <dl className="fc-facts">
-                <div>
-                  <dt>STARTS</dt>
-                  <dd>{sel.format === "self_paced" ? "On demand" : fullDay(sel.nextStartsAt)}</dd>
+              <div className="cf-pv-body">
+                <h2>{sel.title}</h2>
+                {(sel.tagline || sel.blurb) && <p className="cf-pv-blurb">{sel.tagline ?? (sel.blurb!.length > 220 ? `${sel.blurb!.slice(0, 220).trimEnd()}…` : sel.blurb)}</p>}
+                <div className="cf-pv-classes">
+                  {selCohorts.slice(0, 5).map((x) => {
+                    const taken = x.capacity ? Math.round(((x.capacity - x.seatsLeft) / x.capacity) * 100) : 0;
+                    return (
+                      <a key={x.key} className="cf-pv-class" href={classUrl(appUrl, sel, x)}>
+                        <span className="cf-pv-row">
+                          <strong>{shortRange(x)}</strong>
+                          <span>
+                            {x.format === "live_virtual" ? "Live online" : whereOf(x)}
+                            {x.lang ? ` · ${x.lang}` : ""}
+                          </span>
+                        </span>
+                        {x.capacity > 0 && (
+                          <span className="cf-bar-track" role="img" aria-label={`${x.seatsLeft} of ${x.capacity} seats left`}>
+                            <span style={{ width: `${taken}%` }} />
+                          </span>
+                        )}
+                        <span className="cf-pv-sub">
+                          {x.capacity ? (x.seatsLeft ? `${x.seatsLeft} of ${x.capacity} seats left` : "Full: join the waitlist") : "Open enrollment"}
+                          {x.format !== "self_paced" ? ` · ${x.format === "in_person" ? `${dayTimes(x, x.timezone)}, local time` : dayTimes(x, zone)}` : ""}
+                        </span>
+                      </a>
+                    );
+                  })}
+                  {selCohorts.length > 5 && <span className="rx-muted cf-pv-sub">+{selCohorts.length - 5} more dates on the class page</span>}
                 </div>
-                <div>
-                  <dt>FORMAT</dt>
-                  <dd>
-                    {formatOf(sel)}
-                    {sel.hours ? ` · ${sel.hours}h` : ""}
-                  </dd>
-                </div>
-                <div>
-                  <dt>DATES</dt>
-                  <dd>
-                    {sel.classes} upcoming
-                  </dd>
-                </div>
-                <div>
-                  <dt>SEATS LEFT</dt>
-                  <dd>{sel.capacity ? `${sel.seatsLeft} of ${sel.capacity}` : "—"}</dd>
-                </div>
-              </dl>
-              {sel.capacity ? (
-                <div className="fc-seats" role="img" aria-label={`${sel.seatsLeft} of ${sel.capacity} seats left`}>
-                  {Array.from({ length: 20 }, (_, i) => (
-                    <span key={i} className={i < Math.round((20 * ((sel.capacity ?? 0) - (sel.seatsLeft ?? 0))) / (sel.capacity || 1)) ? "taken" : "free"} />
+                <ul className="cf-pv-incl">
+                  {(sel.included.length ? sel.included.slice(0, 4) : [sel.badgeName ? `Verified digital badge: ${sel.badgeName}` : null, "Ticket and calendar invitation by email"].filter((x): x is string => Boolean(x))).map((t) => (
+                    <li key={t}>{t}</li>
                   ))}
-                </div>
-              ) : null}
-              {sel.digitalBadge && (
-                <div className="fc-preview-badge">
-                  <DigitalBadge c={sel} size={64} label />
-                </div>
-              )}
-              <div>
-                <h3>What&apos;s included</h3>
-                <ul className="fc-learn">
-                  {sel.certificationBody && <li>Certification course from {sel.certificationBody}</li>}
-                  {sel.digitalBadge && <li>{sel.verifiedBadge ? `Verified digital badge (Open Badges 3.0): ${sel.digitalBadge.name}` : `Digital badge: ${sel.digitalBadge.name}`}</li>}
-                  <li>Ticket and calendar invitation by email</li>
-                  <li>Change or cancel from your booking link, within the provider&apos;s policy</li>
+                  {sel.heldUntilDelivery && <li>Payment held until the class runs</li>}
                 </ul>
-              </div>
-            </div>
-            <div className="fc-preview-foot">
-              <div className="fc-preview-row">
-                <span className="fc-price fc-price-lg">{money(sel.priceMinor, sel.currency)}</span>
-                {cmpButton(sel, "md")}
-                <a className="fc-pill" href={pageUrl(sel)} target="_blank" rel="noopener">
-                  Open ↗
+                {(() => {
+                  const open = nextOpen(selCohorts);
+                  const price = fromPrice(selCohorts);
+                  return open ? (
+                    <a className="cf-pv-reg" href={registerUrl(appUrl, sel, open)}>
+                      {open.capacity && !open.seatsLeft ? "Join the waitlist" : `Register${price !== null ? ` — ${money(price, sel.currency)}` : ""}`}
+                    </a>
+                  ) : null;
+                })()}
+                <a className="cf-pv-link" href={selCohorts[0] ? classUrl(appUrl, sel, selCohorts[0]) : "#"}>
+                  Full class page, agenda and video
                 </a>
               </div>
-              <a className="fc-enroll" href={pageUrl(sel)}>
-                {sel.seatsLeft === 0 && sel.capacity ? "Join the waitlist" : "Enroll"}
-              </a>
             </div>
           </aside>
         )}
       </div>
 
-      {cmpItems.length > 0 && (
-        <div className="fc-tray" role="region" aria-label="Compare">
-          <span className="fc-mono">
-            COMPARE {cmpItems.length}/{MAX_COMPARE}
-          </span>
-          {cmpItems.map((c) => (
-            <button key={keyOf(c)} type="button" className="fc-chip" onClick={() => toggleCmp(c)} aria-label={`Remove ${c.name} from compare`}>
-              <ProviderLogo c={c} size={24} />
-              {short(c.name)} ✕
-            </button>
-          ))}
-          <button type="button" className="fc-cmp-now" disabled={cmpItems.length < 2} onClick={() => setShowCmp(true)}>
-            Compare now
-          </button>
-        </div>
-      )}
-
-      {showCmp && cmpItems.length >= 2 && (
-        <div className="fc-overlay" onClick={() => setShowCmp(false)}>
-          <div className="fc-modal" role="dialog" aria-modal="true" aria-label="Compare classes" onClick={(e) => e.stopPropagation()}>
-            <div className="fc-modal-head">
-              <h2>Compare classes</h2>
-              <button type="button" className="fc-round fc-round-ink" onClick={() => setShowCmp(false)} aria-label="Close">
-                ✕
+      {tray.length > 0 && (
+        <div className="cf-tray" role="region" aria-label="Compare">
+          <div className="cf-in">
+            <strong>Compare</strong>
+            {tray.map((c) => (
+              <button key={c.id} type="button" className="cf-tray-chip" onClick={() => toggleCmp(c.id)} aria-label={`Remove ${c.title} from compare`}>
+                {c.code} · {c.title.length > 28 ? `${c.title.slice(0, 26).trimEnd()}…` : c.title} <span aria-hidden="true">✕</span>
               </button>
-            </div>
-            <div className="fc-compare" style={{ gridTemplateColumns: `110px repeat(${cmpItems.length}, minmax(0, 1fr))`, ["--n" as string]: cmpItems.length }}>
-              <div />
-              {cmpItems.map((c) => (
-                <div key={keyOf(c)} className="fc-compare-col">
-                  <div className="fc-compare-prov">
-                    <ProviderLogo c={c} size={34} />
-                    <span>{c.organizationName}</span>
-                  </div>
-                  <strong>{c.name}</strong>
-                  <Badge c={c} />
-                </div>
-              ))}
-              {(() => {
-                // Only call a price best when every class is priced in the same currency.
-                const sameCurrency = new Set(cmpItems.map((c) => c.currency)).size === 1;
-                const prices = cmpItems.map((c) => major(c)).filter((x): x is number => x !== null);
-                const best = sameCurrency && prices.length ? Math.min(...prices) : null;
-                const rows: [string, (c: CatalogItem) => string, (c: CatalogItem) => boolean][] = [
-                  ["PRICE", (c) => money(c.priceMinor, c.currency), (c) => best !== null && major(c) === best && cmpItems.length > 1],
-                  ["STARTS", (c) => (c.format === "self_paced" ? "On demand" : fullDay(c.nextStartsAt)), () => false],
-                  ["FORMAT", formatOf, () => false],
-                  ["HOURS", (c) => (c.hours ? `${c.hours}h` : "—"), () => false],
-                  ["DATES", (c) => `${c.classes} upcoming`, () => false],
-                  ["SEATS LEFT", (c) => (c.capacity ? `${c.seatsLeft} of ${c.capacity}` : "—"), () => false],
-                  ["CATEGORY", (c) => catLabel(c.category), () => false],
-                  ["BADGE", (c) => c.digitalBadge?.name ?? "—", () => false],
-                ];
-                return rows.map(([label, value, win]) => [
-                  <div key={label} className="fc-compare-label">
-                    {label}
-                  </div>,
-                  ...cmpItems.map((c) => (
-                    <div key={`${label}-${keyOf(c)}`} className={`fc-compare-cell${win(c) ? " is-best" : ""}`}>
-                      {value(c)}
-                    </div>
-                  )),
-                ]);
-              })()}
-              <div />
-              {cmpItems.map((c) => (
-                <a key={keyOf(c)} className="fc-enroll" href={pageUrl(c)} target="_blank" rel="noopener">
-                  Open class ↗
-                </a>
-              ))}
-            </div>
+            ))}
+            <span className="cf-grow" />
+            <span className="cf-tray-hint">{tray.length < 2 ? "Pick one more to compare" : `Up to ${MAX_COMPARE}`}</span>
+            {tray.length >= 2 ? (
+              <a className="cf-tray-go" href={compareHref}>
+                Compare ({tray.length})
+              </a>
+            ) : (
+              <span className="cf-tray-go" aria-disabled="true">
+                Compare ({tray.length})
+              </span>
+            )}
           </div>
         </div>
       )}
 
+      <div className="cf-float">
+        <button type="button" className="cf-float-ink" onClick={() => setSheet(true)}>
+          Filters{active ? ` · ${active}` : ""}
+        </button>
+        {tray.length >= 2 ? (
+          <a className="cf-float-light" href={compareHref}>
+            Compare ({tray.length})
+          </a>
+        ) : (
+          <button type="button" className="cf-float-light" onClick={() => setToast(tray.length ? "Pick one more certification to compare." : "Tick Compare on two or three certifications.")}>
+            Compare ({tray.length})
+          </button>
+        )}
+      </div>
+
       {sheet && (
-        <div className="fc-overlay fc-overlay-sheet" onClick={() => setSheet(false)}>
-          <div className="fc-sheet" role="dialog" aria-modal="true" aria-label="Filters" onClick={(e) => e.stopPropagation()}>
-            <div className="fc-modal-head">
+        <div className="cf-overlay" onClick={() => setSheet(false)}>
+          <div className="cf-sheet" role="dialog" aria-modal="true" aria-label="Filters" onClick={(e) => e.stopPropagation()}>
+            <div className="cf-sheet-head">
               <h2>Filters</h2>
-              <button type="button" className="fc-round fc-round-ink" onClick={() => setSheet(false)} aria-label="Close filters">
+              {active > 0 && (
+                <button type="button" className="cf-link" onClick={reset}>
+                  Clear all
+                </button>
+              )}
+              <button type="button" className="cf-pv-close" onClick={() => setSheet(false)} aria-label="Close filters">
                 ✕
               </button>
             </div>
-            <div className="fc-sheet-body">{filters}</div>
-            <button type="button" className="fc-enroll" onClick={() => setSheet(false)}>
-              Show {list.length} result{list.length === 1 ? "" : "s"}
+            <div className="cf-sheet-body">{filters}</div>
+            <button type="button" className="cf-sheet-go" onClick={() => setSheet(false)}>
+              Show {list.length} certification{list.length === 1 ? "" : "s"}
             </button>
           </div>
         </div>
       )}
 
       {toast && (
-        <div className="fc-toast" role="status">
+        <div className="cf-toast" role="status">
           {toast}
         </div>
       )}

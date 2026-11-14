@@ -60,6 +60,7 @@ export default async function RegisterPage({ params, searchParams }: { params: P
         api={publicApiUrl()}
         orgId={org}
         classHref={classHref}
+        viaKey={`ec-via:${org}/${slug}`}
         registeredBase={`/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/registered`}
         course={{ name: data.course.name, durationDays: data.course.durationDays }}
         orgName={data.organization.name}

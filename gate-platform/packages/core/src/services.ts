@@ -75,10 +75,28 @@ export interface CatalogEntry {
   verifiedBadge: boolean;
   /** The provider's logo, when uploaded. */
   logoUrl?: string;
-  /** Every upcoming date with its page slug (/c/:org/:course/:dateSlug). */
-  dates: { slug: string; startsAt: Date }[];
+  /** Every upcoming date with its page slug (/c/:org/:course/:dateSlug), seats and the first day's hours. */
+  dates: CatalogDate[];
+  /** Teaching language (ISO 639-1), when set on the course. */
+  language?: string;
+  /** The class page's one-line pitch. */
+  tagline?: string;
+  /** "What you leave with" titles from the class page (at most 6). */
+  included?: string[];
+  /** True when EnrollClass holds learners' money until the class is delivered (protected payments). */
+  heldUntilDelivery: boolean;
   /** The digital badge learners earn (Credly, uploaded or EnrollClass verified). */
   digitalBadge?: { name: string; imageUrl?: string; platform: string };
+}
+
+export interface CatalogDate {
+  slug: string; startsAt: Date; endsAt: Date; timezone: string; format: DeliveryFormat;
+  /** Seats on sale and left across the date's tickets; capacity 0 = no seated tickets. */
+  capacity: number; seatsLeft: number;
+  /** Lowest current price for this date; null when nothing is on sale. */
+  priceMinor: number | null;
+  /** First session's hours (a whole-day class: 9:00-17:00 in the class's zone). */
+  dayStartsAt: Date; dayEndsAt: Date; days: number;
 }
 
 export class Core {
@@ -686,11 +704,25 @@ export class Core {
         const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
         const next = upcoming[0];
         if (!next) continue;
+        const slugs = dateSlugs(upcoming, localDate);
+        const dates: CatalogDate[] = [];
+        for (const e of upcoming) {
+          const tt = await this.repos.ticketTypes.listByEvent(e.id);
+          const sale = tt.filter((t) => t.quantity > t.sold);
+          const pr = sale.map((t) => { try { return this.resolveUnitPrice(t, e, e.currency, now, pricing); } catch { return null; } }).filter((x): x is number => x !== null);
+          const first = [...e.sessions].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime())[0];
+          dates.push({
+            slug: slugs.get(e.id)!, startsAt: e.startsAt, endsAt: e.endsAt ?? e.sessions.reduce((m, x) => (x.endsAt > m ? x.endsAt : m), e.startsAt), timezone: e.timezone, format: e.format,
+            capacity: tt.reduce((a, t) => a + t.quantity, 0), seatsLeft: tt.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0),
+            priceMinor: pr.length ? Math.min(...pr) : null,
+            dayStartsAt: first?.startsAt ?? e.startsAt, dayEndsAt: first?.endsAt ?? e.endsAt ?? e.startsAt, days: Math.max(1, e.sessions.length),
+          });
+        }
         const tickets = await this.repos.ticketTypes.listByEvent(next.id);
         const onSale = tickets.filter((t) => t.quantity > t.sold);
-        const prices = onSale.map((t) => { try { return this.resolveUnitPrice(t, next, next.currency, now, pricing); } catch { return null; } }).filter((x): x is number => x !== null);
-        const capacity = tickets.reduce((a, t) => a + t.quantity, 0);
-        const seatsLeft = tickets.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0);
+        const prices = dates[0]!.priceMinor === null ? [] : [dates[0]!.priceMinor];
+        const capacity = dates[0]!.capacity;
+        const seatsLeft = dates[0]!.seatsLeft;
         const hoursMs = next.sessions.reduce((a, x) => a + (x.endsAt.getTime() - x.startsAt.getTime()), 0);
         const badge: CatalogEntry["badge"] =
           capacity > 0 && seatsLeft > 0 && seatsLeft <= capacity / 4 ? "selling_fast"
@@ -708,7 +740,11 @@ export class Core {
           priceMinor: prices.length ? Math.min(...prices) : null, currency: next.currency, capacity, seatsLeft, badge,
           verifiedBadge: course.badge?.platform === "own",
           ...(org.logoUrl ? { logoUrl: org.logoUrl } : {}),
-          dates: (() => { const sl = dateSlugs(upcoming, localDate); return upcoming.map((e) => ({ slug: sl.get(e.id)!, startsAt: e.startsAt })); })(),
+          dates,
+          ...(course.language ? { language: course.language } : {}),
+          ...(course.page?.tagline ? { tagline: course.page.tagline } : {}),
+          ...(course.page?.included?.length ? { included: course.page.included.slice(0, 6).map((i) => i.title) } : {}),
+          heldUntilDelivery: (org.paymentMode ?? "protected") !== "direct",
           ...(course.badge ? { digitalBadge: { name: course.badge.name, platform: course.badge.platform, ...(course.badge.imageUrl ? { imageUrl: course.badge.imageUrl } : {}) } } : {}),
         });
         if (out.length >= limit) return out;

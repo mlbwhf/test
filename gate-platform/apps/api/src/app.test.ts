@@ -350,6 +350,11 @@ describe("API", () => {
     const [item] = (await im.inject("/public/v1/catalog")).json().items;
     expect(item).toMatchObject({ logoUrl: logo.logoUrl, classes: 3, digitalBadge: { name: "SAFe Agilist", platform: "own" } });
     expect(item.digitalBadge.imageUrl).toMatch(/\/media\//);
+    // Per-date facts for Find a class: no meeting links or fees ride along.
+    expect(item.dates).toHaveLength(3);
+    expect(item.dates[1]).toMatchObject({ startsAt: "2099-02-02T14:00:00.000Z", timezone: expect.any(String), format: expect.any(String), capacity: expect.any(Number), seatsLeft: expect.any(Number), days: expect.any(Number) });
+    expect(Object.keys(item.dates[0]).sort()).toEqual(["capacity", "dayEndsAt", "dayStartsAt", "days", "endsAt", "format", "priceMinor", "seatsLeft", "slug", "startsAt", "timezone"]);
+    expect(item).toMatchObject({ heldUntilDelivery: true, included: [] });
     expect((await im.inject(`/public/v1/organizations/${logo.id}/courses/safe`)).json().organization.logoUrl).toBe(logo.logoUrl);
     expect((await im.inject({ method: "DELETE", url: "/v1/organizations/me/logo", headers: { "x-api-key": key } })).json().logoUrl).toBeNull();
     const cover = (await im.inject({ method: "PUT", url: "/v1/organizations/me/cover", headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();

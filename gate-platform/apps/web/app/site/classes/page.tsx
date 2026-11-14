@@ -1,8 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { keyOf, publicCatalogWithCategories } from "@/lib/catalog";
+import { publicCatalogWithCategories } from "@/lib/catalog";
 import { appUrl, jsonLd, siteUrl } from "@/lib/seo";
 import { ClassFinder, type FinderState } from "@/components/class-finder";
+import { RxFonts } from "@/components/class-page/shared";
+import { groupCertifications } from "@/lib/finder";
+import "../../c/registration.css";
+import "./finder.css";
 
 export const dynamic = "force-dynamic";
 
@@ -22,18 +26,23 @@ export default async function ClassesPage({ searchParams }: { searchParams: Prom
   const { items: catalog, categories } = await publicCatalogWithCategories();
   // Organizers can opt out of the class finder; bookings that come through it carry a referral fee.
   const items = catalog.filter((c) => c.listed !== false);
-  const max = Number(one(sp.max));
+  const certs = groupCertifications(items);
+  const ids = new Set(certs.map((c) => c.id));
+  // Older links used comma lists and format ids (live_virtual, in_person); keep them working.
+  const fmt = many(sp.format);
+  const sort = one(sp.sort);
   const sel = one(sp.class);
   const initial: FinderState = {
     q: one(sp.q),
-    view: one(sp.view) === "table" ? "table" : "cards",
-    sort: one(sp.sort) === "price" ? "price" : "soonest",
-    cats: many(sp.category),
-    modes: many(sp.format),
-    badges: many(sp.badge),
+    quick: one(sp.quick),
+    cat: many(sp.category)[0] ?? "",
+    month: /^\d{4}-\d{2}$/.test(one(sp.month)) ? one(sp.month) : "",
+    format: fmt.includes("in_person") ? "in_person" : fmt.some((f) => f === "online" || f === "live_virtual" || f === "hybrid") ? "online" : "any",
+    lang: /^[A-Za-z]{2}$/.test(one(sp.lang)) ? one(sp.lang).toUpperCase() : "",
     provs: many(sp.provider),
-    max: one(sp.max) && Number.isFinite(max) && max >= 0 ? max : null,
-    sel: items.some((c) => keyOf(c) === sel) ? sel : null,
+    sort: sort === "price" || sort === "seats" ? sort : "soonest",
+    sel: ids.has(sel) ? sel : null,
+    cmp: many(sp.compare).filter((x) => ids.has(x)).slice(0, 3),
   };
   const page = (c: (typeof items)[number]) => `${appUrl()}/c/${encodeURIComponent(c.organizationId)}/${encodeURIComponent(c.slug)}`;
   const ld = {
@@ -44,10 +53,11 @@ export default async function ClassesPage({ searchParams }: { searchParams: Prom
     itemListElement: items.slice(0, 200).map((c, i) => ({ "@type": "ListItem", position: i + 1, url: page(c), name: c.name })),
   };
   return (
-    <main className="classes-app">
+    <main className="rx cf-page">
+      <RxFonts />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
       <ClassFinder items={items} categories={categories.filter((c) => items.some((i) => i.category === c.id))} initial={initial} appUrl={appUrl()} />
-      <p className="classes-foot">
+      <p className="cf-foot">
         Already registered? Your confirmation email has your ticket and a link to change or cancel. <Link href="/help/tickets">Learner help</Link>
         <br />
         Run classes yourself? <a href={`${appUrl()}/login?mode=signup`}>Sign up free</a> and publish your first one in minutes. Listings marked Sponsored are paid

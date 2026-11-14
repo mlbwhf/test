@@ -35,6 +35,8 @@ type Props = {
   initialTier: "me" | "team" | "invoice";
   initialQty: number;
   seatsLeft: number;
+  /** sessionStorage key the class page sets when the visitor came from Find a class (?via=enrollclass). */
+  viaKey: string;
 };
 
 type StripePaymentElement = { mount(el: HTMLElement): void; unmount(): void };
@@ -91,6 +93,16 @@ function attemptId(): string {
 
 export function Checkout(p: Props) {
   const [step, setStep] = useState(1);
+  // Bookings that start in EnrollClass's class finder carry the marketplace referral.
+  const [fromFinder, setFromFinder] = useState(false);
+  useEffect(() => {
+    try {
+      if (new URLSearchParams(window.location.search).get("via") === "enrollclass") window.sessionStorage.setItem(p.viaKey, "marketplace");
+      setFromFinder(window.sessionStorage.getItem(p.viaKey) === "marketplace");
+    } catch {
+      setFromFinder(new URLSearchParams(window.location.search).get("via") === "enrollclass");
+    }
+  }, [p.viaKey]);
   const [zone, setZone] = useState(p.classZone);
   const maxSeats = Math.max(1, Math.min(p.seatsLeft, 20));
   const [people, setPeople] = useState<Person[]>(() => Array.from({ length: p.initialQty }, () => blank(p.classZone)));
@@ -138,10 +150,10 @@ export function Checkout(p: Props) {
     if (!ticket) return;
     const r = await call<{ order: { pricing: Pricing } }>(`${p.api}/public/v1/organizations/${encodeURIComponent(p.orgId)}/orders`, {
       method: "POST",
-      body: JSON.stringify({ ticketTypeId: ticket.id, quantity: n, currency: p.currency, buyerEmail: "quote@enrollclass.invalid", dryRun: true, ...(flexible ? { flexible: true } : {}) }),
+      body: JSON.stringify({ ticketTypeId: ticket.id, quantity: n, currency: p.currency, buyerEmail: "quote@enrollclass.invalid", dryRun: true, ...(flexible ? { flexible: true } : {}), ...(fromFinder ? { source: "marketplace" } : {}) }),
     });
     if (r.ok) setPricing(r.data.order.pricing);
-  }, [p.api, p.orgId, p.currency, ticket, n, flexible]);
+  }, [p.api, p.orgId, p.currency, ticket, n, flexible, fromFinder]);
   useEffect(() => {
     const t = setTimeout(() => void quote(), 250);
     return () => clearTimeout(t);
@@ -215,7 +227,7 @@ export function Checkout(p: Props) {
     const r = await call<{ order: { id: string; status: string; paymentRef: string | null }; clientSecret: string | null; stripeAccount: string | null }>(`${p.api}/public/v1/organizations/${encodeURIComponent(p.orgId)}/orders`, {
       method: "POST",
       headers: { "idempotency-key": idem.current },
-      body: JSON.stringify({ ticketTypeId: ticket!.id, quantity: n, currency: p.currency, buyerEmail: buyer, attendees: attendees(), ...(flexible ? { flexible: true } : {}), ...(challenge ? { turnstileToken: challenge } : {}) }),
+      body: JSON.stringify({ ticketTypeId: ticket!.id, quantity: n, currency: p.currency, buyerEmail: buyer, attendees: attendees(), ...(flexible ? { flexible: true } : {}), ...(fromFinder ? { source: "marketplace" } : {}), ...(challenge ? { turnstileToken: challenge } : {}) }),
     });
     setBusy(false);
     freshChallenge();
