@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { courseNameFrom, slugify } from "./plan.js";
-import { importFromEventbrite, mapEventbriteEvent, planFromEventbrite, type EventbriteEvent } from "./eventbrite.js";
+import { htmlToText, importFromEventbrite, mapEventbriteEvent, planFromEventbrite, type EventbriteEvent } from "./eventbrite.js";
 import { CSV_TEMPLATE, parseCsv, parseDateParts, parseMoneyMinor, planFromCsv, zonedToIso } from "./csv.js";
 
 const future = new Date(Date.now() + 30 * 86_400_000);
@@ -91,6 +91,21 @@ describe("eventbrite mapping", () => {
     expect(plan.organization).toEqual({ id: "org9", name: "Agile Agilist" });
     expect(plan.items.map((i) => i.sourceId).sort()).toEqual(["a", "b"]);
     expect(calls[1]).toContain("/organizations/org9/events/?expand=ticket_classes");
+  });
+  it("uses the full description from structured content, not the short summary", async () => {
+    const html = "<p><strong>Lead the ART.</strong> Three live days.</p><h3>You will learn</h3><ul><li>PI Planning</li><li>Risk &amp; dependencies</li></ul><p>Badge: <a href=\"https://www.credly.com/org/scaled-agile/badge/rte\">RTE</a></p>";
+    expect(htmlToText(html)).toBe("Lead the ART. Three live days.\n\nYou will learn\n\n\u2022 PI Planning\n\u2022 Risk & dependencies\n\nBadge: RTE");
+    const fetchImpl = (async (url: string) => {
+      if (url.endsWith("/users/me/organizations/")) return new Response(JSON.stringify({ organizations: [{ id: "org9", name: "AA" }] }));
+      if (url.includes("/events/a/structured_content/")) return new Response(JSON.stringify({ modules: [{ type: "image", data: {} }, { type: "text", data: { body: { text: html } } }] }));
+      if (url.includes("/structured_content/")) return new Response("{}", { status: 404 });
+      return new Response(JSON.stringify({ events: [ebEvent({ id: "a", summary: "Lead the ART." }), ebEvent({ id: "b", summary: "Short only." })], pagination: { has_more_items: false } }));
+    }) as unknown as typeof fetch;
+    const plan = await importFromEventbrite("tok_1", { fetchImpl });
+    const a = plan.items.find((i) => i.sourceId === "a")!;
+    expect(a.course.description).toContain("\u2022 PI Planning");
+    expect(a.course.badge).toMatchObject({ platform: "credly" });
+    expect(plan.items.find((i) => i.sourceId === "b")!.course.description).toBe("Short only.");
   });
   it("reports a rejected token", async () => {
     const fetchImpl = (async () => new Response("{}", { status: 401 })) as unknown as typeof fetch;

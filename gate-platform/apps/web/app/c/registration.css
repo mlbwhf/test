@@ -372,3 +372,19 @@
   .rx-class { flex-wrap: wrap; }
   .rx-class-end { text-align: left; flex-direction: row; gap: 10px; align-items: baseline; width: 100%; padding-left: 78px; }
 }
+
+/* About this class: the full course description, with the badge beside it */
+.rx-about { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 32px; align-items: start; }
+.rx-about.is-single { grid-template-columns: minmax(0, 760px); }
+.rx-about-text { display: flex; flex-direction: column; gap: 14px; max-width: 760px; }
+.rx-about-text p { margin: 0; color: var(--rx-body); font-size: 16px; line-height: 1.65; white-space: pre-line; overflow-wrap: anywhere; }
+.rx-about-badge { background: var(--rx-surface); border: 1px solid var(--rx-border); border-radius: 20px; padding: 20px; display: flex; gap: 16px; align-items: flex-start; }
+.rx-about-badge .rx-badge-art { flex-shrink: 0; }
+.rx-about-badge strong { display: block; font-family: var(--rx-head); font-size: 18px; line-height: 1.25; margin: 4px 0 6px; }
+.rx-about-badge p { margin: 0 0 8px; font-size: 14px; color: var(--rx-body); }
+.rx-about-badge a { font-weight: 600; font-size: 14px; }
+@media (max-width: 860px) {
+  .rx-about { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+}
+.rx-about-badge .rx-badge-art { width: 88px; height: 88px; border-width: 4px; padding: 6px; }
+.rx-about-badge .rx-badge-art strong { font-size: 11px; margin: 0; color: #fff; }

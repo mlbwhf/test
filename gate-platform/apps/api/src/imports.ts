@@ -84,7 +84,16 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
     if (want && !want.has(item.sourceId)) continue;
     const startsAt = new Date(item.event.startsAt);
     if (!opts.includePast && startsAt.getTime() < Date.now()) { results.push({ sourceId: item.sourceId, status: "skipped", reason: "starts in the past" }); continue; }
-    if (existingKeys.has(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`)) { results.push({ sourceId: item.sourceId, status: "exists", reason: "a cohort with this name and start already exists" }); continue; }
+    if (existingKeys.has(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`)) {
+      // The date is already here; a fuller course description from the source still fills in.
+      try {
+        await fillDescription(core, org, await core.getCourseBySlug(org.id, item.course.slug), item);
+      } catch {
+        /* the course was renamed or removed; nothing to fill */
+      }
+      results.push({ sourceId: item.sourceId, status: "exists", reason: "a cohort with this name and start already exists" });
+      continue;
+    }
     try {
       results.push(await applyItem(core, org, item, startsAt, deps, instructors));
       existingKeys.add(`${item.event.name.trim().toLowerCase()}|${startsAt.toISOString()}`);
@@ -93,6 +102,16 @@ export async function applyImportPlan(core: Core, org: Organization, plan: Impor
     }
   }
   return results;
+}
+
+/**
+ * A fuller description from the source (e.g. Eventbrite's long description) replaces a missing or
+ * shorter one it contains; text the organizer rewrote is left alone.
+ */
+async function fillDescription(core: Core, org: Organization, course: { id: string; description?: string | undefined }, item: ImportItem): Promise<void> {
+  const incoming = item.course.description?.trim();
+  const current = course.description?.trim() ?? "";
+  if (incoming && incoming.length > current.length && incoming.includes(current)) await core.updateCourse(org.id, course.id, { description: incoming });
 }
 
 async function applyItem(core: Core, org: Organization, item: ImportItem, startsAt: Date, deps: ApplyDeps, instructors: Map<string, string>): Promise<ImportResult> {
@@ -106,6 +125,7 @@ async function applyItem(core: Core, org: Organization, item: ImportItem, starts
     hasImage = Boolean(existing.imageUrl);
     hasBadge = Boolean(existing.badge);
     if (item.course.certificationBody && !existing.certificationBody) await core.updateCourse(org.id, courseId, { certificationBody: item.course.certificationBody });
+    await fillDescription(core, org, existing, item);
   } catch (err) {
     if (!(err instanceof DomainError) || err.code !== "NOT_FOUND") throw err;
     const course = await core.createCourse(org.id, { slug: item.course.slug, name: item.course.name, description: item.course.description, durationDays: item.course.durationDays, certificationBody: item.course.certificationBody });

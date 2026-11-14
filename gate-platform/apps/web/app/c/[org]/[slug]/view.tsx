@@ -30,6 +30,62 @@ function fmt(iso: string, tz: string, o: Intl.DateTimeFormatOptions): string {
 }
 
 /** "OCT 21–23, 2026" / "OCT 30 – NOV 2, 2026" in the cohort's own time zone. */
+/** Paragraphs of a course description (blank-line separated; single line breaks stay inside). */
+const paragraphs = (t: string) => t.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
+
+/** The intro under the title: the first paragraph, cut at a sentence end when it runs long. */
+function leadOf(t: string): string {
+  const first = paragraphs(t)[0] ?? "";
+  if (first.length <= 260) return first;
+  const cut = first.slice(0, 260);
+  const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
+  return end > 80 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" ")).trimEnd()}…`;
+}
+
+/** "About this class": the full description, and the badge with how it's issued and a link to it. */
+function About({ data, showBadge }: { data: PublicCoursePage; showBadge: boolean }) {
+  const desc = data.course.description?.trim() ?? "";
+  const lede = data.course.page?.tagline ?? leadOf(desc);
+  const body = desc && (desc !== lede || paragraphs(desc).length > 1) ? paragraphs(desc) : [];
+  const badge = showBadge ? data.course.badge : null;
+  if (!body.length && !badge) return null;
+  return (
+    <section className={`rx-about${badge && body.length ? "" : " is-single"}`} aria-labelledby="about-title">
+      {body.length > 0 && (
+        <div className="rx-about-text">
+          <h2 id="about-title" className="rx-h2">
+            About this class
+          </h2>
+          {body.map((p, i) => (
+            <p key={i}>{p}</p>
+          ))}
+        </div>
+      )}
+      {badge && (
+        <aside className="rx-about-badge" aria-labelledby={body.length ? undefined : "about-title"}>
+          <div className="rx-badge-art" role="img" aria-label={`${badge.name} badge`}>
+            {badge.imageUrl ? <img src={badge.imageUrl} alt="" /> : <strong>{badge.name}</strong>}
+          </div>
+          <div>
+            <div className="rx-eyebrow">Digital badge</div>
+            <strong id={body.length ? undefined : "about-title"}>{badge.name}</strong>
+            <p>
+              {badge.platform === "own"
+                ? `Earned on completion: a verified digital badge (Open Badges 3.0) issued by ${data.organization.name} with your certificate, ready to share on LinkedIn or keep in any badge wallet.`
+                : `Earned on completion, issued through ${BADGE_LABEL[badge.platform] ?? "a badge platform"}. Share it on LinkedIn or add it to your email signature.`}
+            </p>
+            {badge.url && (
+              <a href={badge.url} target="_blank" rel="noreferrer noopener">
+                View the badge →
+              </a>
+            )}
+          </div>
+        </aside>
+      )}
+    </section>
+  );
+}
+
 export function range(c: Cohort): string {
   const e = c.event;
   const end = e.endsAt ?? e.startsAt;
@@ -124,10 +180,13 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
             <div className="rx-card rx-hero-main">
               {orgRow}
               <h1 className="rx-title">{data.course.name}</h1>
-              {(data.course.page?.tagline ?? data.course.description) && <p className="rx-lede">{data.course.page?.tagline ?? data.course.description}</p>}
+              {(data.course.page?.tagline ?? leadOf(data.course.description ?? "")) && <p className="rx-lede">{data.course.page?.tagline ?? leadOf(data.course.description ?? "")}</p>}
               <p className="rx-muted" style={{ margin: 0 }}>No upcoming dates yet. Check back soon.</p>
             </div>
           </section>
+          <div className="rx-sections">
+            <About data={data} showBadge={show.badge} />
+          </div>
         </main>
       </div>
     );
@@ -144,7 +203,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
   const formatLabel = ev.format === "in_person" ? "In person · instructor-led" : ev.format === "hybrid" ? "Hybrid · instructor-led" : ev.format === "self_paced" ? "Self-paced" : "Live online · instructor-led";
   const where = online ? "Online" : cityOf(ev.timezone);
   const instructors = sel.instructors;
-  const lede = data.course.page?.tagline ?? data.course.description;
+  const lede = data.course.page?.tagline ?? leadOf(data.course.description ?? "");
   const checkoutHref = `/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/register?date=${encodeURIComponent(sel.dateSlug)}`;
   const priceText = price ? (free ? "Free" : whole(price.minor, price.currency)) : "—";
   const video = show.video && data.course.page?.videoUrl ? videoEmbed(data.course.page.videoUrl) : null;
@@ -292,10 +351,11 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
                   <h2 id="preview-title" className="rx-h2">
                     {lead ? `Meet ${lead.name.split(" ")[0]} before you commit` : "See how the class runs"}
                   </h2>
-                  {data.course.description && lede !== data.course.description && <p>{data.course.description}</p>}
                 </div>
               </section>
             )}
+
+            <About data={data} showBadge={show.badge} />
 
             {(agenda.length > 0 || sessions.length > 1) && <Agenda sessions={sessions} topics={agenda} classZone={ev.timezone} multiDay={sessions.length > 1 || agenda.length > 1} />}
 

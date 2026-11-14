@@ -136,10 +136,12 @@ describe("API", () => {
 
   it("imports from Eventbrite through an injected fetch and rejects bad tokens", async () => {
     const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    let longText: string | null = null;
     const fetchImpl = (async (url: string, init?: RequestInit) => {
       if ((init?.headers as Record<string, string>).authorization !== "Bearer good-token-123") return new Response("{}", { status: 401 });
       if (url.endsWith("/users/me/organizations/")) return new Response(JSON.stringify({ organizations: [{ id: "eb1", name: "Agile Agilist" }] }));
-      return new Response(JSON.stringify({ events: [{ id: "e1", name: { text: "CSM Workshop - Dec 2099" }, start: { timezone: "America/Toronto", utc: "2099-12-03T14:00:00Z" }, end: { timezone: "America/Toronto", utc: "2099-12-04T22:00:00Z" }, currency: "CAD", online_event: true, status: "live", ticket_classes: [{ id: "t", name: "Standard", cost: { currency: "CAD", value: 99500 }, quantity_total: 16, quantity_sold: 3 }] }], pagination: { has_more_items: false } }));
+      if (url.includes("/structured_content/")) return longText ? new Response(JSON.stringify({ modules: [{ type: "text", data: { body: { text: longText } } }] })) : new Response("{}", { status: 404 });
+      return new Response(JSON.stringify({ events: [{ id: "e1", name: { text: "CSM Workshop - Dec 2099" }, summary: "Two days to become a Scrum Master.", start: { timezone: "America/Toronto", utc: "2099-12-03T14:00:00Z" }, end: { timezone: "America/Toronto", utc: "2099-12-04T22:00:00Z" }, currency: "CAD", online_event: true, status: "live", ticket_classes: [{ id: "t", name: "Standard", cost: { currency: "CAD", value: 99500 }, quantity_total: 16, quantity_sold: 3 }] }], pagination: { has_more_items: false } }));
     }) as unknown as typeof fetch;
     const eb = await buildApp({ core, adminKey: "admin", env: "test", fetchImpl });
     const created = await eb.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "CAD" } });
@@ -153,6 +155,13 @@ describe("API", () => {
     expect(res.json().results[0]).toMatchObject({ status: "created", ticketTypes: 1 });
     const tts = (await eb.inject({ url: `/v1/events/${res.json().results[0].eventId}/ticket-types`, headers: { "x-api-key": key } })).json().items;
     expect(tts[0]).toMatchObject({ name: "Standard", priceMinor: 99500, quantity: 16 });
+    const desc = async () => (await eb.inject({ url: "/v1/courses", headers: { "x-api-key": key } })).json().items[0].description as string;
+    expect(await desc()).toBe("Two days to become a Scrum Master.");
+    // Importing again once the full description is readable fills it in; existing dates are not duplicated.
+    longText = "<p>Two days to become a Scrum Master.</p><ul><li>Scrum theory</li><li>Facilitation</li></ul>";
+    const again = (await eb.inject({ method: "POST", url: "/v1/imports/eventbrite", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { token: "good-token-123", dryRun: false } })).json();
+    expect(again.results[0].status).toBe("exists");
+    expect(await desc()).toBe("Two days to become a Scrum Master.\n\n\u2022 Scrum theory\n\u2022 Facilitation");
   });
 
   it("localizes prices: settings, converted public prices, orders in the chosen currency", async () => {
