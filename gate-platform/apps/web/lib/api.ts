@@ -378,6 +378,8 @@ export type UpdateCourseInput = {
   surveyUrl?: string | null;
   description?: string | null;
   badge?: CourseBadge | null;
+  /** Class page sections and content. */
+  page?: CoursePage | null;
 };
 
 export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
@@ -399,6 +401,11 @@ export type UpdateOrganizationInput = {
   passFeeToAttendee?: boolean;
   marketplaceListing?: boolean;
   flexibleTickets?: boolean;
+  name?: string;
+  accentColor?: string | null;
+  checkoutInvoices?: boolean;
+  slug?: string | null;
+  profile?: OrganizationProfile;
 };
 export type EarlyReleaseQuote = { eligible: boolean; reason?: string; currency: string; heldMinor: number; feeMinor: number; netMinor: number };
 export type SetInstructorFeesInput = { fees: InstructorFee[] };
@@ -808,6 +815,9 @@ export const api = {
   importCourseImage: (id: string, url: string) => request<Course>("POST", `/v1/courses/${enc(id)}/image/from-url`, { url }),
   uploadOrganizationLogo: (bytes: ArrayBuffer, contentType: string) => request<Organization>("PUT", "/v1/organizations/me/logo", new RawBody(bytes, contentType)),
   removeOrganizationLogo: () => request<Organization>("DELETE", "/v1/organizations/me/logo"),
+  uploadOrganizationCover: (bytes: ArrayBuffer, contentType: string) => request<Organization>("PUT", "/v1/organizations/me/cover", new RawBody(bytes, contentType)),
+  updateParty: (id: string, input: { name?: string; title?: string | null; bio?: string | null; photoUrl?: string | null }) => request<Party>("PATCH", `/v1/parties/${enc(id)}`, input),
+  uploadPartyPhoto: (id: string, bytes: ArrayBuffer, contentType: string) => request<Party>("PUT", `/v1/parties/${enc(id)}/photo`, new RawBody(bytes, contentType)),
   buildSchedule: (eventId: string, input: ScheduleInput) => request<{ plan: SchedulePlanRow[]; created: Event[] }>("POST", `/v1/events/${enc(eventId)}/schedule`, input),
   removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
   listBadges: () => request<{ items: BadgeOverviewItem[] }>("GET", "/v1/badges"),

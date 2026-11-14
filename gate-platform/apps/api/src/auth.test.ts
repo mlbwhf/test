@@ -201,6 +201,10 @@ describe("teams and roles", () => {
   });
 
   it("maps routes to permissions", () => {
+    expect(permissionFor("PATCH", "/v1/parties/party_1")).toBe("settings");
+    expect(permissionFor("PUT", "/v1/parties/party_1/photo")).toBe("settings");
+    expect(permissionFor("GET", "/v1/parties")).toBe("classes:read");
+    expect(permissionFor("PUT", "/v1/organizations/me/cover")).toBe("settings");
     expect(permissionFor("GET", "/v1/events")).toBe("classes:read");
     expect(permissionFor("POST", "/v1/events/evt_1/ticket-types")).toBe("classes:write");
     expect(permissionFor("POST", "/v1/events/evt_1/release")).toBe("money:write");

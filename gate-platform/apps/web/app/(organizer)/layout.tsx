@@ -35,6 +35,7 @@ const AREAS: Array<{ key: string; label: string; pages: Array<[href: string, lab
     label: "Team",
     pages: [
       ["/team", "Team", "team"],
+      ["/profile", "Profile", "settings"],
       ["/instructors", "Instructors", "settings"],
       ["/integrations", "Integrations", "settings"],
     ],

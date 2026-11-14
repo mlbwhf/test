@@ -13,6 +13,7 @@ import { ApiNotice, Empty, Section, StatusBadge } from "@/components/ui";
 import { awardBadgeAction, createCohortAction, migrateBadgeAction, updateCourseBadgeAction, updateCourseDeliveryAction, updateCourseImageAction } from "@/app/actions";
 import { BadgeDesigner } from "@/components/badge-designer";
 import { Disclosure } from "@/components/disclosure";
+import { PageDesigner } from "@/components/page-designer";
 
 export const dynamic = "force-dynamic";
 
@@ -98,6 +99,23 @@ export default async function CourseDetailPage({ params, searchParams }: { param
             )}
           </div>
         </div>
+      </Section>
+
+      <Section title="Class page" id="page">
+        <PageDesigner
+          courseId={course.id}
+          courseName={course.name}
+          orgName={orgRes.ok ? orgRes.data.name : ""}
+          page={course.page ?? null}
+          has={{
+            cover: Boolean(course.imageUrl),
+            logo: orgRes.ok && Boolean(orgRes.data.logoUrl),
+            badge: Boolean(course.badge),
+            instructors: cohorts.some((c) => c.instructorIds.length > 0) && instructors.length > 0,
+          }}
+          publicUrl={orgRes.ok ? `/c/${encodeURIComponent(orgRes.data.id)}/${encodeURIComponent(course.slug)}` : null}
+          days={Math.max(1, course.durationDays ?? cohorts[0]?.sessions.length ?? 1)}
+        />
       </Section>
 
       <Section title="Digital badge" id="badge">

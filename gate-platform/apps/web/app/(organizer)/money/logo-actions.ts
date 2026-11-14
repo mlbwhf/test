@@ -17,5 +17,6 @@ export async function updateOrganizationLogoAction(_prev: ActionState, formData:
   } else return { status: "error", message: "Choose a logo file." };
   if (!result.ok) return { status: "error", message: describeFailure(result.error) };
   revalidatePath("/money");
+  revalidatePath("/profile");
   return { status: "ok", message: result.data.logoUrl ? "Logo saved. It shows in Find a class within a few minutes." : "Logo removed." };
 }

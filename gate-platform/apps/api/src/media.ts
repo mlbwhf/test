@@ -131,6 +131,20 @@ export function registerCourseImageRoutes(api: FastifyInstance, deps: { core: Co
     const { id } = await deps.store.put(req.body, (req.headers["content-type"] ?? "").split(";")[0]!.trim().toLowerCase());
     return S.toOrganization(await deps.core.updateOrganization(o.id, { logoUrl: mediaUrl(deps.publicUrl, id) }));
   });
+  // Profile cover (raw bytes, as above): the wide image on /o/<address>, and the default class banner.
+  typed.put("/v1/organizations/me/cover", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema, 400: S.ErrorSchema } } }, async (req) => {
+    const o = org(req);
+    if (!Buffer.isBuffer(req.body)) throw new DomainError("VALIDATION", "send the image bytes with an image/* content type");
+    const { id } = await deps.store.put(req.body, (req.headers["content-type"] ?? "").split(";")[0]!.trim().toLowerCase());
+    return S.toOrganization(await deps.core.updateOrganization(o.id, { profile: { coverUrl: mediaUrl(deps.publicUrl, id) } }));
+  });
+  // An instructor's photo for class pages and the profile (raw bytes, as above).
+  typed.put("/v1/parties/:id/photo", { schema: { tags: ["parties"], params: z.object({ id: z.string() }), response: { 200: S.PartySchema, 400: S.ErrorSchema, 404: S.ErrorSchema } } }, async (req) => {
+    const o = org(req);
+    if (!Buffer.isBuffer(req.body)) throw new DomainError("VALIDATION", "send the image bytes with an image/* content type");
+    const { id } = await deps.store.put(req.body, (req.headers["content-type"] ?? "").split(";")[0]!.trim().toLowerCase());
+    return S.toParty(await deps.core.updateParty(o.id, req.params.id, { photoUrl: mediaUrl(deps.publicUrl, id) }));
+  });
   typed.delete("/v1/organizations/me/logo", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateOrganization(org(req).id, { logoUrl: null })));
   // The course's badge image (raw bytes, as above). With no badge yet it becomes the
   // organizer's own badge, issued with EnrollClass certificates.

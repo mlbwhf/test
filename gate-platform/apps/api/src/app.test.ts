@@ -352,6 +352,11 @@ describe("API", () => {
     expect(item.digitalBadge.imageUrl).toMatch(/\/media\//);
     expect((await im.inject(`/public/v1/organizations/${logo.id}/courses/safe`)).json().organization.logoUrl).toBe(logo.logoUrl);
     expect((await im.inject({ method: "DELETE", url: "/v1/organizations/me/logo", headers: { "x-api-key": key } })).json().logoUrl).toBeNull();
+    const cover = (await im.inject({ method: "PUT", url: "/v1/organizations/me/cover", headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();
+    expect(cover.profile.coverUrl).toMatch(/^https:\/\/api\.test\/public\/v1\/media\//);
+    const teacher = (await im.inject({ method: "POST", url: "/v1/parties", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { name: "Mark", kind: "instructor" } })).json();
+    const photo = (await im.inject({ method: "PUT", url: `/v1/parties/${teacher.id}/photo`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();
+    expect(photo.photoUrl).toMatch(/\/public\/v1\/media\//);
   });
 
   it("categories and paid promotions in the class finder", async () => {
