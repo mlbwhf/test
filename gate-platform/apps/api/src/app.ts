@@ -262,7 +262,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       return {
         organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null },
         course: S.toCourse(res.course),
-        cohorts: res.cohorts.map((c) => ({ event: S.toEvent(c.event), dateSlug: c.dateSlug, ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
+        cohorts: res.cohorts.map((c) => ({ event: S.toPublicEvent(c.event), dateSlug: c.dateSlug, ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
       };
     });
 
@@ -300,7 +300,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     const seatOptionsOut = async (seatId: string, email: string) => {
       const o = await deps.core.seatOptions(seatId, { attendeeEmail: email });
       return {
-        seat: S.toSeat(o.seat), event: S.toEvent(o.event), course: o.course ? S.toCourse(o.course) : null, organization: { id: o.organization.id, name: o.organization.name },
+        seat: S.toSeat(o.seat), event: S.toPublicEvent(o.event), course: o.course ? S.toCourse(o.course) : null, organization: { id: o.organization.id, name: o.organization.name },
         policy: {
           transfer: { ...o.policyTerms.transfer, freeUntil: o.policyTerms.transfer.freeUntil.toISOString() },
           cancel: { ...o.policyTerms.cancel, fullRefundUntil: o.policyTerms.cancel.fullRefundUntil.toISOString() },

@@ -79,7 +79,7 @@ export const ticketUrl = (d: Pick<TicketDeps, "webUrl">, token: string) => `${d.
 
 const TicketViewSchema = z.object({
   ticket: z.object({ seatId: z.string(), code: z.string(), status: z.enum(["valid", "checked_in", "pending", "cancelled", "transferred"]), checkedInAt: z.string().nullable(), attendee: S.AttendeeSchema, ticketTypeName: z.string(), orderId: z.string() }),
-  event: S.EventSchema,
+  event: S.PublicEventSchema,
   course: S.CourseSchema.nullable(),
   organization: z.object({ id: z.string(), name: z.string() }),
   links: z.object({ ticket: z.string(), checkIn: z.string(), qrSvg: z.string(), qrPng: z.string(), calendar: z.string() }),
@@ -94,7 +94,7 @@ async function ticketView(d: TicketDeps, token: string) {
   const course = event.courseId ? await d.core.repos.courses.get(event.courseId) : undefined;
   return {
     ticket: { seatId: seat.id, code: d.signer.code(seat.id), status: ticketStatus(seat), checkedInAt: seat.checkedInAt?.toISOString() ?? null, attendee: seat.attendee, ticketTypeName: ticketType?.name ?? "Seat", orderId: seat.orderId },
-    event: S.toEvent(event),
+    event: S.toPublicEvent(event),
     course: course ? S.toCourse(course) : null,
     organization: { id: org.id, name: org.name },
     links: {

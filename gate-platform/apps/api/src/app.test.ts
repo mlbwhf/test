@@ -556,3 +556,34 @@ describe("event overview", () => {
     expect((await im.inject({ url: `/v1/events/${ev.id}/overview`, headers: J })).json().publicUrl).toBe(base);
   });
 });
+
+describe("public event data", () => {
+  it("class pages, tickets and seat pages never carry meeting links, instructor fees or revenue splits", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test", webUrl: "https://app.test", ticketSecret: "public-event-test-secret" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json();
+    const J = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const orgId = created.organization.id as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "rte", name: "RTE" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", sessions: [{ startsAt: "2099-11-16T14:00:00Z", endsAt: "2099-11-16T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 0, quantity: 5 } })).json();
+    const meeting = await im.inject({ method: "POST", url: `/v1/events/${ev.id}/meeting`, headers: J, payload: { provider: "manual", joinUrl: "https://zoom.example/j/1?pwd=JOINSECRET", hostUrl: "https://zoom.example/s/1?zak=HOSTSECRET", passcode: "PASS999" } });
+    expect(meeting.statusCode).toBe(200);
+    const secret = /JOINSECRET|HOSTSECRET|PASS999|instructorFees|splitRules|"meeting"/;
+
+    const page = await im.inject(`/public/v1/organizations/${orgId}/courses/rte`);
+    expect(page.statusCode).toBe(200);
+    expect(page.body).not.toMatch(secret);
+
+    const order = (await im.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "ada@example.com", attendees: [{ email: "ada@example.com", name: "Ada" }] } })).json();
+    const seats = (await im.inject({ url: `/v1/seats?orderId=${order.order.id}`, headers: J })).json();
+    const seat = (seats.items ?? seats.seats ?? seats)[0];
+    const seatView = await im.inject(`/public/v1/seats/${seat.id}?email=ada@example.com`);
+    expect(seatView.statusCode).toBe(200);
+    expect(seatView.body).not.toMatch(secret);
+    const token = decodeURIComponent(String(seatView.json().ticketUrl).split("/my/ticket/")[1]);
+    const ticket = await im.inject(`/public/v1/tickets/${encodeURIComponent(token)}`);
+    expect(ticket.statusCode).toBe(200);
+    expect(ticket.body).not.toMatch(secret);
+  });
+});

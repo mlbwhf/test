@@ -72,6 +72,11 @@ export const EventSchema = z.object({
   instructorFees: z.array(InstructorFeeSchema), atRiskAt: z.string().nullable(), cancelledAt: z.string().nullable(), cancelReason: z.string().nullable(),
   currency: Currency, status: z.enum(["draft", "live", "ended", "cancelled"]), splitRules: z.array(SplitRuleSchema).nullable(), createdAt: z.string(),
 });
+/**
+ * An event as the public sees it (class pages, tickets, a learner's seat): no meeting links or
+ * passcodes, no instructor fees and no revenue splits. Joining details go to learners by email.
+ */
+export const PublicEventSchema = EventSchema.omit({ meeting: true, instructorFees: true, splitRules: true });
 export const CreateEventBody = z.object({
   name: z.string().min(1), startsAt: IsoDate.optional(), currency: Currency.optional(), splitRules: z.array(SplitRuleSchema).optional(),
   courseId: z.string().optional(), timezone: z.string().optional(), format: DeliveryFormat.optional(), sessions: z.array(SessionInput).max(60).optional(),
@@ -100,7 +105,7 @@ export const ChangePolicySchema = z.object({
   substituteAllowed: z.boolean(), substituteCutoffHours: z.number().min(0), waitlistOfferHours: z.number().min(1).max(168),
 });
 export const SeatOptionsSchema = z.object({
-  seat: SeatSchema, event: z.lazy(() => EventSchema), course: z.lazy(() => CourseSchema).nullable(), organization: z.object({ id: z.string(), name: z.string() }),
+  seat: SeatSchema, event: z.lazy(() => PublicEventSchema), course: z.lazy(() => CourseSchema).nullable(), organization: z.object({ id: z.string(), name: z.string() }),
   policy: z.object({
     transfer: z.object({ allowed: z.boolean(), feeMinor: Minor, freeUntil: z.string(), reason: z.string().optional() }),
     cancel: z.object({ allowed: z.boolean(), refundBps: z.number().int(), refundMinor: Minor, fullRefundUntil: z.string(), reason: z.string().optional() }),
@@ -118,7 +123,7 @@ export const PublicCourseSchema = z.object({
   organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable() }),
   course: CourseSchema,
   cohorts: z.array(z.object({
-    event: EventSchema,
+    event: PublicEventSchema,
     dateSlug: z.string(),
     ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
@@ -164,6 +169,10 @@ export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.curre
 export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, category: c.category ?? null, topic: c.category ?? inferCategory(c.name, c.certificationBody), language: c.language ?? null, createdAt: c.createdAt.toISOString() });
+export function toPublicEvent(e: Event) {
+  const { meeting: _meeting, instructorFees: _fees, splitRules: _splits, ...rest } = toEvent(e);
+  return rest;
+}
 export const toEvent = (e: Event) => ({
   ...e, courseId: e.courseId ?? null, splitRules: e.splitRules ?? null, startsAt: e.startsAt.toISOString(), endsAt: e.endsAt?.toISOString() ?? null,
   minEnrollment: e.minEnrollment ?? null, sessions: e.sessions.map((s) => ({ startsAt: s.startsAt.toISOString(), endsAt: s.endsAt.toISOString(), ...(s.title ? { title: s.title } : {}) })), createdAt: e.createdAt.toISOString(),
