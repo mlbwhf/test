@@ -1,14 +1,19 @@
+import { Logo } from "@/components/brand";
+import { siteUrl } from "@/lib/seo";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { publicApi, type PublicCoursePage, type PublicTicketType } from "@/lib/public-api";
 import { formatMoney } from "@/lib/format";
 import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { RegisterSheet } from "@/components/register-sheet";
-import { RegisterCard } from "@/components/class-page/register-card";
-import { Agenda, YourTime, ZoneProvider } from "@/components/class-page/times";
-import { RxFonts, videoEmbed } from "@/components/class-page/shared";
+import { Agenda, ZoneProvider } from "@/components/class-page/times";
+import { videoEmbed } from "@/components/class-page/shared";
+import { BookingProvider, DatePicker, HeroFacts, MobileBar, RegisterLink, RegisterPanel, SelectedLabel, type ClassDate } from "@/components/class-page/booking";
 import { dateRange } from "@/lib/class-time";
+import { badgeCode } from "@/lib/finder";
+import { COURSE_CATEGORIES } from "@/lib/api";
 import "../../registration.css";
+import "../../classpage.css";
 
 export type Cohort = PublicCoursePage["cohorts"][number];
 
@@ -50,50 +55,6 @@ function leadOf(t: string): string {
   const cut = first.slice(0, 260);
   const end = Math.max(cut.lastIndexOf(". "), cut.lastIndexOf("! "), cut.lastIndexOf("? "));
   return end > 80 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" ")).trimEnd()}…`;
-}
-
-/** "About this class": the full description, and the badge with how it's issued and a link to it. */
-function About({ data, showBadge }: { data: PublicCoursePage; showBadge: boolean }) {
-  const desc = data.course.description?.trim() ?? "";
-  const lede = data.course.page?.tagline ?? leadOf(desc);
-  const body = desc && (desc !== lede || paragraphs(desc).length > 1) ? paragraphs(desc) : [];
-  const badge = showBadge ? data.course.badge : null;
-  if (!body.length && !badge) return null;
-  return (
-    <section className={`rx-about${badge && body.length ? "" : " is-single"}`} aria-labelledby="about-title">
-      {body.length > 0 && (
-        <div className="rx-about-text">
-          <h2 id="about-title" className="rx-h2">
-            About this class
-          </h2>
-          {body.map((p, i) => (
-            <p key={i}>{p}</p>
-          ))}
-        </div>
-      )}
-      {badge && (
-        <aside className="rx-about-badge" aria-labelledby={body.length ? undefined : "about-title"}>
-          <div className="rx-badge-art" role="img" aria-label={`${badge.name} badge`}>
-            {badge.imageUrl ? <img src={badge.imageUrl} alt="" /> : <strong>{badge.name}</strong>}
-          </div>
-          <div>
-            <div className="rx-eyebrow">Digital badge</div>
-            <strong id={body.length ? undefined : "about-title"}>{badge.name}</strong>
-            <p>
-              {badge.platform === "own"
-                ? `Earned on completion: a verified digital badge (Open Badges 3.0) issued by ${data.organization.name} with your certificate, ready to share on LinkedIn or keep in any badge wallet.`
-                : `Earned on completion, issued through ${BADGE_LABEL[badge.platform] ?? "a badge platform"}. Share it on LinkedIn or add it to your email signature.`}
-            </p>
-            {badge.url && (
-              <a href={badge.url} target="_blank" rel="noreferrer noopener">
-                View the badge →
-              </a>
-            )}
-          </div>
-        </aside>
-      )}
-    </section>
-  );
 }
 
 export function range(c: Cohort): string {
@@ -157,334 +118,405 @@ export async function loadCourse(params: Promise<{ org: string; slug: string }>)
 /** The class page body, shared by /c/:org/:course (pick a date) and /c/:org/:course/:date (one date). */
 export async function CourseView({ org, slug, data, sel: chosen, single }: { org: string; slug: string; data: PublicCoursePage; sel?: Cohort | undefined; single?: boolean }) {
   const cohorts = [...data.cohorts].sort((a, b) => a.event.startsAt.localeCompare(b.event.startsAt));
-  const sel = chosen ?? cohorts.find((c) => seats(c).left > 0) ?? cohorts[0];
+  const nowIso = new Date().toISOString();
+  // Classes already running are not offered (unless a link points at one).
+  const upcoming = cohorts.filter((c) => c.event.startsAt > nowIso || c === chosen);
+  const sel = chosen ?? upcoming.find((c) => seats(c).left > 0) ?? upcoming[0] ?? cohorts[0];
   const webBase = await siteOrigin();
-  const base = `${webBase}/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}`;
+  const basePath = `/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}`;
+  const base = `${webBase}${basePath}`;
   // A date page describes only its own date; the course page lists every date.
   const jsonLd = (single && sel ? [sel] : cohorts).map((c) => educationEvent(data, c, base));
   const show = data.sections;
   const accent = data.organization.accentColor ?? undefined;
-  const style = accent ? ({ "--rx-accent": accent } as React.CSSProperties) : undefined;
-  const profileHref = `/o/${encodeURIComponent(data.organization.profileHandle ?? data.organization.id)}`;
-  const orgRow = (
-    <a className="rx-org" href={profileHref}>
-      {show.logo && data.organization.logoUrl && <img className="rx-org-logo" src={data.organization.logoUrl} alt="" />}
+  const style = accent ? ({ "--cp-cta": accent, "--cp-on-cta": "#fff" } as React.CSSProperties) : undefined;
+  const handle = data.organization.profileHandle ?? data.organization.id;
+  const profileHref = `/o/${encodeURIComponent(handle)}`;
+  const profileRes = await publicApi.getProfile(handle);
+  const profile = profileRes.ok ? profileRes.data : null;
+  const site = siteUrl();
+  const course = data.course;
+  const lede = course.page?.tagline ?? leadOf(course.description ?? "");
+  const desc = course.description?.trim() ?? "";
+  const body = desc && (desc !== lede || paragraphs(desc).length > 1) ? paragraphs(desc) : [];
+  const badge = show.badge ? course.badge : null;
+  const paymentMode = data.organization.paymentMode === "direct" ? "direct" : "protected";
+  const category = COURSE_CATEGORIES.find((c) => c.id === course.category)?.label;
+  const language = course.language ? langLabel(course.language) : null;
+  const initials = data.organization.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+  const otherCourses = (() => {
+    const m = new Map<string, NonNullable<typeof profile>["classes"]>();
+    for (const c of profile?.classes ?? []) if (c.courseSlug !== slug) m.set(c.courseSlug, [...(m.get(c.courseSlug) ?? []), c]);
+    return [...m.values()];
+  })();
+  const courseCount = new Set((profile?.classes ?? []).map((c) => c.courseSlug)).size;
+
+  const dates: ClassDate[] = (sel && !upcoming.includes(sel) ? [sel, ...upcoming] : upcoming).map((c) => {
+    const ses = c.event.sessions.length ? [...c.event.sessions].sort((a, b) => a.startsAt.localeCompare(b.startsAt)) : [{ startsAt: c.event.startsAt, endsAt: c.event.endsAt ?? c.event.startsAt }];
+    const price = cheapest(c);
+    const { cap, left } = seats(c);
+    return {
+      slug: c.dateSlug, eventId: c.event.id, startsAt: c.event.startsAt, endsAt: c.event.endsAt ?? ses[ses.length - 1]!.endsAt, timezone: c.event.timezone, format: c.event.format,
+      days: ses.length, dayStartsAt: ses[0]!.startsAt, dayEndsAt: ses[0]!.endsAt,
+      weekend: ses.some((x) => ["Sat", "Sun"].includes(fmt(x.startsAt, c.event.timezone, { weekday: "short" }))),
+      cap, left, priceMinor: price?.minor ?? null, currency: price?.currency ?? c.event.currency, invoice: c.invoiceAvailable,
+      instructors: c.instructors.map((i) => i.name), where: cityOf(c.event.timezone),
+    };
+  });
+
+  const header = (
+    <header className="cp-head">
+      <div className="cp-wrap cp-head-in">
+        <Logo href={site} size={11} />
+        <nav aria-label="Main" className="cp-nav">
+          <a href={`${site}/classes`}>Find a class</a>
+          <a href={`${site}/badges`}>Badges</a>
+          <a href={`${site}/instructors`}>For instructors</a>
+          <a href="/help">Help</a>
+        </nav>
+        {sel && <SelectedLabel />}
+        {sel && <RegisterLink className="cp-btn cp-btn-ink cp-btn-sm">Register</RegisterLink>}
+      </div>
+    </header>
+  );
+
+  const providerRow = (
+    <a className="cp-provider" href={profileHref}>
+      {show.logo && data.organization.logoUrl ? <img src={data.organization.logoUrl} alt="" /> : <span className="cp-initials" aria-hidden="true">{initials}</span>}
       <span>
-        <span className="rx-org-name">{data.organization.name}</span>
-        {data.course.certificationBody && <span className="rx-org-sub" style={{ display: "block" }}>{data.course.certificationBody} certification</span>}
+        <span className="cp-provider-name">
+          <strong>{data.organization.name}</strong>
+          {profile?.verified && (
+            <span className="cp-verified">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M20 6 9 17l-5-5" />
+              </svg>
+              Verified provider
+            </span>
+          )}
+        </span>
+        <small>{[profile?.organization.profile.partnerLevel ?? (course.certificationBody ? `${course.certificationBody} certification` : null), courseCount > 1 ? `${courseCount} courses on EnrollClass` : null].filter(Boolean).join(" · ")}</small>
       </span>
     </a>
   );
 
-  if (!sel) {
-    return (
-      <div className="rx" style={style}>
-        <RxFonts />
-        <header className="rx-bar">
-          <div className="rx-wrap rx-bar-in">
-            <a href="/" className="rx-word">EnrollClass</a>
-          </div>
-        </header>
-        <main className="rx-wrap">
-          <section className="rx-hero">
-            <div className="rx-card rx-hero-main">
-              {orgRow}
-              <h1 className="rx-title">{data.course.name}</h1>
-              {(data.course.page?.tagline ?? leadOf(data.course.description ?? "")) && <p className="rx-lede">{data.course.page?.tagline ?? leadOf(data.course.description ?? "")}</p>}
-              <p className="rx-muted" style={{ margin: 0 }}>No upcoming dates yet. Check back soon.</p>
-            </div>
-          </section>
-          <div className="rx-sections">
-            <About data={data} showBadge={show.badge} />
-          </div>
-        </main>
+  const badgeArt = (size: "md" | "lg") =>
+    badge ? (
+      <div className={`cp-ring cp-ring-${size}`} role="img" aria-label={`${badge.name} badge`}>
+        {badge.imageUrl ? <img src={badge.imageUrl} alt="" /> : <strong>{badgeCode(/\([A-Z][A-Z0-9-]{1,5}\)/.test(course.name) ? course.name : badge.name)}</strong>}
       </div>
-    );
-  }
+    ) : null;
 
-  const { cap, left } = seats(sel);
-  const price = cheapest(sel);
-  const free = price?.minor === 0;
-  const paymentMode = data.organization.paymentMode === "direct" ? "direct" : "protected";
-  const ev = sel.event;
-  const sessions = ev.sessions.length ? ev.sessions : [{ startsAt: ev.startsAt, endsAt: ev.endsAt ?? ev.startsAt }];
-  const dates = dateRange(ev.startsAt, ev.endsAt ?? ev.startsAt, ev.timezone);
-  const online = ev.format === "live_virtual" || ev.format === "self_paced";
-  const formatLabel = ev.format === "in_person" ? "In person · instructor-led" : ev.format === "hybrid" ? "Hybrid · instructor-led" : ev.format === "self_paced" ? "Self-paced" : "Live online · instructor-led";
-  const where = online ? "Online" : cityOf(ev.timezone);
-  const instructors = sel.instructors;
-  const lede = data.course.page?.tagline ?? leadOf(data.course.description ?? "");
-  const checkoutHref = `/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/register?date=${encodeURIComponent(sel.dateSlug)}`;
-  const priceText = price ? (free ? "Free" : whole(price.minor, price.currency)) : "—";
-  const video = show.video && data.course.page?.videoUrl ? videoEmbed(data.course.page.videoUrl) : null;
-  const agenda = show.agenda ? (data.course.page?.agenda ?? []) : [];
-  const included = show.included ? (data.course.page?.included ?? []) : [];
-  const lead = instructors[0];
+  const video = show.video && course.page?.videoUrl ? videoEmbed(course.page.videoUrl) : null;
+  const agenda = show.agenda ? (course.page?.agenda ?? []) : [];
+  const included = show.included && course.page?.included?.length ? course.page.included : null;
+  const selSessions = sel ? (sel.event.sessions.length ? sel.event.sessions : [{ startsAt: sel.event.startsAt, endsAt: sel.event.endsAt ?? sel.event.startsAt }]) : [];
+  const lead = sel?.instructors[0];
+  const days = dates[0]?.days ?? 1;
+  const defaults = [
+    sel && sel.event.format !== "self_paced" ? `${days} live instructor-led ${days === 1 ? "day" : "days"}` : null,
+    course.badge ? (course.badge.platform === "own" ? "Certificate and verified digital badge" : `Digital badge: ${course.badge.name}`) : "Certificate of completion",
+    `Ticket and calendar invites${days > 1 ? ` for all ${days} days` : ""} by email`,
+  ].filter((x): x is string => Boolean(x));
 
-  return (
-    <div className="rx" style={style}>
-      <RxFonts />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
-      <ZoneProvider classZone={ev.timezone}>
-        <header className="rx-bar">
-          <div className="rx-wrap rx-bar-in">
-            <a href="/" className="rx-word">EnrollClass</a>
-            <span className="rx-bar-title">
-              {data.course.name} · {dates} · {online ? "Live online" : where}
-            </span>
-            {left > 0 && show.seats && <span className={`rx-bar-seats${left > 5 ? " is-ok" : ""}`}>{left} {left === 1 ? "seat" : "seats"} left</span>}
-            {left > 0 ? (
-              <a className="rx-btn rx-btn-sm" href={`${checkoutHref}&tier=me&qty=1`}>
-                Register
-              </a>
-            ) : (
-              <button type="button" className="rx-btn rx-btn-sm" data-open-register>
-                Join the waitlist
-              </button>
+  const page = (
+    <main className="cp-wrap cp-main" data-entity="course" data-course={course.slug}>
+      <section className="cp-hero" data-entity="event" data-event={sel?.event.id}>
+        <div className="cp-hero-main">
+          <div className="cp-mono cp-crumbs">
+            <a href={`${site}/classes`}>FIND A CLASS</a>
+            {category && (
+              <>
+                {" / "}
+                <a href={`${site}/classes?category=${encodeURIComponent(course.category ?? "")}`}>{category.toUpperCase()}</a>
+              </>
+            )}
+            {course.certificationBody && <> / {course.certificationBody.toUpperCase()}</>}
+          </div>
+          {providerRow}
+          <div className="cp-title-row">
+            <div>
+              <h1>{course.name}</h1>
+              {lede && <p className="cp-lede">{lede}</p>}
+            </div>
+            {badge && (
+              <figure className="cp-badge-fig">
+                {badgeArt("md")}
+                <figcaption>You earn this badge</figcaption>
+              </figure>
             )}
           </div>
-        </header>
-
-        {show.banner && data.course.imageUrl && <div className="rx-banner" role="img" aria-label={`${data.course.name} banner`} style={{ backgroundImage: `url(${data.course.imageUrl})` }} />}
-
-        <main className="rx-wrap" data-entity="course" data-course={data.course.slug}>
-          <section className={`rx-hero${show.banner && data.course.imageUrl ? " has-banner" : ""}`} data-entity="event" data-event={ev.id}>
-            <div className="rx-card rx-hero-main">
-              <div className="rx-hero-top">
-                {orgRow}
-                <span className="rx-live">
-                  <i aria-hidden="true" />
-                  {formatLabel}
-                </span>
+          {sel ? (
+            <>
+              <HeroFacts language={language} />
+              <div className="cp-cta-row">
+                <RegisterLink className="cp-btn cp-btn-green cp-btn-lg" />
+                {dates.length > 1 && (
+                  <a className="cp-btn cp-btn-outline cp-btn-lg" href="#dates">
+                    See all {dates.length} dates
+                  </a>
+                )}
               </div>
-              <div className="rx-hero-text">
-                <div>
-                  <h1 className="rx-title">{data.course.name}</h1>
-                  {lede && <p className="rx-lede">{lede}</p>}
-                </div>
-                {show.badge && data.course.badge && (
-                  <div className="rx-badge">
-                    <div className="rx-badge-art" role="img" aria-label={`${data.course.badge.name} badge`}>
-                      {data.course.badge.imageUrl ? <img src={data.course.badge.imageUrl} alt="" /> : <strong>{data.course.badge.name}</strong>}
-                    </div>
-                    <span>Earn this badge</span>
+            </>
+          ) : (
+            <p className="cp-muted">No upcoming dates yet. Check back soon, or see the provider&apos;s other classes below.</p>
+          )}
+        </div>
+        {sel && (
+          <aside className="cp-hero-card" aria-label="Register">
+            <RegisterPanel />
+          </aside>
+        )}
+      </section>
+
+      {sel && <DatePicker heading={dates.length > 3 ? "Pick the week that works" : "Pick your date"} />}
+
+      {data.related && data.related.length > 0 && (
+        <section className="cp-related" aria-labelledby="related-title">
+          <h2 id="related-title" className="cp-mono cp-eyebrow">
+            SAME CERTIFICATION · OTHER VERSIONS FROM {data.organization.name.toUpperCase()}
+          </h2>
+          {data.related.map((r) => (
+            <div key={r.slug} className="cp-related-row">
+              <a className="cp-related-name" href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}`}>
+                {r.language && <span className="cp-tag cp-tag-soon">{langLabel(r.language)}</span>}
+                {r.name}
+              </a>
+              <div className="cp-related-dates">
+                {r.dates.map((d) => (
+                  <a key={d.dateSlug} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}/${d.dateSlug}`} className={d.full ? "is-full" : ""}>
+                    <strong>{dateRange(d.startsAt, d.endsAt, d.timezone)}</strong>
+                    <small>
+                      {d.format === "in_person" ? cityOf(d.timezone) : "Online"} · {d.full ? "Full" : d.seatsLeft !== null ? `${d.seatsLeft} left` : "Open"}
+                    </small>
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </section>
+      )}
+
+      {(body.length > 0 || included || defaults.length > 0) && (
+        <section className="cp-about" aria-labelledby="about-title">
+          <div className="cp-about-text">
+            <span className="cp-mono cp-eyebrow">ABOUT THIS CLASS</span>
+            <h2 id="about-title">{course.page?.tagline && course.page.tagline.length < 90 ? course.page.tagline : "What this class covers"}</h2>
+            {(body.length ? body : lede ? [lede] : []).map((p, i) => (
+              <p key={i}>{p}</p>
+            ))}
+          </div>
+          <div className="cp-included">
+            <h3>What&apos;s included</h3>
+            <ul>
+              {(included ? included.map((i) => ({ title: i.title, note: i.note })) : defaults.map((t) => ({ title: t, note: undefined }))).map((i, n) => (
+                <li key={n}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                    <path d="M20 6 9 17l-5-5" />
+                  </svg>
+                  <span>
+                    {i.title}
+                    {i.note && <small>{i.note}</small>}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      )}
+
+      {sel && (video || agenda.length > 0 || selSessions.length > 1 || (show.instructor && lead)) && (
+        <div className="rx cp-rx">
+          <ZoneProvider classZone={sel.event.timezone}>
+            <div className="rx-sections">
+              {video && (
+                <section id="preview" className="rx-video" aria-labelledby="preview-title">
+                  <div className="rx-video-frame">
+                    <iframe src={video} title={`${course.name} preview`} loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" referrerPolicy="strict-origin-when-cross-origin" />
+                  </div>
+                  <div className="rx-video-text">
+                    <span className="rx-eyebrow">Course preview</span>
+                    <h2 id="preview-title" className="rx-h2">
+                      {lead ? `Meet ${lead.name.split(" ")[0]} before you commit` : "See how the class runs"}
+                    </h2>
+                  </div>
+                </section>
+              )}
+              {(agenda.length > 0 || selSessions.length > 1) && <Agenda sessions={selSessions} topics={agenda} classZone={sel.event.timezone} multiDay={selSessions.length > 1 || agenda.length > 1} />}
+              {show.instructor && lead && (
+                <section className="rx-instructor" aria-labelledby="instructor-title">
+                  {lead.photoUrl ? <img src={lead.photoUrl} alt="" /> : <span className="ph" aria-hidden="true">{lead.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("")}</span>}
+                  <div>
+                    <div className="rx-eyebrow">Your instructor</div>
+                    <h2 id="instructor-title">{lead.name}</h2>
+                    {lead.title && <div className="sub">{lead.title}</div>}
+                    {lead.bio && <p>{lead.bio}</p>}
+                  </div>
+                </section>
+              )}
+            </div>
+          </ZoneProvider>
+        </div>
+      )}
+
+      {badge && (
+        <section className="cp-badge-band" aria-labelledby="badge-title">
+          {badgeArt("lg")}
+          <div>
+            <span className="cp-mono cp-eyebrow cp-green">{badge.platform === "own" ? "EVERY CERTIFICATE COMES WITH A BADGE" : "YOU EARN THIS BADGE"}</span>
+            <h2 id="badge-title">{badge.platform === "own" ? "Proof anyone can check" : badge.name}</h2>
+            <p>
+              {badge.platform === "own"
+                ? `Issued by ${data.organization.name} to the name you register with once the class is delivered. One click to add it to LinkedIn; anyone can verify it on enrollclass.com.`
+                : `Issued through ${BADGE_LABEL[badge.platform] ?? "a badge platform"} once the class is delivered. Share it on LinkedIn or add it to your email signature.`}
+            </p>
+            <span className="cp-badge-links">
+              {badge.url && (
+                <a href={badge.url} target="_blank" rel="noreferrer noopener">
+                  View the badge
+                </a>
+              )}
+              <a href={`${site}/badges`}>How badges work</a>
+            </span>
+          </div>
+        </section>
+      )}
+
+      <section className="cp-org" aria-label="About the provider">
+        <div className="cp-org-card">
+          <div className="cp-org-cover" style={profile?.organization.profile.coverUrl ? { backgroundImage: `url(${profile.organization.profile.coverUrl})` } : undefined} role="img" aria-label={`${data.organization.name} cover`} />
+          <div className="cp-org-body">
+            {data.organization.logoUrl ? <img className="cp-org-logo" src={data.organization.logoUrl} alt="" /> : <span className="cp-org-logo cp-initials" aria-hidden="true">{initials}</span>}
+            <div className="cp-org-text">
+              <span className="cp-mono cp-eyebrow">YOUR PROVIDER</span>
+              <h2>{data.organization.name}</h2>
+              <div className="cp-stats">
+                {(profile?.stats.learnersTrained ?? 0) > 0 && (
+                  <div>
+                    <strong>{profile!.stats.learnersTrained.toLocaleString("en-US")}</strong>
+                    <small>learners trained on EnrollClass</small>
+                  </div>
+                )}
+                {courseCount > 0 && (
+                  <div>
+                    <strong>{courseCount}</strong>
+                    <small>{courseCount === 1 ? "course" : "courses"} with upcoming dates</small>
+                  </div>
+                )}
+                {(profile?.stats.classesDelivered ?? 0) > 0 && (
+                  <div>
+                    <strong>{profile!.stats.classesDelivered}</strong>
+                    <small>classes delivered</small>
                   </div>
                 )}
               </div>
-              <div className="rx-facts">
-                <div className="rx-fact">
-                  <span>Dates</span>
-                  <strong>{dates}</strong>
-                </div>
-                <div className="rx-fact">
-                  <span>Your time</span>
-                  <strong>
-                    <YourTime session={sessions[0]!} classZone={ev.timezone} />
-                  </strong>
-                </div>
-                <div className="rx-fact">
-                  <span>Where</span>
-                  <strong>{where}</strong>
-                </div>
-                <div className="rx-fact">
-                  <span>{instructors.length > 1 ? "Instructors" : "Instructor"}</span>
-                  <strong>{instructors.length ? instructors.map((i) => i.name).join(", ") : "To be announced"}</strong>
-                </div>
-              </div>
-              <div className="rx-cta-row">
-                {left > 0 ? (
-                  <a className="rx-btn" href={`${checkoutHref}&tier=me&qty=1`}>
-                    {free ? "Register now — free" : `Register now — ${priceText}`}
-                  </a>
-                ) : (
-                  <button type="button" className="rx-btn" data-open-register>
-                    Sold out · join the waitlist
-                  </button>
-                )}
-                {video && (
-                  <a className="rx-btn-ghost" href="#preview">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                      <path d="M8 5v14l11-7z" />
-                    </svg>
-                    Watch preview
-                  </a>
-                )}
-                {(agenda.length > 0 || sessions.length > 1) && (
-                  <a className="rx-btn-plain" href="#agenda">
-                    See agenda
-                  </a>
-                )}
-              </div>
+              {profile?.organization.profile.about && <p>{profile.organization.profile.about}</p>}
             </div>
-            <aside className="rx-reg" aria-label="Register">
-              {price && (
-                <RegisterCard
-                  checkoutHref={checkoutHref}
-                  unitMinor={price.minor}
-                  currency={price.currency}
-                  capacity={cap}
-                  left={left}
-                  invoiceAvailable={sel.invoiceAvailable}
-                  paymentMode={paymentMode}
-                  orgName={data.organization.name}
-                  hideSeats={!show.seats}
-                />
-              )}
-              {left === 0 && (
-                <p className="rx-muted" style={{ fontSize: 14, margin: "12px 4px 0" }}>
-                  This date is full. <button type="button" className="rx-btn-plain" style={{ minHeight: 0, padding: 0, border: 0, background: "none", color: "var(--rx-accent)", cursor: "pointer" }} data-open-register>Join the waitlist</button> and you&apos;ll be offered a seat if one opens.
-                </p>
-              )}
-            </aside>
-          </section>
-
-          {cohorts.length > 1 && (
-            <nav className="rx-dates" aria-label="Other dates">
-              {cohorts.map((c) => (
-                <Link key={c.event.id} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/${c.dateSlug}`} scroll={false} aria-current={c.event.id === ev.id ? "true" : undefined} className={seats(c).left === 0 ? "is-full" : ""}>
-                  <strong>{dateRange(c.event.startsAt, c.event.endsAt ?? c.event.startsAt, c.event.timezone)}</strong>
-                  <small>
-                    {c.event.format === "in_person" ? cityOf(c.event.timezone) : "Online"} · {seats(c).left > 0 ? (show.seats ? `${seats(c).left} left` : "Open") : "Full"}
-                  </small>
-                </Link>
-              ))}
-            </nav>
-          )}
-
-          {data.related && data.related.length > 0 && (
-            <section className="rx-related" aria-labelledby="related-title">
-              <h2 id="related-title" className="rx-eyebrow">
-                Same certification · other dates from {data.organization.name}
-              </h2>
-              {data.related.map((r) => (
-                <div key={r.slug} className="rx-related-row">
-                  <a className="rx-related-name" href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}`}>
-                    {r.language && <span className="rx-lang">{langLabel(r.language)}</span>}
-                    {r.name}
-                  </a>
-                  <nav className="rx-dates" aria-label={`Dates for ${r.name}`}>
-                    {r.dates.map((d) => (
-                      <a key={d.dateSlug} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}/${d.dateSlug}`} className={d.full ? "is-full" : ""}>
-                        <strong>{dateRange(d.startsAt, d.endsAt, d.timezone)}</strong>
-                        <small>
-                          {d.format === "in_person" ? cityOf(d.timezone) : "Online"} · {d.full ? "Full" : d.seatsLeft !== null ? `${d.seatsLeft} left` : "Open"}
-                        </small>
-                      </a>
-                    ))}
-                  </nav>
-                </div>
-              ))}
-            </section>
-          )}
-
-          <div className="rx-sections">
-            {video && (
-              <section id="preview" className="rx-video" aria-labelledby="preview-title">
-                <div className="rx-video-frame">
-                  <iframe src={video} title={`${data.course.name} preview`} loading="lazy" allow="encrypted-media; picture-in-picture; fullscreen" referrerPolicy="strict-origin-when-cross-origin" />
-                </div>
-                <div className="rx-video-text">
-                  <span className="rx-eyebrow">Course preview</span>
-                  <h2 id="preview-title" className="rx-h2">
-                    {lead ? `Meet ${lead.name.split(" ")[0]} before you commit` : "See how the class runs"}
-                  </h2>
-                </div>
-              </section>
-            )}
-
-            <About data={data} showBadge={show.badge} />
-
-            {(agenda.length > 0 || sessions.length > 1) && <Agenda sessions={sessions} topics={agenda} classZone={ev.timezone} multiDay={sessions.length > 1 || agenda.length > 1} />}
-
-            {included.length > 0 && (
-              <section aria-labelledby="included-title" style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <h2 id="included-title" className="rx-h2">
-                  What you leave with
-                </h2>
-                <div className="rx-included">
-                  {included.map((i, n) => (
-                    <div key={n}>
-                      <strong>{i.title}</strong>
-                      {i.note && <span>{i.note}</span>}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            )}
-
-            {show.instructor && lead && (
-              <section className="rx-instructor" aria-labelledby="instructor-title">
-                {lead.photoUrl ? <img src={lead.photoUrl} alt="" /> : <span className="ph" aria-hidden="true">{lead.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("")}</span>}
-                <div>
-                  <div className="rx-eyebrow">Your instructor</div>
-                  <h2 id="instructor-title">{lead.name}</h2>
-                  {lead.title && <div className="sub">{lead.title}</div>}
-                  {lead.bio && <p>{lead.bio}</p>}
-                </div>
-                <a href={profileHref} style={{ color: "#fff", fontWeight: 600, border: "1px solid #5a6070", borderRadius: 10, padding: "12px 16px", textDecoration: "none" }}>
-                  All classes by {data.organization.name}
+            <div className="cp-org-actions">
+              <a className="cp-btn cp-btn-green" href={profileHref}>
+                View profile
+              </a>
+              {profile?.organization.profile.website && (
+                <a className="cp-btn cp-btn-outline" href={profile.organization.profile.website} target="_blank" rel="noopener noreferrer">
+                  Website
                 </a>
-              </section>
-            )}
-
-            <section className="rx-band" aria-label="Register">
-              <div>
-                <strong>{left > 0 ? (show.seats ? `${left} ${left === 1 ? "seat" : "seats"} left for ${dates}` : `Seats open for ${dates}`) : `${dates} is full`}</strong>
-                <span>
-                  {free
-                    ? "Free to attend · your ticket and calendar invite arrive by email"
-                    : paymentMode === "direct"
-                      ? `Secure card payment to ${data.organization.name}`
-                      : "Payment held until the class runs · cancelled class = full refund"}
-                </span>
-              </div>
-              {left > 0 ? (
-                <a className="rx-btn" href={`${checkoutHref}&tier=me&qty=1`}>
-                  Register now
-                </a>
-              ) : (
-                <button type="button" className="rx-btn" data-open-register>
-                  Join the waitlist
-                </button>
               )}
-            </section>
-
-            <p className="rx-help">
-              Questions about booking, changing dates or refunds? <a href="/help#learners">Learner help</a>
-            </p>
+            </div>
           </div>
-        </main>
-
-        <div className="rx-mbar">
-          <div>
-            <strong>{priceText}{price && !free ? ` ${price.currency}` : ""}</strong>
-            <span>{left > 0 ? (show.seats ? `${left} of ${cap} seats left` : "Seats available") : "Sold out"}</span>
-          </div>
-          {left > 0 ? (
-            <a className="rx-btn" href={`${checkoutHref}&tier=me&qty=1`}>
-              Reserve seat
-            </a>
-          ) : (
-            <button type="button" className="rx-btn" data-open-register>
-              Join waitlist
-            </button>
-          )}
         </div>
-      </ZoneProvider>
+        {otherCourses.length > 0 && (
+          <>
+            <div className="cp-more-head">
+              <h3>More from {data.organization.name}</h3>
+              <a href={profileHref}>All {courseCount} courses</a>
+            </div>
+            <div className="cp-more">
+              {otherCourses.slice(0, 4).map((list) => {
+                const c = list[0]!;
+                const prices = list.map((x) => x.priceMinor).filter((x): x is number => x !== null);
+                return (
+                  <a key={c.courseSlug} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(c.courseSlug)}`}>
+                    <span className="cp-ring cp-ring-sm" aria-hidden="true">
+                      <strong>{badgeCode(c.courseName)}</strong>
+                    </span>
+                    <strong>{c.courseName}</strong>
+                    <span className="cp-mono">
+                      {(c.format === "in_person" ? cityOf(c.timezone) : c.format === "self_paced" ? "SELF-PACED" : "LIVE ONLINE").toUpperCase()} · {fmt(c.startsAt, c.timezone, { month: "short", day: "numeric" }).toUpperCase()}
+                    </span>
+                    <span className="cp-more-price">{prices.length ? `From ${whole(Math.min(...prices), c.currency)}` : ""}</span>
+                  </a>
+                );
+              })}
+            </div>
+          </>
+        )}
+      </section>
 
-      <RegisterSheet
-        api={publicApiUrl()}
-        org={org}
-        course={slug}
-        event={ev.id}
-        currency={ev.currency}
-        stripePk={process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
-        turnstileSiteKey={process.env.TURNSTILE_SITE_KEY ?? null}
-        priceLabel={priceText}
-        dateLabel={range(sel)}
-        disabled={left === 0}
-        hideBar
-      />
+      <section className="cp-policies" aria-label="Booking policies">
+        <div>
+          <span className="cp-mono">01</span>
+          <strong>{paymentMode === "protected" ? "Payment held until delivery" : "Secure card payment"}</strong>
+          <span>{paymentMode === "protected" ? "Released to the provider only after the class runs. Cancelled class: full refund." : `You pay ${data.organization.name} directly by card; receipts come by email.`}</span>
+        </div>
+        {dates.some((d) => d.invoice) && (
+          <div>
+            <span className="cp-mono">02</span>
+            <strong>Need an invoice?</strong>
+            <span>Choose &ldquo;Invoice my company&rdquo;: your seat is held while your accounts team pays.</span>
+          </div>
+        )}
+        <div>
+          <span className="cp-mono">{dates.some((d) => d.invoice) ? "03" : "02"}</span>
+          <strong>Change of plans</strong>
+          <span>
+            Change or cancel from your booking link, within {data.organization.name}&apos;s policy. <a href={`${site}/refunds`}>Refunds and cancellations</a>
+          </span>
+        </div>
+      </section>
+    </main>
+  );
+
+  return (
+    <div className="cp" style={style}>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
+      {sel ? (
+        <BookingProvider dates={dates} initial={sel.dateSlug} basePath={basePath} nowIso={nowIso} showSeats={show.seats} paymentMode={paymentMode} orgName={data.organization.name}>
+          {header}
+          {page}
+          <MobileBar />
+        </BookingProvider>
+      ) : (
+        <>
+          {header}
+          {page}
+        </>
+      )}
+      <footer className="cp-foot">
+        <div className="cp-wrap cp-foot-in">
+          <Logo href={site} size={9} />
+          <nav aria-label="Footer">
+            <a href={`${site}/classes`}>Find a class</a>
+            <a href="/verify">Verify a badge</a>
+            <a href={`${site}/refunds`}>Refunds and cancellations</a>
+            <a href="/help">Help</a>
+          </nav>
+        </div>
+      </footer>
+      {sel && (
+        <RegisterSheet
+          api={publicApiUrl()}
+          org={org}
+          course={slug}
+          event={sel.event.id}
+          currency={sel.event.currency}
+          stripePk={process.env.STRIPE_PUBLISHABLE_KEY ?? process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY ?? null}
+          turnstileSiteKey={process.env.TURNSTILE_SITE_KEY ?? null}
+          priceLabel={cheapest(sel) ? whole(cheapest(sel)!.minor, cheapest(sel)!.currency) : "—"}
+          dateLabel={range(sel)}
+          disabled={seats(sel).left === 0}
+          hideBar
+        />
+      )}
     </div>
   );
 }

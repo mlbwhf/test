@@ -30,17 +30,6 @@ function useZone(fallback: string): ZoneState {
   return useContext(ZoneContext) ?? { zone: fallback, setZone: () => undefined, detected: null };
 }
 
-/** "9:00 AM – 5:00 PM EST" for the first session, in the chosen zone. */
-export function YourTime({ session, classZone }: { session: Session; classZone: string }) {
-  const { zone } = useZone(classZone);
-  return (
-    <>
-      {timeRange(session.startsAt, session.endsAt, zone)} {zoneAbbr(session.startsAt, zone)}
-    </>
-  );
-}
-
-/** One column per day: date and time in the chosen zone, and the organizer's topics for that day. */
 export function Agenda({ sessions, topics, classZone, multiDay }: { sessions: Session[]; topics: string[][]; classZone: string; multiDay: boolean }) {
   const { zone, setZone, detected } = useZone(classZone);
   const zones = [...COMMON_ZONES];

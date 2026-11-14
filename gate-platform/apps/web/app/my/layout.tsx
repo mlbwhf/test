@@ -1,3 +1,4 @@
+import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
 import { Logo, SeatMark } from "@/components/brand";
@@ -13,7 +14,7 @@ export default function LearnerLayout({ children }: { children: ReactNode }) {
   return (
     <>
       <header className="topbar">
-        <Logo context="Your registration" />
+        <Logo href={siteUrl()} context="Your registration" />
       </header>
       <main>{children}</main>
       <footer className="learner-footer">

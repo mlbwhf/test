@@ -1,3 +1,5 @@
+import { Logo } from "@/components/brand";
+import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import { publicApi, type OrderSummary } from "@/lib/public-api";
 import { publicApiUrl, siteOrigin } from "@/lib/urls";
@@ -56,7 +58,7 @@ export default async function RegisteredPage({ params, searchParams }: { params:
   }
 
   const s = res.data;
-  const accent = s.organization.accentColor ? ({ "--rx-accent": s.organization.accentColor } as React.CSSProperties) : undefined;
+  const accent = s.organization.accentColor ? ({ "--rx-accent": s.organization.accentColor, "--rx-on-accent": "#fff" } as React.CSSProperties) : undefined;
   const mine = s.seats.find((x) => x.attendee.email.toLowerCase() === s.order.buyerEmail.toLowerCase()) ?? s.seats[0];
   const others = s.seats.filter((x) => x !== mine);
   const zone = mine?.attendee.timeZone ?? s.event.timezone;
@@ -80,7 +82,7 @@ export default async function RegisteredPage({ params, searchParams }: { params:
       <RxFonts />
       <header className="rx-card" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}>
         <div className="rx-wrap rx-co-head-in">
-          <span className="rx-word">EnrollClass</span>
+          <Logo href={siteUrl()} size={11} />
           <a href="/my" style={{ fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
             My classes
           </a>

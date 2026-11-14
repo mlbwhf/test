@@ -1,8 +1,9 @@
+import { Logo } from "@/components/brand";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { publicApi, type PublicProfile } from "@/lib/public-api";
 import { COURSE_CATEGORIES } from "@/lib/api";
-import { appUrl } from "@/lib/seo";
+import { appUrl, siteUrl } from "@/lib/seo";
 import { RxFonts } from "@/components/class-page/shared";
 import { ProfileClasses } from "@/components/class-page/profile-classes";
 import "../../c/registration.css";
@@ -38,7 +39,7 @@ export default async function ProfilePage({ params }: { params: Params }) {
   const p = await load(params);
   const o = p.organization;
   const prof = o.profile;
-  const style = o.accentColor ? ({ "--rx-accent": o.accentColor } as React.CSSProperties) : undefined;
+  const style = o.accentColor ? ({ "--rx-accent": o.accentColor, "--rx-on-accent": "#fff" } as React.CSSProperties) : undefined;
   const site = prof.website ? prof.website.replace(/^https?:\/\//, "").replace(/\/$/, "") : null;
   const initials = o.name.split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
   const classes = p.classes.map((c) => ({ ...c, href: `/c/${encodeURIComponent(o.id)}/${encodeURIComponent(c.courseSlug)}/${c.dateSlug}` }));
@@ -58,9 +59,7 @@ export default async function ProfilePage({ params }: { params: Params }) {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       <header className="rx-bar">
         <div className="rx-wrap rx-bar-in">
-          <a href="/" className="rx-word">
-            EnrollClass
-          </a>
+          <Logo href={siteUrl()} size={11} />
           <span style={{ flex: 1 }} />
           <a href="/classes" style={{ fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
             Find a class

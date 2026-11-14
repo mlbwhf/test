@@ -38,6 +38,8 @@ export function RegisterSheet(p: Props) {
       setClaiming(true);
       setOpen(true);
     }
+    // "Join the waitlist" on a full date picked in the date list lands here with ?waitlist=1.
+    if (q.get("waitlist") === "1") setOpen(true);
     // Back from Klarna, Affirm or a bank redirect: reopen checkout so it can show the result.
     if (q.has("redirect_status")) setOpen(true);
     const onClick = (e: MouseEvent) => {

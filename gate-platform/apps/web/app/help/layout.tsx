@@ -1,3 +1,4 @@
+import { siteUrl } from "@/lib/seo";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { cookies } from "next/headers";
@@ -11,7 +12,7 @@ export default async function HelpLayout({ children }: { children: ReactNode }) 
   return (
     <div className="help">
       <header className="help-top">
-        <Logo href="/help" context="Help" />
+        <Logo href={siteUrl()} context="Help" />
         <nav>
           <Link href="/faq">FAQ</Link>
           {signedIn ? (

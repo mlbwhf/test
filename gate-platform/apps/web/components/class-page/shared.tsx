@@ -1,16 +1,10 @@
 // Pieces shared by the class page, checkout and confirmation.
 
-const FONTS = "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap";
 
 /** Space Grotesk and Inter for the learner pages (React hoists the stylesheet into <head>). */
+/** Brand fonts are self-hosted for the whole app (app/fonts.css); nothing extra to load. */
 export function RxFonts() {
-  return (
-    <>
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="stylesheet" href={FONTS} precedence="default" />
-    </>
-  );
+  return null;
 }
 
 /** YouTube or Vimeo link -> privacy-friendly embed URL (same rules as the API's check). */

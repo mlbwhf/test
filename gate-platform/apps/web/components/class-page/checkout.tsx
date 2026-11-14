@@ -1,5 +1,6 @@
 "use client";
 
+import { Logo } from "@/components/brand";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { COMMON_ZONES, detectedZone, zoneName } from "@/lib/class-time";
 import { loadTurnstile } from "@/components/turnstile-field";
@@ -37,6 +38,8 @@ type Props = {
   seatsLeft: number;
   /** sessionStorage key the class page sets when the visitor came from Find a class (?via=enrollclass). */
   viaKey: string;
+  /** The marketing homepage (enrollclass.com), where the logo leads. */
+  homeUrl: string;
 };
 
 type StripePaymentElement = { mount(el: HTMLElement): void; unmount(): void };
@@ -312,7 +315,7 @@ export function Checkout(p: Props) {
             </svg>
             Back to class
           </a>
-          <span className="rx-word">EnrollClass</span>
+          <Logo href={p.homeUrl} size={11} />
           <span className="rx-secure">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <rect x="5" y="11" width="14" height="10" rx="2" />

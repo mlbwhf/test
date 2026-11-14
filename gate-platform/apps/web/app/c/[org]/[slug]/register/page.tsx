@@ -1,3 +1,4 @@
+import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
 import { loadCourse, seats } from "../view";
 import { publicApiUrl } from "@/lib/urls";
@@ -25,7 +26,7 @@ export default async function RegisterPage({ params, searchParams }: { params: P
   const cohorts = [...data.cohorts].sort((a, b) => a.event.startsAt.localeCompare(b.event.startsAt));
   const sel = cohorts.find((c) => c.dateSlug === want || c.event.id === want) ?? cohorts.find((c) => seats(c).left > 0) ?? cohorts[0];
   const classHref = `/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}${sel ? `/${sel.dateSlug}` : ""}`;
-  const accent = data.organization.accentColor ? ({ "--rx-accent": data.organization.accentColor } as React.CSSProperties) : undefined;
+  const accent = data.organization.accentColor ? ({ "--rx-accent": data.organization.accentColor, "--rx-on-accent": "#fff" } as React.CSSProperties) : undefined;
 
   if (!sel || seats(sel).left === 0) {
     return (
@@ -61,6 +62,7 @@ export default async function RegisterPage({ params, searchParams }: { params: P
         orgId={org}
         classHref={classHref}
         viaKey={`ec-via:${org}/${slug}`}
+        homeUrl={siteUrl()}
         registeredBase={`/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/registered`}
         course={{ name: data.course.name, durationDays: data.course.durationDays }}
         orgName={data.organization.name}
