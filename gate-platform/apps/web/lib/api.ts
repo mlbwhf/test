@@ -161,7 +161,7 @@ export type Course = {
 
 export type OrganizationProfile = { coverUrl?: string; about?: string; website?: string; partnerLevel?: string; basedIn?: string; teachesIn?: string };
 
-export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor";
+export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor" | "seats";
 export type CoursePage = {
   tagline?: string;
   videoUrl?: string;

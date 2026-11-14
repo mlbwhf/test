@@ -120,8 +120,9 @@ export interface OrganizationProfile {
 }
 
 /** Optional sections of the class page. Unset means: on when there is something to show. */
-export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor";
-export const COURSE_PAGE_MODULES: readonly CoursePageModule[] = ["banner", "logo", "badge", "video", "agenda", "included", "instructor"];
+export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor" | "seats";
+/** "seats": seats-left counts and the seat map; off shows only "Sold out" when a date is full. */
+export const COURSE_PAGE_MODULES: readonly CoursePageModule[] = ["banner", "logo", "badge", "video", "agenda", "included", "instructor", "seats"];
 
 export interface CoursePage {
   /** One line under the title; the description is used when absent. */

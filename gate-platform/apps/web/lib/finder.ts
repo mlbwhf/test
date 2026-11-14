@@ -172,7 +172,8 @@ function cohortsOf(c: CatalogItem): Cohort[] {
 export function groupCertifications(items: CatalogItem[]): Cert[] {
   const groups = new Map<string, CatalogItem[]>();
   for (const c of items) {
-    const k = c.digitalBadge?.name ? `${c.organizationId}~badge~${c.digitalBadge.name.trim().toLowerCase()}` : `${c.organizationId}~${c.slug}`;
+    // The API groups an organizer's language versions of one certification (same badge or same name apart from the language).
+    const k = c.groupKey ? `${c.organizationId}~group~${c.groupKey}` : c.digitalBadge?.name ? `${c.organizationId}~badge~${c.digitalBadge.name.trim().toLowerCase()}` : `${c.organizationId}~${c.slug}`;
     groups.set(k, [...(groups.get(k) ?? []), c]);
   }
   const out: Cert[] = [];
@@ -204,6 +205,15 @@ export function groupCertifications(items: CatalogItem[]): Cert[] {
     });
   }
   return out;
+}
+
+/** One or two lines for a card: the class page tagline, else the description's opening, clipped. */
+export function blurbOf(cert: Cert, max = 180): string | null {
+  const t = cert.tagline?.trim() || cert.blurb?.split(/\n\s*\n/)[0]?.replace(/\s+/g, " ").trim() || "";
+  if (!t) return null;
+  if (t.length <= max) return t;
+  const cut = t.slice(0, max);
+  return `${cut.slice(0, cut.lastIndexOf(" ")).trimEnd()}…`;
 }
 
 /** Cheapest on-sale price among the given classes (same currency as the card). */

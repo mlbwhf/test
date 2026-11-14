@@ -130,6 +130,33 @@ describe("public catalogue and JSON-LD", () => {
     expect(tt.earlyBirdUntil?.toISOString()).toBe("2026-11-01T00:00:00.000Z");
     await expect(core.publicCourse(org.id, "nope")).rejects.toMatchObject({ code: "NOT_FOUND" });
   });
+  it("lists the provider's other versions of the certification, and can hide seat counts", async () => {
+    const { org, course } = await leadingSafe();
+    const fr = await core.createCourse(org.id, { slug: "leading-safe-fr", name: "Leading SAFe (SAFe Agilist) - En Français", language: "fr" });
+    const frDate = await core.createEvent(org.id, { courseId: fr.id, name: "FR", timezone: "America/Toronto", startsAt: new Date("2026-12-07T14:00:00Z"), endsAt: new Date("2026-12-08T22:00:00Z") });
+    await core.createTicketType(org.id, frDate.id, { name: "Standard", priceMinor: 129_900, quantity: 10 });
+    await core.createCourse(org.id, { slug: "pmp", name: "PMP Exam Prep" });
+    // Another organizer's course with the same name is never related.
+    const { organization: other } = await core.createOrganization({ name: "Other", country: "CA", currency: "CAD" });
+    const theirs = await core.createCourse(other.id, { slug: "ls", name: "Leading SAFe (SAFe Agilist)" });
+    const theirDate = await core.createEvent(other.id, { courseId: theirs.id, name: "x", startsAt: new Date("2026-12-01T14:00:00Z") });
+    await core.createTicketType(other.id, theirDate.id, { name: "x", priceMinor: 1, quantity: 5 });
+
+    const pub = await core.publicCourse(org.id, "leading-safe");
+    expect(pub.related).toEqual([{ slug: "leading-safe-fr", name: fr.name, language: "fr", dates: [expect.objectContaining({ timezone: "America/Toronto", full: false, seatsLeft: 10 })] }]);
+    expect((await core.publicCourse(org.id, "leading-safe-fr")).related.map((r) => r.slug)).toEqual(["leading-safe"]);
+    const cat = await core.publicCatalog();
+    const key = (slug: string) => cat.find((c) => c.slug === slug)!.groupKey;
+    expect(key("leading-safe-fr")).toBe(key("leading-safe"));
+    expect(cat.find((c) => c.slug === "ls")!.groupKey).not.toBe(key("leading-safe"));
+
+    await core.updateCourse(org.id, course.id, { page: { modules: { seats: false } } });
+    const hidden = await core.publicCourse(org.id, "leading-safe");
+    expect(hidden.sections.seats).toBe(false);
+    expect(hidden.cohorts[0]!.ticketTypes[0]).toMatchObject({ quantity: 20, remaining: 20 });
+    expect((await core.publicCatalog()).find((c) => c.slug === "leading-safe")).toMatchObject({ capacity: 0, seatsLeft: 0, badge: "early_bird" });
+    expect((await core.publicCourse(org.id, "leading-safe-fr")).related[0]!.dates[0]!.seatsLeft).toBeNull();
+  });
   it("builds schema.org Course + CourseInstance", async () => {
     const { org, course, cohort } = await leadingSafe();
     const doc = courseJsonLd({ organization: org, course, pageUrl: "https://agile-agilist.com/training/safe/sa/", cohorts: [{ event: cohort, priceMinor: 109_900, currency: "CAD", remaining: 12 }] });

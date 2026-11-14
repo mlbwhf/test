@@ -3,7 +3,7 @@ import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } 
 import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
 import { addDays, dateSlugs, planScheduleDates, type ScheduleRule } from "./schedule.js";
-import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, isProfileSlug, normalizeCoursePage, normalizeProfile } from "./class-page.js";
+import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, isProfileSlug, normalizeCoursePage, normalizeProfile, sameCertification } from "./class-page.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -85,6 +85,8 @@ export interface CatalogEntry {
   included?: string[];
   /** True when EnrollClass holds learners' money until the class is delivered (protected payments). */
   heldUntilDelivery: boolean;
+  /** Courses of one organizer with the same groupKey are language versions of one certification. */
+  groupKey: string;
   /** The digital badge learners earn (Credly, uploaded or EnrollClass verified). */
   digitalBadge?: { name: string; imageUrl?: string; platform: string };
 }
@@ -700,7 +702,11 @@ export class Core {
     for (const org of await this.repos.organizations.list()) {
       const listed = org.marketplaceListing !== false;
       const pricing = this.pricingOf(org);
-      for (const course of await this.repos.courses.listByOrganization(org.id)) {
+      const orgCourses = await this.repos.courses.listByOrganization(org.id);
+      // Language versions of one certification share a group (the first course that matches).
+      const groupOf = (c: Course) => orgCourses.find((o) => o.id === c.id || sameCertification(o, c))!.id;
+      for (const course of orgCourses) {
+        const hideSeats = course.page?.modules?.seats === false;
         const upcoming = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
         const next = upcoming[0];
         if (!next) continue;
@@ -713,7 +719,11 @@ export class Core {
           const first = [...e.sessions].sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime())[0];
           dates.push({
             slug: slugs.get(e.id)!, startsAt: e.startsAt, endsAt: e.endsAt ?? e.sessions.reduce((m, x) => (x.endsAt > m ? x.endsAt : m), e.startsAt), timezone: e.timezone, format: e.format,
-            capacity: tt.reduce((a, t) => a + t.quantity, 0), seatsLeft: tt.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0),
+            ...(() => {
+              const cap = tt.reduce((a, t) => a + t.quantity, 0), left = tt.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0);
+              // Hidden seat counts: only "full" survives (capacity 1, none left); open dates read as open enrollment.
+              return hideSeats ? { capacity: cap > 0 && left === 0 ? 1 : 0, seatsLeft: 0 } : { capacity: cap, seatsLeft: left };
+            })(),
             priceMinor: pr.length ? Math.min(...pr) : null,
             dayStartsAt: first?.startsAt ?? e.startsAt, dayEndsAt: first?.endsAt ?? e.endsAt ?? e.startsAt, days: Math.max(1, e.sessions.length),
           });
@@ -725,7 +735,7 @@ export class Core {
         const seatsLeft = dates[0]!.seatsLeft;
         const hoursMs = next.sessions.reduce((a, x) => a + (x.endsAt.getTime() - x.startsAt.getTime()), 0);
         const badge: CatalogEntry["badge"] =
-          capacity > 0 && seatsLeft > 0 && seatsLeft <= capacity / 4 ? "selling_fast"
+          !hideSeats && capacity > 0 && seatsLeft > 0 && seatsLeft <= capacity / 4 ? "selling_fast"
           : onSale.some((t) => t.earlyBird && now < t.earlyBird.until) ? "early_bird"
           : course.certificationBody ? "accredited"
           : now.getTime() - course.createdAt.getTime() < 30 * 86_400_000 ? "new"
@@ -745,6 +755,7 @@ export class Core {
           ...(course.page?.tagline ? { tagline: course.page.tagline } : {}),
           ...(course.page?.included?.length ? { included: course.page.included.slice(0, 6).map((i) => i.title) } : {}),
           heldUntilDelivery: (org.paymentMode ?? "protected") !== "direct",
+          groupKey: groupOf(course),
           ...(course.badge ? { digitalBadge: { name: course.badge.name, platform: course.badge.platform, ...(course.badge.imageUrl ? { imageUrl: course.badge.imageUrl } : {}) } } : {}),
         });
         if (out.length >= limit) return out;
@@ -852,13 +863,32 @@ export class Core {
               if (this.isConvertedPrice(t, event, c, now)) converted.push(c);
             } catch { /* not sold in c */ }
           }
-          return { id: t.id, name: t.name, quantity: t.quantity, remaining: t.quantity - t.sold, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
+          // Hidden seat counts: an open ticket reads as 20 of 20 (the most one checkout takes); ordering still checks real capacity.
+          const left = t.quantity - t.sold;
+          const counts = course.page?.modules?.seats === false ? (left > 0 ? { quantity: 20, remaining: 20 } : { quantity: 1, remaining: 0 }) : { quantity: t.quantity, remaining: left };
+          return { id: t.id, name: t.name, ...counts, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
         }),
       });
     }
+    // The same certification from this organizer in other versions (another language, say), with their upcoming dates.
+    const related = [];
+    for (const other of await this.repos.courses.listByOrganization(organizationId)) {
+      if (other.id === course.id || !sameCertification(course, other)) continue;
+      const evs = (await this.repos.events.listByCourse(other.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime());
+      if (!evs.length) continue;
+      const sl = dateSlugs(evs, localDate);
+      const hide = other.page?.modules?.seats === false;
+      const dates = [];
+      for (const e of evs.slice(0, 12)) {
+        const tt = await this.repos.ticketTypes.listByEvent(e.id);
+        const left = tt.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0);
+        dates.push({ dateSlug: sl.get(e.id)!, startsAt: e.startsAt, endsAt: e.endsAt ?? e.startsAt, timezone: e.timezone, format: e.format, full: tt.length > 0 && left === 0, seatsLeft: hide ? null : left });
+      }
+      related.push({ slug: other.slug, name: other.name, language: other.language ?? null, dates });
+    }
     return {
       organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id },
-      course, cohorts: out,
+      course, cohorts: out, related,
       sections: coursePageSections(course, { logo: Boolean(org.logoUrl), instructors: out.some((c) => c.instructors.length > 0) }),
     };
   }
@@ -1659,7 +1689,11 @@ export class Core {
           courseSlug: course.slug, courseName: course.name, topic: course.category ?? inferCategory(course.name, course.certificationBody), imageUrl: course.imageUrl,
           eventId: e.id, dateSlug: slugs.get(e.id)!, startsAt: e.startsAt, endsAt: e.endsAt, timezone: e.timezone, format: e.format, currency: e.currency,
           priceMinor: prices.length ? Math.min(...prices) : null,
-          capacity: tts.reduce((a, t) => a + t.quantity, 0), seatsLeft: tts.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0),
+          // Hidden seat counts read as capacity 0 with 1 left (open) or 0 left (full).
+          ...(() => {
+            const cap = tts.reduce((a, t) => a + t.quantity, 0), left = tts.reduce((a, t) => a + Math.max(0, t.quantity - t.sold), 0);
+            return course.page?.modules?.seats === false ? { capacity: 0, seatsLeft: left > 0 ? 1 : 0 } : { capacity: cap, seatsLeft: left };
+          })(),
         });
       }
     }

@@ -14,6 +14,8 @@ type Props = {
   invoiceAvailable: boolean;
   paymentMode: "protected" | "direct";
   orgName: string;
+  /** The organizer hides seat counts: no numbers and no seat map, only "Sold out" when full. */
+  hideSeats?: boolean;
 };
 
 const money = (minor: number, currency: string) =>
@@ -49,17 +51,23 @@ export function RegisterCard(p: Props) {
         {free ? "Free" : money(p.unitMinor, p.currency)}{" "}
         {!free && <small>{p.currency} / seat</small>}
       </div>
-      <div>
+      {p.hideSeats ? (
         <div className="rx-seats-top">
-          <strong>{soldOut ? "Sold out" : `${p.left} of ${p.capacity} seats left`}</strong>
-          <span className="rx-muted">{p.capacity <= 30 ? "Small cohort" : ""}</span>
+          <strong>{soldOut ? "Sold out" : "Seats available"}</strong>
         </div>
-        <div className="rx-seatgrid" aria-hidden="true">
-          {Array.from({ length: cells }, (_, i) => (
-            <i key={i} className={i < taken ? "is-taken" : undefined} />
-          ))}
+      ) : (
+        <div>
+          <div className="rx-seats-top">
+            <strong>{soldOut ? "Sold out" : `${p.left} of ${p.capacity} seats left`}</strong>
+            <span className="rx-muted">{p.capacity <= 30 ? "Small cohort" : ""}</span>
+          </div>
+          <div className="rx-seatgrid" aria-hidden="true">
+            {Array.from({ length: cells }, (_, i) => (
+              <i key={i} className={i < taken ? "is-taken" : undefined} />
+            ))}
+          </div>
         </div>
-      </div>
+      )}
       <fieldset className="rx-tiers">
         <legend className="rx-eyebrow" style={{ marginBottom: 8 }}>
           Who is attending

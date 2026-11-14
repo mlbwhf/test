@@ -74,6 +74,7 @@ export function coursePageSections(course: Course, has: { logo: boolean; instruc
     agenda: Boolean(course.page?.agenda?.length),
     included: Boolean(course.page?.included?.length),
     instructor: has.instructors,
+    seats: true,
   };
   const out = {} as Record<CoursePageModule, boolean>;
   for (const k of COURSE_PAGE_MODULES) out[k] = content[k] && m[k] !== false;
@@ -158,4 +159,32 @@ export function normalizeProfile(current: OrganizationProfile | undefined, patch
     } else delete out.website;
   }
   return out;
+}
+
+const LANGUAGE_WORDS = "english|anglais|french|fran(?:c|ç)ais|en fran(?:c|ç)ais|spanish|espa(?:n|ñ)ol|en espa(?:n|ñ)ol|german|deutsch|auf deutsch|portuguese|portugu(?:e|ê)s|italian|italiano|arabic|en|fr|es|de|pt";
+
+/**
+ * A course name without its language marker, for matching the language versions of one
+ * certification: "Advanced SAFe® Practice Consultant - En Français" -> "advanced safe practice consultant".
+ */
+export function certificationBase(name: string): string {
+  return name
+    .normalize("NFKC")
+    .toLowerCase()
+    .replace(/[®™©]/g, "")
+    .replace(new RegExp(`\\s*[([](?:${LANGUAGE_WORDS})(?:\\s+version)?[)\\]]`, "gi"), " ")
+    .replace(new RegExp(`\\s+[-–—|:·]\\s*(?:${LANGUAGE_WORDS})(?:\\s+version)?\\s*$`, "i"), "")
+    .replace(new RegExp(`\\s+(?:en fran(?:c|ç)ais|en espa(?:n|ñ)ol|auf deutsch|in (?:english|french|spanish|german))\\s*$`, "i"), "")
+    .replace(/[^\p{L}\p{N}]+/gu, " ")
+    // "Certified" comes and goes between versions of one name.
+    .replace(/\b(?:certified|certification|certifi(?:é|e)e?)\b/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** Two courses of one organizer lead to the same certification: same badge, or same name apart from the language. */
+export function sameCertification(a: Pick<Course, "name" | "badge">, b: Pick<Course, "name" | "badge">): boolean {
+  if (a.badge?.name && b.badge?.name && a.badge.name.trim().toLowerCase() === b.badge.name.trim().toLowerCase()) return true;
+  const ka = certificationBase(a.name);
+  return ka.length > 0 && ka === certificationBase(b.name);
 }

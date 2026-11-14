@@ -30,6 +30,16 @@ function fmt(iso: string, tz: string, o: Intl.DateTimeFormatOptions): string {
 }
 
 /** "OCT 21–23, 2026" / "OCT 30 – NOV 2, 2026" in the cohort's own time zone. */
+/** "fr" -> "Français": a language in its own words. */
+function langLabel(code: string): string {
+  try {
+    const n = new Intl.DisplayNames([code], { type: "language" }).of(code) ?? code;
+    return n.charAt(0).toUpperCase() + n.slice(1);
+  } catch {
+    return code.toUpperCase();
+  }
+}
+
 /** Paragraphs of a course description (blank-line separated; single line breaks stay inside). */
 const paragraphs = (t: string) => t.split(/\n\s*\n/).map((x) => x.trim()).filter(Boolean);
 
@@ -222,7 +232,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
             <span className="rx-bar-title">
               {data.course.name} · {dates} · {online ? "Live online" : where}
             </span>
-            {left > 0 && <span className={`rx-bar-seats${left > 5 ? " is-ok" : ""}`}>{left} {left === 1 ? "seat" : "seats"} left</span>}
+            {left > 0 && show.seats && <span className={`rx-bar-seats${left > 5 ? " is-ok" : ""}`}>{left} {left === 1 ? "seat" : "seats"} left</span>}
             {left > 0 ? (
               <a className="rx-btn rx-btn-sm" href={`${checkoutHref}&tier=me&qty=1`}>
                 Register
@@ -317,6 +327,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
                   invoiceAvailable={sel.invoiceAvailable}
                   paymentMode={paymentMode}
                   orgName={data.organization.name}
+                  hideSeats={!show.seats}
                 />
               )}
               {left === 0 && (
@@ -333,11 +344,37 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
                 <Link key={c.event.id} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/${c.dateSlug}`} scroll={false} aria-current={c.event.id === ev.id ? "true" : undefined} className={seats(c).left === 0 ? "is-full" : ""}>
                   <strong>{dateRange(c.event.startsAt, c.event.endsAt ?? c.event.startsAt, c.event.timezone)}</strong>
                   <small>
-                    {c.event.format === "in_person" ? cityOf(c.event.timezone) : "Online"} · {seats(c).left > 0 ? `${seats(c).left} left` : "Full"}
+                    {c.event.format === "in_person" ? cityOf(c.event.timezone) : "Online"} · {seats(c).left > 0 ? (show.seats ? `${seats(c).left} left` : "Open") : "Full"}
                   </small>
                 </Link>
               ))}
             </nav>
+          )}
+
+          {data.related && data.related.length > 0 && (
+            <section className="rx-related" aria-labelledby="related-title">
+              <h2 id="related-title" className="rx-eyebrow">
+                Same certification · other dates from {data.organization.name}
+              </h2>
+              {data.related.map((r) => (
+                <div key={r.slug} className="rx-related-row">
+                  <a className="rx-related-name" href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}`}>
+                    {r.language && <span className="rx-lang">{langLabel(r.language)}</span>}
+                    {r.name}
+                  </a>
+                  <nav className="rx-dates" aria-label={`Dates for ${r.name}`}>
+                    {r.dates.map((d) => (
+                      <a key={d.dateSlug} href={`/c/${encodeURIComponent(org)}/${encodeURIComponent(r.slug)}/${d.dateSlug}`} className={d.full ? "is-full" : ""}>
+                        <strong>{dateRange(d.startsAt, d.endsAt, d.timezone)}</strong>
+                        <small>
+                          {d.format === "in_person" ? cityOf(d.timezone) : "Online"} · {d.full ? "Full" : d.seatsLeft !== null ? `${d.seatsLeft} left` : "Open"}
+                        </small>
+                      </a>
+                    ))}
+                  </nav>
+                </div>
+              ))}
+            </section>
           )}
 
           <div className="rx-sections">
@@ -392,7 +429,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
 
             <section className="rx-band" aria-label="Register">
               <div>
-                <strong>{left > 0 ? `${left} ${left === 1 ? "seat" : "seats"} left for ${dates}` : `${dates} is full`}</strong>
+                <strong>{left > 0 ? (show.seats ? `${left} ${left === 1 ? "seat" : "seats"} left for ${dates}` : `Seats open for ${dates}`) : `${dates} is full`}</strong>
                 <span>
                   {free
                     ? "Free to attend · your ticket and calendar invite arrive by email"
@@ -421,7 +458,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
         <div className="rx-mbar">
           <div>
             <strong>{priceText}{price && !free ? ` ${price.currency}` : ""}</strong>
-            <span>{left > 0 ? `${left} of ${cap} seats left` : "Sold out"}</span>
+            <span>{left > 0 ? (show.seats ? `${left} of ${cap} seats left` : "Seats available") : "Sold out"}</span>
           </div>
           {left > 0 ? (
             <a className="rx-btn" href={`${checkoutHref}&tier=me&qty=1`}>

@@ -214,3 +214,5 @@ main.cf-page { max-width: none; margin: 0; padding: 0; display: block; overflow-
 .cf-table tbody th { color: var(--rx-body); }
 .cf-table .cf-table-title { font-family: var(--rx-head); font-size: 18px; letter-spacing: -0.01em; color: var(--rx-ink); }
 @media (max-width: 640px) { .cf-table th, .cf-table td { font-size: 14px; } }
+.cf-blurb { margin: 0; font-size: 14px; line-height: 1.5; color: var(--rx-body); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 899px) { .cf-blurb { font-size: 13px; } }

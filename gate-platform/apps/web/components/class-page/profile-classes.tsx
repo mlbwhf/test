@@ -79,7 +79,7 @@ export function ProfileClasses({ classes, topics }: { classes: ClassItem[]; topi
               </div>
               <div className="rx-class-end">
                 <strong>{c.priceMinor === null ? "—" : c.priceMinor === 0 ? "Free" : rxMoney(c.priceMinor, c.currency)}</strong>
-                <span className={c.seatsLeft > 0 && c.seatsLeft <= 5 ? "is-low" : undefined}>{c.seatsLeft > 0 ? `${c.seatsLeft} of ${c.capacity} seats left` : "Full · waitlist"}</span>
+                <span className={c.capacity > 0 && c.seatsLeft > 0 && c.seatsLeft <= 5 ? "is-low" : undefined}>{c.seatsLeft > 0 ? (c.capacity > 0 ? `${c.seatsLeft} of ${c.capacity} seats left` : "Seats available") : "Full · waitlist"}</span>
               </div>
             </a>
           );

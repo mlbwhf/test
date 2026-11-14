@@ -15,6 +15,7 @@ const MODULES: { id: CoursePageModule; name: string; note: string }[] = [
   { id: "agenda", name: "Agenda", note: "Topics per day, times in each visitor’s zone" },
   { id: "included", name: "What you leave with", note: "Certificate, badge, workbook…" },
   { id: "instructor", name: "Instructor", note: "Photo, title and bio" },
+  { id: "seats", name: "Seats left", note: "Seat count and seat map; off shows only “Sold out” when a date is full" },
 ];
 
 /** Class page sections: switches with inline fields, and a live preview that follows them. */
@@ -33,7 +34,7 @@ export function PageDesigner(p: Props) {
 
   const content: Record<CoursePageModule, boolean> = {
     banner: p.has.cover, logo: p.has.logo, badge: p.has.badge, video: Boolean(video.trim()),
-    agenda: agenda.some((d) => d.trim()), included: included.some((i) => i.title.trim()), instructor: p.has.instructors,
+    agenda: agenda.some((d) => d.trim()), included: included.some((i) => i.title.trim()), instructor: p.has.instructors, seats: true,
   };
   const shows = (id: CoursePageModule) => on[id] && content[id];
   const missing: Partial<Record<CoursePageModule, string>> = {

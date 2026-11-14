@@ -177,7 +177,9 @@ export type PublicCoursePage = {
   organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null; profileHandle?: string };
   course: Course;
   /** Optional class page sections to show. */
-  sections: Record<"banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor", boolean>;
+  sections: Record<"banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor" | "seats", boolean>;
+  /** The same organizer's other versions of this certification (another language...) and their upcoming dates. */
+  related?: { slug: string; name: string; language: string | null; dates: { dateSlug: string; startsAt: string; endsAt: string; timezone: string; format: string; full: boolean; seatsLeft: number | null }[] }[];
   /** dateSlug: the date's own page, /c/:org/:course/:dateSlug. */
   cohorts: { event: Event; dateSlug: string; ticketTypes: PublicTicketType[]; instructors: PublicInstructor[]; invoiceAvailable: boolean }[];
 };

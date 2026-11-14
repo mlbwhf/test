@@ -624,7 +624,8 @@ describe("class page and checkout", () => {
   it("organizers set page sections, content, instructor profile and accent; the public page gets them", async () => {
     const { im, J, orgId, course, instructor } = await org();
     let page = (await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json();
-    expect(page.sections).toEqual({ banner: false, logo: false, badge: false, video: false, agenda: false, included: false, instructor: true });
+    expect(page.sections).toEqual({ banner: false, logo: false, badge: false, video: false, agenda: false, included: false, instructor: true, seats: true });
+    expect(page.related).toEqual([]);
     expect(page.cohorts[0].instructors).toEqual([{ id: instructor.id, name: "Mark Saymen", title: null, bio: null, photoUrl: null }]);
     expect(page.cohorts[0].invoiceAvailable).toBe(true);
 

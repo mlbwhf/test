@@ -262,7 +262,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       courseId: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), format: z.string(), hours: z.number().nullable(), priceMinor: z.number().int().nullable(), currency: z.string(), capacity: z.number().int(), seatsLeft: z.number().int(),
       badge: z.enum(["selling_fast", "early_bird", "accredited", "new"]).nullable(), verifiedBadge: z.boolean(),
       logoUrl: z.string().nullable(), digitalBadge: z.object({ name: z.string(), platform: z.string(), imageUrl: z.string().nullable() }).nullable(), dates: z.array(z.object({ slug: z.string(), startsAt: z.string(), endsAt: z.string(), timezone: z.string(), format: z.string(), capacity: z.number().int(), seatsLeft: z.number().int(), priceMinor: z.number().int().nullable(), dayStartsAt: z.string(), dayEndsAt: z.string(), days: z.number().int() })),
-      language: z.string().nullable(), tagline: z.string().nullable(), included: z.array(z.string()), heldUntilDelivery: z.boolean() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
+      language: z.string().nullable(), tagline: z.string().nullable(), included: z.array(z.string()), heldUntilDelivery: z.boolean(), groupKey: z.string() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
       const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null, description: c.description ?? null, certificationBody: c.certificationBody ?? null, logoUrl: c.logoUrl ?? null, digitalBadge: c.digitalBadge ? { ...c.digitalBadge, imageUrl: c.digitalBadge.imageUrl ?? null } : null, dates: c.dates.map((d) => ({ ...d, startsAt: d.startsAt.toISOString(), endsAt: d.endsAt.toISOString(), dayStartsAt: d.dayStartsAt.toISOString(), dayEndsAt: d.dayEndsAt.toISOString() })), language: c.language ?? null, tagline: c.tagline ?? null, included: c.included ?? [] }));
       // Short cache: a paid placement should show soon after payment.
       reply.header("cache-control", "public, max-age=300");
@@ -274,6 +274,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
         organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null },
         course: S.toCourse(res.course),
         sections: res.sections,
+        related: res.related.map((r) => ({ ...r, dates: r.dates.map((d) => ({ ...d, startsAt: d.startsAt.toISOString(), endsAt: d.endsAt.toISOString() })) })),
         cohorts: res.cohorts.map((c) => ({ event: S.toPublicEvent(c.event), dateSlug: c.dateSlug, instructors: c.instructors, invoiceAvailable: c.invoiceAvailable, ticketTypes: c.ticketTypes.map((t) => ({ ...t, earlyBirdUntil: t.earlyBirdUntil?.toISOString() ?? null })) })),
       };
     });

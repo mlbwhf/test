@@ -6,7 +6,7 @@ export type CatalogItem = {
   priceMinor?: number | null; currency?: string; capacity?: number; seatsLeft?: number;
   badge?: "selling_fast" | "early_bird" | "accredited" | "new" | null; verifiedBadge?: boolean;
   logoUrl?: string | null; dates?: CatalogDate[];
-  language?: string | null; tagline?: string | null; included?: string[]; heldUntilDelivery?: boolean; digitalBadge?: { name: string; platform: string; imageUrl: string | null } | null;
+  language?: string | null; tagline?: string | null; included?: string[]; heldUntilDelivery?: boolean; groupKey?: string; digitalBadge?: { name: string; platform: string; imageUrl: string | null } | null;
 };
 /** One upcoming date of a course. Older API responses carry only slug and startsAt. */
 export type CatalogDate = {

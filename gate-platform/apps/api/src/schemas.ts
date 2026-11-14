@@ -60,7 +60,7 @@ export const CreatePartyBody = z.object({ name: z.string().min(1), kind: PartyKi
 
 /** "own": an uploaded badge image with no outside platform, so no link. */
 export const BadgeSchema = z.object({ platform: z.enum(["credly", "accredible", "badgr", "certopus", "other", "own"]), name: z.string().min(1).max(200), url: z.string().url().max(1000).optional(), imageUrl: z.string().url().max(1000).optional() });
-export const CoursePageModules = z.object({ banner: z.boolean().optional(), logo: z.boolean().optional(), badge: z.boolean().optional(), video: z.boolean().optional(), agenda: z.boolean().optional(), included: z.boolean().optional(), instructor: z.boolean().optional() });
+export const CoursePageModules = z.object({ banner: z.boolean().optional(), logo: z.boolean().optional(), badge: z.boolean().optional(), video: z.boolean().optional(), agenda: z.boolean().optional(), included: z.boolean().optional(), instructor: z.boolean().optional(), seats: z.boolean().optional() });
 export const CoursePageSchema = z.object({
   tagline: z.string().max(240).optional(), videoUrl: z.string().max(500).optional(),
   agenda: z.array(z.array(z.string().max(200)).max(12)).max(14).optional(),
@@ -137,7 +137,9 @@ export const PublicCourseSchema = z.object({
   organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), profileHandle: z.string() }),
   course: CourseSchema,
   /** Which optional class page sections to show (the organizer's switches, else "has content"). */
-  sections: z.object({ banner: z.boolean(), logo: z.boolean(), badge: z.boolean(), video: z.boolean(), agenda: z.boolean(), included: z.boolean(), instructor: z.boolean() }),
+  sections: z.object({ banner: z.boolean(), logo: z.boolean(), badge: z.boolean(), video: z.boolean(), agenda: z.boolean(), included: z.boolean(), instructor: z.boolean(), seats: z.boolean() }),
+  /** The same organizer's other versions of this certification (e.g. another language) with their upcoming dates. */
+  related: z.array(z.object({ slug: z.string(), name: z.string(), language: z.string().nullable(), dates: z.array(z.object({ dateSlug: z.string(), startsAt: z.string(), endsAt: z.string(), timezone: z.string(), format: z.string(), full: z.boolean(), seatsLeft: z.number().int().nullable() })) })),
   cohorts: z.array(z.object({
     event: PublicEventSchema,
     dateSlug: z.string(),

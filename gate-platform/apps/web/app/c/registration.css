@@ -388,3 +388,12 @@
 }
 .rx-about-badge .rx-badge-art { width: 88px; height: 88px; border-width: 4px; padding: 6px; }
 .rx-about-badge .rx-badge-art strong { font-size: 11px; margin: 0; color: #fff; }
+
+/* Same certification from this organizer in other versions (language), with their dates */
+.rx-related { margin-top: 28px; display: flex; flex-direction: column; gap: 16px; }
+.rx-related h2.rx-eyebrow { font-family: inherit; letter-spacing: 0.08em; font-size: 12px; font-weight: 600; }
+.rx-related-row { display: flex; flex-direction: column; gap: 0; }
+.rx-related-name { display: inline-flex; align-items: center; gap: 10px; flex-wrap: wrap; font-weight: 600; color: var(--rx-ink) !important; text-decoration: none; font-size: 16px; }
+.rx-related-name:hover { text-decoration: underline; text-underline-offset: 3px; }
+.rx-related .rx-dates { margin-top: 10px; }
+.rx-lang { background: var(--rx-accent-tint); color: var(--rx-accent); font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }

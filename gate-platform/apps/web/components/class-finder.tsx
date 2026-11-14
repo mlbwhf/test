@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import type { CatalogCategory, CatalogItem } from "@/lib/catalog-types";
 import { COMMON_ZONES, detectedZone, zoneName } from "@/lib/class-time";
 import {
-  classUrl, dayTimes, formatLabel, fromPrice, groupCertifications, isInPerson, isLow, isOnline, langName, languagesOf, lengthOf, majorUnits, money, monthLabel, monthOf,
+  blurbOf, classUrl, dayTimes, formatLabel, fromPrice, groupCertifications, isInPerson, isLow, isOnline, langName, languagesOf, lengthOf, majorUnits, money, monthLabel, monthOf,
   nextOpen, registerUrl, seatsShort, shortRange, whereOf, type Cert, type Cohort,
 } from "@/lib/finder";
 
@@ -356,6 +356,7 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                         {c.title}
                       </button>
                     </h2>
+                    {blurbOf(c) && <p className="cf-blurb">{blurbOf(c)}</p>}
                     <div className="cf-tags">
                       <span>{lengthOf(c)}</span>
                       <span>{formatLabel(c.cohorts)}</span>

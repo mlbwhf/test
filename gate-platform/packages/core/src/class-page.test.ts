@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { cleanAttendee, coursePageSections, isTimeZone, normalizeCoursePage, videoEmbedUrl } from "./class-page.js";
+import { certificationBase, cleanAttendee, coursePageSections, isTimeZone, normalizeCoursePage, sameCertification, videoEmbedUrl } from "./class-page.js";
 import type { Course } from "./types.js";
 
 describe("class page", () => {
@@ -13,7 +13,18 @@ describe("class page", () => {
 
   it("sections show when there's content, unless the organizer switched them off", () => {
     const course = { id: "c", organizationId: "o", slug: "s", name: "N", createdAt: new Date(), imageUrl: "https://x/y.png", page: { agenda: [["a"]], modules: { banner: false } } } as Course;
-    expect(coursePageSections(course, { logo: true, instructors: false })).toEqual({ banner: false, logo: true, badge: false, video: false, agenda: true, included: false, instructor: false });
+    expect(coursePageSections(course, { logo: true, instructors: false })).toEqual({ banner: false, logo: true, badge: false, video: false, agenda: true, included: false, instructor: false, seats: true });
+  });
+
+  it("matches language versions of one certification", () => {
+    const base = "advanced safe practice consultant";
+    for (const n of ["Advanced SAFe® Practice Consultant", "Advanced SAFe Practice Consultant - En Français", "Advanced SAFe® Practice Consultant (French)", "Advanced SAFe Practice Consultant – Español", "Advanced SAFe Practice Consultant en français", "Advanced SAFe Practice Consultant (EN)"]) expect(certificationBase(n)).toBe(base);
+    expect(certificationBase("Leading SAFe (SAFe Agilist)")).toBe("leading safe safe agilist");
+    expect(certificationBase("SAFe® 6 Practice Consultant (SPC) en français")).toBe(certificationBase("Certified SAFe® 6 Practice Consultant (SPC)"));
+    expect(sameCertification({ name: "SPC" }, { name: "Practice Consultant", badge: undefined })).toBe(false);
+    const badge = { platform: "credly" as const, name: "Certified SAFe RTE" };
+    expect(sameCertification({ name: "RTE class", badge }, { name: "Release Train Engineer (FR)", badge })).toBe(true);
+    expect(sameCertification({ name: "Advanced SAFe Practice Consultant" }, { name: "SAFe Practice Consultant" })).toBe(false);
   });
 
   it("validates page content and learner details", () => {
