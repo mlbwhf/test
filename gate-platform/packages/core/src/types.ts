@@ -36,6 +36,10 @@ export interface Organization {
   flexibleTickets?: boolean;
   /** Company logo (square works best) shown in Find a class, on course pages and in the schedule widget. */
   logoUrl?: string;
+  /** Brand colour for the organizer's class pages and checkout (#RRGGBB). */
+  accentColor?: string;
+  /** Learners may ask for an invoice at checkout (seats held until it's due). Default on. */
+  checkoutInvoices?: boolean;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */
@@ -63,6 +67,10 @@ export interface Party {
   name: string;
   kind: PartyKind;
   paymentsAccountRef?: string;
+  /** Instructors: shown on class pages ("AI-Native SPCT · Founder"), with a short bio and a photo. */
+  title?: string;
+  bio?: string;
+  photoUrl?: string;
   createdAt: Date;
 }
 
@@ -90,7 +98,26 @@ export interface Course {
   category?: CourseCategory;
   /** Teaching language, ISO 639-1 ("en", "es", "fr"). */
   language?: string;
+  /** What the public class page shows beyond the basics, and the extra content for it. */
+  page?: CoursePage;
   createdAt: Date;
+}
+
+/** Optional sections of the class page. Unset means: on when there is something to show. */
+export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor";
+export const COURSE_PAGE_MODULES: readonly CoursePageModule[] = ["banner", "logo", "badge", "video", "agenda", "included", "instructor"];
+
+export interface CoursePage {
+  /** One line under the title; the description is used when absent. */
+  tagline?: string | undefined;
+  /** YouTube or Vimeo link for the preview video. */
+  videoUrl?: string | undefined;
+  /** Topics per day: agenda[0] is day 1. Times come from each date's sessions. */
+  agenda?: string[][] | undefined;
+  /** "What you leave with": certificate, badge, workbook, exam eligibility... */
+  included?: Array<{ title: string; note?: string | undefined }> | undefined;
+  /** Sections the organizer switched off (false) or on (true). */
+  modules?: Partial<Record<CoursePageModule, boolean | undefined>> | undefined;
 }
 
 /**
@@ -197,6 +224,18 @@ export interface Attendee {
   email: string;
   name?: string | undefined;
   company?: string | undefined;
+  jobTitle?: string | undefined;
+  /** IANA zone the learner joins from, for reminders and calendar invites. */
+  timeZone?: string | undefined;
+  /** The learner's own "ready for class" answers. Never blocks a booking. */
+  readyChecks?: ReadyChecks | undefined;
+}
+
+export interface ReadyChecks {
+  camera?: boolean | undefined;
+  connection?: boolean | undefined;
+  calendar?: boolean | undefined;
+  prework?: boolean | undefined;
 }
 
 export type SeatStatus = "reserved" | "confirmed" | "cancelled" | "transferred";
@@ -413,6 +452,8 @@ export interface Invoice {
   cardPaymentRef?: string;
   /** Payment reminders already emailed to the billing contact. */
   reminders?: Array<{ step: InvoiceReminderStep; sentAt: Date }>;
+  /** Asked for by a learner at checkout: voided and its seats released if unpaid when due. */
+  selfService?: boolean;
   createdAt: Date;
 }
 

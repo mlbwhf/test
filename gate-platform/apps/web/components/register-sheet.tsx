@@ -14,6 +14,9 @@ type Props = {
   priceLabel: string;
   dateLabel: string;
   disabled: boolean;
+  /** No price bar: the page has its own Register buttons; the sheet still opens for waitlist offers,
+   *  payment redirects and any element marked data-open-register (e.g. "Join the waitlist"). */
+  hideBar?: boolean;
 };
 
 declare global {
@@ -37,6 +40,13 @@ export function RegisterSheet(p: Props) {
     }
     // Back from Klarna, Affirm or a bank redirect: reopen checkout so it can show the result.
     if (q.has("redirect_status")) setOpen(true);
+    const onClick = (e: MouseEvent) => {
+      if (e.target instanceof Element && e.target.closest("[data-open-register]")) {
+        e.preventDefault();
+        setOpen(true);
+      }
+    };
+    document.addEventListener("click", onClick);
     // Visitors from EnrollClass's class finder (?via=enrollclass), remembered while they browse dates.
     const key = `ec-via:${p.org}/${p.course}`;
     try {
@@ -45,6 +55,7 @@ export function RegisterSheet(p: Props) {
     } catch {
       setFromFinder(q.get("via") === "enrollclass");
     }
+    return () => document.removeEventListener("click", onClick);
   }, [p.org, p.course]);
 
   useEffect(() => {
@@ -68,7 +79,7 @@ export function RegisterSheet(p: Props) {
 
   return (
     <>
-      <div className="ep-bar">
+      {!p.hideBar && <div className="ep-bar">
         <div>
           <strong>{p.priceLabel}</strong>
           <span>{p.dateLabel}</span>
@@ -76,7 +87,7 @@ export function RegisterSheet(p: Props) {
         <button type="button" className="ep-register" disabled={p.disabled} onClick={() => setOpen(true)}>
           {p.disabled ? "Sold out" : "Register"}
         </button>
-      </div>
+      </div>}
       {open && (
         <div className="ep-sheet" role="dialog" aria-modal="true" aria-label="Register">
           <button type="button" className="ep-sheet-scrim" aria-label="Close" onClick={() => setOpen(false)} />

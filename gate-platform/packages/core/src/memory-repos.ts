@@ -15,6 +15,7 @@ class MemOrganizations implements OrganizationRepo {
 class MemParties implements PartyRepo {
   private readonly byId = new Map<string, Party>();
   async create(p: Party) { this.byId.set(p.id, structuredClone(p)); }
+  async update(p: Party) { this.byId.set(p.id, structuredClone(p)); }
   async get(id: string) { const p = this.byId.get(id); return p && structuredClone(p); }
   async listByOrganization(orgId: string) { return [...this.byId.values()].filter((p) => p.organizationId === orgId).map((p) => structuredClone(p)); }
 }

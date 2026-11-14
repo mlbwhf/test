@@ -29,6 +29,8 @@ function toOrg(r: Row): Organization {
     ...(r.marketplace_listing === false ? { marketplaceListing: false } : {}),
     ...(r.flexible_tickets === true ? { flexibleTickets: true } : {}),
     ...(opt<string>(r.logo_url) ? { logoUrl: str(r.logo_url) } : {}),
+    ...(opt<string>(r.accent_color) ? { accentColor: str(r.accent_color) } : {}),
+    ...(r.checkout_invoices === false ? { checkoutInvoices: false } : {}),
     releasePolicy: (r.release_policy as Organization["releasePolicy"]) ?? "on_delivery", releaseGraceHours: num(r.release_grace_hours ?? 24), minEnrollmentDecisionDays: num(r.min_enrollment_decision_days ?? 7),
     apiKeyHash: str(r.api_key_hash), createdAt: date(r.created_at),
   };
@@ -42,12 +44,13 @@ function pricingFromRow(p: Record<string, unknown>): NonNullable<Organization["p
 }
 function toParty(r: Row): Party {
   const ref = opt<string>(r.payments_account_ref);
-  return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), kind: r.kind as Party["kind"], ...(ref ? { paymentsAccountRef: ref } : {}), createdAt: date(r.created_at) };
+  const title = opt<string>(r.title), bio = opt<string>(r.bio), photoUrl = opt<string>(r.photo_url);
+  return { id: str(r.id), organizationId: str(r.organization_id), name: str(r.name), kind: r.kind as Party["kind"], ...(ref ? { paymentsAccountRef: ref } : {}), ...(title ? { title } : {}), ...(bio ? { bio } : {}), ...(photoUrl ? { photoUrl } : {}), createdAt: date(r.created_at) };
 }
 function toCourse(r: Row): Course {
   const description = opt<string>(r.description), body = opt<string>(r.certification_body), days = opt<number>(r.duration_days);
   const policy = opt<Course["changePolicy"]>(r.change_policy), prework = opt<string>(r.prework), surveyUrl = opt<string>(r.survey_url), imageUrl = opt<string>(r.image_url);
-  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), ...(opt<Course["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Course["badge"]> } : {}), ...(opt<string>(r.category) ? { category: r.category as NonNullable<Course["category"]> } : {}), ...(opt<string>(r.language) ? { language: str(r.language) } : {}), createdAt: date(r.created_at) };
+  return { id: str(r.id), organizationId: str(r.organization_id), slug: str(r.slug), name: str(r.name), ...(description ? { description } : {}), ...(body ? { certificationBody: body } : {}), ...(days !== undefined ? { durationDays: num(days) } : {}), ...(policy ? { changePolicy: policy as NonNullable<Course["changePolicy"]> } : {}), ...(prework ? { prework } : {}), ...(surveyUrl ? { surveyUrl } : {}), ...(imageUrl ? { imageUrl } : {}), ...(opt<Course["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Course["badge"]> } : {}), ...(opt<string>(r.category) ? { category: r.category as NonNullable<Course["category"]> } : {}), ...(opt<string>(r.language) ? { language: str(r.language) } : {}), ...(opt<Course["page"]>(r.page) ? { page: r.page as NonNullable<Course["page"]> } : {}), createdAt: date(r.created_at) };
 }
 function toEvent(r: Row): Event {
   const rules = opt<Event["splitRules"]>(r.split_rules);
@@ -127,7 +130,7 @@ function toInvoice(r: Row): Invoice {
   return {
     id: str(r.id), organizationId: str(r.organization_id), orderId: str(r.order_id), ...(corp ? { corporateAccountId: corp } : {}), number: str(r.number), ...(po ? { poNumber: po } : {}),
     currency: str(r.currency), subtotalMinor: num(r.subtotal_minor), taxMinor: num(r.tax_minor), totalMinor: num(r.total_minor), paidMinor: num(r.paid_minor),
-    status: r.status as Invoice["status"], issuedAt: date(r.issued_at), dueAt: date(r.due_at), payments, ...(cardRef ? { cardPaymentRef: cardRef } : {}),
+    status: r.status as Invoice["status"], issuedAt: date(r.issued_at), dueAt: date(r.due_at), payments, ...(cardRef ? { cardPaymentRef: cardRef } : {}), ...(r.self_service === true ? { selfService: true } : {}),
     ...(((r.reminders as unknown[]) ?? []).length ? { reminders: (r.reminders as Array<{ step: NonNullable<Invoice["reminders"]>[number]["step"]; sentAt: string }>).map((x) => ({ step: x.step, sentAt: new Date(x.sentAt) })) } : {}),
     createdAt: date(r.created_at),
   };
@@ -147,8 +150,8 @@ class PgOrganizations implements OrganizationRepo {
   }
   async update(o: Organization) {
     await this.pool.query(
-      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15, instructor_access=$16, payment_mode=$17, direct_account_ref=$18, direct_status=$19, marketplace_listing=$20, flexible_tickets=$21, logo_url=$22 WHERE id=$1`,
-      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null, o.instructorAccess ? JSON.stringify(o.instructorAccess) : null, o.paymentMode ?? "protected", o.directAccountRef ?? null, o.directStatus ? JSON.stringify(o.directStatus) : null, o.marketplaceListing !== false, o.flexibleTickets === true, o.logoUrl ?? null],
+      `UPDATE organizations SET name=$2, country=$3, currency=$4, payout_destination=$5, pass_fee_to_attendee=$6, payments_account_ref=$7, split_rules=$8, change_policy=$9, release_policy=$10, release_grace_hours=$11, min_enrollment_decision_days=$12, api_key_hash=$13, pricing=$14, payments_status=$15, instructor_access=$16, payment_mode=$17, direct_account_ref=$18, direct_status=$19, marketplace_listing=$20, flexible_tickets=$21, logo_url=$22, accent_color=$23, checkout_invoices=$24 WHERE id=$1`,
+      [o.id, o.name, o.country, o.currency, o.payoutDestination, o.passFeeToAttendee, o.paymentsAccountRef ?? null, JSON.stringify(o.splitRules), o.changePolicy ? JSON.stringify(o.changePolicy) : null, o.releasePolicy, o.releaseGraceHours, o.minEnrollmentDecisionDays, o.apiKeyHash, o.pricing ? JSON.stringify(o.pricing) : null, o.paymentsStatus ? JSON.stringify(o.paymentsStatus) : null, o.instructorAccess ? JSON.stringify(o.instructorAccess) : null, o.paymentMode ?? "protected", o.directAccountRef ?? null, o.directStatus ? JSON.stringify(o.directStatus) : null, o.marketplaceListing !== false, o.flexibleTickets === true, o.logoUrl ?? null, o.accentColor ?? null, o.checkoutInvoices !== false],
     );
   }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM organizations WHERE id=$1`, [id]); return r.rows[0] ? toOrg(r.rows[0]) : undefined; }
@@ -158,13 +161,14 @@ class PgOrganizations implements OrganizationRepo {
 class PgParties implements PartyRepo {
   constructor(private readonly pool: Pool) {}
   async create(p: Party) { await this.pool.query(`INSERT INTO parties (id, organization_id, name, kind, payments_account_ref, created_at) VALUES ($1,$2,$3,$4,$5,$6)`, [p.id, p.organizationId, p.name, p.kind, p.paymentsAccountRef ?? null, p.createdAt]); }
+  async update(p: Party) { await this.pool.query(`UPDATE parties SET name=$2, payments_account_ref=$3, title=$4, bio=$5, photo_url=$6 WHERE id=$1`, [p.id, p.name, p.paymentsAccountRef ?? null, p.title ?? null, p.bio ?? null, p.photoUrl ?? null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM parties WHERE id=$1`, [id]); return r.rows[0] ? toParty(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM parties WHERE organization_id=$1 ORDER BY created_at`, [orgId]); return r.rows.map(toParty); }
 }
 class PgCourses implements CourseRepo {
   constructor(private readonly pool: Pool) {}
   async create(c: Course) { await this.pool.query(`INSERT INTO courses (id, organization_id, slug, name, description, certification_body, duration_days, created_at, category, language) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)`, [c.id, c.organizationId, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.createdAt, c.category ?? null, c.language ?? null]); }
-  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10, badge=$11, category=$12, language=$13 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null, c.badge ? JSON.stringify(c.badge) : null, c.category ?? null, c.language ?? null]); }
+  async update(c: Course) { await this.pool.query(`UPDATE courses SET slug=$2, name=$3, description=$4, certification_body=$5, duration_days=$6, change_policy=$7, prework=$8, survey_url=$9, image_url=$10, badge=$11, category=$12, language=$13, page=$14 WHERE id=$1`, [c.id, c.slug, c.name, c.description ?? null, c.certificationBody ?? null, c.durationDays ?? null, c.changePolicy ? JSON.stringify(c.changePolicy) : null, c.prework ?? null, c.surveyUrl ?? null, c.imageUrl ?? null, c.badge ? JSON.stringify(c.badge) : null, c.category ?? null, c.language ?? null, c.page ? JSON.stringify(c.page) : null]); }
   async get(id: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE id=$1`, [id]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async getBySlug(orgId: string, slug: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 AND slug=$2`, [orgId, slug]); return r.rows[0] ? toCourse(r.rows[0]) : undefined; }
   async listByOrganization(orgId: string) { const r = await this.pool.query(`SELECT * FROM courses WHERE organization_id=$1 ORDER BY name`, [orgId]); return r.rows.map(toCourse); }
@@ -241,8 +245,8 @@ class PgInvoices implements InvoiceRepo {
   constructor(private readonly pool: Pool) {}
   async create(i: Invoice) {
     await this.pool.query(
-      `INSERT INTO invoices (id, organization_id, order_id, corporate_account_id, number, po_number, currency, subtotal_minor, tax_minor, total_minor, paid_minor, status, issued_at, due_at, payments, card_payment_ref, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)`,
-      [i.id, i.organizationId, i.orderId, i.corporateAccountId ?? null, i.number, i.poNumber ?? null, i.currency, i.subtotalMinor, i.taxMinor, i.totalMinor, i.paidMinor, i.status, i.issuedAt, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, i.createdAt],
+      `INSERT INTO invoices (id, organization_id, order_id, corporate_account_id, number, po_number, currency, subtotal_minor, tax_minor, total_minor, paid_minor, status, issued_at, due_at, payments, card_payment_ref, created_at, self_service) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)`,
+      [i.id, i.organizationId, i.orderId, i.corporateAccountId ?? null, i.number, i.poNumber ?? null, i.currency, i.subtotalMinor, i.taxMinor, i.totalMinor, i.paidMinor, i.status, i.issuedAt, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, i.createdAt, i.selfService === true],
     );
   }
   async update(i: Invoice) { await this.pool.query(`UPDATE invoices SET po_number=$2, paid_minor=$3, status=$4, due_at=$5, payments=$6, card_payment_ref=$7, reminders=$8 WHERE id=$1`, [i.id, i.poNumber ?? null, i.paidMinor, i.status, i.dueAt, paymentsJson(i), i.cardPaymentRef ?? null, JSON.stringify(i.reminders ?? [])]); }

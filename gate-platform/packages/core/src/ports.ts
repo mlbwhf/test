@@ -113,6 +113,7 @@ export interface OrganizationRepo {
 }
 export interface PartyRepo {
   create(p: Party): Promise<void>;
+  update(p: Party): Promise<void>;
   get(id: string): Promise<Party | undefined>;
   listByOrganization(organizationId: string): Promise<Party[]>;
 }

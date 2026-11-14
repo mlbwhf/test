@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql", "0020_categories_promotions.sql", "0021_organization_logos.sql", "0022_course_language.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql", "0020_categories_promotions.sql", "0021_organization_logos.sql", "0022_course_language.sql", "0023_class_page.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -136,6 +136,38 @@ describe.skipIf(!url)("Postgres integration", () => {
     await core.updateCourse(org.id, course.id, { category: null });
     expect((await core.getCourse(org.id, course.id)).category).toBeUndefined();
     await ledger.assertBalanced();
+  });
+
+  it("class page, instructor profile, accent, learner details and checkout invoices on Postgres", async () => {
+    const payments = new FakePaymentsAdapter();
+    const ledger = new Ledger({ store: new PostgresLedgerStore(pool) });
+    const core = new Core({ repos: createPgRepos(pool), ledger, payments });
+    const { organization: org } = await core.createOrganization({ name: "PG Page", country: "CA", currency: "USD" });
+    await core.updateOrganization(org.id, { accentColor: "#0b7a5c", checkoutInvoices: false });
+    expect(await core.getOrganization(org.id)).toMatchObject({ accentColor: "#0B7A5C", checkoutInvoices: false });
+    await core.updateOrganization(org.id, { checkoutInvoices: true });
+    expect((await core.getOrganization(org.id)).checkoutInvoices).toBeUndefined();
+    const course = await core.createCourse(org.id, { slug: "rte", name: "RTE" });
+    await core.updateCourse(org.id, course.id, { page: { tagline: "Three live days.", videoUrl: "https://vimeo.com/123456789", agenda: [["Role"], ["PI Planning"]], included: [{ title: "Certificate PDF" }], modules: { banner: false } } });
+    expect((await core.getCourse(org.id, course.id)).page).toEqual({ tagline: "Three live days.", videoUrl: "https://vimeo.com/123456789", agenda: [["Role"], ["PI Planning"]], included: [{ title: "Certificate PDF" }], modules: { banner: false } });
+    const teacher = await core.createParty(org.id, { name: "Mark", kind: "instructor" });
+    await core.updateParty(org.id, teacher.id, { title: "SPCT", bio: "Trainer.", photoUrl: "https://cdn.example/m.jpg" });
+    expect((await core.listParties(org.id))[0]).toMatchObject({ title: "SPCT", bio: "Trainer.", photoUrl: "https://cdn.example/m.jpg" });
+    const ev = await core.createEvent(org.id, { name: "Dec", courseId: course.id, startsAt: new Date("2099-12-01T14:00:00Z"), instructorIds: [teacher.id] });
+    const tt = await core.createTicketType(org.id, ev.id, { name: "Seat", priceMinor: 220_000, quantity: 24 });
+    await core.publishEvent(org.id, ev.id);
+    const page = await core.publicCourse(org.id, "rte");
+    expect(page.sections).toMatchObject({ banner: false, agenda: true, included: true, video: true, instructor: true });
+    expect(page.cohorts[0]).toMatchObject({ invoiceAvailable: true, instructors: [{ name: "Mark", title: "SPCT" }] });
+
+    const { order } = await core.createOrder(org.id, { ticketTypeId: tt.id, quantity: 1, buyerEmail: "p@acme.test", attendees: [{ email: "p@acme.test", name: "Priya", jobTitle: "SM", timeZone: "America/Toronto", readyChecks: { camera: true } }] });
+    await core.handlePaymentEvent(payments.succeed(order.paymentRef!, order.pricing.totalMinor, "USD"));
+    const seat = (await core.publicOrderSummary(order.id, "p@acme.test")).seats[0]!;
+    expect(seat.attendee).toMatchObject({ jobTitle: "SM", timeZone: "America/Toronto", readyChecks: { camera: true } });
+    expect((await core.updateSeatReadyChecks(seat.id, "p@acme.test", { prework: true })).attendee.readyChecks).toEqual({ camera: true, prework: true });
+
+    const asked = await core.requestCheckoutInvoice(org.id, { ticketTypeId: tt.id, quantity: 2, company: "Acme", billingEmail: "ap@acme.test", attendees: [{ email: "a@acme.test" }, { email: "b@acme.test" }] });
+    expect((await core.getInvoice(org.id, asked.invoice.id)).selfService).toBe(true);
   });
 
   it("corporate invoice orders on Postgres: numbering, partial payments, settlement", async () => {

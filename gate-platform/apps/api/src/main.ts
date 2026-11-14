@@ -180,6 +180,8 @@ async function main() {
         const flagged = await core.reviewMinEnrollment();
         const reminders = await core.runInvoiceReminders();
         const synced = await core.reconcilePendingPayments();
+        const unpaid = await core.releaseUnpaidCheckoutInvoices();
+        if (unpaid.released) console.log(`[scheduler] released seats from ${unpaid.released} unpaid checkout invoice(s)`);
         if (synced.confirmed) console.log(`[scheduler] confirmed ${synced.confirmed} paid order(s) whose payment webhook never arrived`);
         if (r.sent || expired.length || released.orders || flagged.length || reminders.sent) console.log(`[scheduler] sent ${r.sent} emails, expired ${expired.length} offers, released ${released.orders} orders (${released.amountMinor}), flagged ${flagged.length} cohorts, ${reminders.sent} invoice reminders`);
       } catch (err) {

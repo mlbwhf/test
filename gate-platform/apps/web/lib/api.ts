@@ -147,7 +147,19 @@ export type Course = {
   topic: string;
   /** Teaching language (ISO 639-1), when set. */
   language: string | null;
+  /** Class page sections and content beyond the basics. */
+  page?: CoursePage | null;
   createdAt: string;
+};
+
+export type CoursePageModule = "banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor";
+export type CoursePage = {
+  tagline?: string;
+  videoUrl?: string;
+  /** Topics per day; agenda[0] is day 1. */
+  agenda?: string[][];
+  included?: { title: string; note?: string }[];
+  modules?: Partial<Record<CoursePageModule, boolean>>;
 };
 
 export type PartyKind = "venue" | "vendor" | "promoter" | "tax_reserve" | "instructor";
@@ -159,9 +171,14 @@ export type Party = {
   name: string;
   kind: PartyKind;
   paymentsAccountRef: string | null;
+  /** Instructor profile on class pages. */
+  title?: string | null;
+  bio?: string | null;
+  photoUrl?: string | null;
 };
 
-export type Attendee = { email: string; name?: string; company?: string };
+export type ReadyChecks = { camera?: boolean; connection?: boolean; calendar?: boolean; prework?: boolean };
+export type Attendee = { email: string; name?: string; company?: string; jobTitle?: string; timeZone?: string; readyChecks?: ReadyChecks };
 
 export type SeatStatus = "reserved" | "confirmed" | "cancelled" | "transferred";
 

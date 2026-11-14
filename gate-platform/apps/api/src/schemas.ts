@@ -33,12 +33,12 @@ export const OrganizationSchema = z.object({
   pricing: PricingSettingsSchema,
   paymentsStatus: PaymentsStatusSchema,
   paymentMode: z.enum(["protected", "direct"]),
-  marketplaceListing: z.boolean(), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(),
+  marketplaceListing: z.boolean(), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), checkoutInvoices: z.boolean(),
   directAccountRef: z.string().nullable(),
   directStatus: PaymentsStatusSchema,
   createdAt: z.string(),
 });
-export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional(), marketplaceListing: z.boolean().optional(), flexibleTickets: z.boolean().optional() });
+export const UpdateOrganizationBody = z.object({ name: z.string().min(1).optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(), releaseGraceHours: z.number().min(0).max(720).optional(), minEnrollmentDecisionDays: z.number().min(0).max(90).optional(), passFeeToAttendee: z.boolean().optional(), marketplaceListing: z.boolean().optional(), flexibleTickets: z.boolean().optional(), accentColor: z.string().regex(/^#[0-9a-fA-F]{6}$/).nullable().optional(), checkoutInvoices: z.boolean().optional() });
 export const InstructorFeeSchema = z.object({ partyId: z.string(), amountMinor: Minor });
 export const PayoutSchema = z.object({ id: z.string(), partyId: z.string().nullable(), currency: Currency, amountMinor: Minor, method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().nullable(), createdAt: z.string() });
 export const CreatePayoutBody = z.object({ partyId: z.string().optional(), currency: Currency, amountMinor: z.number().int().min(1), method: z.enum(["bank_transfer", "wire", "cheque", "other"]), reference: z.string().max(120).optional() });
@@ -49,13 +49,21 @@ export const CreateOrganizationBody = z.object({
   payoutDestination: z.enum(["gate_account", "external_bank"]).optional(), passFeeToAttendee: z.boolean().optional(), releasePolicy: z.enum(["immediate", "on_delivery"]).optional(),
 });
 const PartyKind = z.enum(["venue", "vendor", "promoter", "tax_reserve", "instructor"]);
-export const PartySchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), kind: PartyKind, paymentsAccountRef: z.string().nullable(), createdAt: z.string() });
+export const PartySchema = z.object({ id: z.string(), organizationId: z.string(), name: z.string(), kind: PartyKind, paymentsAccountRef: z.string().nullable(), title: z.string().nullable(), bio: z.string().nullable(), photoUrl: z.string().nullable(), createdAt: z.string() });
+export const UpdatePartyBody = z.object({ name: z.string().min(1).max(200).optional(), title: z.string().max(120).nullable().optional(), bio: z.string().max(1200).nullable().optional(), photoUrl: z.string().max(1000).nullable().optional() });
 export const CreatePartyBody = z.object({ name: z.string().min(1), kind: PartyKind, paymentsAccountRef: z.string().optional() });
 
 /** "own": an uploaded badge image with no outside platform, so no link. */
-const BadgeSchema = z.object({ platform: z.enum(["credly", "accredible", "badgr", "certopus", "other", "own"]), name: z.string().min(1).max(200), url: z.string().url().max(1000).optional(), imageUrl: z.string().url().max(1000).optional() });
-export const CourseSchema = z.object({ id: z.string(), organizationId: z.string(), slug: z.string(), name: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), durationDays: z.number().int().nullable(), prework: z.string().nullable(), surveyUrl: z.string().nullable(), imageUrl: z.string().nullable(), badge: BadgeSchema.nullable(), category: z.string().nullable(), topic: z.string(), language: z.string().nullable(), createdAt: z.string() });
-export const UpdateCourseBody = z.object({ description: z.string().max(5000).nullable().optional(), prework: z.string().max(20_000).nullable().optional(), surveyUrl: z.string().max(500).nullable().optional(), certificationBody: z.string().max(200).nullable().optional(), durationDays: z.number().int().min(1).nullable().optional(), imageUrl: z.string().max(1000).nullable().optional(), badge: BadgeSchema.nullable().optional(), category: z.string().max(40).nullable().optional(), language: z.string().max(5).nullable().optional() });
+export const BadgeSchema = z.object({ platform: z.enum(["credly", "accredible", "badgr", "certopus", "other", "own"]), name: z.string().min(1).max(200), url: z.string().url().max(1000).optional(), imageUrl: z.string().url().max(1000).optional() });
+export const CoursePageModules = z.object({ banner: z.boolean().optional(), logo: z.boolean().optional(), badge: z.boolean().optional(), video: z.boolean().optional(), agenda: z.boolean().optional(), included: z.boolean().optional(), instructor: z.boolean().optional() });
+export const CoursePageSchema = z.object({
+  tagline: z.string().max(240).optional(), videoUrl: z.string().max(500).optional(),
+  agenda: z.array(z.array(z.string().max(200)).max(12)).max(14).optional(),
+  included: z.array(z.object({ title: z.string().max(80), note: z.string().max(140).optional() })).max(12).optional(),
+  modules: CoursePageModules.optional(),
+});
+export const CourseSchema = z.object({ id: z.string(), organizationId: z.string(), slug: z.string(), name: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), durationDays: z.number().int().nullable(), prework: z.string().nullable(), surveyUrl: z.string().nullable(), imageUrl: z.string().nullable(), badge: BadgeSchema.nullable(), category: z.string().nullable(), topic: z.string(), language: z.string().nullable(), page: CoursePageSchema.nullable(), createdAt: z.string() });
+export const UpdateCourseBody = z.object({ description: z.string().max(5000).nullable().optional(), prework: z.string().max(20_000).nullable().optional(), surveyUrl: z.string().max(500).nullable().optional(), certificationBody: z.string().max(200).nullable().optional(), durationDays: z.number().int().min(1).nullable().optional(), imageUrl: z.string().max(1000).nullable().optional(), badge: BadgeSchema.nullable().optional(), category: z.string().max(40).nullable().optional(), language: z.string().max(5).nullable().optional(), page: CoursePageSchema.nullable().optional() });
 export const MeetingSchema = z.object({ provider: z.enum(["zoom", "teams", "manual"]), meetingId: z.string(), joinUrl: z.string(), hostUrl: z.string().nullable(), passcode: z.string().nullable() });
 export const AttendanceRowSchema = z.object({ seatId: z.string(), email: z.string(), name: z.string().nullable(), status: z.enum(["present", "partial", "absent", "unknown"]), minutes: z.number(), sessionsAttended: z.number().int(), source: z.enum(["provider", "manual", "none"]), updatedAt: z.string() });
 export const CertificateSchema = z.object({ id: z.string(), seatId: z.string(), eventId: z.string(), attendeeName: z.string(), attendeeEmail: z.string(), courseName: z.string(), issuedAt: z.string(), verifyCode: z.string(), verifyUrl: z.string(), viewUrl: z.string(), kind: z.enum(["attendance", "completion"]), hours: z.number().nullable() });
@@ -91,7 +99,8 @@ export const CreateTicketTypeBody = z.object({
   earlyBird: z.object({ until: IsoDate, priceMinor: Minor, prices: PriceList.optional() }).optional(),
 });
 
-export const AttendeeSchema = z.object({ email: z.string().email(), name: z.string().max(200).optional(), company: z.string().max(200).optional() });
+export const ReadyChecksSchema = z.object({ camera: z.boolean().optional(), connection: z.boolean().optional(), calendar: z.boolean().optional(), prework: z.boolean().optional() });
+export const AttendeeSchema = z.object({ email: z.string().email(), name: z.string().max(200).optional(), company: z.string().max(200).optional(), jobTitle: z.string().max(120).optional(), timeZone: z.string().max(64).optional(), readyChecks: ReadyChecksSchema.optional() });
 export const SeatSchema = z.object({
   id: z.string(), organizationId: z.string(), orderId: z.string(), eventId: z.string(), ticketTypeId: z.string(), attendee: AttendeeSchema, status: z.enum(["reserved", "confirmed", "cancelled", "transferred"]), createdAt: z.string(), confirmedAt: z.string().nullable(),
   transferredFromSeatId: z.string().nullable(), transferredToSeatId: z.string().nullable(), cancelledAt: z.string().nullable(), substitutions: z.array(z.object({ from: AttendeeSchema, at: z.string() })),
@@ -120,11 +129,15 @@ export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(
 export const JoinWaitlistBody = z.object({ eventId: z.string(), ticketTypeId: z.string().optional(), email: z.string().email(), name: z.string().max(200).optional(), quantity: z.number().int().min(1).max(10).optional() });
 
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable() }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable() }),
   course: CourseSchema,
+  /** Which optional class page sections to show (the organizer's switches, else "has content"). */
+  sections: z.object({ banner: z.boolean(), logo: z.boolean(), badge: z.boolean(), video: z.boolean(), agenda: z.boolean(), included: z.boolean(), instructor: z.boolean() }),
   cohorts: z.array(z.object({
     event: PublicEventSchema,
     dateSlug: z.string(),
+    instructors: z.array(z.object({ id: z.string(), name: z.string(), title: z.string().nullable(), bio: z.string().nullable(), photoUrl: z.string().nullable() })),
+    invoiceAvailable: z.boolean(),
     ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
 });
@@ -166,9 +179,9 @@ export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.n
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
 export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
-export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
-export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, createdAt: p.createdAt.toISOString() });
-export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, category: c.category ?? null, topic: c.category ?? inferCategory(c.name, c.certificationBody), language: c.language ?? null, createdAt: c.createdAt.toISOString() });
+export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, accentColor: o.accentColor ?? null, checkoutInvoices: o.checkoutInvoices !== false, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
+export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, title: p.title ?? null, bio: p.bio ?? null, photoUrl: p.photoUrl ?? null, createdAt: p.createdAt.toISOString() });
+export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, category: c.category ?? null, topic: c.category ?? inferCategory(c.name, c.certificationBody), language: c.language ?? null, page: c.page ?? null, createdAt: c.createdAt.toISOString() });
 export function toPublicEvent(e: Event) {
   const { meeting: _meeting, instructorFees: _fees, splitRules: _splits, ...rest } = toEvent(e);
   return rest;

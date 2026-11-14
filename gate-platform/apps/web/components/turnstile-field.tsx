@@ -20,7 +20,7 @@ declare global {
 }
 
 let loader: Promise<TurnstileApi> | undefined;
-function loadTurnstile(): Promise<TurnstileApi> {
+export function loadTurnstile(): Promise<TurnstileApi> {
   if (window.turnstile) return Promise.resolve(window.turnstile);
   if (!loader) {
     loader = new Promise<TurnstileApi>((resolve, reject) => {

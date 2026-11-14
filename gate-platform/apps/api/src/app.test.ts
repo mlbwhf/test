@@ -587,3 +587,105 @@ describe("public event data", () => {
     expect(ticket.body).not.toMatch(secret);
   });
 });
+
+describe("class page and checkout", () => {
+  async function org(now = () => new Date("2099-01-01T12:00:00Z")) {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter(), clock: { now } });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test", webUrl: "https://app.test", ticketSecret: "class-page-test-secret" });
+    const created = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "USD" } })).json();
+    const J = { "x-api-key": created.apiKey as string, "content-type": "application/json" };
+    const orgId = created.organization.id as string;
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "rte", name: "AI-Empowered SAFe RTE" } })).json();
+    const instructor = (await im.inject({ method: "POST", url: "/v1/parties", headers: J, payload: { name: "Mark Saymen", kind: "instructor" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "Nov", instructorIds: [instructor.id], sessions: [{ startsAt: "2099-01-20T14:00:00Z", endsAt: "2099-01-20T22:00:00Z" }, { startsAt: "2099-01-21T14:00:00Z", endsAt: "2099-01-21T22:00:00Z" }] } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 220_000, quantity: 24 } })).json();
+    return { core, im, J, orgId, course, instructor, ev, tt };
+  }
+
+  it("organizers set page sections, content, instructor profile and accent; the public page gets them", async () => {
+    const { im, J, orgId, course, instructor } = await org();
+    let page = (await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json();
+    expect(page.sections).toEqual({ banner: false, logo: false, badge: false, video: false, agenda: false, included: false, instructor: true });
+    expect(page.cohorts[0].instructors).toEqual([{ id: instructor.id, name: "Mark Saymen", title: null, bio: null, photoUrl: null }]);
+    expect(page.cohorts[0].invoiceAvailable).toBe(true);
+
+    expect((await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { page: { videoUrl: "https://example.com/video" } } })).statusCode).toBe(400);
+    const saved = await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { page: {
+      tagline: "  Three live days with a working RTE.  ", videoUrl: "https://youtu.be/dQw4w9WgXcQ",
+      agenda: [["Introducing the RTE role", ""], ["PI Planning"], []], included: [{ title: "Certificate PDF", note: "When the class is delivered" }, { title: " " }],
+      modules: { instructor: false },
+    } } });
+    expect(saved.statusCode).toBe(200);
+    expect(saved.json().page).toEqual({ tagline: "Three live days with a working RTE.", videoUrl: "https://youtu.be/dQw4w9WgXcQ", agenda: [["Introducing the RTE role"], ["PI Planning"]], included: [{ title: "Certificate PDF", note: "When the class is delivered" }], modules: { instructor: false } });
+    await im.inject({ method: "PATCH", url: `/v1/parties/${instructor.id}`, headers: J, payload: { title: "AI-Native SPCT · Founder", bio: "Trained 3,000+ professionals.", photoUrl: "https://cdn.example/mark.jpg" } });
+    expect((await im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: J, payload: { accentColor: "blue" } })).statusCode).toBe(400);
+    await im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: J, payload: { accentColor: "#2f45e8" } });
+
+    page = (await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json();
+    expect(page.sections).toMatchObject({ video: true, agenda: true, included: true, instructor: false });
+    expect(page.organization.accentColor).toBe("#2F45E8");
+    expect(page.cohorts[0].instructors[0]).toMatchObject({ title: "AI-Native SPCT · Founder", photoUrl: "https://cdn.example/mark.jpg" });
+  });
+
+  it("browsers may send the learner's checklist from another origin (PATCH passes the CORS preflight)", async () => {
+    const { im } = await org();
+    const pre = await im.inject({ method: "OPTIONS", url: "/public/v1/seats/seat_x/ready", headers: { origin: "https://app.enrollclass.com", "access-control-request-method": "PATCH", "access-control-request-headers": "content-type" } });
+    expect(pre.statusCode).toBe(204);
+    expect(String(pre.headers["access-control-allow-methods"])).toContain("PATCH");
+  });
+
+  it("checkout keeps the learner's job title, time zone and ready checks; the learner updates them later", async () => {
+    const { im, J, orgId, tt } = await org();
+    const placed = (await im.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/orders`, payload: { ticketTypeId: tt.id, quantity: 2, buyerEmail: "priya@acme.test", attendees: [
+      { email: "priya@acme.test", name: "Priya Raman", jobTitle: "Scrum Master", timeZone: "America/Toronto", readyChecks: { camera: true, connection: false } },
+      { email: "sam@acme.test", name: "Sam Lee", timeZone: "Not/AZone" },
+    ] } })).json();
+    await im.inject({ method: "POST", url: `/v1/dev/payments/${placed.order.paymentRef}/succeed`, headers: { "x-api-key": J["x-api-key"] } });
+    const summary = await im.inject(`/public/v1/orders/${placed.order.id}/summary?buyerEmail=priya@acme.test`);
+    expect(summary.statusCode).toBe(200);
+    const body = summary.json();
+    expect(body.order).toMatchObject({ status: "paid", quantity: 2, totalMinor: placed.order.pricing.totalMinor });
+    expect(body.instructors).toEqual(["Mark Saymen"]);
+    expect(body.capacity).toBe(24);
+    const priya = body.seats.find((s: { attendee: { email: string } }) => s.attendee.email === "priya@acme.test");
+    expect(priya.attendee).toMatchObject({ jobTitle: "Scrum Master", timeZone: "America/Toronto", readyChecks: { camera: true, connection: false } });
+    expect(body.seats.find((s: { attendee: { email: string } }) => s.attendee.email === "sam@acme.test").attendee.timeZone).toBeUndefined();
+    expect(priya.qrSvg).toMatch(/^https:\/\/api\.test\/public\/v1\/tickets\/.+\/qr\.svg$/);
+    expect((await im.inject(`/public/v1/orders/${placed.order.id}/summary?buyerEmail=someone@else.test`)).statusCode).toBe(404);
+
+    expect((await im.inject({ method: "PATCH", url: `/public/v1/seats/${priya.id}/ready`, payload: { email: "sam@acme.test", readyChecks: { prework: true } } })).statusCode).toBe(404);
+    const ready = await im.inject({ method: "PATCH", url: `/public/v1/seats/${priya.id}/ready`, payload: { email: "PRIYA@acme.test", readyChecks: { prework: true, connection: true } } });
+    expect(ready.json().readyChecks).toEqual({ camera: true, connection: true, prework: true });
+  });
+
+  it("invoice my company: seats held, invoice to accounts payable, released if unpaid when due", async () => {
+    let now = new Date("2099-01-01T12:00:00Z");
+    const { core, im, J, orgId, tt } = await org(() => now);
+    const ask = (payload: object) => im.inject({ method: "POST", url: `/public/v1/organizations/${orgId}/invoice-requests`, payload: { ticketTypeId: tt.id, quantity: 2, company: "Acme Inc.", billingEmail: "ap@acme.test", attendees: [{ email: "priya@acme.test", name: "Priya Raman" }, { email: "sam@acme.test" }], ...payload } });
+    const res = await ask({ poNumber: "PO-77" });
+    expect(res.statusCode).toBe(201);
+    const { orderId, invoice } = res.json();
+    expect(invoice.status).toBe("issued");
+    // Class on Jan 20: due Jan 16 at the latest (3 days of margin), within 14-day terms.
+    expect(invoice.dueAt.slice(0, 10)).toBe("2099-01-15");
+    let seatsLeft = (await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json().cohorts[0].ticketTypes[0].remaining;
+    expect(seatsLeft).toBe(22);
+    const summary = (await im.inject(`/public/v1/orders/${orderId}/summary?buyerEmail=ap@acme.test`)).json();
+    expect(summary.invoice).toMatchObject({ status: "issued", number: invoice.number });
+    expect(summary.seats).toHaveLength(2);
+
+    // Organizer switched invoices off.
+    await im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: J, payload: { checkoutInvoices: false } });
+    expect((await ask({})).statusCode).toBe(409);
+    expect((await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json().cohorts[0].invoiceAvailable).toBe(false);
+    await im.inject({ method: "PATCH", url: "/v1/organizations/me", headers: J, payload: { checkoutInvoices: true } });
+
+    // Not yet due: nothing released. Past due and unpaid: voided, seats back on sale.
+    expect(await core.releaseUnpaidCheckoutInvoices()).toEqual({ released: 0 });
+    now = new Date("2099-01-16T12:00:00Z");
+    expect((await ask({})).statusCode).toBe(409); // under 5 days to the class now
+    expect(await core.releaseUnpaidCheckoutInvoices()).toEqual({ released: 1 });
+    seatsLeft = (await im.inject(`/public/v1/organizations/${orgId}/courses/rte`)).json().cohorts[0].ticketTypes[0].remaining;
+    expect(seatsLeft).toBe(24);
+  });
+});

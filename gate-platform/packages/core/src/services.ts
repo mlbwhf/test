@@ -3,6 +3,7 @@ import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } 
 import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
 import { addDays, dateSlugs, planScheduleDates, type ScheduleRule } from "./schedule.js";
+import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, normalizeCoursePage } from "./class-page.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -15,7 +16,7 @@ import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { InvoiceReminderStep } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, CoursePage, ReadyChecks, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -55,6 +56,9 @@ export function hashApiKey(key: string): string {
 }
 
 const defaultClock: Clock = { now: () => new Date() };
+/** Learners can ask for an invoice only when the class is at least this far away; invoices fall due before it starts. */
+export const CHECKOUT_INVOICE_MIN_LEAD_MS = 5 * 86_400_000;
+const CHECKOUT_INVOICE_MAX_SEATS = 20;
 const defaultIds: IdGenerator = {
   next: (prefix) => `${prefix}_${randomBytes(9).toString("base64url")}`,
 };
@@ -155,9 +159,10 @@ export class Core {
     return { organization, apiKey };
   }
 
-  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined; logoUrl?: string | null | undefined }): Promise<Organization> {
+  async updateOrganization(organizationId: string, patch: { releasePolicy?: ReleasePolicy | undefined; releaseGraceHours?: number | undefined; minEnrollmentDecisionDays?: number | undefined; passFeeToAttendee?: boolean | undefined; name?: string | undefined; marketplaceListing?: boolean | undefined; flexibleTickets?: boolean | undefined; logoUrl?: string | null | undefined; accentColor?: string | null | undefined; checkoutInvoices?: boolean | undefined }): Promise<Organization> {
     const org = await this.getOrganization(organizationId);
     if (patch.logoUrl && !/^https?:\/\//.test(patch.logoUrl)) throw new DomainError("VALIDATION", "logoUrl must be an http(s) URL");
+    if (patch.accentColor && !isAccentColor(patch.accentColor)) throw new DomainError("VALIDATION", "accentColor must be a hex colour like #2F45E8");
     if (patch.releaseGraceHours !== undefined && (!Number.isFinite(patch.releaseGraceHours) || patch.releaseGraceHours < 0 || patch.releaseGraceHours > 24 * 30)) throw new DomainError("VALIDATION", "releaseGraceHours must be 0..720");
     if (patch.minEnrollmentDecisionDays !== undefined && (!Number.isFinite(patch.minEnrollmentDecisionDays) || patch.minEnrollmentDecisionDays < 0 || patch.minEnrollmentDecisionDays > 90)) throw new DomainError("VALIDATION", "minEnrollmentDecisionDays must be 0..90");
     const next: Organization = {
@@ -170,8 +175,11 @@ export class Core {
       ...(patch.flexibleTickets !== undefined ? { flexibleTickets: patch.flexibleTickets } : {}),
       ...(patch.name?.trim() ? { name: patch.name.trim() } : {}),
       ...(patch.logoUrl ? { logoUrl: patch.logoUrl } : {}),
+      ...(patch.accentColor ? { accentColor: patch.accentColor.toUpperCase() } : {}),
+      ...(patch.checkoutInvoices !== undefined ? { checkoutInvoices: patch.checkoutInvoices } : {}),
     };
     if (patch.logoUrl === null || patch.logoUrl === "") delete next.logoUrl;
+    if (patch.accentColor === null || patch.accentColor === "") delete next.accentColor;
     await this.repos.organizations.update(next);
     return next;
   }
@@ -273,6 +281,26 @@ export class Core {
     return party;
   }
 
+  /** Name and the instructor profile shown on class pages (title, short bio, photo). */
+  async updateParty(organizationId: string, partyId: string, patch: { name?: string | undefined; title?: string | null | undefined; bio?: string | null | undefined; photoUrl?: string | null | undefined }): Promise<Party> {
+    const party = await this.repos.parties.get(partyId);
+    if (!party || party.organizationId !== organizationId) throw notFound("party", partyId);
+    if (patch.photoUrl && !/^https?:\/\//.test(patch.photoUrl)) throw new DomainError("VALIDATION", "photoUrl must be an http(s) URL");
+    const next: Party = { ...party };
+    if (patch.name?.trim()) next.name = patch.name.trim().slice(0, 200);
+    const set = (k: "title" | "bio" | "photoUrl", v: string | null | undefined, max: number) => {
+      if (v === undefined) return;
+      const t = (v ?? "").trim().slice(0, max);
+      if (t) next[k] = t;
+      else delete next[k];
+    };
+    set("title", patch.title, 120);
+    set("bio", patch.bio, 1200);
+    set("photoUrl", patch.photoUrl, 1000);
+    await this.repos.parties.update(next);
+    return next;
+  }
+
   listParties(organizationId: string): Promise<Party[]> {
     return this.repos.parties.listByOrganization(organizationId);
   }
@@ -302,7 +330,7 @@ export class Core {
     return course;
   }
 
-  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined; category?: string | null | undefined; language?: string | null | undefined }): Promise<Course> {
+  async updateCourse(organizationId: string, courseId: string, patch: { description?: string | undefined; prework?: string | undefined; surveyUrl?: string | undefined; certificationBody?: string | undefined; durationDays?: number | undefined; imageUrl?: string | undefined; badge?: CourseBadge | null | undefined; category?: string | null | undefined; language?: string | null | undefined; page?: CoursePage | null | undefined }): Promise<Course> {
     const course = await this.getCourse(organizationId, courseId);
     if (patch.badge) {
       if (!["credly", "accredible", "badgr", "certopus", "other", "own"].includes(patch.badge.platform)) throw new DomainError("VALIDATION", "unknown badge platform");
@@ -321,6 +349,12 @@ export class Core {
     else if (patch.category !== undefined) next.category = this.checkCategory(patch.category);
     if (patch.badge === null) delete next.badge;
     else if (patch.badge) next.badge = { platform: patch.badge.platform, name: patch.badge.name.trim(), ...(patch.badge.url ? { url: patch.badge.url } : {}), ...(patch.badge.imageUrl ? { imageUrl: patch.badge.imageUrl } : {}) };
+    if (patch.page === null) delete next.page;
+    else if (patch.page) {
+      const page = normalizeCoursePage(patch.page);
+      if (Object.keys(page).length) next.page = page;
+      else delete next.page;
+    }
     await this.repos.courses.update(next);
     return next;
   }
@@ -739,12 +773,25 @@ export class Core {
     const now = this.clock.now();
     const cohorts = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
     const slugs = dateSlugs(cohorts, localDate);
+    const partyCache = new Map<string, Party | undefined>();
+    const instructorsOf = async (e: Event) => {
+      const list = [];
+      for (const id of e.instructorIds) {
+        if (!partyCache.has(id)) partyCache.set(id, await this.repos.parties.get(id));
+        const p = partyCache.get(id);
+        if (p && p.organizationId === organizationId) list.push({ id: p.id, name: p.name, title: p.title ?? null, bio: p.bio ?? null, photoUrl: p.photoUrl ?? null });
+      }
+      return list;
+    };
     const out = [];
     for (const event of cohorts) {
       const ticketTypes = await this.repos.ticketTypes.listByEvent(event.id);
       out.push({
         event,
         dateSlug: slugs.get(event.id)!,
+        instructors: await instructorsOf(event),
+        /** A learner may ask for an invoice: the organizer allows it and the class is at least 5 days away. */
+        invoiceAvailable: org.checkoutInvoices !== false && event.startsAt.getTime() - now.getTime() >= CHECKOUT_INVOICE_MIN_LEAD_MS,
         ticketTypes: ticketTypes.map((t) => {
           const currencies = [event.currency, ...Object.keys(t.prices ?? {}), ...Object.keys(t.earlyBird?.prices ?? {}), ...(pricing.fxFallback ? pricing.currencies : [])];
           const prices: Record<string, MinorUnits> = {};
@@ -760,8 +807,9 @@ export class Core {
       });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null },
       course, cohorts: out,
+      sections: coursePageSections(course, { logo: Boolean(org.logoUrl), instructors: out.some((c) => c.instructors.length > 0) }),
     };
   }
 
@@ -795,6 +843,7 @@ export class Core {
     },
   ): Promise<{ order: Order; clientSecret: string | null; created: boolean }> {
     const org = await this.getOrganization(organizationId);
+    if (input.attendees) input = { ...input, attendees: input.attendees.map(cleanAttendee) };
     if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || input.quantity > 100) {
       throw new DomainError("VALIDATION", "quantity must be an integer between 1 and 100");
     }
@@ -1397,9 +1446,12 @@ export class Core {
       dueDays?: number | undefined;
       idempotencyKey?: string | undefined;
       dryRun?: boolean | undefined;
+      /** Asked for by a learner at checkout (released if unpaid when due). */
+      selfService?: boolean | undefined;
     },
   ): Promise<{ order: Order; invoice: Invoice; created: boolean }> {
     const org = await this.getOrganization(organizationId);
+    if (input.attendees) input = { ...input, attendees: input.attendees.map(cleanAttendee) };
     const account = await this.getCorporateAccount(organizationId, input.corporateAccountId);
     if (!Number.isSafeInteger(input.quantity) || input.quantity <= 0 || input.quantity > 500) throw new DomainError("VALIDATION", "quantity must be an integer between 1 and 500");
     if (account.poRequired && !input.poNumber?.trim()) throw new DomainError("VALIDATION", `${account.name} requires a PO number`, "ask the buyer for their purchase order number");
@@ -1439,7 +1491,7 @@ export class Core {
       id: invoiceId, organizationId, orderId: order.id, corporateAccountId: account.id,
       number: "", ...(input.poNumber?.trim() ? { poNumber: input.poNumber.trim() } : {}), currency,
       subtotalMinor: pricing.subtotalMinor + pricing.attendeeFeeMinor, taxMinor: pricing.taxMinor, totalMinor: pricing.totalMinor, paidMinor: 0,
-      status: "issued", issuedAt: now, dueAt, payments: [], createdAt: now,
+      status: "issued", issuedAt: now, dueAt, payments: [], ...(input.selfService ? { selfService: true } : {}), createdAt: now,
     };
     if (input.dryRun) return { order, invoice, created: false };
 
@@ -1462,6 +1514,83 @@ export class Core {
     const finalInvoice = (await this.repos.invoices.get(invoiceId)) ?? invoice;
     await this.runHooks("invoiceIssued", order.id, (hook) => hook({ organization: org, order, invoice: finalInvoice, account, event }));
     return { order: (await this.repos.orders.get(order.id)) ?? order, invoice: finalInvoice, created: true };
+  }
+
+  /**
+   * "Invoice my company" at checkout: seats are held and the invoice goes to the company's
+   * accounts payable address. Needs the organizer's permission and a class at least 5 days away;
+   * the invoice falls due before the class, and unpaid seats go back on sale when it does.
+   */
+  async requestCheckoutInvoice(
+    organizationId: string,
+    input: { ticketTypeId: string; quantity: number; attendees: Attendee[]; company: string; billingEmail: string; poNumber?: string | undefined; country?: string | undefined; idempotencyKey?: string | undefined },
+  ): Promise<{ order: Order; invoice: Invoice; created: boolean }> {
+    const org = await this.getOrganization(organizationId);
+    if (org.checkoutInvoices === false) throw new DomainError("INVALID_STATE", `${org.name} takes card payment only`, "pay by card instead");
+    if (!Number.isSafeInteger(input.quantity) || input.quantity < 1 || input.quantity > CHECKOUT_INVOICE_MAX_SEATS) throw new DomainError("VALIDATION", `an invoice request covers 1 to ${CHECKOUT_INVOICE_MAX_SEATS} seats`, "for a larger group, contact the organizer");
+    const company = input.company.trim().slice(0, 200);
+    if (company.length < 2) throw new DomainError("VALIDATION", "enter the company's legal name");
+    const billingEmail = input.billingEmail.trim().toLowerCase();
+    if (!isEmail(billingEmail)) throw new DomainError("VALIDATION", "enter the accounts payable email");
+    const ticketType = await this.repos.ticketTypes.get(input.ticketTypeId);
+    if (!ticketType || ticketType.organizationId !== organizationId) throw notFound("ticketType", input.ticketTypeId);
+    const event = await this.getEvent(organizationId, ticketType.eventId);
+    const now = this.clock.now();
+    const lead = event.startsAt.getTime() - now.getTime();
+    if (lead < CHECKOUT_INVOICE_MIN_LEAD_MS) throw new DomainError("INVALID_STATE", "this class starts too soon to pay by invoice", "pay by card to reserve your seat");
+    const country = (input.country ?? org.country).trim().toUpperCase();
+    if (!/^[A-Z]{2}$/.test(country)) throw new DomainError("VALIDATION", "country must be a two-letter code");
+    const account = (await this.repos.corporateAccounts.getByBillingEmail(organizationId, billingEmail))
+      ?? (await this.createCorporateAccount(organizationId, { name: company, billingEmail, address: { country }, netTermsDays: 14, currency: event.currency }));
+    // Due 3 days before the class at the latest, so unpaid seats can still be sold.
+    const dueDays = Math.max(1, Math.min(account.netTermsDays || 14, Math.floor(lead / 86_400_000) - 3));
+    return this.createInvoiceOrder(organizationId, {
+      corporateAccountId: account.id, ticketTypeId: ticketType.id, quantity: input.quantity, attendees: input.attendees,
+      ...(input.poNumber?.trim() ? { poNumber: input.poNumber.trim().slice(0, 60) } : {}),
+      currency: event.currency, dueDays, selfService: true,
+      ...(input.idempotencyKey ? { idempotencyKey: input.idempotencyKey } : {}),
+    });
+  }
+
+  /** Scheduler: checkout invoices still unpaid when due are voided and their seats go back on sale. */
+  async releaseUnpaidCheckoutInvoices(): Promise<{ released: number }> {
+    const now = this.clock.now();
+    let released = 0;
+    for (const org of await this.repos.organizations.list()) {
+      for (const inv of await this.repos.invoices.listByOrganization(org.id, { status: ["issued"] })) {
+        if (!inv.selfService || inv.paidMinor > 0 || inv.dueAt > now) continue;
+        await this.voidInvoice(org.id, inv.id, "unpaid when due: seats released");
+        released++;
+      }
+    }
+    return { released };
+  }
+
+  /** The learner's "ready for class" answers, from their confirmation page (seat id + their email). */
+  async updateSeatReadyChecks(seatId: string, attendeeEmail: string, checks: ReadyChecks): Promise<Seat> {
+    const seat = await this.repos.seats.get(seatId);
+    if (!seat || seat.attendee.email.toLowerCase() !== attendeeEmail.trim().toLowerCase()) throw notFound("seat", seatId);
+    const merged = cleanReadyChecks({ ...seat.attendee.readyChecks, ...checks });
+    const next: Seat = { ...seat, attendee: { ...seat.attendee, ...(merged ? { readyChecks: merged } : {}) } };
+    await this.repos.seats.update(next);
+    return next;
+  }
+
+  /** Everything the post-checkout page shows, for the buyer who placed the order. */
+  async publicOrderSummary(orderId: string, buyerEmail: string) {
+    const order = await this.publicOrder(orderId, buyerEmail);
+    const org = await this.getOrganization(order.organizationId);
+    const event = await this.getEvent(order.organizationId, order.eventId);
+    const course = event.courseId ? await this.repos.courses.get(event.courseId) : undefined;
+    const seats = (await this.repos.seats.listByOrder(order.id)).filter((x) => x.status !== "cancelled" && x.status !== "transferred");
+    const invoice = order.paymentMethod === "invoice" ? await this.repos.invoices.getByOrder(order.id) : undefined;
+    const instructors = [];
+    for (const id of event.instructorIds) {
+      const p = await this.repos.parties.get(id);
+      if (p && p.organizationId === org.id) instructors.push(p.name);
+    }
+    const capacity = (await this.repos.ticketTypes.listByEvent(event.id)).reduce((a, t) => a + t.quantity, 0);
+    return { order, organization: org, event, course, seats, invoice, instructors, capacity };
   }
 
   async getInvoice(organizationId: string, invoiceId: string): Promise<Invoice> {

@@ -171,11 +171,27 @@ async function fetchSvg(path: string): Promise<string | null> {
 }
 
 export type PublicTicketType = { id: string; name: string; quantity: number; remaining: number; prices: Record<string, number>; converted: string[]; earlyBirdUntil: string | null };
+export type PublicInstructor = { id: string; name: string; title: string | null; bio: string | null; photoUrl: string | null };
 export type PublicCoursePage = {
-  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; logoUrl?: string | null };
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null };
   course: Course;
+  /** Optional class page sections to show. */
+  sections: Record<"banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor", boolean>;
   /** dateSlug: the date's own page, /c/:org/:course/:dateSlug. */
-  cohorts: { event: Event; dateSlug: string; ticketTypes: PublicTicketType[] }[];
+  cohorts: { event: Event; dateSlug: string; ticketTypes: PublicTicketType[]; instructors: PublicInstructor[]; invoiceAvailable: boolean }[];
+};
+
+/** What the page after checkout shows: tickets, sessions, where the money is. */
+export type OrderSummary = {
+  order: { id: string; status: string; paymentMethod: string; fundsStatus: "none" | "held" | "released"; quantity: number; currency: string; totalMinor: number; buyerEmail: string; settlement: string; createdAt: string };
+  organization: { id: string; name: string; logoUrl: string | null; accentColor: string | null };
+  event: Event;
+  course: { slug: string; name: string; prework: string | null; badge: { platform: string; name: string; url?: string; imageUrl?: string } | null } | null;
+  instructors: string[];
+  capacity: number;
+  delivered: boolean;
+  invoice: { number: string; status: string; dueAt: string; totalMinor: number; paidMinor: number; currency: string } | null;
+  seats: { id: string; status: string; attendee: Attendee; code: string; ticketUrl: string; qrSvg: string; calendarUrl: string }[];
 };
 
 export type CertificateView = {
@@ -222,6 +238,9 @@ export const publicApi = {
   getCertificate: (code: string) => request<CertificateView>("GET", `/public/v1/certificates/${enc(code)}`),
   /** A course's public page data: upcoming live cohorts with seats left and prices. */
   getCourse: (orgId: string, slug: string) => request<PublicCoursePage>("GET", `/public/v1/organizations/${enc(orgId)}/courses/${enc(slug)}`),
+
+  /** The post-checkout summary for the buyer who placed the order; 404 when the email doesn't match. */
+  getOrderSummary: (orderId: string, buyerEmail: string) => request<OrderSummary>("GET", `/public/v1/orders/${enc(orderId)}/summary?buyerEmail=${enc(buyerEmail)}`),
 
   /** Ticket view by its signed token; 404 for unknown or forged tokens. */
   getTicket: (token: string) => request<TicketView>("GET", `/public/v1/tickets/${enc(token)}`),
