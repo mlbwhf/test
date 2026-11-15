@@ -120,6 +120,7 @@ def by_model_mean(R, key, variant=None, group=None):
 def main():
     S = {"generated_from": "tools/ml-benchmark/results/*.jsonl"}
     R = rows("main")
+    R_all = list(R)
     if R and any(r["model"] == "TabPFN v2" for r in R):
         # keep only (dataset, split) pairs where every model ran, so ranks compare like with like
         full = {(r["dataset"], r["seed"]) for r in R if r["model"] == "TabPFN v2"}
@@ -143,8 +144,9 @@ def main():
         S["dataset_info"] = info
         S["n_rows_main"] = len(R)
     N = rows("noscale")
-    if N and R:
-        scaled = by_model_mean([r for r in R if r["model"] in {x["model"] for x in N}], "acc")
+    if N and R_all:
+        keys = {(r["dataset"], r["seed"], r["model"]) for r in N}
+        scaled = by_model_mean([r for r in R_all if (r["dataset"], r["seed"], r["model"]) in keys], "acc")
         raw = by_model_mean(N, "acc")
         S["noscale"] = {m[0]: dict(scaled=scaled[m], unscaled=raw[m], delta=raw[m] - scaled[m]) for m in raw}
     Z = rows("size")

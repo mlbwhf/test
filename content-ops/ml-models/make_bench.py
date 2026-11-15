@@ -240,7 +240,9 @@ if NS or IM or TU:
                     "source": "Source: Report AI benchmark, November 2026", "notes": "Tree-based models and TabPFN do not need scaling and are not shown.", "confidence": "DERIVED"})
     if IM:
         maj = IM['Majority class']
-        paras.append(f"When only 10% of cases are positive, a model that always answers 'no' scores {pts(maj['acc'])}% accuracy while learning nothing; its balanced accuracy is {pts(maj['bal_acc'])}%. On imbalanced data, a high accuracy figure is therefore meaningless without the base rate, and balanced accuracy or ROC AUC tells the real story.")
+        real = {m: v for m, v in IM.items() if m != 'Majority class'}
+        top_acc = max(real, key=lambda m: real[m]['acc']); top_bal = max(real, key=lambda m: real[m]['bal_acc'])
+        paras.append(f"When only 10% of cases are positive, a model that always answers 'no' scores {pts(maj['acc'])}% accuracy while learning nothing; its balanced accuracy is {pts(maj['bal_acc'])}%. The real models scored between {pts(min(v['acc'] for v in real.values()))}% and {pts(max(v['acc'] for v in real.values()))}% accuracy, barely above that do-nothing baseline, but between {pts(min(v['bal_acc'] for v in real.values()))}% and {pts(max(v['bal_acc'] for v in real.values()))}% balanced accuracy. The leader changes with the metric: {top_acc} had the highest accuracy, {top_bal} the highest balanced accuracy. On imbalanced data, an accuracy figure is meaningless without the base rate. (TabPFN was not run in this test.)")
         tbs.append({"title": "Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)", "columns": ["Model", "Accuracy (%)", "Balanced accuracy (%)", "ROC AUC (%)", "Confidence"],
                     "rows": [[m, pts(v['acc']), pts(v['bal_acc']), pts(v['auc']), 'DERIVED'] for m, v in sorted(IM.items(), key=lambda kv: -kv[1]['bal_acc'])]})
     if TU:
