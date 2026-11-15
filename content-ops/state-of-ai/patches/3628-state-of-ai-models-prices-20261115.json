@@ -1,0 +1,17 @@
+[
+ {
+  "search": "-2026-rev20261112.csv",
+  "replace": "-2026-rev20261115.csv",
+  "mode": "plain, replaces every occurrence"
+ },
+ {
+  "search": "Llama 5 (8 Apr)",
+  "replace": "Meta Muse Spark (8 Apr; closed weights)",
+  "mode": "plain, replaces every occurrence"
+ },
+ {
+  "search": "In the US, Meta released Llama 5 in April 2026 and Muse Spark Open,",
+  "replace": "In the US, Meta launched its first frontier model without open weights, Muse Spark, in April 2026, then released Muse Spark Open,",
+  "mode": "plain, replaces every occurrence"
+ }
+]

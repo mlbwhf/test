@@ -1,0 +1,12 @@
+[
+ {
+  "search": "report-ai-data-state-of-ai-year-over-year.csv",
+  "replace": "report-ai-data-state-of-ai-year-over-year-rev20261115.csv",
+  "mode": "plain, replaces every occurrence"
+ },
+ {
+  "search": "Llama 5 (8 Apr)",
+  "replace": "Meta Muse Spark (8 Apr; closed weights)",
+  "mode": "plain, replaces every occurrence"
+ }
+]

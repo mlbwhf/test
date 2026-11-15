@@ -27,7 +27,10 @@ ALL_YEARS = ['2022', '2023', '2024', '2025', '2026']
 NS = {}
 WORDS = {5: 'five', 6: 'six', 7: 'seven', 8: 'eight', 9: 'nine', 10: 'ten', 11: 'eleven', 12: 'twelve'}
 # CSVs re-issued under a new name after the first upload (media has no trash; never overwrite)
-CSV_REV = {'state-of-ai-models-prices': 'report-ai-data-state-of-ai-models-prices-2026-rev20261112.csv'}
+CSV_REV = {'state-of-ai-models-prices': 'report-ai-data-state-of-ai-models-prices-2026-rev20261115.csv',
+           # 15 Nov 2026: 'Llama 5 (8 Apr)' corrected to Meta Muse Spark in the 2026 release list
+           'state-of-ai-2026': 'report-ai-data-state-of-ai-2026-in-numbers-rev20261115.csv',
+           'state-of-ai-year-over-year': 'report-ai-data-state-of-ai-year-over-year-rev20261115.csv'}
 ON = ' class="on"'
 NOBR = ' style="border-right:none;"'
 def detail(link):
@@ -276,7 +279,7 @@ def theme_report(t, d, published, published_h, outdir):
 
 def annual(year, ds, published, published_h, outdir, intro, status_note=''):
     slug = f'state-of-ai-{year}'; url = BASE + slug + '/'; title = f'State of AI in Numbers {year}'
-    csv_name = f'report-ai-data-{slug}-in-numbers.csv'
+    csv_name = CSV_REV.get(slug, f'report-ai-data-{slug}-in-numbers.csv')
     prev = str(int(year) - 1)
     yrs = [prev, year] if prev in YEARS else [year]
     secs = ''; rows = []; allfaq = []; C = Counter()
@@ -313,7 +316,7 @@ def annual(year, ds, published, published_h, outdir, intro, status_note=''):
 
 def yoy_page(ds, published, published_h, outdir, intro):
     slug = 'state-of-ai-year-over-year'; url = BASE + slug + '/'; title = 'State of AI, Year over Year: 2024 vs 2025 vs 2026'
-    csv_name = 'report-ai-data-state-of-ai-year-over-year.csv'
+    csv_name = CSV_REV.get('state-of-ai-year-over-year', 'report-ai-data-state-of-ai-year-over-year.csv')
     secs = ''; rows = []; C = Counter()
     for t in THEMES:
         if t not in ds:
