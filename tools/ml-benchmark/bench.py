@@ -39,10 +39,10 @@ from sklearn.tree import DecisionTreeClassifier
 # categorical columns, ordinal-coded), otherwise clf_num.
 DATASETS = [
     "clf_cat/albert", "clf_cat/compas-two-years", "clf_cat/default-of-credit-card-clients",
-    "clf_cat/electricity", "clf_cat/eye_movements",
+    "clf_cat/electricity", "clf_cat/eye_movements", "clf_cat/covertype", "clf_cat/road-safety",
     "clf_num/Bioresponse", "clf_num/Diabetes130US", "clf_num/MagicTelescope",
     "clf_num/bank-marketing", "clf_num/california", "clf_num/credit", "clf_num/heloc",
-    "clf_num/house_16H", "clf_num/pol",
+    "clf_num/house_16H", "clf_num/pol", "clf_num/Higgs", "clf_num/MiniBooNE", "clf_num/jannis",
 ]
 
 MODEL_ORDER = ["TabPFN v2", "CatBoost", "LightGBM", "XGBoost", "Gradient boosting (HistGB)",
@@ -75,20 +75,25 @@ def make_model(name, seed, scale=True, threads=1):
 
 
 def make_tabpfn(seed):
+    # Pinned to the TabPFN v2 weights (Prior-Labs/TabPFN-v2-clf): openly downloadable.
+    # v2.5+ weights need a browser licence acceptance and are not used here.
     from tabpfn import TabPFNClassifier
-    path = os.environ.get("TABPFN_V2_CKPT")
-    kw = dict(device="cpu", random_state=seed, ignore_pretraining_limits=True)
-    if path:
-        kw["model_path"] = path
-    return TabPFNClassifier(**kw)
+    from tabpfn.constants import ModelVersion
+    return TabPFNClassifier.create_default_for_version(
+        ModelVersion.V2, device="cpu", random_state=seed, ignore_pretraining_limits=True)
 
 
 def load(data_dir, key):
+    cache = os.path.join(data_dir, key + ".npz")
+    if os.path.exists(cache):
+        z = np.load(cache)
+        return z["X"], z["y"]
     df = pd.read_csv(os.path.join(data_dir, key + ".csv"))
     y_raw = df.iloc[:, -1].astype(str)
     classes = sorted(y_raw.unique())
     y = (y_raw == classes[-1]).astype(int).to_numpy()
     X = df.iloc[:, :-1].to_numpy(dtype=np.float64)
+    np.savez(cache, X=X, y=y)
     return X, y
 
 

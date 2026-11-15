@@ -1,0 +1,4964 @@
+{
+ "meta": {
+  "compiled": "2026-11-15",
+  "compiled_by": "Report AI research (read-only; nothing written to WordPress)",
+  "title": "How to categorize large language models — taxonomy dataset",
+  "selection": "93 notable LLMs released March 2023 – November 2026, chosen to (a) cover the brief's required list and (b) give at least one example of every category on every dimension; editorial, not a sample. Counts in 'aggregates' describe this table only.",
+  "conventions": {
+   "release": "YYYY-MM of first public availability (API/app or weights); where weights followed later the note gives both.",
+   "params": "Billions. total_params_b from Hugging Face safetensors metadata or the model card; null when undisclosed. Report AI never estimates closed-model sizes; Epoch database values for closed models are mentioned only in notes, labelled.",
+   "active_params_b": "Parameters used per token for MoE models (for Gemma 3n: Google's 'effective' size).",
+   "context_tokens": "Maximum context as stated by the developer (or the config); MEDIUM where only an aggregator listing was available.",
+   "reasoning": "none = answers directly; reasoning = always reasons before answering (effort may be adjustable); hybrid = same weights can switch reasoning on/off or set a budget to zero; null = not verified.",
+   "size_class": "See dimension 'size'. Frontier rule: Epoch top-5-by-compute flag, OR Epoch estimate ≥1e25 FLOP, OR top-tier closed flagship of a developer with a ≥1e25 run on record. Otherwise by total params: large ≥100B, mid 10–100B, small <10B; on-device where the vendor designs for devices; 'undisclosed (efficient tier)' for closed non-flagships.",
+   "training_compute_flop": "Epoch AI estimate (database downloaded 15 Nov 2026; for a few 2024 closed models the Nov 2025 1e25 CSV). epoch_compute_confidence carries Epoch's own label (Confident/Likely/Speculative/Unknown).",
+   "confidence": "HIGH = model card, official page or paper opened this session and the core fields seen there; MEDIUM = key fields from secondary sources, aggregators or search summaries; DERIVED = Report AI calculation.",
+   "openness": "closed / open-weight / open-source (OSAID-style: weights + data + code). licence_class: closed, permissive (OSI-approved licence on weights), restricted (custom licence with use, scale or attribution conditions), non-commercial, open-source."
+  },
+  "counts": {
+   "models": 93,
+   "high": 76,
+   "medium": 17
+  },
+  "blocked_hosts": [
+   "openai.com",
+   "platform.openai.com",
+   "ai.google.dev",
+   "deepmind.google",
+   "blog.google",
+   "opensource.org",
+   "eur-lex.europa.eu",
+   "artificialintelligenceact.eu",
+   "leginfo.legislature.ca.gov",
+   "mistral.ai",
+   "x.ai",
+   "machinelearning.apple.com",
+   "ibm.com",
+   "api-docs.deepseek.com",
+   "docs.cohere.com",
+   "allenai.org",
+   "inceptionlabs.ai",
+   "export.arxiv.org",
+   "web.archive.org"
+  ]
+ },
+ "dimensions": [
+  {
+   "id": "architecture",
+   "name": "Architecture",
+   "source": "Vaswani et al. 2017; Shazeer et al. 2017; Gu & Dao 2023; Nie et al. 2025; model cards",
+   "url": "https://arxiv.org/abs/1706.03762",
+   "categories": [
+    {
+     "id": "dense",
+     "name": "Dense decoder-only transformer",
+     "definition": "A stack of Transformer decoder blocks in which every parameter is used for every token, trained to predict the next token from the left context. The Transformer itself replaced recurrence with attention (Vaswani et al., 2017); GPT-4's technical report describes 'a Transformer-based model pre-trained to predict the next token', and Meta describes Llama 3.1 405B as 'a dense Transformer with 405B parameters'. For a dense model, total parameters equal parameters used per token, so size and per-token compute move together.",
+     "examples": [
+      "Llama 3.1 405B",
+      "Qwen3-32B",
+      "Gemma 3 27B",
+      "OLMo 2 32B",
+      "Phi-4",
+      "Apertus 70B"
+     ]
+    },
+    {
+     "id": "moe",
+     "name": "Mixture-of-experts (MoE)",
+     "definition": "Feed-forward layers are split into many 'experts' and a learned router sends each token to a few of them, so only a fraction of the weights run per token (Shazeer et al., 2017; Switch Transformer, 2021). Two numbers therefore matter: total parameters (memory needed to hold the model) and active parameters (compute per token). Mixtral 8x7B has 47B total but 'only uses 13B active parameters'; DeepSeek-V3 has 671B total and 37B activated; Kimi K3.1 Pro has 2.8T total and 104B activated. Comparing a MoE's total count with a dense model's count overstates its per-token cost.",
+     "examples": [
+      "Mixtral 8x7B",
+      "DeepSeek-V3",
+      "Qwen3-235B-A22B",
+      "gpt-oss-120b",
+      "Llama 4 Maverick",
+      "Mistral Large 4"
+     ]
+    },
+    {
+     "id": "hybrid",
+     "name": "Hybrid / state-space / linear attention",
+     "definition": "Models that replace most quadratic self-attention layers with layers whose cost grows linearly with sequence length — selective state-space (Mamba) layers or linear-attention variants such as Gated DeltaNet, lightning attention or Kimi Delta Attention — keeping a few full-attention layers for exact recall. Mamba introduced selective state spaces (Gu & Dao, 2023); Jamba interleaved Transformer and Mamba blocks with MoE; Nemotron-H 'replace[s] the majority of self-attention layers… with Mamba layers'; Falcon-H1 runs attention and SSM heads in parallel; Qwen3-Next and Qwen3.8 use three Gated DeltaNet layers per gated-attention layer. The payoff is cheaper long-context inference. Sliding-window or compressed-attention schemes (Gemma, DeepSeek-V4) are still attention and are not counted here.",
+     "examples": [
+      "Jamba 1.5 Large",
+      "Nemotron-H 56B",
+      "Falcon-H1-34B",
+      "Qwen3-Next-80B-A3B",
+      "MiniMax-M1",
+      "Granite 4.0-H-Small",
+      "Kimi K3.1 Pro"
+     ]
+    },
+    {
+     "id": "diffusion",
+     "name": "Diffusion language model",
+     "definition": "Instead of emitting one token at a time left to right, the model starts from masked or noised text and refines many positions in parallel over several denoising steps. LLaDA (Nie et al., 2025) trained an 8B masked-diffusion model 'from scratch under the pre-training and SFT paradigm'; Inception's Mercury Coder is a commercial diffusion LLM reporting 1,109 tokens/s; Google showed Gemini Diffusion at I/O (May 2025) and released DiffusionGemma 26B A4B with open weights (June 2026), which denoises 256 tokens at a time. The main selling point is generation speed.",
+     "examples": [
+      "LLaDA 8B",
+      "Mercury Coder",
+      "Gemini Diffusion",
+      "DiffusionGemma 26B A4B"
+     ]
+    },
+    {
+     "id": "encoder",
+     "name": "Encoder-only and encoder–decoder (for contrast)",
+     "definition": "Pre-LLM-era Transformer designs that are not generative chat models in the modern sense. BERT is encoder-only: it reads the whole input bidirectionally ('jointly conditioning on both left and right context') and is fine-tuned for classification, retrieval or extraction. T5 is encoder–decoder: it 'converts all text-based language problems into a text-to-text format'. They survive in embeddings, rerankers and some translation systems; none of the generative models in the table uses them.",
+     "examples": [
+      "BERT (2018)",
+      "T5 (2019)"
+     ]
+    },
+    {
+     "id": "undisclosed",
+     "name": "Undisclosed",
+     "definition": "Closed developers usually do not publish architecture or size. Google disclosed that Gemini 1.5 Pro and Gemini 2.5 are sparse MoE Transformers but not their sizes; OpenAI, Anthropic and xAI publish neither. Report AI does not estimate parameter counts for closed models; third-party figures (e.g. Epoch's database values) are cited only as labelled estimates.",
+     "examples": [
+      "GPT-5",
+      "Claude Opus 5.5",
+      "Grok 4",
+      "Gemini 4 Argon"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "training_stage",
+   "name": "Training stage and reasoning behaviour",
+   "source": "Ouyang et al. 2022; DeepSeek-AI 2025; Qwen3 report; Anthropic",
+   "url": "https://arxiv.org/abs/2501.12948",
+   "categories": [
+    {
+     "id": "base",
+     "name": "Base (pretrained) model",
+     "definition": "The raw output of pre-training: a next-token predictor over a large corpus with no instruction following or safety tuning. Useful for research and as a starting point for fine-tunes. Open developers often publish base checkpoints next to tuned ones (Llama, Qwen, Gemma '-pt', OLMo, Nemotron-H base-only); closed developers essentially never do.",
+     "examples": [
+      "Pythia-12B",
+      "Llama 3.1 405B (base)",
+      "Nemotron-H 56B Base",
+      "OLMo 2 32B"
+     ]
+    },
+    {
+     "id": "instruct",
+     "name": "Instruction-tuned / chat model",
+     "definition": "A base model further trained with supervised examples and preference optimisation (RLHF or variants) to follow instructions and converse. OpenAI's InstructGPT paper showed outputs from a 1.3B instruction-tuned model were preferred to those of the 175B base GPT-3. Answers come straight away, with no separate reasoning phase. In the table this is reasoning = 'none'.",
+     "examples": [
+      "GPT-4o",
+      "Claude 3.5 Sonnet",
+      "Llama 4 Maverick",
+      "Kimi K2"
+     ]
+    },
+    {
+     "id": "reasoning",
+     "name": "Reasoning ('thinking') model",
+     "definition": "Trained, usually with large-scale reinforcement learning on verifiable tasks, to produce a long chain of reasoning before the final answer, trading inference compute ('test-time compute') for accuracy. DeepSeek-R1 showed reasoning 'can be incentivized through pure reinforcement learning'; Snell et al. (2024) found scaling test-time compute can beat scaling parameters. In the table, 'reasoning' means the model always reasons (effort may be adjustable but cannot be turned off).",
+     "examples": [
+      "o1",
+      "o3",
+      "DeepSeek-R1",
+      "Gemini 2.5 Pro",
+      "Claude Opus 5.5",
+      "Qwen3.8-2.4T-A95B"
+     ]
+    },
+    {
+     "id": "hybrid_reasoning",
+     "name": "Hybrid reasoning (toggle or budget)",
+     "definition": "One set of weights that can either answer immediately or think first, controlled by a switch or a thinking-token budget. Anthropic called Claude 3.7 Sonnet 'the first hybrid reasoning model on the market' (Feb 2025); Qwen3 integrated 'thinking mode… and non-thinking mode… into a unified framework' with a thinking budget; Gemini 2.5 Flash is Google's 'hybrid reasoning model with a controllable thinking budget'.",
+     "examples": [
+      "Claude 3.7 Sonnet",
+      "Qwen3-235B-A22B",
+      "DeepSeek-V3.1",
+      "Gemini 2.5 Flash",
+      "Gemma 4",
+      "Claude Haiku 5.5"
+     ]
+    },
+    {
+     "id": "agentic",
+     "name": "Agentic / tool-use-trained",
+     "definition": "A training emphasis rather than a separate mode: post-training on multi-step tasks in which the model calls tools, browses, runs code or operates a terminal, often with RL in real or simulated environments. Kimi K2 used 'a large-scale agentic data synthesis pipeline and a joint reinforcement learning stage'; gpt-oss was optimised for 'deep research browsing, python tool use'; Jais 3 is trained to 'call tools and Model Context Protocol (MCP) servers, operate a terminal'. Recorded in the table as agentic_trained = true only where the developer says so.",
+     "examples": [
+      "Kimi K2",
+      "GLM-4.5",
+      "MiniMax-M2",
+      "gpt-oss-120b",
+      "Jais-3-375B-A23B",
+      "Nemotron 3 Nano"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "openness",
+   "name": "Openness",
+   "source": "Open Source Initiative, Open Source AI Definition 1.0 (Oct 2024); model licences",
+   "url": "https://opensource.org/ai/open-source-ai-definition",
+   "categories": [
+    {
+     "id": "closed",
+     "name": "Closed (API / hosted only)",
+     "definition": "Weights are not released; access is through the developer's app or API, sometimes further restricted (Claude Mythos 5 to vetted partners; Muse Spark to a private API preview; Apple's on-device model only inside Apple's framework). The developer can change, rate-limit or retire the model (Claude 3 Opus was retired on 5 Jan 2026).",
+     "examples": [
+      "GPT-5",
+      "Claude Opus 5.5",
+      "Gemini 3 Pro",
+      "Grok 4",
+      "Muse Spark"
+     ]
+    },
+    {
+     "id": "open_weight",
+     "name": "Open-weight (with licence terms)",
+     "definition": "Trained parameters can be downloaded and run locally, but training data and full training code are not released, and the licence may restrict use. Permissive examples use OSI-approved licences (Apache 2.0: gpt-oss, Qwen3, Gemma 4; MIT: DeepSeek-R1, GLM). Restricted examples use custom terms: the Llama licences require a separate Meta licence above 700 million monthly active users; Gemma (before Gemma 4) used Gemma Terms of Use; Muse Spark Open, Mistral Large 4 and Kimi K3.1 Pro add model-as-a-service or attribution conditions; some are non-commercial (Mistral Research Licence, CC-BY-NC for Command A).",
+     "examples": [
+      "Llama 4 Maverick",
+      "DeepSeek-R1",
+      "gpt-oss-120b",
+      "Mistral Large 4",
+      "Kimi K3.1 Pro"
+     ]
+    },
+    {
+     "id": "open_source",
+     "name": "Open-source AI (OSAID 1.0 sense)",
+     "definition": "The Open Source Initiative's Open Source AI Definition 1.0 (released October 2024) requires the 'preferred form for making modifications': data information sufficient for 'a skilled person [to] build a substantially equivalent system', the complete training and inference code, and the parameters, under OSI-approved terms. In OSI's validation, Pythia, OLMo, Amber, CrystalCoder and T5 passed, while Llama 2, Grok, Phi-2 and Mixtral did not. The Linux Foundation's Model Openness Framework (used for IBM Granite's 'Class 3' badge) is a graded alternative. (OSI pages were read via search summaries only.)",
+     "examples": [
+      "Pythia-12B",
+      "OLMo 2 32B",
+      "Olmo 3 32B Think",
+      "Apertus 70B"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "modality",
+   "name": "Modality",
+   "source": "GPT-4 Technical Report; OpenAI GPT-4o announcement; Gemini 1.5 report; model cards",
+   "url": "https://arxiv.org/abs/2303.08774",
+   "categories": [
+    {
+     "id": "text",
+     "name": "Text-only",
+     "definition": "Text (and code) in, text out. Most open-weight LLMs through 2025 and many specialised models.",
+     "examples": [
+      "DeepSeek-R1",
+      "Qwen3-32B",
+      "Kimi K2",
+      "Llama 3.1 405B"
+     ]
+    },
+    {
+     "id": "vision_in",
+     "name": "Multimodal input (vision, sometimes audio/video)",
+     "definition": "Accepts images (and in some cases audio or video) alongside text but answers only in text. GPT-4 accepted 'image and text inputs and produce[d] text outputs'; Gemini 1.5 handled 'hours of video and audio'; most 2026 frontier models are in this class.",
+     "examples": [
+      "GPT-4",
+      "Claude Opus 5.5",
+      "Gemini 2.5 Pro",
+      "Llama 4 Scout",
+      "Muse Spark Open"
+     ]
+    },
+    {
+     "id": "omni",
+     "name": "'Omni' / native audio in and out",
+     "definition": "One network that takes and produces speech (and other media) natively instead of chaining separate speech-to-text and text-to-speech models. OpenAI said GPT-4o 'accepts as input any combination of text, audio, image, and video and generates any combination of text, audio, and image outputs', answering audio in as little as 232 ms.",
+     "examples": [
+      "GPT-4o"
+     ]
+    },
+    {
+     "id": "image_out",
+     "name": "Image output",
+     "definition": "Generates images as well as text from the same model family (as opposed to a separate diffusion image model). Google's Gemini 2.5 Flash Image and Gemini 3 Pro Image ('Nano Banana', 'Nano Banana Pro') list image and text output.",
+     "examples": [
+      "Gemini 3 Pro Image (Nano Banana Pro)",
+      "GPT-4o (image output, 2025)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "size",
+   "name": "Size / deployment class",
+   "source": "Epoch AI frontier-model definition; Belcak et al. (NVIDIA) 2025; Gemini 1.0 report; Apple 2025 report",
+   "url": "https://arxiv.org/abs/2506.02153",
+   "categories": [
+    {
+     "id": "frontier",
+     "name": "Frontier",
+     "definition": "Epoch AI defines frontier models as those 'in the top 5 by training compute at the time of their release'. Because Epoch has no compute estimate for most 2025–26 closed flagships, Report AI's table also counts a model as frontier if Epoch estimates it at ≥10^25 FLOP, or if it is the top-tier closed flagship of a developer with a ≥10^25 run on record (OpenAI, Anthropic, Google DeepMind, xAI, Meta). This rule is Report AI's (DERIVED).",
+     "examples": [
+      "GPT-6 Astra",
+      "Claude Opus 5.5",
+      "Gemini 4 Argon",
+      "Llama 3.1 405B",
+      "Kimi K3.1 Pro"
+     ]
+    },
+    {
+     "id": "large",
+     "name": "Large (≥100B total parameters, not frontier)",
+     "definition": "Open-weight models at or above 100B total parameters that do not meet the frontier rule. Most are MoE, so active parameters can be far smaller (gpt-oss-120b runs 5.1B per token).",
+     "examples": [
+      "DeepSeek-V4-Pro",
+      "Qwen3-235B-A22B",
+      "GLM-5",
+      "gpt-oss-120b"
+     ]
+    },
+    {
+     "id": "mid",
+     "name": "Mid-size (10B to <100B)",
+     "definition": "Models that fit on one or a few data-centre GPUs; the bulk of self-hosted enterprise deployments.",
+     "examples": [
+      "Gemma 3 27B",
+      "Qwen3-32B",
+      "Llama 3 70B",
+      "Apertus 70B"
+     ]
+    },
+    {
+     "id": "small",
+     "name": "Small language model (<10B)",
+     "definition": "There is no regulatory definition. NVIDIA researchers define an SLM functionally as one that 'can fit onto a common consumer electronic device and perform inference with latency sufficiently low to be practical', adding they would be 'comfortable with considering most models below 10bn parameters' SLMs as of 2025. Report AI uses <10B total parameters.",
+     "examples": [
+      "LLaDA 8B",
+      "LLM-jp-4.1 8B",
+      "Teuken-7B",
+      "Qwen3-Embedding-8B"
+     ]
+    },
+    {
+     "id": "on_device",
+     "name": "On-device",
+     "definition": "Designed and shipped to run locally on phones or laptops, typically 2–4B effective parameters with aggressive quantisation. Gemini Nano comes in '1.8B (Nano-1) and 3.25B (Nano-2)' versions, 4-bit quantised; Apple's 2025 on-device model is '~3B' with 2-bit quantisation-aware training; Phi-3-mini was billed as running 'locally on your phone'; Gemma 3n E4B runs 8B raw parameters at a 4B footprint.",
+     "examples": [
+      "Gemini Nano",
+      "Apple Foundation Model (on-device)",
+      "Phi-3-mini",
+      "Gemma 3n E4B"
+     ]
+    },
+    {
+     "id": "undisclosed_efficient",
+     "name": "Undisclosed (efficient tier)",
+     "definition": "Closed models sold as the fast/cheap tier whose size is not published (Haiku, Flash, Mercury). Classified by tier, not by parameters.",
+     "examples": [
+      "Claude Haiku 5.5",
+      "Gemini 2.5 Flash",
+      "Mercury Coder"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "specialisation",
+   "name": "Specialisation",
+   "source": "Model cards and papers",
+   "url": "https://arxiv.org/abs/2305.09617",
+   "categories": [
+    {
+     "id": "general",
+     "name": "General-purpose",
+     "definition": "Broad chat, writing, reasoning and coding ability; nearly all frontier models.",
+     "examples": [
+      "GPT-5",
+      "Claude Opus 5.5",
+      "Qwen3-235B-A22B"
+     ]
+    },
+    {
+     "id": "code",
+     "name": "Code",
+     "definition": "Trained or tuned mainly for programming and agentic coding.",
+     "examples": [
+      "Qwen3-Coder-480B-A35B",
+      "Mercury Coder"
+     ]
+    },
+    {
+     "id": "math",
+     "name": "Mathematics",
+     "definition": "Systems specialised for formal or competition mathematics. None is in the table; Report AI's models data cites DeepMind's AlphaProof (IMO 2024 silver standard, 28/42) as an example — a formal-proof system rather than a general LLM.",
+     "examples": [
+      "AlphaProof (not in table)"
+     ]
+    },
+    {
+     "id": "domain",
+     "name": "Domain (medical, legal, finance)",
+     "definition": "Tuned and evaluated for one professional domain. Med-PaLM 2 targeted medical question answering at USMLE level.",
+     "examples": [
+      "Med-PaLM 2"
+     ]
+    },
+    {
+     "id": "embedding",
+     "name": "Embedding / reranker",
+     "definition": "Output vectors (or relevance scores) instead of text, for search and retrieval-augmented generation. Qwen3 Embedding builds embedding and reranking models 'upon the Qwen3 foundation models'.",
+     "examples": [
+      "Qwen3-Embedding-8B"
+     ]
+    },
+    {
+     "id": "guard",
+     "name": "Safety / guard",
+     "definition": "Classifiers that label prompts and responses against a hazard taxonomy, deployed beside a chat model. Llama Guard 4 is 'a natively multimodal safety classifier with 12 billion parameters'.",
+     "examples": [
+      "Llama Guard 4 12B"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "compute",
+   "name": "Training-compute class (regulatory thresholds)",
+   "source": "EU AI Act Art. 51; US EO 14110 §4.2; California SB 53; New York RAISE Act; Epoch AI",
+   "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+   "categories": [
+    {
+     "id": "eu_1e25",
+     "name": "EU AI Act systemic-risk presumption: >10^25 FLOP",
+     "definition": "Under Article 51 of the EU AI Act (Regulation 2024/1689), a general-purpose AI model is presumed to have high-impact capabilities, and so 'systemic risk', when its cumulative training compute exceeds 10^25 floating-point operations; such providers must evaluate and red-team models, report serious incidents and ensure cybersecurity. Secondary sources report the 2026 Digital Omnibus deal (provisional agreement 7 May 2026) changed deadlines, not this threshold. (EUR-Lex was not reachable; MEDIUM.)",
+     "examples": [
+      "GPT-4 (2.1e25)",
+      "Llama 3.1 405B (3.8e25)",
+      "Mistral Large 4 (1.24e25)",
+      "Kimi K3.1 Pro (2e25, Epoch speculative)"
+     ]
+    },
+    {
+     "id": "us_1e26",
+     "name": "US federal 10^26 (EO 14110, rescinded)",
+     "definition": "Executive Order 14110 (30 Oct 2023) set interim reporting duties for models trained with more than 10^26 integer or floating-point operations (10^23 for models trained primarily on biological sequence data). It was rescinded on 20 January 2025; sources differ on whether EO 14148 or EO 14179 was the instrument. No federal compute threshold is in force as far as found.",
+     "examples": [
+      "Grok 3",
+      "GPT-4.5",
+      "Grok 4",
+      "GPT-6 Astra"
+     ]
+    },
+    {
+     "id": "ca_sb53",
+     "name": "California SB 53 (TFAIA): >10^26 incl. fine-tuning",
+     "definition": "California's Transparency in Frontier Artificial Intelligence Act, signed 29 Sep 2025 and in force since 1 Jan 2026, defines a 'frontier model' as one trained with more than 10^26 integer or floating-point operations, counting fine-tuning and later modifications; 'large frontier developers' (over $500M annual revenue) carry extra duties. New York's RAISE Act (final amendment signed 27 Mar 2026, effective 1 Jan 2027) uses 10^26 plus a >$100M compute-cost test.",
+     "examples": [
+      "GPT-6 Astra (9.4e26, Epoch)"
+     ]
+    },
+    {
+     "id": "below",
+     "name": "Below 10^25 or no public estimate",
+     "definition": "Most open-weight models, including very large MoEs, sit below 10^25 because active parameters, not total, drive training FLOP: DeepSeek-V4-Pro (1.6T total) is estimated at 9.7e24. Most 2025–26 closed flagships have no public estimate at all.",
+     "examples": [
+      "DeepSeek-V4-Pro (9.7e24)",
+      "Kimi K2 (3.0e24)",
+      "Claude Opus 5.5 (no estimate)"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "origin",
+   "name": "Origin / developer type",
+   "source": "Epoch AI 'Organization categorization'; Report AI Sovereign AI Index",
+   "url": "https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/",
+   "categories": [
+    {
+     "id": "big_tech",
+     "name": "Big tech",
+     "definition": "Large diversified technology firms building models in-house (Google, Meta, Microsoft, Apple, Alibaba, NVIDIA, IBM, LG).",
+     "examples": [
+      "Gemini",
+      "Llama / Muse",
+      "Qwen",
+      "Nemotron",
+      "K-EXAONE"
+     ]
+    },
+    {
+     "id": "ai_lab",
+     "name": "AI lab / startup",
+     "definition": "Companies whose main business is building models (OpenAI, Anthropic, xAI, Mistral, DeepSeek, Moonshot, Zhipu, MiniMax, Cohere, AI21, Inception, Thinking Machines, Sarvam).",
+     "examples": [
+      "GPT-5",
+      "Claude",
+      "DeepSeek-R1",
+      "Mistral Large 4"
+     ]
+    },
+    {
+     "id": "academic",
+     "name": "Academic / non-profit",
+     "definition": "Universities, public research institutes and non-profits, which dominate fully open (OSAID-style) releases.",
+     "examples": [
+      "Pythia (EleutherAI)",
+      "OLMo (Ai2)",
+      "Apertus (Swiss AI)",
+      "LLM-jp (NII)"
+     ]
+    },
+    {
+     "id": "government",
+     "name": "Government / sovereign",
+     "definition": "State-owned or state-funded developers building national-language or 'sovereign' models; the concept, and 58 model families by country, are covered in Report AI's Sovereign AI Index. Many sovereign models are adapted from foreign open weights rather than trained from scratch (Counterpoint: 56% of sovereign LLMs). The table flags in_sovereign_ai_index for families listed there.",
+     "examples": [
+      "Falcon (TII, UAE)",
+      "Teuken (OpenGPT-X, Germany)",
+      "Jais 3 (UAE)",
+      "Sarvam-105B (India)"
+     ]
+    }
+   ]
+  }
+ ],
+ "models": [
+  {
+   "name": "GPT-4",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2023-03",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 8192,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 2.1e+25,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2303.08774",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://openrouter.ai/api/v1/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Modalities and date from the GPT-4 Technical Report (image+text in, text out). Architecture and size undisclosed by OpenAI; Epoch's CSV stores a rumoured 1.8T parameters that Epoch itself labels a rumour, so total_params is null. Context 8,192 (OpenRouter listing, MEDIUM); a 32K variant also existed.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2023
+  },
+  {
+   "name": "GPT-4o",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2024-05",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text",
+    "audio",
+    "image"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.81e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://openai.com/index/hello-gpt-4o/",
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "'Omni' model: OpenAI's launch post says it accepts any mix of text, audio, image and video and generates text, audio and image (read via search summary; openai.com blocked). At launch only text+image in and text out were enabled. Compute is from Epoch's 1e25 dataset; Epoch's main database has no point estimate.",
+   "modality_class": "omni (audio in/out)",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2024
+  },
+  {
+   "name": "o1",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2024-12",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv",
+    "https://artificialanalysis.ai/models/comparisons/grok-4-vs-o1"
+   ],
+   "confidence": "MEDIUM",
+   "note": "o1-preview released Sep 2024 (128K context); full o1 Dec 2024 (200K). Epoch lists o1 among models it believes exceed 1e25 FLOP but gives no point estimate. First widely deployed 'test-time compute' reasoning model.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e25 per Epoch assessment (no point estimate)",
+   "architecture_family": "undisclosed",
+   "release_year": 2024
+  },
+  {
+   "name": "o3",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Announced as a preview Dec 2024; released 16 Apr 2025 (Artificial Analysis/OpenRouter dates). Epoch: believed >1e25, no point estimate.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e25 per Epoch assessment (no point estimate)",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "GPT-4.5",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-02",
+   "openness": "closed",
+   "licence": "proprietary (API, retired from API Jul 2025)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.8e+26,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://en.wikipedia.org/wiki/GPT-4.5",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Released 27 Feb 2025. NYT (via Wikipedia) called it OpenAI's last chatbot without chain-of-thought reasoning. Epoch's main database: 3.8e26 (Likely); its older 1e25 CSV shows 2.1e26 (Speculative) — the database value is newer.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "GPT-5",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-08",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed (routed system)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 400000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 6.6e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://en.wikipedia.org/wiki/GPT-5",
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Launched 7 Aug 2025. Wikipedia describes GPT-5 as a system of a fast model, a deeper reasoning model and a real-time router — classed hybrid at the product level. Epoch: 6.6e25 (Speculative); not in Epoch's top-5 'frontier' set because Grok 3/4 and GPT-4.5 were larger.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "GPT-5.5",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-04",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1050000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Likely (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://artificialanalysis.ai/leaderboards/models",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "23 Apr 2026 (Epoch/Artificial Analysis). Reasoning-effort levels exposed; whether reasoning can be fully disabled was not verified.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "GPT-6 Astra",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-09",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1050000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 9.4e+26,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://openrouter.ai/api/v1/models",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "MEDIUM",
+   "note": "3 Sep 2026. Largest training-compute estimate in Epoch's database (9.4e26 FLOP, Likely; CI ~5e26–2e27 per site history notes). Every Artificial Analysis variant (low→max) is a reasoning variant.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "GPT-6 Sol",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-09",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1050000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "22 Sep 2026, OpenAI's default flagship tier (site page 3441 prices it at $2/$10). Classed frontier under the closed-flagship rule; no Epoch compute estimate.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "gpt-oss-120b",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-08",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 116.8,
+   "active_params_b": 5.1,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 4.94e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "openai/gpt-oss-120b",
+   "sources": [
+    "https://huggingface.co/openai/gpt-oss-120b",
+    "https://arxiv.org/abs/2508.10925",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "OpenAI's first open-weight LLM since GPT-2. 128 experts, 4 active per token; alternating sliding/full attention. Low/medium/high reasoning effort (cannot be switched off).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "gpt-oss-20b",
+   "developer": "OpenAI",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-08",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 20.9,
+   "active_params_b": 3.6,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 5.49e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "openai/gpt-oss-20b",
+   "sources": [
+    "https://huggingface.co/openai/gpt-oss-20b",
+    "https://arxiv.org/abs/2508.10925",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "32 experts, 4 active. Most-downloaded OpenAI repo on Hugging Face (109.6M all-time downloads at 15 Nov 2026).",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Claude 3 Opus",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2024-03",
+   "openness": "closed",
+   "licence": "proprietary (API; retired 5 Jan 2026)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 1.64e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-3-family",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Launch post (4 Mar 2024): 200K context at launch, inputs over 1M tokens possible for select customers; vision input. Compute imputed by Epoch from benchmarks.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2024
+  },
+  {
+   "name": "Claude 3.5 Sonnet",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2024-06",
+   "openness": "closed",
+   "licence": "proprietary (API; retired 28 Oct 2025)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 2.7e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-3-5-sonnet",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Launch post dated 21 Jun 2024 (Epoch dates it 20 Jun): $3/$15 per M tokens, 200K context.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2024
+  },
+  {
+   "name": "Claude 3.7 Sonnet",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-02",
+   "openness": "closed",
+   "licence": "proprietary (API; retired 19 Feb 2026)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.35e+25,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-3-7-sonnet",
+    "https://platform.claude.com/docs/en/about-claude/model-deprecations",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Anthropic called it 'the first hybrid reasoning model on the market' (24 Feb 2025): near-instant answers or visible extended thinking with a user-set budget. Context 200K not restated on the pages opened (MEDIUM).",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Claude Opus 4",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-05",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": true,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-4",
+    "https://platform.claude.com/docs/en/about-claude/models/overview",
+    "https://epoch.ai/data-insights/models-over-1e25-flop"
+   ],
+   "confidence": "HIGH",
+   "note": "22 May 2025; 'hybrid reasoning models' with tool use during extended thinking. Epoch's 1e25 page text gives a 1.5e26 speculative estimate for Opus 4 but its CSV/database store no value, so training_compute_flop is null.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e25 per Epoch assessment (no point estimate)",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Claude Opus 4.5",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-11",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 200000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": true,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-opus-4-5",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+   ],
+   "confidence": "HIGH",
+   "note": "24 Nov 2025; effort parameter; 200K context and 64K max output per Anthropic's model table.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Claude Fable 5",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-06",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-fable-5-mythos-5",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+   ],
+   "confidence": "HIGH",
+   "note": "Launched 9 Jun 2026; suspended 12 Jun under a US export-control directive and restored 1 Jul (not 'withdrawn' — see site followups E). 1M context, $10/$50. Reasoning class MEDIUM: Anthropic documents 'Adaptive (always on)' thinking for the current Fable 5.2; Fable 5 itself not separately stated.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Claude Mythos 5",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-06",
+   "openness": "closed",
+   "licence": "proprietary (restricted trusted access)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-fable-5-mythos-5",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+   ],
+   "confidence": "HIGH",
+   "note": "Same launch as Fable 5; Anthropic: 'restricted to Glasswing partners (with cyber safeguards lifted)' and select biology researchers. Example of an access tier below 'API for everyone'. Epoch classes it 'Unreleased'.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Claude Opus 5.5",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-09",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-opus-5-5",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+   ],
+   "confidence": "HIGH",
+   "note": "22 Sep 2026; $4/$20; 1M context (fills the gap models.json lists as 'not confirmed'); thinking 'Adaptive (always on)', default effort medium.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Claude Haiku 5.5",
+   "developer": "Anthropic",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-10",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://www.anthropic.com/news/claude-haiku-5-5",
+    "https://platform.claude.com/docs/en/about-claude/models/overview"
+   ],
+   "confidence": "HIGH",
+   "note": "7 Oct 2026; from $0.10/$0.50; thinking 'Adaptive' (not always on), so classed hybrid.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Gemini 1.5 Pro",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-02",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "MoE (sparse, size undisclosed)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 1.58e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2403.05530",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: 'a sparse mixture-of-expert (MoE) Transformer-based model'; near-perfect retrieval to at least 10M tokens in research. Production window 1M at launch, 2M from mid-2024 (MEDIUM).",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "MoE",
+   "release_year": 2024
+  },
+  {
+   "name": "Gemini 2.0 Flash",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-12",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "MoE (sparse, size undisclosed)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2507.06261",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Gemini 2.5 report calls 2.0 Flash a 'fast and cost-efficient non-thinking model' (HIGH). MoE attribution is inferred from the report's 'Gemini 2.5 models are sparse MoE' and 2.X family framing (MEDIUM). Native image/audio output was experimental only.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2024
+  },
+  {
+   "name": "Gemini 2.5 Pro",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-03",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "MoE (sparse, size undisclosed)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1048576,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2507.06261",
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: 'Gemini 2.5 models are sparse mixture-of-experts (MoE) transformers'; 2.5 Pro 'is a thinking model'. Preview 25 Mar 2025, GA Jun 2025. Context from OpenRouter (MEDIUM).",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e25 per Epoch assessment (no point estimate)",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemini 2.5 Flash",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "MoE (sparse, size undisclosed)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1048576,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2507.06261",
+    "https://openrouter.ai/api/v1/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: 'our hybrid reasoning model with a controllable thinking budget'.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemini 3 Pro",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-11",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "MEDIUM",
+   "note": "18 Nov 2025 (Epoch, Artificial Analysis). Google pages blocked from this environment; context and modalities per site models.json and aggregator listings.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemini 4 Argon",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2026-09",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 1048576,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://openrouter.ai/api/v1/models",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://computingforgeeks.com/gemini-4-argon-released-features-benchmarks/"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Announced 30 Sep 2026 (initially cyber defenders only), broadly available 13 Oct 2026 (Epoch uses 13 Oct). Thinking levels low/medium/high (secondary). Later siblings: Gemini 4 Carbon (10 Nov) and Hydrogen (12 Nov).",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Gemini Nano",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2023-12",
+   "openness": "closed",
+   "licence": "proprietary (on-device via Android)",
+   "licence_class": "closed",
+   "architecture": "undisclosed (distilled, 4-bit quantised)",
+   "total_params_b": 3.25,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "on-device",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2312.11805",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Gemini 1.0 report: 'two versions of Nano, with 1.8B (Nano-1) and 3.25B (Nano-2) parameters', distilled and 4-bit quantised for on-device use. total_params shows Nano-2. Architecture family not stated in the report. Input modalities per Epoch (MEDIUM).",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2023
+  },
+  {
+   "name": "Gemini Diffusion",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-05",
+   "openness": "closed",
+   "licence": "experimental demo (waitlist)",
+   "licence_class": "closed",
+   "architecture": "diffusion",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://blog.google/technology/google-deepmind/gemini-diffusion/",
+    "https://fortune.com/2025/05/21/gemini-diffusion-google-io-sleeper-hit-blazing-speed-ai-model-wars/"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Announced at Google I/O on 20 May 2025 as an experimental text-diffusion model; ~1,000–2,000 tokens/s reported. Not generally released. Its open successor line is DiffusionGemma.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "diffusion",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemma 2 27B",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-06",
+   "openness": "open-weight",
+   "licence": "Gemma Terms of Use",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 27.2,
+   "active_params_b": null,
+   "context_tokens": 8192,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 2.106e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "google/gemma-2-27b",
+   "sources": [
+    "https://huggingface.co/google/gemma-2-27b",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Context 8,192 not on the gated card excerpt read (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Gemma 3 27B",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-03",
+   "openness": "open-weight",
+   "licence": "Gemma Terms of Use",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 27.4,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 2.268e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "google/gemma-3-27b-pt",
+   "sources": [
+    "https://huggingface.co/google/gemma-3-27b-pt",
+    "https://arxiv.org/abs/2503.19786",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: vision understanding and 'at least 128K' context; higher local:global attention ratio to cut KV-cache memory.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemma 3n E4B",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-06",
+   "openness": "open-weight",
+   "licence": "Gemma Terms of Use",
+   "licence_class": "restricted",
+   "architecture": "dense (MatFormer, selective parameter activation)",
+   "total_params_b": 7.85,
+   "active_params_b": 4.0,
+   "context_tokens": 32000,
+   "input_modalities": [
+    "text",
+    "image",
+    "audio",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "on-device",
+   "specialisation": "general",
+   "training_compute_flop": 5.181e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "google/gemma-3n-E4B",
+   "sources": [
+    "https://huggingface.co/google/gemma-3n-E4B",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "8B raw parameters run at a 4B 'effective' memory footprint (active_params here = Google's 'effective' size, not MoE routing). Audio input encoded at 6.25 tokens/s; 32K total input.",
+   "modality_class": "multimodal input",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Gemma 4 26B A4B",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2026-04",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 25.2,
+   "active_params_b": 3.8,
+   "context_tokens": 256000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "google/gemma-4-26B-A4B-it",
+   "sources": [
+    "https://huggingface.co/google/gemma-4-26B-A4B-it",
+    "https://arxiv.org/abs/2607.02770",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Gemma moved from its own Terms of Use to Apache 2.0 with Gemma 4 (2 Apr 2026). Configurable thinking mode. Family spans 2.3B effective to 31B dense.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "DiffusionGemma 26B A4B",
+   "developer": "Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2026-06",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "diffusion (MoE backbone)",
+   "total_params_b": 25.2,
+   "active_params_b": 3.8,
+   "context_tokens": 256000,
+   "input_modalities": [
+    "text",
+    "image",
+    "video"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "google/diffusiongemma-26B-A4B-it",
+   "sources": [
+    "https://huggingface.co/google/diffusiongemma-26B-A4B-it",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: built on the Gemma 4 26B A4B MoE architecture but 'generates tokens using discrete diffusion', denoising 256 tokens in parallel; >1,100 tokens/s per user on H100 claimed. First open-weight diffusion LLM from a frontier lab in this table.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "diffusion",
+   "release_year": 2026
+  },
+  {
+   "name": "Med-PaLM 2",
+   "developer": "Google Research / Google DeepMind",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2023-05",
+   "openness": "closed",
+   "licence": "not released (limited testing)",
+   "licence_class": "closed",
+   "architecture": "undisclosed (PaLM 2-based)",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "domain: medical",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Likely (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2305.09617",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Medical question-answering LLM (USMLE-style). Epoch stores 340B parameters labelled 'Likely' — Google has not confirmed it, so total_params is null. size_class uses the 'undisclosed' bucket.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2023
+  },
+  {
+   "name": "Llama 2 70B",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2023-07",
+   "openness": "open-weight",
+   "licence": "Llama 2 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 69.0,
+   "active_params_b": null,
+   "context_tokens": 4096,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 8.1e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Llama-2-70b-hf",
+   "sources": [
+    "https://huggingface.co/meta-llama/Llama-2-70b-hf",
+    "https://arxiv.org/abs/2307.09288",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Licence requires a separate Meta licence above 700M monthly active users. 69.0B from safetensors (marketed as 70B). Context 4,096 (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2023
+  },
+  {
+   "name": "Llama 3 70B",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-04",
+   "openness": "open-weight",
+   "licence": "Meta Llama 3 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 70.6,
+   "active_params_b": null,
+   "context_tokens": 8192,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 7.861e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Meta-Llama-3-70B",
+   "sources": [
+    "https://huggingface.co/meta-llama/Meta-Llama-3-70B",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Context 8,192 (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Llama 3.1 405B",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-07",
+   "openness": "open-weight",
+   "licence": "Llama 3.1 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 405.9,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.8e+25,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Llama-3.1-405B",
+   "sources": [
+    "https://huggingface.co/meta-llama/Llama-3.1-405B",
+    "https://arxiv.org/abs/2407.21783",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Paper: 'a dense Transformer with 405B parameters and a context window of up to 128K tokens'. Largest open-weight training run until 2025 and the only open-weight model in Epoch's original 1e25 list with a restricted licence.",
+   "modality_class": "text-only",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Llama 4 Scout",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "Llama 4 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 109,
+   "active_params_b": 17,
+   "context_tokens": 10000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 4.08e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Llama-4-Scout-17B-16E",
+   "sources": [
+    "https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 17B activated / 109B total, 16 experts, 10M-token context, ~40T training tokens, release 5 Apr 2025. Largest advertised context of any model in this table.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Llama 4 Maverick",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "Llama 4 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 400,
+   "active_params_b": 17,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 2.244e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Llama-4-Maverick-17B-128E",
+   "sources": [
+    "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 17B activated / 400B total, 128 experts, 1M context. Last 'Llama'-branded flagship: no Llama 5 repository exists under meta-llama on Hugging Face (checked 15 Nov 2026).",
+   "modality_class": "multimodal input",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Llama Guard 4 12B",
+   "developer": "Meta",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "Llama 4 Community Licence",
+   "licence_class": "restricted",
+   "architecture": "dense (pruned from Llama 4 Scout)",
+   "total_params_b": 12.0,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "safety/guard",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-llama/Llama-Guard-4-12B",
+   "sources": [
+    "https://huggingface.co/meta-llama/Llama-Guard-4-12B"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 'a natively multimodal safety classifier with 12 billion parameters'; classifies prompts and responses; dense, pruned from Llama 4 Scout.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Muse Spark",
+   "developer": "Meta (Meta Superintelligence Labs)",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2026-04",
+   "openness": "closed",
+   "licence": "proprietary (private API preview)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": null,
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://www.bloomberg.com/news/articles/2026-04-08/meta-debuts-first-ai-model-from-prized-superintelligence-group",
+    "https://the-decoder.com/metas-muse-spark-is-its-first-frontier-model-and-its-first-without-open-weights/"
+   ],
+   "confidence": "MEDIUM",
+   "note": "8 Apr 2026: first model from Meta Superintelligence Labs and Meta's first frontier model without open weights (Bloomberg, The Decoder). This — not a 'Llama 5' — is Meta's 8 Apr 2026 release. Reasoning mode not verified (null).",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "undisclosed",
+   "release_year": 2026
+  },
+  {
+   "name": "Muse Spark Open",
+   "developer": "Meta (Meta Superintelligence Labs)",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2026-10",
+   "openness": "open-weight",
+   "licence": "Muse Model License",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 816,
+   "active_params_b": 42,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image",
+    "video",
+    "audio"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "meta-models/Muse-Spark-Open-816B-A42B",
+   "sources": [
+    "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://openrouter.ai/api/v1/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 816B total / 42B active, 1M context, text+image+video+audio in, text out, release 15 Oct 2026. Licence requires 'Built with Muse Spark Open' attribution and a separate licence for model-as-a-service businesses above $20M revenue. Reasoning class MEDIUM (effort levels; Artificial Analysis lists only reasoning variants).",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "Mixtral 8x7B",
+   "developer": "Mistral AI",
+   "developer_type": "ai_lab",
+   "country": "France",
+   "release": "2023-12",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 46.7,
+   "active_params_b": 12.9,
+   "context_tokens": 32768,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 7.74e+23,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "mistralai/Mixtral-8x7B-v0.1",
+   "sources": [
+    "https://huggingface.co/mistralai/Mixtral-8x7B-v0.1",
+    "https://arxiv.org/abs/2401.04088",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Paper: 'each token has access to 47B parameters, but only uses 13B active parameters'; 8 experts, 2 per token. The open MoE that popularised total-vs-active counts. OSI listed Mixtral among models that did not pass its OSAID validation.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "MoE",
+   "release_year": 2023
+  },
+  {
+   "name": "Mistral Large 2",
+   "developer": "Mistral AI",
+   "developer_type": "ai_lab",
+   "country": "France",
+   "release": "2024-07",
+   "openness": "open-weight",
+   "licence": "Mistral AI Research Licence (non-commercial)",
+   "licence_class": "non-commercial",
+   "architecture": "dense",
+   "total_params_b": 122.6,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 2.13e+25,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI 'Models over 1e25 FLOP' dataset (CSV updated 21 Nov 2025)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "mistralai/Mistral-Large-Instruct-2407",
+   "sources": [
+    "https://huggingface.co/mistralai/Mistral-Large-Instruct-2407",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "In Epoch's 1e25 list (2.13e25, Likely) — one of only three open-weight models there. Commercial use needs a separate licence.",
+   "modality_class": "text-only",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Mistral Small 3",
+   "developer": "Mistral AI",
+   "developer_type": "ai_lab",
+   "country": "France",
+   "release": "2025-01",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 23.6,
+   "active_params_b": null,
+   "context_tokens": 32768,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 1.152e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "mistralai/Mistral-Small-24B-Base-2501",
+   "sources": [
+    "https://huggingface.co/mistralai/Mistral-Small-24B-Base-2501",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Magistral Small",
+   "developer": "Mistral AI",
+   "developer_type": "ai_lab",
+   "country": "France",
+   "release": "2025-06",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 23.6,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "mistralai/Magistral-Small-2506",
+   "sources": [
+    "https://huggingface.co/mistralai/Magistral-Small-2506",
+    "https://arxiv.org/abs/2506.10910",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Mistral Small 3.1 plus SFT on Magistral Medium traces and RL; card warns quality may degrade past 40K of its 128K window.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Mistral Large 4",
+   "developer": "Mistral AI",
+   "developer_type": "ai_lab",
+   "country": "France",
+   "release": "2026-10",
+   "openness": "open-weight",
+   "licence": "Mistral Ecosystem Open-Weight Licence (modified MIT)",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 1000,
+   "active_params_b": 49,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 1.24e+25,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "mistralai/Mistral-Large-4-1T-A52B",
+   "sources": [
+    "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: ~1T total, 49B active (52B incl. embeddings), 128 routed experts (4 active) + 1 shared, 1M context, low/medium/high reasoning effort plus instruct use. API preview 6 Oct, weights 29 Oct 2026. Model-as-a-service operators need a commercial licence.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "DeepSeek-V3",
+   "developer": "DeepSeek",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2024-12",
+   "openness": "open-weight",
+   "licence": "DeepSeek Model Licence (code MIT)",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 671,
+   "active_params_b": 37,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 3.3e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "deepseek-ai/DeepSeek-V3",
+   "sources": [
+    "https://huggingface.co/deepseek-ai/DeepSeek-V3",
+    "https://arxiv.org/abs/2412.19437",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: 671B total, 37B activated, 14.8T tokens, 2.788M H800 GPU-hours for full training. Model licence permits commercial use with use restrictions.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2024
+  },
+  {
+   "name": "DeepSeek-R1",
+   "developer": "DeepSeek",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-01",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 671,
+   "active_params_b": 37,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 3.3e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "deepseek-ai/DeepSeek-R1",
+   "sources": [
+    "https://huggingface.co/deepseek-ai/DeepSeek-R1",
+    "https://arxiv.org/abs/2501.12948",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Reasoning 'incentivised through pure reinforcement learning'; the open-weight counterpart to o1 that triggered the 2025 shift to open reasoning models.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "DeepSeek-V3.1",
+   "developer": "DeepSeek",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-08",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 671,
+   "active_params_b": 37,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 3.594e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "deepseek-ai/DeepSeek-V3.1",
+   "sources": [
+    "https://huggingface.co/deepseek-ai/DeepSeek-V3.1",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 'a hybrid model that supports both thinking mode and non-thinking mode'; tool calls and a search-agent format.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "DeepSeek-V4-Pro",
+   "developer": "DeepSeek",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2026-04",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 1600,
+   "active_params_b": 49,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 9.702e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "deepseek-ai/DeepSeek-V4-Pro",
+   "sources": [
+    "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro",
+    "https://arxiv.org/abs/2606.19348",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "1.6T total / 49B activated, 1M context, hybrid compressed-sparse attention (still attention, so architecture = MoE); Non-think / Think High / Think Max modes. Epoch's 9.7e24 sits just under 1e25.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "Qwen2.5-72B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2024-09",
+   "openness": "open-weight",
+   "licence": "Qwen Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 72.7,
+   "active_params_b": null,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 7.8e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen2.5-72B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen2.5-72B",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Flagship 72B kept a custom Qwen licence while smaller Qwen2.5 sizes were Apache 2.0.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Qwen3-235B-A22B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 235,
+   "active_params_b": 22,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 4.752e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3-235B-A22B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3-235B-A22B",
+    "https://arxiv.org/abs/2505.09388",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "32,768 native, 131,072 with YaRN. Qwen3 report: thinking and non-thinking modes 'into a unified framework' plus a thinking budget.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Qwen3-32B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 32.8,
+   "active_params_b": null,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 7.0848e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3-32B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3-32B",
+    "https://arxiv.org/abs/2505.09388",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Dense sibling of the Qwen3 MoE models; same hybrid thinking switch.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Qwen3-Next-80B-A3B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2025-09",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "hybrid linear-attention + MoE",
+   "total_params_b": 81.3,
+   "active_params_b": 3,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 2.7e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3-Next-80B-A3B-Instruct",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 'Gated DeltaNet and Gated Attention' hybrid (3 linear-attention layers per full-attention layer), 512 experts with 10 active, 262K native context extensible to ~1M. Instruct checkpoint is non-thinking; a separate Thinking checkpoint exists.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "Qwen3-Coder-480B-A35B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2025-07",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 480,
+   "active_params_b": 35,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "code",
+   "training_compute_flop": 1.575e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3-Coder-480B-A35B-Instruct",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: non-thinking only; agentic-coding model.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Qwen3-Embedding-8B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2025-06",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 7.57,
+   "active_params_b": null,
+   "context_tokens": 32000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "embedding"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "small",
+   "specialisation": "embedding/reranker",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3-Embedding-8B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3-Embedding-8B",
+    "https://arxiv.org/abs/2506.05176"
+   ],
+   "confidence": "HIGH",
+   "note": "Built on Qwen3-8B-Base; outputs vectors, not text (Hugging Face pipeline: feature-extraction). Sibling reranker models exist.",
+   "modality_class": "text-only (embedding output)",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Qwen3.8-27B",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2026-08",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "hybrid linear-attention (dense)",
+   "total_params_b": 27.8,
+   "active_params_b": null,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3.8-27B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3.8-27B",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 16 × (3 Gated DeltaNet + 1 Gated Attention) layout, dense FFN; thinking on by default and can be disabled. 22.9M all-time Hugging Face downloads by 15 Nov 2026.",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2026
+  },
+  {
+   "name": "Qwen3.8-2.4T-A95B (Qwen3.8-Max base)",
+   "developer": "Alibaba (Qwen)",
+   "developer_type": "big_tech",
+   "country": "China",
+   "release": "2026-08",
+   "openness": "open-weight",
+   "licence": "Qwen3.8-Max licence (custom)",
+   "licence_class": "restricted",
+   "architecture": "hybrid linear-attention + MoE",
+   "total_params_b": 2446,
+   "active_params_b": 95,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "Qwen/Qwen3.8-2.4T-A95B",
+   "sources": [
+    "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://openrouter.ai/api/v1/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Second-largest total parameter count in this table (after Kimi K3.1 Pro, 2.78T). Card: 'requires thinking mode for all interactions… thinking cannot be disabled'; text-only. The hosted Qwen3.8-Max (API, closed) adds vision, non-thinking and 1M context on top of these weights.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2026
+  },
+  {
+   "name": "Kimi K2",
+   "developer": "Moonshot AI",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-07",
+   "openness": "open-weight",
+   "licence": "Modified MIT",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 1026,
+   "active_params_b": 32,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 2.976e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "moonshotai/Kimi-K2-Instruct",
+   "sources": [
+    "https://huggingface.co/moonshotai/Kimi-K2-Instruct",
+    "https://arxiv.org/abs/2507.20534",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report: 32B activated / 1T total, MuonClip optimiser, 15.5T tokens, large-scale agentic data synthesis and joint RL; best open 'non-thinking' model at release. Modified MIT adds an attribution duty for very large deployments.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Kimi K3.1 Pro",
+   "developer": "Moonshot AI",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2026-10",
+   "openness": "open-weight",
+   "licence": "Kimi K3.1 Pro Licence (custom)",
+   "licence_class": "restricted",
+   "architecture": "hybrid linear-attention + MoE",
+   "total_params_b": 2780,
+   "active_params_b": 104,
+   "context_tokens": 1048576,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 2.0001e+25,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "moonshotai/Kimi-K3.1-Pro",
+   "sources": [
+    "https://huggingface.co/moonshotai/Kimi-K3.1-Pro",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 2.8T total / 104B activated, 896 experts (16 selected), 69 Kimi Delta Attention + 24 gated MLA layers, 1M context, MXFP4 QAT. API 23 Oct, weights on Hugging Face 2 Nov 2026. Largest total parameter count in this table. Highest-scoring open-weight model on Artificial Analysis v5.0.1 (46.5) on 15 Nov 2026. Licence: commercial use allowed; MaaS operators above $20M revenue / products above 100M MAU face extra terms. Epoch labels Kimi K3 'non-commercial', which the K3 licence text does not support.",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2026
+  },
+  {
+   "name": "GLM-4.5",
+   "developer": "Zhipu AI (Z.ai)",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-07",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 358,
+   "active_params_b": 32,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 4.42e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "zai-org/GLM-4.5",
+   "sources": [
+    "https://huggingface.co/zai-org/GLM-4.5",
+    "https://arxiv.org/abs/2508.06471",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "355B total / 32B activated; 'hybrid reasoning method that supports both thinking and direct response modes'; agentic/reasoning/coding focus. GLM-4.6 (Sep 2025) kept the architecture and raised context to 200K.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "GLM-5",
+   "developer": "Zhipu AI (Z.ai)",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2026-02",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 754,
+   "active_params_b": 40,
+   "context_tokens": 202752,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": null,
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 6.84e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "zai-org/GLM-5",
+   "sources": [
+    "https://huggingface.co/zai-org/GLM-5",
+    "https://arxiv.org/abs/2602.15763",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 744B total / 40B active (754B in safetensors incl. extra layers), 28.5T tokens, DeepSeek Sparse Attention. Reasoning mode not verified (null). Site page 954 says trained on Huawei Ascend (not checked here).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "MiniMax-M1",
+   "developer": "MiniMax",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-06",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "hybrid linear-attention + MoE",
+   "total_params_b": 456,
+   "active_params_b": 45.9,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 4.324e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "MiniMaxAI/MiniMax-M1-80k",
+   "sources": [
+    "https://huggingface.co/MiniMaxAI/MiniMax-M1-80k",
+    "https://arxiv.org/abs/2506.13585",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'The world's first open-weight, large-scale hybrid-attention reasoning model' (lightning attention); 1M native context.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "MiniMax-M2",
+   "developer": "MiniMax",
+   "developer_type": "ai_lab",
+   "country": "China",
+   "release": "2025-10",
+   "openness": "open-weight",
+   "licence": "Modified MIT",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 228.7,
+   "active_params_b": 10,
+   "context_tokens": 196608,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "MiniMaxAI/MiniMax-M2",
+   "sources": [
+    "https://huggingface.co/MiniMaxAI/MiniMax-M2",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "10B activated / 230B total; full attention in every layer (config), i.e. MiniMax dropped M1's hybrid attention. Card: 'an interleaved thinking model' built for agent loops.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2025
+  },
+  {
+   "name": "Grok-1",
+   "developer": "xAI (now SpaceX Super Intelligence)",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2023-11",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 314,
+   "active_params_b": null,
+   "context_tokens": 8192,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 2.9e+24,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "xai-org/grok-1",
+   "sources": [
+    "https://huggingface.co/xai-org/grok-1",
+    "https://en.wikipedia.org/wiki/Grok_(chatbot)",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "Chatbot launched Nov 2023; weights and architecture released 17 Mar 2024 under Apache 2.0. 314B per Epoch; MoE with 8 experts/2 active per xAI's release (not re-read). OSI listed Grok among models failing its OSAID validation. Context 8,192 (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2023
+  },
+  {
+   "name": "Grok 2",
+   "developer": "xAI (now SpaceX Super Intelligence)",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2024-08",
+   "openness": "open-weight",
+   "licence": "Grok 2 Community Licence (xAI Community Licence)",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 2.96e+25,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "xai-org/grok-2",
+   "sources": [
+    "https://huggingface.co/xai-org/grok-2",
+    "https://en.wikipedia.org/wiki/Grok_(chatbot)",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Closed at launch (Aug 2024); weights published Aug 2025 (HF repo 22 Aug 2025) — 'a model trained and used at xAI in 2024'. Config: 8 experts, 2 per token. Licence allows non-commercial use and commercial use only within xAI's acceptable-use guardrails, with 'Powered by xAI' attribution. Parameter count not stated (~500 GB of weights).",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "MoE",
+   "release_year": 2024
+  },
+  {
+   "name": "Grok 3",
+   "developer": "xAI (now SpaceX Super Intelligence)",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-02",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.5e+26,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://en.wikipedia.org/wiki/Grok_(chatbot)",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://epoch.ai/data/charts/1e25-models/1e25_models.csv"
+   ],
+   "confidence": "MEDIUM",
+   "note": "17 Feb 2025; first model Epoch estimates above 1e26 FLOP. Epoch's database says 3.5e26 (Likely) while its 1e25 CSV says 4.64e26 (Confident) — two Epoch files disagree. 'Think' mode → hybrid (MEDIUM). Epoch's 3T-parameter figure is an Epoch estimate, not disclosed.",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Grok 4",
+   "developer": "xAI (now SpaceX Super Intelligence)",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-07",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "undisclosed",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": 256000,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 5e+26,
+   "epoch_compute_confidence": "Speculative",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://epoch.ai/data-insights/grok-4-training-resources"
+   ],
+   "confidence": "MEDIUM",
+   "note": "9–10 Jul 2025 (sources differ by a day). Epoch: ~5e26 FLOP, ~$490M — largest known run until GPT-6 Astra. Context 256K per most listings (one provider lists 131K).",
+   "modality_class": "multimodal input",
+   "compute_class": "≥1e26",
+   "architecture_family": "undisclosed",
+   "release_year": 2025
+  },
+  {
+   "name": "Phi-3-mini",
+   "developer": "Microsoft",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-04",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 3.8,
+   "active_params_b": null,
+   "context_tokens": 4096,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "on-device",
+   "specialisation": "general",
+   "training_compute_flop": 7.524e+22,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "microsoft/Phi-3-mini-4k-instruct",
+   "sources": [
+    "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct",
+    "https://arxiv.org/abs/2404.14219",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Report title: 'A Highly Capable Language Model Locally on Your Phone'; 3.8B on 3.3T tokens. A 128K-context variant also exists.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Phi-4",
+   "developer": "Microsoft",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-12",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 14.7,
+   "active_params_b": null,
+   "context_tokens": 16384,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 9.32e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "microsoft/phi-4",
+   "sources": [
+    "https://huggingface.co/microsoft/phi-4",
+    "https://arxiv.org/abs/2412.08905",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "14B; synthetic-data-centric training. Phi-4-reasoning variants followed in Apr 2025.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Nemotron-4 340B",
+   "developer": "NVIDIA",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2024-06",
+   "openness": "open-weight",
+   "licence": "NVIDIA Open Model Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 340,
+   "active_params_b": null,
+   "context_tokens": 4096,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 1.8e+25,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": true,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "nvidia/Nemotron-4-340B-Base",
+   "sources": [
+    "https://huggingface.co/nvidia/Nemotron-4-340B-Base",
+    "https://arxiv.org/abs/2406.11704",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Base, Instruct and Reward models; >98% of alignment data synthetic. The only open-weight model in Epoch's 1e25 list under an 'unrestricted' label. Context 4,096 (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Nemotron-H 56B",
+   "developer": "NVIDIA",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-04",
+   "openness": "open-weight",
+   "licence": "NVIDIA Internal Scientific Research & Development Model Licence",
+   "licence_class": "non-commercial",
+   "architecture": "hybrid SSM (Mamba-Transformer)",
+   "total_params_b": 56.3,
+   "active_params_b": null,
+   "context_tokens": 8192,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 6.72e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "nvidia/Nemotron-H-56B-Base-8K",
+   "sources": [
+    "https://huggingface.co/nvidia/Nemotron-H-56B-Base-8K",
+    "https://arxiv.org/abs/2504.03624",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Replaces most self-attention layers with Mamba layers; up to 3× faster inference than similar Transformers. Base checkpoint only.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "Nemotron 3 Nano 30B-A3B",
+   "developer": "NVIDIA",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-12",
+   "openness": "open-weight",
+   "licence": "NVIDIA Nemotron Open Model Licence",
+   "licence_class": "restricted",
+   "architecture": "hybrid SSM + MoE",
+   "total_params_b": 31.6,
+   "active_params_b": 3.5,
+   "context_tokens": 1000000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": true,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 4.8e+23,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+   "sources": [
+    "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16",
+    "https://arxiv.org/abs/2512.20848",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "23 Mamba-2/MoE layers + 6 attention layers; 128 experts + 1 shared, 6 active; 'up to 1M' context (config default 262K); 25T pre-training tokens. Thinking on/off variants listed by Artificial Analysis.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "Granite 4.0-H-Small",
+   "developer": "IBM",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-10",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "hybrid SSM + MoE",
+   "total_params_b": 32.2,
+   "active_params_b": 9,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 1.215e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "ibm-granite/granite-4.0-h-small",
+   "sources": [
+    "https://huggingface.co/ibm-granite/granite-4.0-h-small",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: 4 attention + 36 Mamba2 layers, 72 experts (10 active), 32B total / 9B active, 128K. Carries a Model Openness Framework 'Class 3 qualified' badge. Published 2 Oct 2025 (Epoch); HF repo created 16 Sep.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "Apple Foundation Model (on-device, 2025)",
+   "developer": "Apple",
+   "developer_type": "big_tech",
+   "country": "US",
+   "release": "2025-07",
+   "openness": "closed",
+   "licence": "proprietary (on-device; Foundation Models framework)",
+   "licence_class": "closed",
+   "architecture": "dense",
+   "total_params_b": 3,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text",
+    "image"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "on-device",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2507.13575",
+    "https://arxiv.org/abs/2407.21075",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Tech Report 2025: '~3B-parameter on-device model' with KV-cache sharing and 2-bit QAT, plus a server PT-MoE model ('dense' for the on-device model is MEDIUM: the abstract contrasts it with the MoE server model but the full architecture section was not checked); developers reach the on-device model through the Swift Foundation Models framework but cannot download weights. 2024 AFM-on-device: 2.73B, 4.5e23 FLOP (Epoch, Confident).",
+   "modality_class": "multimodal input",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Pythia-12B",
+   "developer": "EleutherAI",
+   "developer_type": "academic_nonprofit",
+   "country": "US",
+   "release": "2023-04",
+   "openness": "open-source",
+   "licence": "Apache 2.0 (weights, code); data: the Pile",
+   "licence_class": "open-source",
+   "architecture": "dense",
+   "total_params_b": 12.0,
+   "active_params_b": null,
+   "context_tokens": 2048,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 2.159e+22,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "EleutherAI/pythia-12b",
+   "sources": [
+    "https://huggingface.co/EleutherAI/pythia-12b",
+    "https://arxiv.org/abs/2304.01373",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "16-model research suite with 154 checkpoints each and reconstructable data order; base models only. OSI listed Pythia among models that passed its OSAID 1.0 validation.",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2023
+  },
+  {
+   "name": "OLMo 2 32B",
+   "developer": "Allen Institute for AI (Ai2)",
+   "developer_type": "academic_nonprofit",
+   "country": "US",
+   "release": "2025-03",
+   "openness": "open-source",
+   "licence": "Apache 2.0 (weights, data, code)",
+   "licence_class": "open-source",
+   "architecture": "dense",
+   "total_params_b": 32.2,
+   "active_params_b": null,
+   "context_tokens": 4096,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 1.3e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "allenai/OLMo-2-0325-32B",
+   "sources": [
+    "https://huggingface.co/allenai/OLMo-2-0325-32B",
+    "https://arxiv.org/abs/2501.00656",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'Fully released artifacts — model weights, full training data, training code and recipes, training logs and thousands of intermediate checkpoints'. OSI listed OLMo as passing OSAID validation.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Olmo 3 32B Think",
+   "developer": "Allen Institute for AI (Ai2)",
+   "developer_type": "academic_nonprofit",
+   "country": "US",
+   "release": "2025-11",
+   "openness": "open-source",
+   "licence": "Apache 2.0 (weights, data, code)",
+   "licence_class": "open-source",
+   "architecture": "dense",
+   "total_params_b": 32.2,
+   "active_params_b": null,
+   "context_tokens": 65536,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 1.1e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "allenai/Olmo-3-32B-Think",
+   "sources": [
+    "https://huggingface.co/allenai/Olmo-3-32B-Think",
+    "https://arxiv.org/abs/2512.13961",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'The strongest fully-open thinking model released to-date' (Ai2, Dec 2025); Dolma 3 pre-training and Dolci post-training data released.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "LLaDA 8B",
+   "developer": "Renmin University of China & Ant Group",
+   "developer_type": "academic_nonprofit",
+   "country": "China",
+   "release": "2025-02",
+   "openness": "open-weight",
+   "licence": "MIT",
+   "licence_class": "permissive",
+   "architecture": "diffusion",
+   "total_params_b": 8.0,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "small",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "GSAI-ML/LLaDA-8B-Base",
+   "sources": [
+    "https://huggingface.co/GSAI-ML/LLaDA-8B-Base",
+    "https://arxiv.org/abs/2502.09992",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "Masked diffusion LLM 'trained from scratch under the pre-training and SFT paradigm', competitive with LLaMA3 8B.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "diffusion",
+   "release_year": 2025
+  },
+  {
+   "name": "Mercury Coder",
+   "developer": "Inception Labs",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2025-02",
+   "openness": "closed",
+   "licence": "proprietary (API)",
+   "licence_class": "closed",
+   "architecture": "diffusion",
+   "total_params_b": null,
+   "active_params_b": null,
+   "context_tokens": null,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "undisclosed (efficient tier)",
+   "specialisation": "code",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Unknown",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": null,
+   "sources": [
+    "https://arxiv.org/abs/2506.17298",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'Commercial-scale LLMs based on diffusion'; Mini and Small at 1,109 and 737 tokens/s on H100 (Artificial Analysis-measured). Successors: Mercury 2 (Feb 2026), Mercury 3 (Oct 2026, Epoch).",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "diffusion",
+   "release_year": 2025
+  },
+  {
+   "name": "Jamba 1.5 Large",
+   "developer": "AI21 Labs",
+   "developer_type": "ai_lab",
+   "country": "Israel",
+   "release": "2024-08",
+   "openness": "open-weight",
+   "licence": "Jamba Open Model Licence",
+   "licence_class": "restricted",
+   "architecture": "hybrid SSM + MoE",
+   "total_params_b": 398,
+   "active_params_b": 94,
+   "context_tokens": 256000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "ai21labs/AI21-Jamba-Large-1.5",
+   "sources": [
+    "https://huggingface.co/ai21labs/AI21-Jamba-Large-1.5",
+    "https://arxiv.org/abs/2408.12570",
+    "https://arxiv.org/abs/2403.19887",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "First production-scale hybrid Transformer-Mamba MoE; 94B active; 256K effective context.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2024
+  },
+  {
+   "name": "Command R+",
+   "developer": "Cohere",
+   "developer_type": "ai_lab",
+   "country": "Canada",
+   "release": "2024-04",
+   "openness": "open-weight",
+   "licence": "CC-BY-NC 4.0",
+   "licence_class": "non-commercial",
+   "architecture": "dense",
+   "total_params_b": 104,
+   "active_params_b": null,
+   "context_tokens": 128000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": "Confident (no value)",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "CohereForAI/c4ai-command-r-plus",
+   "sources": [
+    "https://huggingface.co/CohereForAI/c4ai-command-r-plus",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "RAG and tool-use oriented; 104B per Epoch.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "Command A",
+   "developer": "Cohere",
+   "developer_type": "ai_lab",
+   "country": "Canada",
+   "release": "2025-03",
+   "openness": "open-weight",
+   "licence": "CC-BY-NC 4.0",
+   "licence_class": "non-commercial",
+   "architecture": "dense",
+   "total_params_b": 111.1,
+   "active_params_b": null,
+   "context_tokens": 256000,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "CohereLabs/c4ai-command-a-03-2025",
+   "sources": [
+    "https://huggingface.co/CohereLabs/c4ai-command-a-03-2025",
+    "https://arxiv.org/abs/2504.00698"
+   ],
+   "confidence": "HIGH",
+   "note": "'Agent-optimised and multilingual-capable' (23 languages); weights 'released for research purposes'. Command A+ (May 2026) moved to an unrestricted licence per Epoch.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Inkling",
+   "developer": "Thinking Machines Lab",
+   "developer_type": "ai_lab",
+   "country": "US",
+   "release": "2026-07",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 952.4,
+   "active_params_b": 41,
+   "context_tokens": 1048576,
+   "input_modalities": [
+    "text",
+    "image",
+    "video",
+    "audio"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 1.1e+25,
+   "epoch_compute_confidence": "Likely",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": false,
+   "weights_repo": "thinkingmachines/Inkling",
+   "sources": [
+    "https://huggingface.co/thinkingmachines/Inkling",
+    "https://epoch.ai/data/all_ai_models.csv",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "HIGH",
+   "note": "Card: '975B total, 41B active', 6 of 256 experts + 2 shared, hybrid local/global attention, natively multimodal input. 952.4B in safetensors. Largest Apache-2.0 model in this table and one of three open-weight models Epoch estimates above 1e25 FLOP in 2026. Reasoning class from Artificial Analysis (MEDIUM).",
+   "modality_class": "multimodal input",
+   "compute_class": "1e25–1e26",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "Falcon-180B",
+   "developer": "Technology Innovation Institute (TII)",
+   "developer_type": "government",
+   "country": "UAE",
+   "release": "2023-09",
+   "openness": "open-weight",
+   "licence": "Falcon-180B TII Licence",
+   "licence_class": "restricted",
+   "architecture": "dense",
+   "total_params_b": 179.5,
+   "active_params_b": null,
+   "context_tokens": 2048,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "frontier",
+   "specialisation": "general",
+   "training_compute_flop": 3.76e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": true,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "tiiuae/falcon-180B",
+   "sources": [
+    "https://huggingface.co/tiiuae/falcon-180B",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "In Epoch's top-5-by-compute 'frontier' set at release. Licence restricts hosting use. Context 2,048 (MEDIUM).",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2023
+  },
+  {
+   "name": "Falcon-H1-34B",
+   "developer": "Technology Innovation Institute (TII)",
+   "developer_type": "government",
+   "country": "UAE",
+   "release": "2025-05",
+   "openness": "open-weight",
+   "licence": "Falcon-LLM Licence (Apache-2.0-based)",
+   "licence_class": "restricted",
+   "architecture": "hybrid SSM (parallel attention + Mamba)",
+   "total_params_b": 33.6,
+   "active_params_b": null,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 3.672e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "tiiuae/Falcon-H1-34B-Base",
+   "sources": [
+    "https://huggingface.co/tiiuae/Falcon-H1-34B-Base",
+    "https://arxiv.org/abs/2507.22448",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'Parallel hybrid approach that combines Transformer-based attention with State Space Models'; family 0.5B–34B. Falcon-H1R-7B (Jan 2026) adds reasoning.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "hybrid (SSM / linear attention)",
+   "release_year": 2025
+  },
+  {
+   "name": "Jais-3-375B-A23B",
+   "developer": "Inception (G42) with MBZUAI",
+   "developer_type": "ai_lab",
+   "country": "UAE",
+   "release": "2026-09",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 379.2,
+   "active_params_b": 23,
+   "context_tokens": 524288,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": true,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "inception42/Jais-3-375B-A23B",
+   "sources": [
+    "https://huggingface.co/inception42/Jais-3-375B-A23B",
+    "https://arxiv.org/abs/2611.10224"
+   ],
+   "confidence": "HIGH",
+   "note": "Arabic-centric agentic model (tools, MCP, terminal, files). Paper: 'Instead of pretraining from scratch, we adapt each model of the fully open K2 Horizon fleet to Arabic through continual pretraining' — an adapted sovereign model, not from scratch.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "Apertus 70B",
+   "developer": "Swiss AI Initiative (EPFL, ETH Zurich, CSCS)",
+   "developer_type": "academic_nonprofit",
+   "country": "Switzerland",
+   "release": "2025-09",
+   "openness": "open-source",
+   "licence": "Apache 2.0 (weights, data, recipes)",
+   "licence_class": "open-source",
+   "architecture": "dense",
+   "total_params_b": 70.6,
+   "active_params_b": null,
+   "context_tokens": 65536,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "mid-size",
+   "specialisation": "general",
+   "training_compute_flop": 6.74e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "swiss-ai/Apertus-70B-2509",
+   "sources": [
+    "https://huggingface.co/swiss-ai/Apertus-70B-2509",
+    "https://arxiv.org/abs/2509.14233",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "'Fully open model: open weights + open data + full training details'; 15T tokens, 1,811 languages; respects robots.txt opt-outs retroactively. Meets the OSAID components by the developer's description; not on OSI's 2024 validation list.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "dense",
+   "release_year": 2025
+  },
+  {
+   "name": "Teuken-7B",
+   "developer": "OpenGPT-X (Fraunhofer IAIS/IIS consortium)",
+   "developer_type": "government",
+   "country": "Germany",
+   "release": "2024-11",
+   "openness": "open-weight",
+   "licence": "Apache 2.0 (commercial variant); research variant non-commercial",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 7.45,
+   "active_params_b": null,
+   "context_tokens": 4096,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "none",
+   "agentic_trained": null,
+   "size_class": "small",
+   "specialisation": "general",
+   "training_compute_flop": 2.144e+23,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "openGPT-X/Teuken-7B-instruct-commercial-v0.4",
+   "sources": [
+    "https://huggingface.co/openGPT-X/Teuken-7B-instruct-commercial-v0.4",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "24 EU languages; ~4T tokens per card. Release date per site sovereign data (26 Nov 2024, MEDIUM); Epoch dates it Aug 2025 and labels it non-commercial (research variant).",
+   "modality_class": "text-only",
+   "compute_class": "<1e24",
+   "architecture_family": "dense",
+   "release_year": 2024
+  },
+  {
+   "name": "K-EXAONE",
+   "developer": "LG AI Research",
+   "developer_type": "big_tech",
+   "country": "South Korea",
+   "release": "2026-01",
+   "openness": "open-weight",
+   "licence": "K-EXAONE Licence (custom)",
+   "licence_class": "restricted",
+   "architecture": "MoE",
+   "total_params_b": 236,
+   "active_params_b": 23,
+   "context_tokens": 262144,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": 1.52e+24,
+   "epoch_compute_confidence": "Confident",
+   "training_compute_source": "Epoch AI database (all_ai_models.csv, downloaded 15 Nov 2026)",
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": false,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "LGAI-EXAONE/K-EXAONE-236B-A23B",
+   "sources": [
+    "https://huggingface.co/LGAI-EXAONE/K-EXAONE-236B-A23B",
+    "https://arxiv.org/abs/2601.01739",
+    "https://epoch.ai/data/all_ai_models.csv"
+   ],
+   "confidence": "HIGH",
+   "note": "236B total / 23B activated, 3:1 sliding-window:global attention, 256K, six languages; reasoning and non-reasoning modes. Weights on HF 26 Dec 2025; tech report 5 Jan 2026. K-EXAONE 2.0 (750B-A37B, Jul 2026) is Apache 2.0.",
+   "modality_class": "text-only",
+   "compute_class": "1e24–1e25",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "Sarvam-105B",
+   "developer": "Sarvam AI",
+   "developer_type": "ai_lab",
+   "country": "India",
+   "release": "2026-03",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "MoE",
+   "total_params_b": 106.0,
+   "active_params_b": 10.3,
+   "context_tokens": 131072,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "hybrid",
+   "agentic_trained": null,
+   "size_class": "large",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "sarvamai/sarvam-105b",
+   "sources": [
+    "https://huggingface.co/sarvamai/sarvam-105b",
+    "https://artificialanalysis.ai/leaderboards/models"
+   ],
+   "confidence": "HIGH",
+   "note": "10.3B active; trained on IndiaAI Mission compute (site sovereign data); 22+ Indian languages; enable_thinking switch in the card's examples.",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "MoE",
+   "release_year": 2026
+  },
+  {
+   "name": "LLM-jp-4.1 8B (thinking)",
+   "developer": "National Institute of Informatics (LLM-jp)",
+   "developer_type": "academic_nonprofit",
+   "country": "Japan",
+   "release": "2026-09",
+   "openness": "open-weight",
+   "licence": "Apache 2.0",
+   "licence_class": "permissive",
+   "architecture": "dense",
+   "total_params_b": 8.59,
+   "active_params_b": null,
+   "context_tokens": 65536,
+   "input_modalities": [
+    "text"
+   ],
+   "output_modalities": [
+    "text"
+   ],
+   "reasoning": "reasoning",
+   "agentic_trained": null,
+   "size_class": "small",
+   "specialisation": "general",
+   "training_compute_flop": null,
+   "epoch_compute_confidence": null,
+   "training_compute_source": null,
+   "epoch_frontier_flag": false,
+   "epoch_assessed_over_1e25": null,
+   "in_sovereign_ai_index": true,
+   "weights_repo": "llm-jp/llm-jp-4.1-8b-thinking",
+   "sources": [
+    "https://huggingface.co/llm-jp/llm-jp-4.1-8b-thinking"
+   ],
+   "confidence": "HIGH",
+   "note": "Japanese/English; family also has 33B dense and 32B-A3B MoE. Post-training datasets are on HF; the site's sovereign notes call LLM-jp 'fully open' (pre-training data release not checked here, so classed open-weight).",
+   "modality_class": "text-only",
+   "compute_class": "no public estimate",
+   "architecture_family": "dense",
+   "release_year": 2026
+  }
+ ],
+ "aggregates": [
+  {
+   "id": "count_architecture_family",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by architecture family is: MoE 28; dense 26; undisclosed 25; hybrid (SSM / linear attention) 10; diffusion 4.",
+   "value": {
+    "MoE": 28,
+    "dense": 26,
+    "undisclosed": 25,
+    "hybrid (SSM / linear attention)": 10,
+    "diffusion": 4
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_openness",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by openness is: open-weight 57; closed 32; open-source 4.",
+   "value": {
+    "open-weight": 57,
+    "closed": 32,
+    "open-source": 4
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_licence_class",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by licence class is: closed 32; permissive 29; restricted 24; non-commercial 4; open-source 4.",
+   "value": {
+    "closed": 32,
+    "permissive": 29,
+    "restricted": 24,
+    "non-commercial": 4,
+    "open-source": 4
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_reasoning",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by reasoning mode is: none 47; reasoning 25; hybrid 19; not verified 2.",
+   "value": {
+    "none": 47,
+    "reasoning": 25,
+    "hybrid": 19,
+    "not verified": 2
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_modality_class",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by modality class is: text-only 50; multimodal input 41; omni (audio in/out) 1; text-only (embedding output) 1.",
+   "value": {
+    "text-only": 50,
+    "multimodal input": 41,
+    "omni (audio in/out)": 1,
+    "text-only (embedding output)": 1
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_size_class",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by size / deployment class is: frontier 32; mid-size 24; large 23; undisclosed (efficient tier) 6; on-device 4; small 4.",
+   "value": {
+    "frontier": 32,
+    "mid-size": 24,
+    "large": 23,
+    "undisclosed (efficient tier)": 6,
+    "on-device": 4,
+    "small": 4
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_specialisation",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by specialisation is: general 88; code 2; domain: medical 1; safety/guard 1; embedding/reranker 1.",
+   "value": {
+    "general": 88,
+    "code": 2,
+    "domain: medical": 1,
+    "safety/guard": 1,
+    "embedding/reranker": 1
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_compute_class",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by training-compute class is: no public estimate 33; 1e24–1e25 28; 1e25–1e26 14; <1e24 10; ≥1e25 per Epoch assessment (no point estimate) 4; ≥1e26 4.",
+   "value": {
+    "no public estimate": 33,
+    "1e24–1e25": 28,
+    "1e25–1e26": 14,
+    "<1e24": 10,
+    "≥1e25 per Epoch assessment (no point estimate)": 4,
+    "≥1e26": 4
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_developer_type",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by developer type is: ai_lab 46; big_tech 38; academic_nonprofit 6; government 3.",
+   "value": {
+    "ai_lab": 46,
+    "big_tech": 38,
+    "academic_nonprofit": 6,
+    "government": 3
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "count_country",
+   "sentence": "Of the 93 LLMs in Report AI's classification table (2023–Nov 2026), the split by country of developer is: US 58; China 19; France 5; UAE 3; Canada 2; Israel 1; Switzerland 1; Germany 1; South Korea 1; India 1; Japan 1.",
+   "value": {
+    "US": 58,
+    "China": 19,
+    "France": 5,
+    "UAE": 3,
+    "Canada": 2,
+    "Israel": 1,
+    "Switzerland": 1,
+    "Germany": 1,
+    "South Korea": 1,
+    "India": 1,
+    "Japan": 1
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Counts depend on which models the table includes (editorial selection, see meta.selection); they describe the table, not the whole market."
+  },
+  {
+   "id": "open_share_by_year",
+   "sentence": "In Report AI's table, the share of models with downloadable weights (open-weight or open-source) by release year is 2023: 5 of 8 (62.5%); 2024: 13 of 19 (68.4%); 2025: 29 of 43 (67.4%); 2026: 14 of 23 (60.9%).",
+   "value": {
+    "2023": {
+     "open": 5,
+     "total": 8,
+     "share_pct": 62.5
+    },
+    "2024": {
+     "open": 13,
+     "total": 19,
+     "share_pct": 68.4
+    },
+    "2025": {
+     "open": 29,
+     "total": 43,
+     "share_pct": 67.4
+    },
+    "2026": {
+     "open": 14,
+     "total": 23,
+     "share_pct": 60.9
+    }
+   },
+   "unit": "% of table rows",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Selection-dependent; 2026 runs to 15 Nov."
+  },
+  {
+   "id": "moe_share_open",
+   "sentence": "Among open-weight models in Report AI's table, 27 of 43 released in 2025–2026 (62.8%) use a mixture-of-experts design (including hybrid and diffusion models with MoE layers), against 5 of 18 released in 2023–2024 (27.8%).",
+   "value": {
+    "2023_2024": {
+     "moe": 5,
+     "open": 18,
+     "pct": 27.8
+    },
+    "2025_2026": {
+     "moe": 27,
+     "open": 43,
+     "pct": 62.8
+    }
+   },
+   "unit": "% of open-weight table rows",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "MoE counted from the architecture text (any MoE layers). Open-weight here includes open-source rows."
+  },
+  {
+   "id": "reasoning_share",
+   "sentence": "44 of the 91 models in Report AI's table with a verified reasoning classification (48.4%) have a reasoning mode (always-on reasoning or a hybrid switch); 2 rows are unverified.",
+   "value": {
+    "with_reasoning_mode": 44,
+    "classified": 91,
+    "pct": 48.4
+   },
+   "unit": "% of table rows",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": ""
+  },
+  {
+   "id": "reasoning_share_2023_2024",
+   "sentence": "Of table models released in 2023–2024, 1 of 27 (3.7%) have a reasoning mode.",
+   "value": {
+    "with_reasoning_mode": 1,
+    "classified": 27,
+    "pct": 3.7
+   },
+   "unit": "% of table rows",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": ""
+  },
+  {
+   "id": "reasoning_share_2025_2026",
+   "sentence": "Of table models released in 2025–2026, 43 of 64 (67.2%) have a reasoning mode.",
+   "value": {
+    "with_reasoning_mode": 43,
+    "classified": 64,
+    "pct": 67.2
+   },
+   "unit": "% of table rows",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": ""
+  },
+  {
+   "id": "closed_param_disclosure",
+   "sentence": "None of the 32 closed models in Report AI's table has an official total parameter count except Google's Gemini Nano (1.8B/3.25B) and Apple's ~3B on-device model; 25 of them do not even disclose their architecture family.",
+   "value": {
+    "closed": 32,
+    "with_official_params": 2,
+    "architecture_undisclosed": 25
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Report AI calculation over the classification table (llm-taxonomy-data.json)",
+   "confidence": "DERIVED",
+   "note": "Google disclosed MoE for Gemini 1.5 and 2.5 without sizes."
+  },
+  {
+   "id": "epoch_1e25_dataset",
+   "sentence": "Epoch AI's 'Over 30 AI models have been trained at the scale of GPT-4' data insight (updated 6 Jun 2025; CSV updated 21 Nov 2025) lists 33 publicly disclosed models estimated above 10^25 FLOP from 12 developers, of which 3 have open weights (Llama 3.1-405B, Mistral Large 2, Nemotron-4 340B).",
+   "value": {
+    "models": 33,
+    "developers": 12,
+    "open_weights": 3,
+    "by_year": {
+     "2023": 4,
+     "2024": 19,
+     "2025": 10
+    },
+    "latest_publication_date_in_csv": "2025-05-22"
+   },
+   "unit": "models",
+   "date": "2025-11-21",
+   "source": "Epoch AI, models-over-1e25-flop data insight and CSV",
+   "confidence": "HIGH",
+   "note": "Includes 4 video models (Sora, Veo 2, Veo 3) and 12 entries with confidence 'Unknown' (no point estimate). Coverage stops at May 2025."
+  },
+  {
+   "id": "epoch_db_over_1e25",
+   "sentence": "Epoch AI's AI-models database, downloaded 15 Nov 2026, holds 28 entries with a training-compute estimate of at least 10^25 FLOP (27 distinct models; GPT-4 appears twice), of which 8 are open-weight and 4 exceed 10^26 FLOP — Grok 3, GPT-4.5, Grok 4 and GPT-6 Astra, all closed.",
+   "value": {
+    "entries": 28,
+    "distinct_models": 27,
+    "open_weight": 8,
+    "over_1e26": 4,
+    "by_year": {
+     "2023": 4,
+     "2024": 6,
+     "2025": 9,
+     "2026": 9
+    },
+    "accessibility": {
+     "API access": 15,
+     "Open weights (restricted use)": 4,
+     "Open weights (unrestricted)": 3,
+     "Unreleased": 3,
+     "Hosted access (no API)": 2,
+     "Open weights (non-commercial)": 1
+    }
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Epoch AI all_ai_models.csv (Report AI count)",
+   "confidence": "HIGH",
+   "note": "Only models with a point estimate are counted; Epoch has no estimate for most 2025–26 closed flagships (Claude 4.x/5.x, Gemini 2.5–4, GPT-5.5/6 Sol), so this undercounts. Open-weight entries: Nemotron-4 340B, Llama 3.1-405B, Llama Nemotron Ultra 253B, LongCat-2.0, Inkling, Kimi K3, Mistral Large 4, Kimi K3.1 Pro. Count DERIVED from Epoch's data."
+  },
+  {
+   "id": "epoch_frontier_flag_total",
+   "sentence": "Epoch AI flags 138 models in its database as 'frontier models' — models in the top 5 by training compute at the time of their release; the most recent is GPT-6 Astra (3 Sep 2026).",
+   "value": 138,
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Epoch AI all_ai_models.csv / frontier_ai_models.csv",
+   "confidence": "HIGH",
+   "note": ""
+  },
+  {
+   "id": "hf_public_models",
+   "sentence": "Hugging Face listed 3,239,530 public models on 15 Nov 2026 (15:27 UTC), of which 438,509 were tagged text-generation and 47,061 image-text-to-text.",
+   "value": {
+    "all_public_models": 3239530,
+    "text_generation": 438509,
+    "image_text_to_text": 47061
+   },
+   "unit": "models",
+   "date": "2026-11-15",
+   "source": "Hugging Face Hub model listing (numTotalItems on /models)",
+   "confidence": "HIGH",
+   "note": "Counts all public repos including fine-tunes, quantisations and duplicates; pipeline tags are self-declared. The site's existing claim is 'crossed 2 million public models in 2025'."
+  },
+  {
+   "id": "aa_open_closed_gap",
+   "sentence": "On Artificial Analysis's Intelligence Index v5.0.1 (read 15 Nov 2026), the best proprietary model, Claude Fable 5.2 at max effort, scored 64.6 and the best open-weights model, Kimi K3.1 Pro, scored 46.5 — a gap of about 18 points.",
+   "value": {
+    "best_proprietary": {
+     "model": "Claude Fable 5.2 (Max)",
+     "score": 64.6
+    },
+    "best_open": {
+     "model": "Kimi K3.1 Pro",
+     "score": 46.5
+    },
+    "gap_points": 18.1
+   },
+   "unit": "index points",
+   "date": "2026-11-15",
+   "source": "Artificial Analysis leaderboard (page opened); gap is Report AI arithmetic (64.6 − 46.5)",
+   "confidence": "HIGH",
+   "note": "Gap value DERIVED. The site's models.json has 12 points (v5, Oct 2026) and ~26 'counting only published weights'; Kimi K3.1 Pro's weights went up on 2 Nov 2026 and Fable 5.2 launched 9 Nov, so both readings are superseded."
+  },
+  {
+   "id": "aa_open_share_indexed",
+   "sentence": "Of the 113 model variants with an Artificial Analysis Intelligence Index score on 15 Nov 2026, 44 (38.9%) are open-weights and 108 (95.6%) are reasoning variants.",
+   "value": {
+    "indexed_variants": 113,
+    "open_weights": 44,
+    "reasoning": 108
+   },
+   "unit": "model variants",
+   "date": "2026-11-15",
+   "source": "Artificial Analysis leaderboard page data (Report AI count)",
+   "confidence": "HIGH",
+   "note": "Counts variants (effort levels are listed separately), not distinct models. Shares DERIVED."
+  }
+ ],
+ "sources": [
+  {
+   "name": "Epoch AI — AI models database (all, notable, large-scale, frontier CSVs)",
+   "url": "https://epoch.ai/data/ai-models",
+   "accessed": "2026-11-15",
+   "how": "curl download of CSVs; parsed locally"
+  },
+  {
+   "name": "Epoch AI — Over 30 AI models have been trained at the scale of GPT-4 (data insight + 1e25 CSV)",
+   "url": "https://epoch.ai/data-insights/models-over-1e25-flop",
+   "accessed": "2026-11-15",
+   "how": "curl; page text and CSV parsed"
+  },
+  {
+   "name": "Hugging Face Hub — model API, config.json, README model cards, LICENSE files (66 repos)",
+   "url": "https://huggingface.co/api/models",
+   "accessed": "2026-11-15",
+   "how": "curl API + raw files"
+  },
+  {
+   "name": "Hugging Face Hub — model listing counts",
+   "url": "https://huggingface.co/models",
+   "accessed": "2026-11-15",
+   "how": "curl; numTotalItems field"
+  },
+  {
+   "name": "arXiv — 50 papers/model cards (abstract pages and selected HTML full texts)",
+   "url": "https://arxiv.org/",
+   "accessed": "2026-11-15",
+   "how": "curl abs/ and html/ pages"
+  },
+  {
+   "name": "Anthropic — Models overview and model deprecations (Claude Platform docs)",
+   "url": "https://platform.claude.com/docs/en/about-claude/models/overview",
+   "accessed": "2026-11-15",
+   "how": "curl; page opened"
+  },
+  {
+   "name": "Anthropic — launch posts (Claude 3 family, 3.5 Sonnet, 3.7 Sonnet, Claude 4, Opus 4.5, Fable 5/Mythos 5, Opus 5, Opus 5.5, Haiku 5.5)",
+   "url": "https://www.anthropic.com/news",
+   "accessed": "2026-11-15",
+   "how": "curl; pages opened"
+  },
+  {
+   "name": "Artificial Analysis — LLM leaderboard (Intelligence Index v5.0.1, release dates, flags)",
+   "url": "https://artificialanalysis.ai/leaderboards/models",
+   "accessed": "2026-11-15",
+   "how": "curl; embedded page data parsed"
+  },
+  {
+   "name": "OpenRouter — models API (context length, modalities)",
+   "url": "https://openrouter.ai/api/v1/models",
+   "accessed": "2026-11-15",
+   "how": "curl JSON (aggregator; MEDIUM for vendor facts)"
+  },
+  {
+   "name": "Wikipedia — GPT-5, GPT-4.5, Gemini, Grok, Artificial Intelligence Act, Executive Order 14110",
+   "url": "https://en.wikipedia.org/",
+   "accessed": "2026-11-15",
+   "how": "MediaWiki API extracts (secondary; MEDIUM)"
+  },
+  {
+   "name": "Belcak et al. (NVIDIA), Small Language Models are the Future of Agentic AI",
+   "url": "https://arxiv.org/abs/2506.02153",
+   "accessed": "2026-11-15",
+   "how": "arXiv HTML opened"
+  },
+  {
+   "name": "OpenAI — Hello GPT-4o",
+   "url": "https://openai.com/index/hello-gpt-4o/",
+   "accessed": "2026-11-15",
+   "how": "search summary only (openai.com 403)"
+  },
+  {
+   "name": "Open Source Initiative — Open Source AI Definition 1.0 and validation results",
+   "url": "https://opensource.org/ai/open-source-ai-definition",
+   "accessed": "2026-11-15",
+   "how": "search summary only (opensource.org blocked)"
+  },
+  {
+   "name": "California SB 53 explainers (FPF, Orrick, Mayer Brown)",
+   "url": "https://fpf.org/blog/californias-sb-53-the-first-frontier-ai-law-explained/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "New York RAISE Act coverage (Wiley/JD Supra, DLA Piper)",
+   "url": "https://www.jdsupra.com/legalnews/new-york-finalizes-raise-act-for-8270433/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "EU Digital Omnibus on AI coverage (Covington Inside Privacy, MoFo)",
+   "url": "https://www.insideprivacy.com/artificial-intelligence/eu-ai-act-update-timeline-relief-targeted-simplification-and-new-prohibitions/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "EO 14110 thresholds coverage (MoFo, The Register)",
+   "url": "https://www.mofo.com/resources/insights/231107-the-ai-executive-order-presidential-authority",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "Meta Muse Spark coverage (Bloomberg, The Decoder, DeepLearning.AI)",
+   "url": "https://the-decoder.com/metas-muse-spark-is-its-first-frontier-model-and-its-first-without-open-weights/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "Gemini Diffusion (Google blog, Fortune)",
+   "url": "https://blog.google/technology/google-deepmind/gemini-diffusion/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "Gemini 4 Argon coverage (computingforgeeks, The New Stack)",
+   "url": "https://computingforgeeks.com/gemini-4-argon-released-features-benchmarks/",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "'Llama 5' claims and rebuttals (startuphub.ai, techjacksolutions, orcarouter.ai)",
+   "url": "https://www.orcarouter.ai/blog/llama-5-leak",
+   "accessed": "2026-11-15",
+   "how": "search summary only"
+  },
+  {
+   "name": "Report AI local data: state-of-ai/data/models.json, geo/sovereign-data.json, ai-history/history-data.json, followups-2026-11-11.md",
+   "url": "file:///home/user/test/content-ops/",
+   "accessed": "2026-11-15",
+   "how": "local-file"
+  }
+ ]
+}
