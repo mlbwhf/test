@@ -5,8 +5,8 @@ Usage:  python bench.py <experiment> [--data DIR] [--out DIR] [--jobs N]
 Experiments:
   main       defaults, n_train=1000, 10 random splits per dataset
   noscale    scale-sensitive models without standardisation (n_train=1000, 10 splits)
-  size       learning curve, n_train in {100,300,1000,3000,10000}, 3 splits
-  imbalance  10% positive class in train and test, n_train=1000, 5 splits
+  size       learning curve, n_train in {100,300,1000,3000,10000}, 3 splits, datasets with >=6,000 rows per class
+  imbalance  10% positive class in train and test, n_train=1000, 3 splits
   tune       20-config random search (3-fold CV) for 9 models, n_train=1000, 3 splits
 
 Results are appended to <out>/<experiment>.jsonl, one line per (dataset, split,
@@ -214,9 +214,13 @@ def main():
         ms = models if a.exp == "main" else [m for m in models if m in SCALE_SENSITIVE]
         plan = [(d, s, 1000, 2000, ms) for d in datasets for s in range(10)]
     elif a.exp == "size":
-        plan = [(d, s, n, 2000, models) for n in (100, 300, 1000, 3000, 10000) for d in datasets for s in range(3)]
+        # learning curve on datasets large enough for every size (each class >= 6,000 rows);
+        # TabPFN v2 is run up to 3,000 training rows only (CPU time).
+        big = [d for d in datasets if np.bincount(load(a.data, d)[1]).min() >= 6000]
+        plan = [(d, s, n, 2000, [m for m in models if not (m == "TabPFN v2" and n > 3000)])
+                for n in (100, 300, 1000, 3000, 10000) for d in big for s in range(3)]
     elif a.exp == "imbalance":
-        plan = [(d, s, 1000, 2000, models) for d in datasets for s in range(5)]
+        plan = [(d, s, 1000, 2000, models) for d in datasets for s in range(3)]
     elif a.exp == "tune":
         plan = [(d, s, 1000, 2000, [m for m in models if m in TUNE_SPACES]) for d in datasets for s in range(3)]
 

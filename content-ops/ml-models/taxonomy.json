@@ -1,0 +1,2976 @@
+{
+ "slug": "llm-taxonomy-2026",
+ "path": "/indexes/technical-benchmarks/llm-taxonomy-2026/",
+ "parent_path": "/indexes/technical-benchmarks/",
+ "csv": "report-ai-data-llm-taxonomy-2026.csv",
+ "trail": [
+  [
+   "Indexes",
+   "/indexes/"
+  ],
+  [
+   "Technical Benchmarks",
+   "/indexes/technical-benchmarks/"
+  ],
+  [
+   "LLM Taxonomy 2026",
+   "/indexes/technical-benchmarks/llm-taxonomy-2026/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; Technical Benchmarks &middot; Index &middot; Updated quarterly",
+ "title": "How to Categorize LLMs: The LLM Taxonomy 2026",
+ "dek": "Eight ways large language models differ, from architecture and reasoning to openness, size, compute and origin, and a classification of 93 notable models on every one of them. Each row is sourced to a model card, paper or official page and confidence-rated.",
+ "cadence_note": "Cadence: quarterly (STANDARD) &middot; Next update February 2027",
+ "edition": "November 2026 edition",
+ "coverage": "2023/2026",
+ "nav_active": "LLM taxonomy",
+ "nav": [
+  [
+   "Technical Benchmarks",
+   "/indexes/technical-benchmarks/"
+  ],
+  [
+   "LLM taxonomy",
+   "/indexes/technical-benchmarks/llm-taxonomy-2026/"
+  ],
+  [
+   "ML models compared",
+   "/reports/machine-learning-models-compared/"
+  ],
+  [
+   "Best AI models 2026",
+   "/indexes/technical-benchmarks/best-ai-models-2026/"
+  ],
+  [
+   "Open vs closed",
+   "/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/"
+  ],
+  [
+   "Reasoning models",
+   "/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "93",
+   "label": "large language models classified on 8 dimensions, 2023 to November 2026 (Report AI table)",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "67.2%",
+   "label": "of models released 2025–26 in the table have a reasoning mode, against 3.7% for 2023–24",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "62.8%",
+   "label": "of open-weight models released 2025–26 use mixture-of-experts layers, against 27.8% for 2023–24",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "3.24M",
+   "label": "public models on Hugging Face on 15 Nov 2026, of which 438,509 tagged text-generation",
+   "confidence": "HIGH"
+  }
+ ],
+ "at_a_glance": [
+  "Report AI classified 93 notable large language models released between 2023 and November 2026 on eight dimensions: architecture, training stage and reasoning, openness, modality, size, specialisation, training-compute class and origin.",
+  "Reasoning went from rare to standard: in Report AI's table, 43 of 64 models released in 2025–26 (67.2%) can reason before answering, against 1 of 27 released in 2023–24.",
+  "Mixture-of-experts has become the default design for open-weight models: 27 of 43 open-weight models in the table released in 2025–26 (62.8%) use it, against 5 of 18 in 2023–24.",
+  "Closed models disclose almost nothing about their design: 25 of the 32 closed models in the table do not say even which architecture family they use.",
+  "On Artificial Analysis's Intelligence Index v5.0.1 (read 15 Nov 2026), the best proprietary model, Claude Fable 5.2 at max effort, scored 64.6 and the best open-weights model, Kimi K3.1 Pro, scored 46.5 — a gap of about 18 points."
+ ],
+ "toc_extra": [
+  [
+   "stop-quoting",
+   "Claims to stop repeating"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "about",
+   "About the data"
+  ]
+ ],
+ "analysis": [
+  "There is no single official way to categorise large language models. Regulators sort them by training compute, researchers by architecture, buyers by price and openness, and governments by origin. Report AI's taxonomy keeps those views separate rather than collapsing them into one ranking, because the same model sits in different boxes depending on the question: DeepSeek-V4-Pro is a frontier-class open-weight mixture-of-experts reasoning model from China, and it is below the EU AI Act's 10²⁵ FLOP presumption on Epoch AI's estimate.",
+  "The table shows three shifts since 2023. First, reasoning: models that spend extra compute thinking before they answer went from one model in our 2023–24 rows (OpenAI's o1, December 2024) to 67.2% of 2025–26 releases; on Artificial Analysis's index, 108 (95.6%) of indexed variants are now reasoning variants. Second, sparsity: mixture-of-experts layers, which let a model hold far more parameters than it uses for each token, moved from a minority to most open-weight releases. Third, openness diverged: open-weight models now come from every region, but the closed frontier still leads on capability benchmarks, by about 18 points on Artificial Analysis's index in mid-November 2026.",
+  "Parameter counts have become a poor guide to cost and capability. Kimi K3.1 Pro has 2,780 billion total parameters but activates 104 billion per token; DeepSeek-V4-Pro has 1.6 trillion total and 49 billion active, yet Epoch AI puts its training compute below 10²⁵ FLOP. The four models Epoch estimates above 10²⁶ FLOP (GPT-6 Astra, Grok 4, GPT-4.5 and Grok 3) are all closed and have no published parameter count. For readers, the useful numbers are active parameters (cost per token), context window (how much it can read), and whether it reasons (speed versus depth).",
+  "The categories matter because they change what a user sees. A reasoning model answers a hard maths question correctly more often but takes longer and bills for hidden reasoning tokens. A small on-device model keeps data on the phone but knows less. An open-weight model can be audited and run privately, but under licence terms. The same chatbot interface can sit on top of any of these, which is why the label on the model card matters more than the brand on the app."
+ ],
+ "takeaways": [
+  "Classify a model on several dimensions at once; no single label (\"open\", \"frontier\", \"small\") describes it.",
+  "Compare mixture-of-experts models on active parameters, not total parameters.",
+  "\"Open-weight\" is not \"open-source\": only models that also release training code and data (OLMo, Pythia, Apertus) meet the Open Source Initiative's 2024 definition.",
+  "Reasoning is now the default for new releases; expect slower, more expensive and more accurate answers on hard tasks.",
+  "Compute thresholds, not parameter counts, decide regulatory duties: 10²⁵ FLOP in the EU, 10²⁶ in California and New York."
+ ],
+ "chapters": [
+  {
+   "id": "dimensions",
+   "kicker": "1. The eight dimensions",
+   "action_title": "Eight questions place any LLM: how it is built, how it thinks, who can use it, and who made it",
+   "paras": [
+    "Each dimension answers a different practical question. The table below lists them with the number of models in Report AI's table that fall in each category. Counts describe our selection of notable models, not every model released, so they show direction rather than market shares.",
+    "Two dimensions need care. Training stage is a property of a release, not a family: Llama 3.1 405B exists as a base model and as an instruction-tuned model. And openness is a spectrum: licences range from Apache 2.0 to custom terms with revenue caps, attribution rules or non-commercial clauses."
+   ],
+   "tables": [
+    {
+     "title": "The eight dimensions and how the table's models divide",
+     "columns": [
+      "Dimension",
+      "Categories",
+      "The question it answers",
+      "Models in the table (of 93)"
+     ],
+     "rows": [
+      [
+       "Architecture",
+       "How the network is built: dense transformer, mixture-of-experts, hybrid state-space, diffusion",
+       "How much compute each token costs, how much memory it needs, how long a context it handles cheaply",
+       "Mixture-of-experts 28; Dense transformer 26; Undisclosed 25; Hybrid (state-space / linear attention) 10; Diffusion 4"
+      ],
+      [
+       "Training stage and reasoning",
+       "Base, instruction-tuned, reasoning (thinks before answering), hybrid (thinking can be switched off)",
+       "Answer quality on hard problems versus speed and price per answer",
+       "No 47; Yes (always on) 25; Hybrid (switchable) 19; not verified 2"
+      ],
+      [
+       "Openness",
+       "Closed (API only), open-weight (downloadable with licence terms), open-source (weights, code and data)",
+       "Whether you can run, inspect, fine-tune or keep data in house",
+       "open-weight 57; closed 32; open-source 4"
+      ],
+      [
+       "Modality",
+       "Text-only, multimodal input (images, sometimes audio and video), omni (native audio in and out)",
+       "What you can show it and what it can return",
+       "text-only 50; multimodal input 41; omni (audio in/out) 1; text-only (embedding output) 1"
+      ],
+      [
+       "Size and deployment",
+       "Frontier, large (100B+), mid-size (10–100B), small (<10B), on-device",
+       "Where it can run: data centre, laptop or phone",
+       "frontier 32; mid-size 24; large 23; undisclosed (efficient tier) 6; on-device 4; small 4"
+      ],
+      [
+       "Specialisation",
+       "General, code, maths, domain (medical, legal), embedding, safety/guard",
+       "Whether it is the right tool for one job or many",
+       "general 88; code 2; domain: medical 1; safety/guard 1; embedding/reranker 1"
+      ],
+      [
+       "Training-compute class",
+       "Below or above the 10²⁵ FLOP (EU) and 10²⁶ (California, New York) thresholds",
+       "Which legal duties attach to the model's maker",
+       "no public estimate 33; 10²⁴–10²⁵ 28; 10²⁵–10²⁶ 14; <10²⁴ 10; ≥10²⁵ per Epoch assessment (no point estimate) 4; ≥10²⁶ 4"
+      ],
+      [
+       "Origin",
+       "Big tech, AI lab or start-up, academic or non-profit, government or sovereign; and country",
+       "Jurisdiction, language coverage and supply-chain dependence",
+       "ai lab 46; big tech 38; academic nonprofit 6; government 3"
+      ]
+     ],
+     "note": "Counts are Report AI calculations over the classification table (DERIVED)."
+    }
+   ]
+  },
+  {
+   "id": "architecture",
+   "kicker": "2. Architecture",
+   "action_title": "Mixture-of-experts overtook dense transformers among open-weight models, and hybrids are spreading",
+   "paras": [
+    "Almost every model in the table is a decoder-only transformer, but they differ in how the layers are arranged. In the table, 28 models are mixture-of-experts, 26 are dense, 10 are hybrids that replace most attention layers with state-space or linear-attention layers, and 4 are diffusion language models that refine a whole draft in parallel instead of writing token by token. The remaining 25 are closed models whose architecture is not disclosed.",
+    "Among open-weight models, mixture-of-experts went from 5 of 18 releases in 2023–24 to 27 of 43 in 2025–26. The reason is cost: only the active experts run for each token, so a model can hold a large amount of knowledge while charging compute like a much smaller one."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "Mixture-of-experts is now the most common disclosed architecture",
+     "subtitle": "Models in Report AI's classification table by architecture family (93 models, 2023–2026)",
+     "unit": "models",
+     "series": [
+      {
+       "name": "Models",
+       "points": [
+        [
+         "Mixture-of-experts",
+         28
+        ],
+        [
+         "Dense",
+         26
+        ],
+        [
+         "Undisclosed",
+         25
+        ],
+        [
+         "Hybrid (SSM / linear)",
+         10
+        ],
+        [
+         "Diffusion",
+         4
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table (model cards, papers and official pages, read 15 Nov 2026)",
+     "notes": "Counts depend on which models were selected; closed models that do not disclose an architecture are shown as undisclosed.",
+     "confidence": "DERIVED"
+    },
+    {
+     "type": "bar",
+     "title": "Most new open-weight models use mixture-of-experts",
+     "subtitle": "Share of open-weight models in the table that use mixture-of-experts layers, by release period (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "MoE share",
+       "points": [
+        [
+         "2023–24",
+         27.8
+        ],
+        [
+         "2025–26",
+         62.8
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table",
+     "notes": "2023–24: 5 of 18 open-weight models; 2025–26: 27 of 43. Includes hybrid and diffusion models with MoE layers.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Architecture categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Dense decoder-only transformer",
+       "A stack of Transformer decoder blocks in which every parameter is used for every token, trained to predict the next token from the left context. The Transformer itself replaced recurrence with attention (Vaswani et al., 2017); GPT-4's technical report describes 'a Transformer-based model pre-trained to predict the next token', and Meta describes Llama 3.1 405B as 'a dense Transformer with 405B parameters'. For a dense model, total parameters equal parameters used per token, so size and per-token compute move together.",
+       "Llama 3.1 405B, Qwen3-32B, Gemma 3 27B, OLMo 2 32B, Phi-4, Apertus 70B"
+      ],
+      [
+       "Mixture-of-experts (MoE)",
+       "Feed-forward layers are split into many 'experts' and a learned router sends each token to a few of them, so only a fraction of the weights run per token (Shazeer et al., 2017; Switch Transformer, 2021). Two numbers therefore matter: total parameters (memory needed to hold the model) and active parameters (compute per token). Mixtral 8x7B has 47B total but 'only uses 13B active parameters'; DeepSeek-V3 has 671B total and 37B activated; Kimi K3.1 Pro has 2.8T total and 104B activated. Comparing a MoE's total count with a dense model's count overstates its per-token cost.",
+       "Mixtral 8x7B, DeepSeek-V3, Qwen3-235B-A22B, gpt-oss-120b, Llama 4 Maverick, Mistral Large 4"
+      ],
+      [
+       "Hybrid / state-space / linear attention",
+       "Models that replace most quadratic self-attention layers with layers whose cost grows linearly with sequence length — selective state-space (Mamba) layers or linear-attention variants such as Gated DeltaNet, lightning attention or Kimi Delta Attention — keeping a few full-attention layers for exact recall. Mamba introduced selective state spaces (Gu & Dao, 2023); Jamba interleaved Transformer and Mamba blocks with MoE; Nemotron-H 'replace[s] the majority of self-attention layers… with Mamba layers'; Falcon-H1 runs attention and SSM heads in parallel; Qwen3-Next and Qwen3.8 use three Gated DeltaNet layers per gated-attention layer. The payoff is cheaper long-context inference. Sliding-window or compressed-attention schemes (Gemma, DeepSeek-V4) are still attention and are not counted here.",
+       "Jamba 1.5 Large, Nemotron-H 56B, Falcon-H1-34B, Qwen3-Next-80B-A3B, MiniMax-M1, Granite 4.0-H-Small, Kimi K3.1 Pro"
+      ],
+      [
+       "Diffusion language model",
+       "Instead of emitting one token at a time left to right, the model starts from masked or noised text and refines many positions in parallel over several denoising steps. LLaDA (Nie et al., 2025) trained an 8B masked-diffusion model 'from scratch under the pre-training and SFT paradigm'; Inception's Mercury Coder is a commercial diffusion LLM reporting 1,109 tokens/s; Google showed Gemini Diffusion at I/O (May 2025) and released DiffusionGemma 26B A4B with open weights (June 2026), which denoises 256 tokens at a time. The main selling point is generation speed.",
+       "LLaDA 8B, Mercury Coder, Gemini Diffusion, DiffusionGemma 26B A4B"
+      ],
+      [
+       "Encoder-only and encoder–decoder (for contrast)",
+       "Pre-LLM-era Transformer designs that are not generative chat models in the modern sense. BERT is encoder-only: it reads the whole input bidirectionally ('jointly conditioning on both left and right context') and is fine-tuned for classification, retrieval or extraction. T5 is encoder–decoder: it 'converts all text-based language problems into a text-to-text format'. They survive in embeddings, rerankers and some translation systems; none of the generative models in the table uses them.",
+       "BERT (2018), T5 (2019)"
+      ],
+      [
+       "Undisclosed",
+       "Closed developers usually do not publish architecture or size. Google disclosed that Gemini 1.5 Pro and Gemini 2.5 are sparse MoE Transformers but not their sizes; OpenAI, Anthropic and xAI publish neither. Report AI does not estimate parameter counts for closed models; third-party figures (e.g. Epoch's database values) are cited only as labelled estimates.",
+       "GPT-5, Claude Opus 5.5, Grok 4, Gemini 4 Argon"
+      ]
+     ]
+    },
+    {
+     "title": "Total versus active parameters: the largest mixture-of-experts and hybrid models in the table",
+     "columns": [
+      "Model",
+      "Developer",
+      "Released",
+      "Total parameters (B)",
+      "Active per token (B)",
+      "Active share",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Kimi K3.1 Pro",
+       "Moonshot AI",
+       "2026-10",
+       "2,780",
+       "104",
+       "3.7%",
+       "HIGH"
+      ],
+      [
+       "Qwen3.8-2.4T-A95B (Qwen3.8-Max base)",
+       "Alibaba (Qwen)",
+       "2026-08",
+       "2,446",
+       "95",
+       "3.9%",
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V4-Pro",
+       "DeepSeek",
+       "2026-04",
+       "1,600",
+       "49",
+       "3.1%",
+       "HIGH"
+      ],
+      [
+       "Kimi K2",
+       "Moonshot AI",
+       "2025-07",
+       "1,026",
+       "32",
+       "3.1%",
+       "HIGH"
+      ],
+      [
+       "Mistral Large 4",
+       "Mistral AI",
+       "2026-10",
+       "1,000",
+       "49",
+       "4.9%",
+       "HIGH"
+      ],
+      [
+       "Inkling",
+       "Thinking Machines Lab",
+       "2026-07",
+       "952",
+       "41",
+       "4.3%",
+       "HIGH"
+      ],
+      [
+       "Muse Spark Open",
+       "Meta (Meta Superintelligence Labs)",
+       "2026-10",
+       "816",
+       "42",
+       "5.1%",
+       "HIGH"
+      ],
+      [
+       "GLM-5",
+       "Zhipu AI (Z.ai)",
+       "2026-02",
+       "754",
+       "40",
+       "5.3%",
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V3",
+       "DeepSeek",
+       "2024-12",
+       "671",
+       "37",
+       "5.5%",
+       "HIGH"
+      ],
+      [
+       "DeepSeek-R1",
+       "DeepSeek",
+       "2025-01",
+       "671",
+       "37",
+       "5.5%",
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V3.1",
+       "DeepSeek",
+       "2025-08",
+       "671",
+       "37",
+       "5.5%",
+       "HIGH"
+      ],
+      [
+       "Qwen3-Coder-480B-A35B",
+       "Alibaba (Qwen)",
+       "2025-07",
+       "480",
+       "35",
+       "7.3%",
+       "HIGH"
+      ],
+      [
+       "MiniMax-M1",
+       "MiniMax",
+       "2025-06",
+       "456",
+       "45.9",
+       "10.1%",
+       "HIGH"
+      ],
+      [
+       "Llama 4 Maverick",
+       "Meta",
+       "2025-04",
+       "400",
+       "17",
+       "4.2%",
+       "HIGH"
+      ],
+      [
+       "Jamba 1.5 Large",
+       "AI21 Labs",
+       "2024-08",
+       "398",
+       "94",
+       "23.6%",
+       "HIGH"
+      ]
+     ],
+     "note": "Active share is Report AI's calculation (active ÷ total). Totals and active counts are from each model's card or paper."
+    }
+   ]
+  },
+  {
+   "id": "reasoning",
+   "kicker": "3. Training stage and reasoning",
+   "action_title": "Reasoning went from one model to two-thirds of new releases in two years",
+   "paras": [
+    "A base model is the raw result of pretraining: it continues text but does not follow instructions. Instruction tuning and preference training turn it into a chat model. Reasoning models are trained, mostly with reinforcement learning, to write out a chain of intermediate steps before the final answer, spending more compute at inference time. Hybrid models let the user or the application switch that thinking off or cap its budget.",
+    "In the table, 25 models always reason, 19 are hybrids and 47 do not reason; 0 could not be verified. By release year, the share with a reasoning mode was 2023: 0 of 8, 2024: 1 of 19, 2025: 22 of 43, 2026: 21 of 21."
+   ],
+   "exhibits": [
+    {
+     "type": "bar",
+     "title": "Reasoning is now standard in new releases",
+     "subtitle": "Share of models in the table with a reasoning mode (always on or switchable), by release year (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "With reasoning mode",
+       "points": [
+        [
+         "2023",
+         0.0
+        ],
+        [
+         "2024",
+         5.3
+        ],
+        [
+         "2025",
+         51.2
+        ],
+        [
+         "2026",
+         100.0
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table",
+     "notes": "OpenAI's o1 (December 2024) is the only 2023–24 model with a reasoning mode in the table. Two 2026 models whose reasoning mode could not be verified are excluded from the denominators.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Training-stage categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Base (pretrained) model",
+       "The raw output of pre-training: a next-token predictor over a large corpus with no instruction following or safety tuning. Useful for research and as a starting point for fine-tunes. Open developers often publish base checkpoints next to tuned ones (Llama, Qwen, Gemma '-pt', OLMo, Nemotron-H base-only); closed developers essentially never do.",
+       "Pythia-12B, Llama 3.1 405B (base), Nemotron-H 56B Base, OLMo 2 32B"
+      ],
+      [
+       "Instruction-tuned / chat model",
+       "A base model further trained with supervised examples and preference optimisation (RLHF or variants) to follow instructions and converse. OpenAI's InstructGPT paper showed outputs from a 1.3B instruction-tuned model were preferred to those of the 175B base GPT-3. Answers come straight away, with no separate reasoning phase. In the table this is reasoning = 'none'.",
+       "GPT-4o, Claude 3.5 Sonnet, Llama 4 Maverick, Kimi K2"
+      ],
+      [
+       "Reasoning ('thinking') model",
+       "Trained, usually with large-scale reinforcement learning on verifiable tasks, to produce a long chain of reasoning before the final answer, trading inference compute ('test-time compute') for accuracy. DeepSeek-R1 showed reasoning 'can be incentivized through pure reinforcement learning'; Snell et al. (2024) found scaling test-time compute can beat scaling parameters. In the table, 'reasoning' means the model always reasons (effort may be adjustable but cannot be turned off).",
+       "o1, o3, DeepSeek-R1, Gemini 2.5 Pro, Claude Opus 5.5, Qwen3.8-2.4T-A95B"
+      ],
+      [
+       "Hybrid reasoning (toggle or budget)",
+       "One set of weights that can either answer immediately or think first, controlled by a switch or a thinking-token budget. Anthropic called Claude 3.7 Sonnet 'the first hybrid reasoning model on the market' (Feb 2025); Qwen3 integrated 'thinking mode… and non-thinking mode… into a unified framework' with a thinking budget; Gemini 2.5 Flash is Google's 'hybrid reasoning model with a controllable thinking budget'.",
+       "Claude 3.7 Sonnet, Qwen3-235B-A22B, DeepSeek-V3.1, Gemini 2.5 Flash, Gemma 4, Claude Haiku 5.5"
+      ],
+      [
+       "Agentic / tool-use-trained",
+       "A training emphasis rather than a separate mode: post-training on multi-step tasks in which the model calls tools, browses, runs code or operates a terminal, often with RL in real or simulated environments. Kimi K2 used 'a large-scale agentic data synthesis pipeline and a joint reinforcement learning stage'; gpt-oss was optimised for 'deep research browsing, python tool use'; Jais 3 is trained to 'call tools and Model Context Protocol (MCP) servers, operate a terminal'. Recorded in the table as agentic_trained = true only where the developer says so.",
+       "Kimi K2, GLM-4.5, MiniMax-M2, gpt-oss-120b, Jais-3-375B-A23B, Nemotron 3 Nano"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "openness",
+   "kicker": "4. Openness and licences",
+   "action_title": "61 of 93 models have downloadable weights, but only 4 meet the open-source definition",
+   "paras": [
+    "Openness is the dimension most often mislabelled. In the table, 32 models are closed (available only through an API or app), 57 are open-weight (the trained weights can be downloaded under a licence) and 4 are open-source in the sense of the Open Source Initiative's Open Source AI Definition 1.0 (October 2024), which also requires the training code and enough information about the data to rebuild the model.",
+    "Licences differ widely. Of the models with downloadable weights, 29 use permissive licences such as Apache 2.0 or MIT, 24 use custom licences with conditions (attribution, acceptable-use rules, caps on very large commercial users) and 4 are non-commercial. The share of table models with downloadable weights by release year was 2023: 5 of 8, 2024: 13 of 19, 2025: 29 of 43, 2026: 14 of 23.",
+    "On Artificial Analysis's Intelligence Index v5.0.1 (read 15 Nov 2026), the best proprietary model, Claude Fable 5.2 at max effort, scored 64.6 and the best open-weights model, Kimi K3.1 Pro, scored 46.5 — a gap of about 18 points. Of the 113 model variants with an Artificial Analysis Intelligence Index score on 15 Nov 2026, 44 (38.9%) are open-weights and 108 (95.6%) are reasoning variants."
+   ],
+   "exhibits": [
+    {
+     "type": "bar",
+     "title": "About two-thirds of notable releases ship downloadable weights",
+     "subtitle": "Share of models in the table with open weights (open-weight or open-source), by release year (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Open weights",
+       "points": [
+        [
+         "2023",
+         62.5
+        ],
+        [
+         "2024",
+         68.4
+        ],
+        [
+         "2025",
+         67.4
+        ],
+        [
+         "2026",
+         60.9
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table",
+     "notes": "Selection-dependent: the table over-represents open models because they publish the details needed to classify them.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Openness categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Closed (API / hosted only)",
+       "Weights are not released; access is through the developer's app or API, sometimes further restricted (Claude Mythos 5 to vetted partners; Muse Spark to a private API preview; Apple's on-device model only inside Apple's framework). The developer can change, rate-limit or retire the model (Claude 3 Opus was retired on 5 Jan 2026).",
+       "GPT-5, Claude Opus 5.5, Gemini 3 Pro, Grok 4, Muse Spark"
+      ],
+      [
+       "Open-weight (with licence terms)",
+       "Trained parameters can be downloaded and run locally, but training data and full training code are not released, and the licence may restrict use. Permissive examples use OSI-approved licences (Apache 2.0: gpt-oss, Qwen3, Gemma 4; MIT: DeepSeek-R1, GLM). Restricted examples use custom terms: the Llama licences require a separate Meta licence above 700 million monthly active users; Gemma (before Gemma 4) used Gemma Terms of Use; Muse Spark Open, Mistral Large 4 and Kimi K3.1 Pro add model-as-a-service or attribution conditions; some are non-commercial (Mistral Research Licence, CC-BY-NC for Command A).",
+       "Llama 4 Maverick, DeepSeek-R1, gpt-oss-120b, Mistral Large 4, Kimi K3.1 Pro"
+      ],
+      [
+       "Open-source AI (OSAID 1.0 sense)",
+       "The Open Source Initiative's Open Source AI Definition 1.0 (released October 2024) requires the 'preferred form for making modifications': data information sufficient for 'a skilled person [to] build a substantially equivalent system', the complete training and inference code, and the parameters, under OSI-approved terms. In OSI's validation, Pythia, OLMo, Amber, CrystalCoder and T5 passed, while Llama 2, Grok, Phi-2 and Mixtral did not. The Linux Foundation's Model Openness Framework (used for IBM Granite's 'Class 3' badge) is a graded alternative. (OSI pages were read via search summaries only.)",
+       "Pythia-12B, OLMo 2 32B, Olmo 3 32B Think, Apertus 70B"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "modality-size",
+   "kicker": "5. Modality, size and specialisation",
+   "action_title": "Most new models read images, and a small-model tier now runs on phones",
+   "paras": [
+    "In the table, 50 models take text only and 41 also take images and sometimes audio or video; 1 is an omni model that speaks and listens natively. Image output is usually handled by a separate model and is defined here but not counted.",
+    "By size and deployment, 32 models are frontier, 6 are closed efficient tiers of undisclosed size, 23 are large (100 billion parameters or more, below the frontier), 24 are mid-size, 4 are small (under 10 billion) and 4 are built to run on phones or laptops. There is no regulatory definition of a small language model; the 10-billion line follows NVIDIA researchers' 2025 working definition.",
+    "Context windows range widely. The longest advertised in the table is Llama 4 Scout's 10,000,000 tokens (2025-04); 1 million tokens is the most common figure among 2026 flagships. Advertised windows are maxima: accuracy on information buried deep in a long prompt is typically lower than at the start."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "Frontier, large and mid-size models dominate the table",
+     "subtitle": "Models in Report AI's classification table by size and deployment class",
+     "unit": "models",
+     "series": [
+      {
+       "name": "Models",
+       "points": [
+        [
+         "frontier",
+         32
+        ],
+        [
+         "mid-size",
+         24
+        ],
+        [
+         "large",
+         23
+        ],
+        [
+         "undisclosed (efficient tier)",
+         6
+        ],
+        [
+         "on-device",
+         4
+        ],
+        [
+         "small",
+         4
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table",
+     "notes": "Frontier: Epoch AI's top-5-by-compute flag, an Epoch estimate of at least 10²⁵ FLOP, or the top-tier closed flagship of a developer with such a run on record (Report AI rule).",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Modality categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Text-only",
+       "Text (and code) in, text out. Most open-weight LLMs through 2025 and many specialised models.",
+       "DeepSeek-R1, Qwen3-32B, Kimi K2, Llama 3.1 405B"
+      ],
+      [
+       "Multimodal input (vision, sometimes audio/video)",
+       "Accepts images (and in some cases audio or video) alongside text but answers only in text. GPT-4 accepted 'image and text inputs and produce[d] text outputs'; Gemini 1.5 handled 'hours of video and audio'; most 2026 frontier models are in this class.",
+       "GPT-4, Claude Opus 5.5, Gemini 2.5 Pro, Llama 4 Scout, Muse Spark Open"
+      ],
+      [
+       "'Omni' / native audio in and out",
+       "One network that takes and produces speech (and other media) natively instead of chaining separate speech-to-text and text-to-speech models. OpenAI said GPT-4o 'accepts as input any combination of text, audio, image, and video and generates any combination of text, audio, and image outputs', answering audio in as little as 232 ms.",
+       "GPT-4o"
+      ],
+      [
+       "Image output",
+       "Generates images as well as text from the same model family (as opposed to a separate diffusion image model). Google's Gemini 2.5 Flash Image and Gemini 3 Pro Image ('Nano Banana', 'Nano Banana Pro') list image and text output.",
+       "Gemini 3 Pro Image (Nano Banana Pro), GPT-4o (image output, 2025)"
+      ]
+     ]
+    },
+    {
+     "title": "Size and deployment categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Frontier",
+       "Epoch AI defines frontier models as those 'in the top 5 by training compute at the time of their release'. Because Epoch has no compute estimate for most 2025–26 closed flagships, Report AI's table also counts a model as frontier if Epoch estimates it at ≥10²⁵ FLOP, or if it is the top-tier closed flagship of a developer with a ≥10²⁵ run on record (OpenAI, Anthropic, Google DeepMind, xAI, Meta). This rule is Report AI's (DERIVED).",
+       "GPT-6 Astra, Claude Opus 5.5, Gemini 4 Argon, Llama 3.1 405B, Kimi K3.1 Pro"
+      ],
+      [
+       "Large (≥100B total parameters, not frontier)",
+       "Open-weight models at or above 100B total parameters that do not meet the frontier rule. Most are MoE, so active parameters can be far smaller (gpt-oss-120b runs 5.1B per token).",
+       "DeepSeek-V4-Pro, Qwen3-235B-A22B, GLM-5, gpt-oss-120b"
+      ],
+      [
+       "Mid-size (10B to <100B)",
+       "Models that fit on one or a few data-centre GPUs; the bulk of self-hosted enterprise deployments.",
+       "Gemma 3 27B, Qwen3-32B, Llama 3 70B, Apertus 70B"
+      ],
+      [
+       "Small language model (<10B)",
+       "There is no regulatory definition. NVIDIA researchers define an SLM functionally as one that 'can fit onto a common consumer electronic device and perform inference with latency sufficiently low to be practical', adding they would be 'comfortable with considering most models below 10bn parameters' SLMs as of 2025. Report AI uses <10B total parameters.",
+       "LLaDA 8B, LLM-jp-4.1 8B, Teuken-7B, Qwen3-Embedding-8B"
+      ],
+      [
+       "On-device",
+       "Designed and shipped to run locally on phones or laptops, typically 2–4B effective parameters with aggressive quantisation. Gemini Nano comes in '1.8B (Nano-1) and 3.25B (Nano-2)' versions, 4-bit quantised; Apple's 2025 on-device model is '~3B' with 2-bit quantisation-aware training; Phi-3-mini was billed as running 'locally on your phone'; Gemma 3n E4B runs 8B raw parameters at a 4B footprint.",
+       "Gemini Nano, Apple Foundation Model (on-device), Phi-3-mini, Gemma 3n E4B"
+      ],
+      [
+       "Undisclosed (efficient tier)",
+       "Closed models sold as the fast/cheap tier whose size is not published (Haiku, Flash, Mercury). Classified by tier, not by parameters.",
+       "Claude Haiku 5.5, Gemini 2.5 Flash, Mercury Coder"
+      ]
+     ]
+    },
+    {
+     "title": "Specialisation categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "General-purpose",
+       "Broad chat, writing, reasoning and coding ability; nearly all frontier models.",
+       "GPT-5, Claude Opus 5.5, Qwen3-235B-A22B"
+      ],
+      [
+       "Code",
+       "Trained or tuned mainly for programming and agentic coding.",
+       "Qwen3-Coder-480B-A35B, Mercury Coder"
+      ],
+      [
+       "Mathematics",
+       "Systems specialised for formal or competition mathematics. None is in the table; Report AI's models data cites DeepMind's AlphaProof (IMO 2024 silver standard, 28/42) as an example — a formal-proof system rather than a general LLM.",
+       "AlphaProof (not in table)"
+      ],
+      [
+       "Domain (medical, legal, finance)",
+       "Tuned and evaluated for one professional domain. Med-PaLM 2 targeted medical question answering at USMLE level.",
+       "Med-PaLM 2"
+      ],
+      [
+       "Embedding / reranker",
+       "Output vectors (or relevance scores) instead of text, for search and retrieval-augmented generation. Qwen3 Embedding builds embedding and reranking models 'upon the Qwen3 foundation models'.",
+       "Qwen3-Embedding-8B"
+      ],
+      [
+       "Safety / guard",
+       "Classifiers that label prompts and responses against a hazard taxonomy, deployed beside a chat model. Llama Guard 4 is 'a natively multimodal safety classifier with 12 billion parameters'.",
+       "Llama Guard 4 12B"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "compute",
+   "kicker": "6. Training compute and regulation",
+   "action_title": "Only 4 models are estimated above 10²⁶ FLOP, and all are closed",
+   "paras": [
+    "Epoch AI's AI-models database, downloaded 15 Nov 2026, holds 28 entries with a training-compute estimate of at least 10²⁵ FLOP (27 distinct models; GPT-4 appears twice), of which 8 are open-weight and 4 exceed 10²⁶ FLOP — Grok 3, GPT-4.5, Grok 4 and GPT-6 Astra, all closed.",
+    "Epoch AI's 'Over 30 AI models have been trained at the scale of GPT-4' data insight (updated 6 Jun 2025; CSV updated 21 Nov 2025) lists 33 publicly disclosed models estimated above 10²⁵ FLOP from 12 developers, of which 3 have open weights (Llama 3.1-405B, Mistral Large 2, Nemotron-4 340B).",
+    "Compute is what regulators count. The EU AI Act presumes a general-purpose model has systemic risk above 10²⁵ FLOP; California's SB 53 and New York's RAISE Act use 10²⁶. The United States' federal 10²⁶ reporting threshold from Executive Order 14110 was rescinded in January 2025. Epoch AI has no estimate for most closed flagships released in 2025–26, so any count above these thresholds undercounts the newest models."
+   ],
+   "tables": [
+    {
+     "title": "Models in the table with an Epoch AI estimate of at least 10²⁵ FLOP",
+     "columns": [
+      "Model",
+      "Developer",
+      "Released",
+      "Training compute (FLOP)",
+      "Epoch's own confidence",
+      "Openness",
+      "Threshold class",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "GPT-6 Astra",
+       "OpenAI",
+       "2026-09",
+       "9.40 × 10²⁶",
+       "Likely",
+       "closed",
+       "Above 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Grok 4",
+       "xAI",
+       "2025-07",
+       "5.00 × 10²⁶",
+       "Speculative",
+       "closed",
+       "Above 10²⁶",
+       "HIGH"
+      ],
+      [
+       "GPT-4.5",
+       "OpenAI",
+       "2025-02",
+       "3.80 × 10²⁶",
+       "Likely",
+       "closed",
+       "Above 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Grok 3",
+       "xAI",
+       "2025-02",
+       "3.50 × 10²⁶",
+       "Likely",
+       "closed",
+       "Above 10²⁶",
+       "HIGH"
+      ],
+      [
+       "GPT-5",
+       "OpenAI",
+       "2025-08",
+       "6.60 × 10²⁵",
+       "Speculative",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "GPT-4o",
+       "OpenAI",
+       "2024-05",
+       "3.81 × 10²⁵",
+       "Speculative",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Llama 3.1 405B",
+       "Meta",
+       "2024-07",
+       "3.80 × 10²⁵",
+       "Confident",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Claude 3.7 Sonnet",
+       "Anthropic",
+       "2025-02",
+       "3.35 × 10²⁵",
+       "Likely",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Grok 2",
+       "xAI",
+       "2024-08",
+       "2.96 × 10²⁵",
+       "Confident",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Claude 3.5 Sonnet",
+       "Anthropic",
+       "2024-06",
+       "2.70 × 10²⁵",
+       "Speculative",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Mistral Large 2",
+       "Mistral AI",
+       "2024-07",
+       "2.13 × 10²⁵",
+       "Likely",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "GPT-4",
+       "OpenAI",
+       "2023-03",
+       "2.10 × 10²⁵",
+       "Likely",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Kimi K3.1 Pro",
+       "Moonshot AI",
+       "2026-10",
+       "2.00 × 10²⁵",
+       "Speculative",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Nemotron-4 340B",
+       "NVIDIA",
+       "2024-06",
+       "1.80 × 10²⁵",
+       "Confident",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Claude 3 Opus",
+       "Anthropic",
+       "2024-03",
+       "1.64 × 10²⁵",
+       "Speculative",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Gemini 1.5 Pro",
+       "Google DeepMind",
+       "2024-02",
+       "1.58 × 10²⁵",
+       "Speculative",
+       "closed",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Mistral Large 4",
+       "Mistral AI",
+       "2026-10",
+       "1.24 × 10²⁵",
+       "Confident",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ],
+      [
+       "Inkling",
+       "Thinking Machines Lab",
+       "2026-07",
+       "1.10 × 10²⁵",
+       "Likely",
+       "open-weight",
+       "10²⁵ to 10²⁶",
+       "HIGH"
+      ]
+     ],
+     "note": "Estimates from Epoch AI's AI-models database (downloaded 15 Nov 2026). Epoch labels its own estimates Confident, Likely or Speculative."
+    },
+    {
+     "title": "Compute thresholds in law",
+     "columns": [
+      "Threshold",
+      "What it means",
+      "Examples",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "EU AI Act systemic-risk presumption: >10²⁵ FLOP",
+       "Under Article 51 of the EU AI Act (Regulation 2024/1689), a general-purpose AI model is presumed to have high-impact capabilities, and so 'systemic risk', when its cumulative training compute exceeds 10²⁵ floating-point operations; such providers must evaluate and red-team models, report serious incidents and ensure cybersecurity. Secondary sources report the 2026 Digital Omnibus deal (provisional agreement 7 May 2026) changed deadlines, not this threshold. (EUR-Lex was not reachable; MEDIUM.)",
+       "GPT-4 (2.1 × 10²⁵), Llama 3.1 405B (3.8 × 10²⁵), Mistral Large 4 (1.24 × 10²⁵), Kimi K3.1 Pro (2 × 10²⁵, Epoch speculative)",
+       "MEDIUM"
+      ],
+      [
+       "US federal 10²⁶ (EO 14110, rescinded)",
+       "Executive Order 14110 (30 Oct 2023) set interim reporting duties for models trained with more than 10²⁶ integer or floating-point operations (10²³ for models trained primarily on biological sequence data). It was rescinded on 20 January 2025; sources differ on whether EO 14148 or EO 14179 was the instrument. No federal compute threshold is in force as far as found.",
+       "Grok 3, GPT-4.5, Grok 4, GPT-6 Astra",
+       "MEDIUM"
+      ],
+      [
+       "California SB 53 (TFAIA): >10²⁶ incl. fine-tuning",
+       "California's Transparency in Frontier Artificial Intelligence Act, signed 29 Sep 2025 and in force since 1 Jan 2026, defines a 'frontier model' as one trained with more than 10²⁶ integer or floating-point operations, counting fine-tuning and later modifications; 'large frontier developers' (over $500M annual revenue) carry extra duties. New York's RAISE Act (final amendment signed 27 Mar 2026, effective 1 Jan 2027) uses 10²⁶ plus a >$100M compute-cost test.",
+       "GPT-6 Astra (9.4 × 10²⁶, Epoch)",
+       "MEDIUM"
+      ],
+      [
+       "Below 10²⁵ or no public estimate",
+       "Most open-weight models, including very large MoEs, sit below 10²⁵ because active parameters, not total, drive training FLOP: DeepSeek-V4-Pro (1.6T total) is estimated at 9.7 × 10²⁴. Most 2025–26 closed flagships have no public estimate at all.",
+       "DeepSeek-V4-Pro (9.7 × 10²⁴), Kimi K2 (3.0 × 10²⁴), Claude Opus 5.5 (no estimate)",
+       "MEDIUM"
+      ]
+     ],
+     "note": "Legal texts (EUR-Lex, California Legislature) could not be opened for this edition; wording is from secondary sources and rated MEDIUM."
+    }
+   ]
+  },
+  {
+   "id": "origin",
+   "kicker": "7. Origin",
+   "action_title": "US developers made most of the table's models; China is a clear second",
+   "paras": [
+    "By country of the developer, the table holds 58 US models and 19 Chinese ones, then France 5, UAE 3, Canada 2, Israel 1, Switzerland 1, Germany 1, South Korea 1, India 1, Japan 1. By developer type, ai labs 46, big techs 38, academic nonprofits 6, governments 3.",
+    "Origin matters for jurisdiction, language coverage and supply-chain dependence, which is why governments now fund national or sovereign models. Many of those are adapted from an open base model rather than trained from scratch; the Sovereign AI Index tracks them separately."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "The United States and China account for most models in the table",
+     "subtitle": "Models in Report AI's classification table by country of developer",
+     "unit": "models",
+     "series": [
+      {
+       "name": "Models",
+       "points": [
+        [
+         "US",
+         58
+        ],
+        [
+         "China",
+         19
+        ],
+        [
+         "France",
+         5
+        ],
+        [
+         "UAE",
+         3
+        ],
+        [
+         "Canada",
+         2
+        ],
+        [
+         "Israel",
+         1
+        ],
+        [
+         "Switzerland",
+         1
+        ],
+        [
+         "Germany",
+         1
+        ],
+        [
+         "South Korea",
+         1
+        ],
+        [
+         "India",
+         1
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI LLM classification table",
+     "notes": "Selection covers notable models and one example of each category; see the Sovereign AI Index for national models.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Developer-type categories",
+     "columns": [
+      "Category",
+      "Definition",
+      "Examples"
+     ],
+     "rows": [
+      [
+       "Big tech",
+       "Large diversified technology firms building models in-house (Google, Meta, Microsoft, Apple, Alibaba, NVIDIA, IBM, LG).",
+       "Gemini, Llama / Muse, Qwen, Nemotron, K-EXAONE"
+      ],
+      [
+       "AI lab / startup",
+       "Companies whose main business is building models (OpenAI, Anthropic, xAI, Mistral, DeepSeek, Moonshot, Zhipu, MiniMax, Cohere, AI21, Inception, Thinking Machines, Sarvam).",
+       "GPT-5, Claude, DeepSeek-R1, Mistral Large 4"
+      ],
+      [
+       "Academic / non-profit",
+       "Universities, public research institutes and non-profits, which dominate fully open (OSAID-style) releases.",
+       "Pythia (EleutherAI), OLMo (Ai2), Apertus (Swiss AI), LLM-jp (NII)"
+      ],
+      [
+       "Government / sovereign",
+       "State-owned or state-funded developers building national-language or 'sovereign' models; the concept, and 58 model families by country, are covered in Report AI's Sovereign AI Index. Many sovereign models are adapted from foreign open weights rather than trained from scratch (Counterpoint: 56% of sovereign LLMs). The table flags in_sovereign_ai_index for families listed there.",
+       "Falcon (TII, UAE), Teuken (OpenGPT-X, Germany), Jais 3 (UAE), Sarvam-105B (India)"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "what-you-see",
+   "kicker": "8. What the categories change for users",
+   "action_title": "The category behind a chatbot decides its speed, price, privacy and failure modes",
+   "paras": [
+    "The same chat window can sit in front of very different models, and apps increasingly route each request to a different one. The table below translates each category into what a user or buyer notices. It is Report AI's synthesis of the definitions above, with links to the indexes that hold the figures."
+   ],
+   "tables": [
+    {
+     "title": "What each category means in practice",
+     "columns": [
+      "Category",
+      "What changes for the user",
+      "Figures on Report AI"
+     ],
+     "rows": [
+      [
+       "Reasoning model",
+       "Better on maths, code and multi-step problems; slower first token and more output tokens billed, because it writes hidden reasoning before answering",
+       {
+        "text": "Test-time compute & reasoning",
+        "href": "/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"
+       }
+      ],
+      [
+       "Mixture-of-experts",
+       "Cheaper and faster per token than a dense model of the same total size, because only the active experts run; still needs memory for all parameters",
+       {
+        "text": "LLM Token Price Index",
+        "href": "/indexes/ai-economics/llm-token-price-index/"
+       }
+      ],
+      [
+       "Open-weight",
+       "Can run on your own hardware, keep data in house and be fine-tuned; licence terms (attribution, revenue caps, acceptable use) still apply",
+       {
+        "text": "Open vs closed AI models 2026",
+        "href": "/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/"
+       }
+      ],
+      [
+       "Closed",
+       "Usually the highest benchmark scores, but parameters, architecture and training data are undisclosed and the model can change or be retired by the vendor",
+       {
+        "text": "Best AI models 2026",
+        "href": "/indexes/technical-benchmarks/best-ai-models-2026/"
+       }
+      ],
+      [
+       "Small / on-device",
+       "Runs privately on a phone or laptop with no network round trip; weaker on broad knowledge and long reasoning",
+       {
+        "text": "AI energy and water per query",
+        "href": "/indexes/technical-benchmarks/ai-energy-water-per-query/"
+       }
+      ],
+      [
+       "Long context",
+       "Can read whole codebases or contracts in one prompt; advertised windows are maxima, and accuracy and price per request change with length",
+       {
+        "text": "Context window (glossary)",
+        "href": "/glossary/context-window/"
+       }
+      ],
+      [
+       "Sovereign / national",
+       "Built for a language, jurisdiction or government; often adapted from an open base rather than trained from scratch",
+       {
+        "text": "Sovereign AI Index 2026",
+        "href": "/indexes/geography-of-ai/sovereign-ai-index-2026/"
+       }
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "table",
+   "kicker": "9. The classification table",
+   "action_title": "All 93 models on every dimension",
+   "paras": [
+    "Parameters are shown as total / active (billions) for mixture-of-experts models. n/d means not disclosed. The source column links the main source for each row; the full list of sources for every row is in the downloadable data."
+   ],
+   "tables": [
+    {
+     "title": "Report AI LLM classification table, 2023–November 2026",
+     "columns": [
+      "Model",
+      "Developer",
+      "Country",
+      "Released",
+      "Openness",
+      "Architecture",
+      "Parameters (B, total / active)",
+      "Context",
+      "Reasoning",
+      "Inputs",
+      "Size class",
+      "Main source",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "GPT-4",
+       "OpenAI",
+       "US",
+       "2023-03",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "8.192K",
+       "No",
+       "text, image",
+       "frontier",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2303.08774"
+       },
+       "HIGH"
+      ],
+      [
+       "Pythia-12B",
+       "EleutherAI",
+       "US",
+       "2023-04",
+       "open-source",
+       "Dense transformer",
+       "12",
+       "2.048K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/EleutherAI/pythia-12b"
+       },
+       "HIGH"
+      ],
+      [
+       "Med-PaLM 2",
+       "Google Research / Google DeepMind",
+       "US",
+       "2023-05",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "n/d",
+       "No",
+       "text",
+       "undisclosed (efficient tier)",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2305.09617"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Llama 2 70B",
+       "Meta",
+       "US",
+       "2023-07",
+       "open-weight",
+       "Dense transformer",
+       "69",
+       "4.096K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Llama-2-70b-hf"
+       },
+       "HIGH"
+      ],
+      [
+       "Falcon-180B",
+       "Technology Innovation Institute (TII)",
+       "UAE",
+       "2023-09",
+       "open-weight",
+       "Dense transformer",
+       "180",
+       "2.048K",
+       "No",
+       "text",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/tiiuae/falcon-180B"
+       },
+       "HIGH"
+      ],
+      [
+       "Grok-1",
+       "xAI",
+       "US",
+       "2023-11",
+       "open-weight",
+       "Mixture-of-experts",
+       "314",
+       "8.192K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/xai-org/grok-1"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Gemini Nano",
+       "Google DeepMind",
+       "US",
+       "2023-12",
+       "closed",
+       "Undisclosed",
+       "3.25",
+       "n/d",
+       "No",
+       "text, image, audio",
+       "on-device",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2312.11805"
+       },
+       "HIGH"
+      ],
+      [
+       "Mixtral 8x7B",
+       "Mistral AI",
+       "France",
+       "2023-12",
+       "open-weight",
+       "Mixture-of-experts",
+       "47 / 13",
+       "32.768K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/mistralai/Mixtral-8x7B-v0.1"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini 1.5 Pro",
+       "Google DeepMind",
+       "US",
+       "2024-02",
+       "closed",
+       "Mixture-of-experts",
+       "undisclosed",
+       "1M",
+       "No",
+       "text, image, audio, video",
+       "frontier",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2403.05530"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude 3 Opus",
+       "Anthropic",
+       "US",
+       "2024-03",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "No",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-3-family"
+       },
+       "HIGH"
+      ],
+      [
+       "Command R+",
+       "Cohere",
+       "Canada",
+       "2024-04",
+       "open-weight",
+       "Dense transformer",
+       "104",
+       "128K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/CohereForAI/c4ai-command-r-plus"
+       },
+       "HIGH"
+      ],
+      [
+       "Llama 3 70B",
+       "Meta",
+       "US",
+       "2024-04",
+       "open-weight",
+       "Dense transformer",
+       "71",
+       "8.192K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Meta-Llama-3-70B"
+       },
+       "HIGH"
+      ],
+      [
+       "Phi-3-mini",
+       "Microsoft",
+       "US",
+       "2024-04",
+       "open-weight",
+       "Dense transformer",
+       "3.8",
+       "4.096K",
+       "No",
+       "text",
+       "on-device",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/microsoft/Phi-3-mini-4k-instruct"
+       },
+       "HIGH"
+      ],
+      [
+       "GPT-4o",
+       "OpenAI",
+       "US",
+       "2024-05",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "128K",
+       "No",
+       "text, image, audio, video",
+       "frontier",
+       {
+        "text": "openai.com",
+        "href": "https://openai.com/index/hello-gpt-4o/"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Claude 3.5 Sonnet",
+       "Anthropic",
+       "US",
+       "2024-06",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "No",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-3-5-sonnet"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemma 2 27B",
+       "Google DeepMind",
+       "US",
+       "2024-06",
+       "open-weight",
+       "Dense transformer",
+       "27",
+       "8.192K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/google/gemma-2-27b"
+       },
+       "HIGH"
+      ],
+      [
+       "Nemotron-4 340B",
+       "NVIDIA",
+       "US",
+       "2024-06",
+       "open-weight",
+       "Dense transformer",
+       "340",
+       "4.096K",
+       "No",
+       "text",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/nvidia/Nemotron-4-340B-Base"
+       },
+       "HIGH"
+      ],
+      [
+       "Llama 3.1 405B",
+       "Meta",
+       "US",
+       "2024-07",
+       "open-weight",
+       "Dense transformer",
+       "406",
+       "128K",
+       "No",
+       "text",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Llama-3.1-405B"
+       },
+       "HIGH"
+      ],
+      [
+       "Mistral Large 2",
+       "Mistral AI",
+       "France",
+       "2024-07",
+       "open-weight",
+       "Dense transformer",
+       "123",
+       "128K",
+       "No",
+       "text",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/mistralai/Mistral-Large-Instruct-2407"
+       },
+       "HIGH"
+      ],
+      [
+       "Grok 2",
+       "xAI",
+       "US",
+       "2024-08",
+       "open-weight",
+       "Mixture-of-experts",
+       "undisclosed",
+       "131.072K",
+       "No",
+       "text, image",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/xai-org/grok-2"
+       },
+       "HIGH"
+      ],
+      [
+       "Jamba 1.5 Large",
+       "AI21 Labs",
+       "Israel",
+       "2024-08",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "398 / 94",
+       "256K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/ai21labs/AI21-Jamba-Large-1.5"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen2.5-72B",
+       "Alibaba (Qwen)",
+       "China",
+       "2024-09",
+       "open-weight",
+       "Dense transformer",
+       "73",
+       "131.072K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen2.5-72B"
+       },
+       "HIGH"
+      ],
+      [
+       "Teuken-7B",
+       "OpenGPT-X (Fraunhofer IAIS/IIS consortium)",
+       "Germany",
+       "2024-11",
+       "open-weight",
+       "Dense transformer",
+       "7.45",
+       "4.096K",
+       "No",
+       "text",
+       "small",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/openGPT-X/Teuken-7B-instruct-commercial-v0.4"
+       },
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V3",
+       "DeepSeek",
+       "China",
+       "2024-12",
+       "open-weight",
+       "Mixture-of-experts",
+       "671 / 37",
+       "128K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/deepseek-ai/DeepSeek-V3"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini 2.0 Flash",
+       "Google DeepMind",
+       "US",
+       "2024-12",
+       "closed",
+       "Mixture-of-experts",
+       "undisclosed",
+       "1M",
+       "No",
+       "text, image, audio, video",
+       "undisclosed (efficient tier)",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2507.06261"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Phi-4",
+       "Microsoft",
+       "US",
+       "2024-12",
+       "open-weight",
+       "Dense transformer",
+       "15",
+       "16.384K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/microsoft/phi-4"
+       },
+       "HIGH"
+      ],
+      [
+       "o1",
+       "OpenAI",
+       "US",
+       "2024-12",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "epoch.ai",
+        "href": "https://epoch.ai/data/charts/10²⁵-models/1e25_models.csv"
+       },
+       "MEDIUM"
+      ],
+      [
+       "DeepSeek-R1",
+       "DeepSeek",
+       "China",
+       "2025-01",
+       "open-weight",
+       "Mixture-of-experts",
+       "671 / 37",
+       "128K",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/deepseek-ai/DeepSeek-R1"
+       },
+       "HIGH"
+      ],
+      [
+       "Mistral Small 3",
+       "Mistral AI",
+       "France",
+       "2025-01",
+       "open-weight",
+       "Dense transformer",
+       "24",
+       "32.768K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/mistralai/Mistral-Small-24B-Base-2501"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude 3.7 Sonnet",
+       "Anthropic",
+       "US",
+       "2025-02",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-3-7-sonnet"
+       },
+       "HIGH"
+      ],
+      [
+       "GPT-4.5",
+       "OpenAI",
+       "US",
+       "2025-02",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "n/d",
+       "No",
+       "text, image",
+       "frontier",
+       {
+        "text": "en.wikipedia.org",
+        "href": "https://en.wikipedia.org/wiki/GPT-4.5"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Grok 3",
+       "xAI",
+       "US",
+       "2025-02",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "n/d",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "en.wikipedia.org",
+        "href": "https://en.wikipedia.org/wiki/Grok_(chatbot)"
+       },
+       "MEDIUM"
+      ],
+      [
+       "LLaDA 8B",
+       "Renmin University of China & Ant Group",
+       "China",
+       "2025-02",
+       "open-weight",
+       "Diffusion",
+       "8",
+       "n/d",
+       "No",
+       "text",
+       "small",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/GSAI-ML/LLaDA-8B-Base"
+       },
+       "HIGH"
+      ],
+      [
+       "Mercury Coder",
+       "Inception Labs",
+       "US",
+       "2025-02",
+       "closed",
+       "Diffusion",
+       "undisclosed",
+       "n/d",
+       "No",
+       "text",
+       "undisclosed (efficient tier)",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2506.17298"
+       },
+       "HIGH"
+      ],
+      [
+       "Command A",
+       "Cohere",
+       "Canada",
+       "2025-03",
+       "open-weight",
+       "Dense transformer",
+       "111",
+       "256K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/CohereLabs/c4ai-command-a-03-2025"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini 2.5 Pro",
+       "Google DeepMind",
+       "US",
+       "2025-03",
+       "closed",
+       "Mixture-of-experts",
+       "undisclosed",
+       "1.04858M",
+       "Yes (always on)",
+       "text, image, audio, video",
+       "frontier",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2507.06261"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemma 3 27B",
+       "Google DeepMind",
+       "US",
+       "2025-03",
+       "open-weight",
+       "Dense transformer",
+       "27",
+       "128K",
+       "No",
+       "text, image",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/google/gemma-3-27b-pt"
+       },
+       "HIGH"
+      ],
+      [
+       "OLMo 2 32B",
+       "Allen Institute for AI (Ai2)",
+       "US",
+       "2025-03",
+       "open-source",
+       "Dense transformer",
+       "32",
+       "4.096K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/allenai/OLMo-2-0325-32B"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini 2.5 Flash",
+       "Google DeepMind",
+       "US",
+       "2025-04",
+       "closed",
+       "Mixture-of-experts",
+       "undisclosed",
+       "1.04858M",
+       "Hybrid (switchable)",
+       "text, image, audio, video",
+       "undisclosed (efficient tier)",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2507.06261"
+       },
+       "HIGH"
+      ],
+      [
+       "Llama 4 Maverick",
+       "Meta",
+       "US",
+       "2025-04",
+       "open-weight",
+       "Mixture-of-experts",
+       "400 / 17",
+       "1M",
+       "No",
+       "text, image",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Llama-4-Maverick-17B-128E"
+       },
+       "HIGH"
+      ],
+      [
+       "Llama 4 Scout",
+       "Meta",
+       "US",
+       "2025-04",
+       "open-weight",
+       "Mixture-of-experts",
+       "109 / 17",
+       "10M",
+       "No",
+       "text, image",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Llama-4-Scout-17B-16E"
+       },
+       "HIGH"
+      ],
+      [
+       "Llama Guard 4 12B",
+       "Meta",
+       "US",
+       "2025-04",
+       "open-weight",
+       "Dense transformer",
+       "12",
+       "n/d",
+       "No",
+       "text, image",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-llama/Llama-Guard-4-12B"
+       },
+       "HIGH"
+      ],
+      [
+       "Nemotron-H 56B",
+       "NVIDIA",
+       "US",
+       "2025-04",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "56",
+       "8.192K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/nvidia/Nemotron-H-56B-Base-8K"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3-235B-A22B",
+       "Alibaba (Qwen)",
+       "China",
+       "2025-04",
+       "open-weight",
+       "Mixture-of-experts",
+       "235 / 22",
+       "131.072K",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3-235B-A22B"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3-32B",
+       "Alibaba (Qwen)",
+       "China",
+       "2025-04",
+       "open-weight",
+       "Dense transformer",
+       "33",
+       "131.072K",
+       "Hybrid (switchable)",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3-32B"
+       },
+       "HIGH"
+      ],
+      [
+       "o3",
+       "OpenAI",
+       "US",
+       "2025-04",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "openrouter.ai",
+        "href": "https://openrouter.ai/api/v1/models"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Claude Opus 4",
+       "Anthropic",
+       "US",
+       "2025-05",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-4"
+       },
+       "HIGH"
+      ],
+      [
+       "Falcon-H1-34B",
+       "Technology Innovation Institute (TII)",
+       "UAE",
+       "2025-05",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "34",
+       "262.144K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/tiiuae/Falcon-H1-34B-Base"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini Diffusion",
+       "Google DeepMind",
+       "US",
+       "2025-05",
+       "closed",
+       "Diffusion",
+       "undisclosed",
+       "n/d",
+       "No",
+       "text",
+       "undisclosed (efficient tier)",
+       {
+        "text": "blog.google",
+        "href": "https://blog.google/technology/google-deepmind/gemini-diffusion/"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Gemma 3n E4B",
+       "Google DeepMind",
+       "US",
+       "2025-06",
+       "open-weight",
+       "Dense transformer",
+       "7.85 / 4",
+       "32K",
+       "No",
+       "text, image, audio, video",
+       "on-device",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/google/gemma-3n-E4B"
+       },
+       "HIGH"
+      ],
+      [
+       "Magistral Small",
+       "Mistral AI",
+       "France",
+       "2025-06",
+       "open-weight",
+       "Dense transformer",
+       "24",
+       "128K",
+       "Yes (always on)",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/mistralai/Magistral-Small-2506"
+       },
+       "HIGH"
+      ],
+      [
+       "MiniMax-M1",
+       "MiniMax",
+       "China",
+       "2025-06",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "456 / 46",
+       "1M",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/MiniMaxAI/MiniMax-M1-80k"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3-Embedding-8B",
+       "Alibaba (Qwen)",
+       "China",
+       "2025-06",
+       "open-weight",
+       "Dense transformer",
+       "7.57",
+       "32K",
+       "No",
+       "text",
+       "small",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3-Embedding-8B"
+       },
+       "HIGH"
+      ],
+      [
+       "Apple Foundation Model (on-device, 2025)",
+       "Apple",
+       "US",
+       "2025-07",
+       "closed",
+       "Dense transformer",
+       "3",
+       "n/d",
+       "No",
+       "text, image",
+       "on-device",
+       {
+        "text": "arxiv.org",
+        "href": "https://arxiv.org/abs/2507.13575"
+       },
+       "HIGH"
+      ],
+      [
+       "GLM-4.5",
+       "Zhipu AI (Z.ai)",
+       "China",
+       "2025-07",
+       "open-weight",
+       "Mixture-of-experts",
+       "358 / 32",
+       "131.072K",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/zai-org/GLM-4.5"
+       },
+       "HIGH"
+      ],
+      [
+       "Grok 4",
+       "xAI",
+       "US",
+       "2025-07",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "256K",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "epoch.ai",
+        "href": "https://epoch.ai/data/all_ai_models.csv"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Kimi K2",
+       "Moonshot AI",
+       "China",
+       "2025-07",
+       "open-weight",
+       "Mixture-of-experts",
+       "1,026 / 32",
+       "128K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/moonshotai/Kimi-K2-Instruct"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3-Coder-480B-A35B",
+       "Alibaba (Qwen)",
+       "China",
+       "2025-07",
+       "open-weight",
+       "Mixture-of-experts",
+       "480 / 35",
+       "262.144K",
+       "No",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3-Coder-480B-A35B-Instruct"
+       },
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V3.1",
+       "DeepSeek",
+       "China",
+       "2025-08",
+       "open-weight",
+       "Mixture-of-experts",
+       "671 / 37",
+       "128K",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/deepseek-ai/DeepSeek-V3.1"
+       },
+       "HIGH"
+      ],
+      [
+       "GPT-5",
+       "OpenAI",
+       "US",
+       "2025-08",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "400K",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "en.wikipedia.org",
+        "href": "https://en.wikipedia.org/wiki/GPT-5"
+       },
+       "MEDIUM"
+      ],
+      [
+       "gpt-oss-120b",
+       "OpenAI",
+       "US",
+       "2025-08",
+       "open-weight",
+       "Mixture-of-experts",
+       "117 / 5.1",
+       "131.072K",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/openai/gpt-oss-120b"
+       },
+       "HIGH"
+      ],
+      [
+       "gpt-oss-20b",
+       "OpenAI",
+       "US",
+       "2025-08",
+       "open-weight",
+       "Mixture-of-experts",
+       "21 / 3.6",
+       "131.072K",
+       "Yes (always on)",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/openai/gpt-oss-20b"
+       },
+       "HIGH"
+      ],
+      [
+       "Apertus 70B",
+       "Swiss AI Initiative (EPFL, ETH Zurich, CSCS)",
+       "Switzerland",
+       "2025-09",
+       "open-source",
+       "Dense transformer",
+       "71",
+       "65.536K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/swiss-ai/Apertus-70B-2509"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3-Next-80B-A3B",
+       "Alibaba (Qwen)",
+       "China",
+       "2025-09",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "81 / 3",
+       "262.144K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3-Next-80B-A3B-Instruct"
+       },
+       "HIGH"
+      ],
+      [
+       "Granite 4.0-H-Small",
+       "IBM",
+       "US",
+       "2025-10",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "32 / 9",
+       "131.072K",
+       "No",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/ibm-granite/granite-4.0-h-small"
+       },
+       "HIGH"
+      ],
+      [
+       "MiniMax-M2",
+       "MiniMax",
+       "China",
+       "2025-10",
+       "open-weight",
+       "Mixture-of-experts",
+       "229 / 10",
+       "196.608K",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/MiniMaxAI/MiniMax-M2"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude Opus 4.5",
+       "Anthropic",
+       "US",
+       "2025-11",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "200K",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-opus-4-5"
+       },
+       "HIGH"
+      ],
+      [
+       "Gemini 3 Pro",
+       "Google DeepMind",
+       "US",
+       "2025-11",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1M",
+       "Yes (always on)",
+       "text, image, audio, video",
+       "frontier",
+       {
+        "text": "epoch.ai",
+        "href": "https://epoch.ai/data/all_ai_models.csv"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Olmo 3 32B Think",
+       "Allen Institute for AI (Ai2)",
+       "US",
+       "2025-11",
+       "open-source",
+       "Dense transformer",
+       "32",
+       "65.536K",
+       "Yes (always on)",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/allenai/Olmo-3-32B-Think"
+       },
+       "HIGH"
+      ],
+      [
+       "Nemotron 3 Nano 30B-A3B",
+       "NVIDIA",
+       "US",
+       "2025-12",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "32 / 3.5",
+       "1M",
+       "Hybrid (switchable)",
+       "text",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/nvidia/NVIDIA-Nemotron-3-Nano-30B-A3B-BF16"
+       },
+       "HIGH"
+      ],
+      [
+       "K-EXAONE",
+       "LG AI Research",
+       "South Korea",
+       "2026-01",
+       "open-weight",
+       "Mixture-of-experts",
+       "236 / 23",
+       "262.144K",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/LGAI-EXAONE/K-EXAONE-236B-A23B"
+       },
+       "HIGH"
+      ],
+      [
+       "GLM-5",
+       "Zhipu AI (Z.ai)",
+       "China",
+       "2026-02",
+       "open-weight",
+       "Mixture-of-experts",
+       "754 / 40",
+       "202.752K",
+       "not verified",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/zai-org/GLM-5"
+       },
+       "HIGH"
+      ],
+      [
+       "Sarvam-105B",
+       "Sarvam AI",
+       "India",
+       "2026-03",
+       "open-weight",
+       "Mixture-of-experts",
+       "106 / 10",
+       "131.072K",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/sarvamai/sarvam-105b"
+       },
+       "HIGH"
+      ],
+      [
+       "DeepSeek-V4-Pro",
+       "DeepSeek",
+       "China",
+       "2026-04",
+       "open-weight",
+       "Mixture-of-experts",
+       "1,600 / 49",
+       "1M",
+       "Hybrid (switchable)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro"
+       },
+       "HIGH"
+      ],
+      [
+       "GPT-5.5",
+       "OpenAI",
+       "US",
+       "2026-04",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1.05M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "openrouter.ai",
+        "href": "https://openrouter.ai/api/v1/models"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Gemma 4 26B A4B",
+       "Google DeepMind",
+       "US",
+       "2026-04",
+       "open-weight",
+       "Mixture-of-experts",
+       "25 / 3.8",
+       "256K",
+       "Hybrid (switchable)",
+       "text, image",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/google/gemma-4-26B-A4B-it"
+       },
+       "HIGH"
+      ],
+      [
+       "Muse Spark",
+       "Meta (Meta Superintelligence Labs)",
+       "US",
+       "2026-04",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "n/d",
+       "not verified",
+       "text, image",
+       "frontier",
+       {
+        "text": "epoch.ai",
+        "href": "https://epoch.ai/data/all_ai_models.csv"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Claude Fable 5",
+       "Anthropic",
+       "US",
+       "2026-06",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-fable-5-mythos-5"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude Mythos 5",
+       "Anthropic",
+       "US",
+       "2026-06",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-fable-5-mythos-5"
+       },
+       "HIGH"
+      ],
+      [
+       "DiffusionGemma 26B A4B",
+       "Google DeepMind",
+       "US",
+       "2026-06",
+       "open-weight",
+       "Diffusion",
+       "25 / 3.8",
+       "256K",
+       "Hybrid (switchable)",
+       "text, image, video",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/google/diffusiongemma-26B-A4B-it"
+       },
+       "HIGH"
+      ],
+      [
+       "Inkling",
+       "Thinking Machines Lab",
+       "US",
+       "2026-07",
+       "open-weight",
+       "Mixture-of-experts",
+       "952 / 41",
+       "1.04858M",
+       "Yes (always on)",
+       "text, image, video, audio",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/thinkingmachines/Inkling"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3.8-2.4T-A95B (Qwen3.8-Max base)",
+       "Alibaba (Qwen)",
+       "China",
+       "2026-08",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "2,446 / 95",
+       "262.144K",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3.8-2.4T-A95B"
+       },
+       "HIGH"
+      ],
+      [
+       "Qwen3.8-27B",
+       "Alibaba (Qwen)",
+       "China",
+       "2026-08",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "28",
+       "262.144K",
+       "Hybrid (switchable)",
+       "text, image",
+       "mid-size",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/Qwen/Qwen3.8-27B"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude Opus 5.5",
+       "Anthropic",
+       "US",
+       "2026-09",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-opus-5-5"
+       },
+       "HIGH"
+      ],
+      [
+       "GPT-6 Astra",
+       "OpenAI",
+       "US",
+       "2026-09",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1.05M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "epoch.ai",
+        "href": "https://epoch.ai/data/all_ai_models.csv"
+       },
+       "MEDIUM"
+      ],
+      [
+       "GPT-6 Sol",
+       "OpenAI",
+       "US",
+       "2026-09",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1.05M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "openrouter.ai",
+        "href": "https://openrouter.ai/api/v1/models"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Gemini 4 Argon",
+       "Google DeepMind",
+       "US",
+       "2026-09",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1.04858M",
+       "Yes (always on)",
+       "text, image, audio, video",
+       "frontier",
+       {
+        "text": "openrouter.ai",
+        "href": "https://openrouter.ai/api/v1/models"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Jais-3-375B-A23B",
+       "Inception (G42) with MBZUAI",
+       "UAE",
+       "2026-09",
+       "open-weight",
+       "Mixture-of-experts",
+       "379 / 23",
+       "524.288K",
+       "Yes (always on)",
+       "text",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/inception42/Jais-3-375B-A23B"
+       },
+       "HIGH"
+      ],
+      [
+       "LLM-jp-4.1 8B (thinking)",
+       "National Institute of Informatics (LLM-jp)",
+       "Japan",
+       "2026-09",
+       "open-weight",
+       "Dense transformer",
+       "8.59",
+       "65.536K",
+       "Yes (always on)",
+       "text",
+       "small",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/llm-jp/llm-jp-4.1-8b-thinking"
+       },
+       "HIGH"
+      ],
+      [
+       "Claude Haiku 5.5",
+       "Anthropic",
+       "US",
+       "2026-10",
+       "closed",
+       "Undisclosed",
+       "undisclosed",
+       "1M",
+       "Hybrid (switchable)",
+       "text, image",
+       "undisclosed (efficient tier)",
+       {
+        "text": "anthropic.com",
+        "href": "https://www.anthropic.com/news/claude-haiku-5-5"
+       },
+       "HIGH"
+      ],
+      [
+       "Kimi K3.1 Pro",
+       "Moonshot AI",
+       "China",
+       "2026-10",
+       "open-weight",
+       "Hybrid (state-space / linear attention)",
+       "2,780 / 104",
+       "1.04858M",
+       "Yes (always on)",
+       "text, image",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/moonshotai/Kimi-K3.1-Pro"
+       },
+       "HIGH"
+      ],
+      [
+       "Mistral Large 4",
+       "Mistral AI",
+       "France",
+       "2026-10",
+       "open-weight",
+       "Mixture-of-experts",
+       "1,000 / 49",
+       "1M",
+       "Hybrid (switchable)",
+       "text, image",
+       "frontier",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/mistralai/Mistral-Large-4-1T-A52B"
+       },
+       "HIGH"
+      ],
+      [
+       "Muse Spark Open",
+       "Meta (Meta Superintelligence Labs)",
+       "US",
+       "2026-10",
+       "open-weight",
+       "Mixture-of-experts",
+       "816 / 42",
+       "1M",
+       "Yes (always on)",
+       "text, image, video, audio",
+       "large",
+       {
+        "text": "huggingface.co",
+        "href": "https://huggingface.co/meta-models/Muse-Spark-Open-816B-A42B"
+       },
+       "HIGH"
+      ]
+     ],
+     "note": "HIGH: the model card, paper or official page was opened and the fields seen. MEDIUM: secondary source (Wikipedia or aggregators) because the vendor's site could not be opened."
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "Meta released Llama 5, a 600-billion-parameter open model with a 5-million-token context window, in April 2026.",
+   "fact": "No Llama 5 has been released: Meta's newest Llama models are still Llama 4 (April 2025). Meta's April 2026 release was Muse Spark, a closed model; its open-weight successor, Muse Spark Open (October 2026), has 816 billion total and 42 billion active parameters and a 1-million-token context window.",
+   "link": "/reports/ai-statistics-fact-check/#fc-llama-5"
+  },
+  {
+   "claim": "Llama (or DeepSeek, or Qwen) is open-source.",
+   "fact": "These are open-weight models: the weights can be downloaded under licence terms, but the training data and full training code are not released. Only models that also release those, such as OLMo, Pythia and Apertus, meet the Open Source Initiative's Open Source AI Definition 1.0 (October 2024).",
+   "link": ""
+  },
+  {
+   "claim": "A 1-trillion-parameter model costs ten times as much to run as a 100-billion-parameter model.",
+   "fact": "Not for mixture-of-experts models, which run only their active parameters per token. Kimi K3.1 Pro has 2,780 billion parameters but activates 104 billion per token.",
+   "link": ""
+  }
+ ],
+ "definitions": [
+  {
+   "term": {
+    "text": "Large language model",
+    "href": "/glossary/large-language-model/"
+   },
+   "def": "A neural network, almost always a transformer, trained on very large text corpora to predict the next token, then usually tuned to follow instructions."
+  },
+  {
+   "term": "Total vs active parameters",
+   "def": "Total parameters are all the weights a model holds (and so the memory needed to serve it). In a mixture-of-experts model only a subset, the active parameters, runs for each token, which sets the compute cost per token."
+  },
+  {
+   "term": "Reasoning model",
+   "def": "A model trained to generate intermediate reasoning steps before its final answer, spending more inference-time compute on harder problems. A hybrid model lets that reasoning be switched off or capped."
+  },
+  {
+   "term": "Open-weight vs open-source",
+   "def": "Open-weight: the trained weights are downloadable under a licence. Open-source AI (OSI definition, 2024): weights plus training code and sufficient information about the training data, under terms that allow use, study, modification and sharing."
+  },
+  {
+   "term": "State-space / linear-attention hybrid",
+   "def": "An architecture that replaces most full-attention layers with layers whose cost grows linearly with sequence length (Mamba, Gated DeltaNet, Kimi Delta Attention), keeping a few attention layers for recall."
+  },
+  {
+   "term": "Diffusion language model",
+   "def": "A model that generates by iteratively refining a full draft of masked tokens in parallel, rather than writing one token after another."
+  },
+  {
+   "term": {
+    "text": "Context window",
+    "href": "/glossary/context-window/"
+   },
+   "def": "The maximum number of tokens a model can take in one request, prompt and conversation history included."
+  },
+  {
+   "term": {
+    "text": "Frontier model",
+    "href": "/glossary/frontier-model/"
+   },
+   "def": "A model at or near the leading edge of capability and training compute at its release; this index uses Epoch AI's top-5-by-compute flag, a 10²⁵ FLOP estimate, or a top-tier closed flagship of a lab with such a run on record."
+  }
+ ],
+ "faq": [
+  {
+   "q": "How are large language models categorized?",
+   "a": "Report AI classifies LLMs on eight dimensions: architecture (dense, mixture-of-experts, hybrid, diffusion), training stage and reasoning, openness (closed, open-weight, open-source), modality, size and deployment, specialisation, training-compute class and origin. Its November 2026 table places 93 notable models on each."
+  },
+  {
+   "q": "What is the difference between an open-weight and an open-source LLM?",
+   "a": "An open-weight model's trained weights can be downloaded under a licence, but its training data and full code usually are not released. An open-source model under the Open Source Initiative's 2024 definition also releases the training code and enough information about the data to rebuild it; OLMo, Pythia and Apertus qualify, Llama, DeepSeek and Qwen do not."
+  },
+  {
+   "q": "What is a mixture-of-experts model?",
+   "a": "A mixture-of-experts model splits its feed-forward layers into many experts and routes each token to a few of them, so only a fraction of its parameters runs per token. In Report AI's table, 27 of 43 open-weight models released in 2025–26 use the design; Kimi K3.1 Pro has 2,780 billion total and 104 billion active parameters."
+  },
+  {
+   "q": "How many LLMs are reasoning models?",
+   "a": "In Report AI's table, 43 of 64 models released in 2025–26 (67.2%) have a reasoning mode, against 1 of 27 released in 2023–24. On Artificial Analysis's index in November 2026, 108 of 113 indexed model variants were reasoning variants."
+  },
+  {
+   "q": "Which LLMs were trained with the most compute?",
+   "a": "On Epoch AI's estimates (database downloaded 15 November 2026), four models exceed 10²⁶ FLOP: GPT-6 Astra (9.4 × 10²⁶), Grok 4 (5 × 10²⁶), GPT-4.5 (3.8 × 10²⁶) and Grok 3 (3.5 × 10²⁶). All are closed. Epoch has no estimate for most closed flagships released in 2025–26."
+  }
+ ],
+ "methodology_extra": "The table covers 93 notable LLMs chosen to include the leading model families of each major developer and at least one example of every category. Each row was checked against the model's Hugging Face card and configuration, its paper on arXiv, or the developer's official page (HIGH); where those could not be opened, against Wikipedia or aggregators such as OpenRouter and Artificial Analysis (MEDIUM). Training compute is Epoch AI's estimate. Category counts, shares and the frontier classification rule are Report AI calculations (DERIVED) and describe the table, not the whole market. Hugging Face model counts were read from the Hub on 15 November 2026. ",
+ "related": "<a href=\"/reports/machine-learning-models-compared/\">Machine-learning models compared: our 13-model benchmark</a> &middot; <a href=\"/indexes/technical-benchmarks/best-ai-models-2026/\">Best AI models 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/open-vs-closed-ai-models-2026/\">Open vs closed AI models 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/chinese-ai-models-2026/\">Chinese AI models 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/test-time-compute-reasoning-2026/\">Test-time compute and reasoning</a> &middot; <a href=\"/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/\">AI models benchmarks statistics</a> &middot; <a href=\"/indexes/geography-of-ai/sovereign-ai-index-2026/\">Sovereign AI Index 2026</a> &middot; <a href=\"/indexes/ai-economics/llm-token-price-index/\">LLM Token Price Index</a> &middot; <a href=\"/indexes/state-of-ai/state-of-ai-models-prices/\">State of AI: Models & Prices</a> &middot; <a href=\"/reports/how-ai-developed-1950-2026/\">How AI developed, 1950–2026</a> &middot; <a href=\"/reports/ai-statistics-fact-check/\">AI statistics fact-check</a> &middot; <a href=\"/glossary/foundation-model/\">Glossary: foundation model</a> &middot; <a href=\"/glossary/multimodal-ai/\">Glossary: multimodal AI</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "Large language model taxonomy"
+ }
+}

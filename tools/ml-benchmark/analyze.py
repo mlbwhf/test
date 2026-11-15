@@ -129,6 +129,12 @@ def main():
             t[r["model"]].append(r["fit_s"] + r["pred_s"])
         S["time_median_s"] = {m: float(np.median(v)) for m, v in t.items()}
         S["datasets"] = sorted({r["dataset"] for r in R})
+        from bench import DATASETS, load
+        info = {}
+        for key in DATASETS:
+            X, y = load("/home/user/ml-data", key)
+            info[key.split("/")[1]] = dict(rows=int(X.shape[0]), features=int(X.shape[1]), folder=key.split("/")[0])
+        S["dataset_info"] = info
         S["n_rows_main"] = len(R)
     N = rows("noscale")
     if N and R:
