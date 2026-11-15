@@ -1,0 +1,14 @@
+[
+ {
+  "slug": "llm-taxonomy-2026",
+  "title": "How to Categorize LLMs: The LLM Taxonomy 2026 \u2014 Report AI",
+  "excerpt": "Eight ways large language models differ, from architecture and reasoning to openness, size, compute and origin, and a classification of 93 notable models on every one of them. Each row is sourced to a model card, paper or official page and confidence-rated.",
+  "csv": "report-ai-data-llm-taxonomy-2026.csv",
+  "url": "https://report-ai.org/indexes/technical-benchmarks/llm-taxonomy-2026/",
+  "exhibits": 6,
+  "tables": 19,
+  "csv_rows": 1512,
+  "parent_path": "/indexes/technical-benchmarks/",
+  "file": "llm-taxonomy-2026.html"
+ }
+]

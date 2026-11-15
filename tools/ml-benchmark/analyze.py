@@ -120,6 +120,12 @@ def by_model_mean(R, key, variant=None, group=None):
 def main():
     S = {"generated_from": "tools/ml-benchmark/results/*.jsonl"}
     R = rows("main")
+    if R and any(r["model"] == "TabPFN v2" for r in R):
+        # keep only (dataset, split) pairs where every model ran, so ranks compare like with like
+        full = {(r["dataset"], r["seed"]) for r in R if r["model"] == "TabPFN v2"}
+        S["main_splits_used"] = len(full)
+        S["main_rows_all_models_12"] = len(R)
+        R = [r for r in R if (r["dataset"], r["seed"]) in full]
     if R:
         S["main_acc"] = summarise_main(R, "acc")
         S["main_auc"] = summarise_main(R, "auc")
@@ -149,7 +155,7 @@ def main():
             have[r["dataset"]].add(r["n_train"])
         common = sorted(d for d, s in have.items() if need <= s)
         curve = defaultdict(dict)
-        for (m, n), v in by_model_mean([r for r in Z if r["dataset"] in common], "acc", group="n_train").items():
+        for (m, n), v in by_model_mean([r for r in Z if r["dataset"] in common], "acc", group="n_train").items():  # TabPFN only to 1,000 rows
             curve[m][n] = v
         rk = {}
         for n in sorted(need):

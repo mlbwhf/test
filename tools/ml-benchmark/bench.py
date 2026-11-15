@@ -3,7 +3,7 @@ benchmark datasets (Hugging Face inria-soda/tabular-benchmark).
 
 Usage:  python bench.py <experiment> [--data DIR] [--out DIR] [--jobs N]
 Experiments:
-  main       defaults, n_train=1000, 10 random splits per dataset
+  main       defaults, n_train=1000, 10 random splits per dataset (TabPFN: first 5)
   noscale    scale-sensitive models without standardisation (n_train=1000, 10 splits)
   size       learning curve, n_train in {100,300,1000,3000,10000}, 3 splits, datasets with >=6,000 rows per class
   imbalance  10% positive class in train and test, n_train=1000, 3 splits
@@ -217,7 +217,7 @@ def main():
         # learning curve on datasets large enough for every size (each class >= 6,000 rows);
         # TabPFN v2 is run up to 3,000 training rows only (CPU time).
         big = [d for d in datasets if np.bincount(load(a.data, d)[1]).min() >= 6000]
-        plan = [(d, s, n, 2000, [m for m in models if not (m == "TabPFN v2" and n > 3000)])
+        plan = [(d, s, n, 2000, models)
                 for n in (100, 300, 1000, 3000, 10000) for d in big for s in range(3)]
     elif a.exp == "imbalance":
         plan = [(d, s, 1000, 2000, models) for d in datasets for s in range(3)]
@@ -225,7 +225,11 @@ def main():
         plan = [(d, s, 1000, 2000, [m for m in models if m in TUNE_SPACES]) for d in datasets for s in range(3)]
 
     # TabPFN runs in-process with all threads; everything else fans out one thread per job.
-    heavy = [p for p in plan if "TabPFN v2" in p[4]]
+    # TabPFN v2 on a CPU costs 25-80 s per fit, so it runs on a subset: the first 5 splits of
+    # the main experiment, no imbalance runs, and learning-curve sizes up to 1,000 rows.
+    def tabpfn_ok(d, s, n):
+        return ((a.exp == "main" and s < 5) or (a.exp == "size" and n <= 1000) or a.exp not in ("main", "size", "imbalance"))
+    heavy = [p for p in plan if "TabPFN v2" in p[4] and tabpfn_ok(p[0], p[1], p[2])]
     light = [(d, s, n, nt, [m for m in ms if m != "TabPFN v2"]) for d, s, n, nt, ms in plan]
     with open(path, "a") as fh:
         def write(rows):
