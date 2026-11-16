@@ -104,7 +104,7 @@ class TailorTests(unittest.TestCase):
                "description": "Scaled Agile experience and Six Sigma required. Coaching leaders."}
         view = tailor.tailor(RESUME, job, CONFIG)
         self.assertEqual(view["skills"][0], "Scaled Agile (SAFe)")
-        self.assertIn("Six Sigma (Lean Six Sigma)", view["skills"])
+        self.assertIn("Lean Six Sigma", view["skills"])
         self.assertNotIn("PRINCE2", view["skills"])
         self.assertIn("Strengths most relevant to this role: Scaled Agile (SAFe)", view["summary"])
         plain = tailor.tailor(RESUME, self.picked["Senior Agile Coach"], CONFIG)
