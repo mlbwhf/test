@@ -246,7 +246,7 @@ function aa_sv_settings() {
 		'ics_url'       => '',           // secret iCal address of learning@agile-agilist.com
 		'page_id'       => 0,            // the page carrying [aa_survey]; 0 = page with slug "survey"
 		'notify'        => 'info@agile-agilist.com',
-		'book'          => 'https://meetings.hubspot.com/john2795',
+		'book'          => 'https://calendar.app.google/RNTxiSLcAPhPXP1D9',
 		'skip_domains'  => "agile-agilist.com\ntrainyard.app\ngroup.calendar.google.com\nresource.calendar.google.com",
 		'orgs'          => "servicecanada.gc.ca=Service Canada\nhrsdc-rhdcc.gc.ca=Service Canada\nesdc-edsc.gc.ca=Service Canada\nlabour-travail.gc.ca=Service Canada",
 		'last_sync'     => '', 'last_sync_note' => '',
