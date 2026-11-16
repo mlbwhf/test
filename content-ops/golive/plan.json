@@ -1,0 +1,589 @@
+[
+ {
+  "id": 3521,
+  "slug": "state-of-ai-usage",
+  "old": "site-content/state-of-ai/state-of-ai-usage.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-usage.html",
+  "patch": "content-ops/golive/3521-state-of-ai-usage.json",
+  "edits": 3,
+  "maxsearch": 4337,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3524,
+  "slug": "state-of-ai-spending",
+  "old": "site-content/state-of-ai/state-of-ai-spending.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-spending.html",
+  "patch": "content-ops/golive/3524-state-of-ai-spending.json",
+  "edits": 3,
+  "maxsearch": 4925,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3526,
+  "slug": "state-of-ai-finance",
+  "old": "site-content/state-of-ai/state-of-ai-finance.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-finance.html",
+  "patch": "content-ops/golive/3526-state-of-ai-finance.json",
+  "edits": 3,
+  "maxsearch": 5034,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3626,
+  "slug": "state-of-ai-work",
+  "old": "site-content/state-of-ai/state-of-ai-work.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-work.html",
+  "patch": "content-ops/golive/3626-state-of-ai-work.json",
+  "edits": 3,
+  "maxsearch": 5205,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3628,
+  "slug": "state-of-ai-models-prices",
+  "old": "site-content/state-of-ai/state-of-ai-models-prices.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-models-prices.html",
+  "patch": "content-ops/golive/3628-state-of-ai-models-prices.json",
+  "edits": 3,
+  "maxsearch": 5080,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3633,
+  "slug": "state-of-ai-tokens",
+  "old": "site-content/state-of-ai/state-of-ai-tokens.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-tokens.html",
+  "patch": "content-ops/golive/3633-state-of-ai-tokens.json",
+  "edits": 3,
+  "maxsearch": 4521,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3695,
+  "slug": "state-of-ai-infrastructure-energy",
+  "old": "site-content/state-of-ai/state-of-ai-infrastructure-energy.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-infrastructure-energy.html",
+  "patch": "content-ops/golive/3695-state-of-ai-infrastructure-energy.json",
+  "edits": 3,
+  "maxsearch": 4448,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3704,
+  "slug": "state-of-ai-geography",
+  "old": "site-content/state-of-ai/state-of-ai-geography.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-geography.html",
+  "patch": "content-ops/golive/3704-state-of-ai-geography.json",
+  "edits": 3,
+  "maxsearch": 4863,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3705,
+  "slug": "state-of-ai-industries",
+  "old": "site-content/state-of-ai/state-of-ai-industries.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-industries.html",
+  "patch": "content-ops/golive/3705-state-of-ai-industries.json",
+  "edits": 3,
+  "maxsearch": 4199,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3757,
+  "slug": "state-of-ai-regulation",
+  "old": "site-content/state-of-ai/state-of-ai-regulation.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-regulation.html",
+  "patch": "content-ops/golive/3757-state-of-ai-regulation.json",
+  "edits": 3,
+  "maxsearch": 4499,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3756,
+  "slug": "state-of-ai-risk",
+  "old": "site-content/state-of-ai/state-of-ai-risk.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-risk.html",
+  "patch": "content-ops/golive/3756-state-of-ai-risk.json",
+  "edits": 3,
+  "maxsearch": 4556,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3851,
+  "slug": "state-of-ai-year-over-year",
+  "old": "site-content/state-of-ai/state-of-ai-year-over-year.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-year-over-year.html",
+  "patch": "content-ops/golive/3851-state-of-ai-year-over-year.json",
+  "edits": 3,
+  "maxsearch": 3518,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 4007,
+  "slug": "state-of-ai-2024",
+  "old": "site-content/state-of-ai/state-of-ai-2024.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-2024.html",
+  "patch": "content-ops/golive/4007-state-of-ai-2024.json",
+  "edits": 3,
+  "maxsearch": 3209,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 4009,
+  "slug": "state-of-ai-2025",
+  "old": "site-content/state-of-ai/state-of-ai-2025.html",
+  "new_local": "site-content/state-of-ai/state-of-ai-2025.html",
+  "patch": "content-ops/golive/4009-state-of-ai-2025.json",
+  "edits": 3,
+  "maxsearch": 3288,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3821,
+  "slug": "ai-technological-revolution-perez",
+  "old": "site-content/ai-history/ai-technological-revolution-perez.html",
+  "new_local": "site-content/ai-history/ai-technological-revolution-perez.html",
+  "patch": "content-ops/golive/3821-ai-technological-revolution-perez.json",
+  "edits": 3,
+  "maxsearch": 4207,
+  "simple": [
+   {
+    "search": "\"2026-11-12\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">12 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 12 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3788,
+  "slug": "how-ai-developed-1950-2026",
+  "old": "site-content/ai-history/how-ai-developed-1950-2026.html",
+  "new_local": "site-content/ai-history/how-ai-developed-1950-2026.html",
+  "patch": "content-ops/golive/3788-how-ai-developed-1950-2026.json",
+  "edits": 3,
+  "maxsearch": 4261,
+  "simple": [
+   {
+    "search": "\"2026-11-12\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">12 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 12 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3789,
+  "slug": "ai-development-index",
+  "old": "site-content/ai-history/ai-development-index.html",
+  "new_local": "site-content/ai-history/ai-development-index.html",
+  "patch": "content-ops/golive/3789-ai-development-index.json",
+  "edits": 3,
+  "maxsearch": 3665,
+  "simple": [
+   {
+    "search": "\"2026-11-12\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">12 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 12 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3916,
+  "slug": "ai-use-by-country-2026",
+  "old": "site-content/geo/ai-use-by-country-2026.html",
+  "new_local": "site-content/geo/ai-use-by-country-2026.html",
+  "patch": "content-ops/golive/3916-ai-use-by-country-2026.json",
+  "edits": 3,
+  "maxsearch": 3336,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 3915,
+  "slug": "sovereign-ai-index-2026",
+  "old": "site-content/geo/sovereign-ai-index-2026.html",
+  "new_local": "site-content/geo/sovereign-ai-index-2026.html",
+  "patch": "content-ops/golive/3915-sovereign-ai-index-2026.json",
+  "edits": 7,
+  "maxsearch": 4067,
+  "simple": [
+   {
+    "search": "\"2026-11-11\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">11 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 11 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   },
+   {
+    "search": "<td>from scratch (2.6T tokens; trained and…</td>",
+    "replace": "<td>from scratch within the UAE: Jais 1-2…</td>",
+    "count": 1
+   },
+   {
+    "search": "<td>mostly (flagship…</td>",
+    "replace": "<td>Yes</td>",
+    "count": 1
+   },
+   {
+    "search": "<td>Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug…</td>",
+    "replace": "<td>Qwen3.8-Max (hosted service built on the open-weight…</td>",
+    "count": 1
+   },
+   {
+    "search": "report-ai-data-sovereign-ai-index-2026.csv",
+    "replace": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
+    "count": 2
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 4104,
+  "slug": "machine-learning-models-compared",
+  "old": "site-content/ml-models/machine-learning-models-compared.html",
+  "new_local": "site-content/ml-models/machine-learning-models-compared.html",
+  "patch": "content-ops/golive/4104-machine-learning-models-compared.json",
+  "edits": 3,
+  "maxsearch": 4111,
+  "simple": [
+   {
+    "search": "\"2026-11-15\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">15 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 15 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ },
+ {
+  "id": 4094,
+  "slug": "llm-taxonomy-2026",
+  "old": "site-content/ml-models/llm-taxonomy-2026.html",
+  "new_local": "site-content/ml-models/llm-taxonomy-2026.html",
+  "patch": "content-ops/golive/4094-llm-taxonomy-2026.json",
+  "edits": 3,
+  "maxsearch": 3940,
+  "simple": [
+   {
+    "search": "\"2026-11-15\"",
+    "replace": "\"2026-11-16\"",
+    "count": 4
+   },
+   {
+    "search": ">15 November 2026<",
+    "replace": ">16 November 2026<",
+    "count": 1
+   },
+   {
+    "search": "published 15 November 2026.",
+    "replace": "published 16 November 2026.",
+    "count": 1
+   }
+  ],
+  "simple_ok": true
+ }
+]

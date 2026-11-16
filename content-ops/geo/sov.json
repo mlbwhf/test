@@ -2,7 +2,7 @@
  "slug": "sovereign-ai-index-2026",
  "path": "/indexes/geography-of-ai/sovereign-ai-index-2026/",
  "parent_path": "/indexes/geography-of-ai/",
- "csv": "report-ai-data-sovereign-ai-index-2026.csv",
+ "csv": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
  "trail": [
   [
    "Indexes",
@@ -368,7 +368,7 @@
        "United Arab Emirates",
        "Jais",
        "Inception (G42) with MBZUAI Institute…",
-       "from scratch (2.6T tokens; trained and…",
+       "from scratch within the UAE: Jais 1-2…",
        "Yes",
        "Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B,…",
        "30k",
@@ -765,8 +765,8 @@
        "Qwen / Qianwen app",
        "Alibaba Cloud (Tongyi Lab)",
        "from scratch",
-       "mostly (flagship…",
-       "Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug…",
+       "Yes",
+       "Qwen3.8-Max (hosted service built on the open-weight…",
        "234.51M",
        "4030.26M",
        "158.17 million monthly active users (Qwen/Qianwen…",

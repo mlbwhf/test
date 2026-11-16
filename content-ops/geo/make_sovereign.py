@@ -74,7 +74,7 @@ page = {
  "slug": "sovereign-ai-index-2026",
  "path": "/indexes/geography-of-ai/sovereign-ai-index-2026/",
  "parent_path": "/indexes/geography-of-ai/",
- "csv": "report-ai-data-sovereign-ai-index-2026.csv",
+ "csv": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
  "trail": [["Indexes", "/indexes/"], ["The Geography of AI", "/indexes/geography-of-ai/"], ["Sovereign AI Index 2026", "/indexes/geography-of-ai/sovereign-ai-index-2026/"]],
  "eyebrow": "Report AI &middot; The Geography of AI &middot; Index &middot; Updated quarterly",
  "title": "Sovereign AI Index 2026: National Models, Compute and Who Uses Them",

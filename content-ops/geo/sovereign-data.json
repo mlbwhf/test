@@ -946,7 +946,7 @@
    "open_weights": true,
    "licence": "Apache 2.0 (Jais 3, HF model card)",
    "languages": "Arabic-first (600B Arabic tokens), English",
-   "build_type": "from scratch (2.6T tokens; trained and served on Cerebras)",
+   "build_type": "from scratch within the UAE: Jais 1-2 pretrained from scratch (2.6T tokens, Cerebras); Jais 3 continually pretrained from MBZUAI's own K2 Horizon models (Jais 3 paper, arXiv 2611.10224, 6 Nov 2026)",
    "popularity": {
     "hf_downloads_all_time": {
      "value": 1689480,
@@ -1018,7 +1018,7 @@
     ]
    },
    "status": null,
-   "notes": "Site page 955 cites '20 open-source Jais models, 590M-70B' (first-generation family); Jais 2 is newer. [11 Nov ET verification] latest_version changed from 'Jais 2 (70B; 8B)' to 'Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B, Jais-3-32B, Jais-3-7B, Jais-3-MoVA-36B-A4B': new release found on Hugging Face [11 Nov ET verification] size_params changed from '70B and 8B' to 'Jais 3: 375B total / 23B active (MoE), 32B, 7B; Jais 2: 70B, 8B': HF safetensors [11 Nov ET verification] licence changed from None to 'Apache 2.0 (Jais 3, HF model card)': HF cardData",
+   "notes": "Site page 955 cites '20 open-source Jais models, 590M-70B' (first-generation family); Jais 2 is newer. [11 Nov ET verification] latest_version changed from 'Jais 2 (70B; 8B)' to 'Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B, Jais-3-32B, Jais-3-7B, Jais-3-MoVA-36B-A4B': new release found on Hugging Face [11 Nov ET verification] size_params changed from '70B and 8B' to 'Jais 3: 375B total / 23B active (MoE), 32B, 7B; Jais 2: 70B, 8B': HF safetensors [11 Nov ET verification] licence changed from None to 'Apache 2.0 (Jais 3, HF model card)': HF cardData [16 Nov 2026 correction] build_type: Jais 3 is not trained from scratch; its paper says each model is adapted from MBZUAI's fully open K2 Horizon fleet by continual pretraining (K2 Horizon is itself UAE-built).",
    "site_pages": [
     955
    ]
@@ -2946,11 +2946,11 @@
     "type": "private (listed conglomerate)",
     "funding": null
    },
-   "latest_version": "Qwen3.8-Max (closed) and Qwen3.8-27B (Apache 2.0, 14 Aug 2026)",
+   "latest_version": "Qwen3.8-Max (hosted service built on the open-weight Qwen3.8-2.4T-A95B, on Hugging Face since 8 Aug 2026 under a custom licence) and Qwen3.8-27B (Apache 2.0, 14 Aug 2026)",
    "release_date": "2026-08-14",
    "size_params": "Qwen3.8-Max 2.4T total / 95B active; Qwen3.8-27B dense",
-   "open_weights": "mostly (flagship Max closed)",
-   "licence": "Apache 2.0 (open models)",
+   "open_weights": true,
+   "licence": "Apache 2.0 (Qwen3.8-27B and other open models); custom 'qwen3.8-max' licence (Qwen3.8-2.4T-A95B)",
    "languages": "119+ languages (Qwen3 family)",
    "build_type": "from scratch",
    "popularity": {
@@ -3048,7 +3048,7 @@
     ]
    },
    "status": null,
-   "notes": null,
+   "notes": "[16 Nov 2026 correction] Qwen3.8-Max was listed as closed; its 2.4T-total / 95B-active base weights (Qwen/Qwen3.8-2.4T-A95B) have been downloadable since 8 Aug 2026. The model card calls Qwen3.8-Max 'the official version based on' those weights, adding vision input, non-thinking mode and 1M context.",
    "site_pages": [
     954,
     1654,
@@ -7030,6 +7030,7 @@
   "[11 Nov ET verification] models[49]: AA v5.0.1 score Kimi K3.1 Pro = 46.5",
   "[11 Nov ET verification] models[50]: AA v5.0.1 score GLM-5.3 (max) = 31.7",
   "[11 Nov ET verification] models[51]: AA v5.0.1 score Command A+ = 6.2",
-  "[11 Nov ET verification] compute India: PIB still blocked; added Sep-2025 38,000 context; count unchanged at 38,231 (MEDIUM)"
+  "[11 Nov ET verification] compute India: PIB still blocked; added Sep-2025 38,000 context; count unchanged at 38,231 (MEDIUM)",
+  "[16 Nov 2026] models[14] Jais build_type corrected (Jais 3 = continual pretraining of K2 Horizon); models[47] Qwen open_weights 'mostly (flagship Max closed)' -> True, Max base weights open since 8 Aug 2026 (HF Qwen/Qwen3.8-2.4T-A95B)"
  ]
 }
