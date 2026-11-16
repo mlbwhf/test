@@ -1,0 +1,14 @@
+[
+  {"source": "Test", "title": "Senior Agile Coach", "company": "Maple Bank", "location": "Toronto, ON, Canada", "url": "https://example.com/1", "posted": "2026-11-15",
+   "description": "We need an agile coach with SAFe, PI planning and Lean Portfolio Management experience. Coaching executives, Jira, OKR. Knowledge of Prince2 governance. Send your CV to careers@maplebank.example."},
+  {"source": "Test", "title": "Senior Agile Coach", "company": "Maple Bank", "location": "Toronto, Canada", "url": "https://example.com/1b", "posted": "2026-11-15", "description": "Duplicate, shorter."},
+  {"source": "Test", "title": "Director, Business Transformation", "company": "Gulf Holding", "location": "Riyadh, Saudi Arabia", "url": "https://example.com/2", "posted": "2026-11-14",
+   "description": "Lead the transformation office, operating model redesign, change management and stakeholder management aligned to Vision 2030."},
+  {"source": "Test", "title": "Head of AI Transformation", "company": "Doha Telecom", "location": "Doha, Qatar", "url": "https://example.com/3", "posted": "",
+   "description": "Own the generative AI roadmap, AI governance, use cases and AI adoption across the business."},
+  {"source": "Test", "title": "Agile Software Developer", "company": "Code Co", "location": "Dubai, UAE", "url": "https://example.com/4", "posted": "", "description": "Write code in an agile team."},
+  {"source": "Test", "title": "Scrum Master", "company": "Berlin GmbH", "location": "Berlin, Germany", "url": "https://example.com/5", "posted": "", "description": "Scrum."},
+  {"source": "Test", "title": "Scrum Master", "company": "Remote Co", "location": "Remote - Worldwide", "url": "https://example.com/6", "posted": "", "description": "Scrum and Kanban."},
+  {"source": "Test", "title": "Change Manager", "company": "Old Co", "location": "Muscat, Oman", "url": "https://example.com/7", "posted": "2026-01-01", "description": "Change management."},
+  {"source": "Test", "title": "Nurse", "company": "Clinic", "location": "A woman-led clinic in Romania", "url": "https://example.com/8", "posted": "", "description": "Agile mindset welcome."}
+]

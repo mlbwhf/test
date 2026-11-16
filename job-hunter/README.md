@@ -1,0 +1,83 @@
+# Job Hunter
+
+Finds new jobs in agile, transformation and AI-transformation roles across Canada, the UAE, Saudi Arabia,
+Qatar, Kuwait and Oman, builds a tailored resume and cover letter for each one, and gives you a review page
+where applying is one click per job.
+
+It is plain Python (standard library only) running on a free GitHub Actions schedule. It makes no AI calls,
+so it uses no tokens.
+
+## What a run does
+
+1. **Fetch** postings from public job APIs and company career boards (`config.json` > `sources`).
+2. **Rank** them by rules: the job title must match one of your tracks, the location must be one of your
+   countries (or worldwide remote), and the description adds points for your keywords.
+3. **Tailor** your resume per job: picks the headline and summary for that track, moves the skills the
+   posting asks for to the front, and leads each role with the bullets that match best. It only selects and
+   reorders what you wrote in `resume.json`; it never invents experience.
+4. **Package** each job as PDF + Word + web resume and a cover letter, and write `index.html`.
+
+On the review page each job has **Open application** (the employer's form), the resume files to attach,
+**Copy cover letter**, and, when the posting gives an address, **Email application** with the letter already
+filled in. It also lists keywords the posting uses that your resume does not, so you can decide whether to
+add real experience to `resume.json`. Mark jobs applied or skipped as you go.
+
+Applications are not submitted automatically. Job boards forbid automated submissions and ban accounts for
+it, and a wrong answer on a screening question is worse than a missed job.
+
+## Setup (about 15 minutes)
+
+This repository is public, so your resume never goes into git. It is stored as an encrypted GitHub secret,
+and results are uploaded as a password-protected archive.
+
+1. Copy `resume.example.json` to `resume.json` and replace the contents with your details.
+2. In GitHub: **Settings > Secrets and variables > Actions > New repository secret**, add:
+
+   | Secret | Value |
+   |---|---|
+   | `RESUME_JSON` | the full contents of your `resume.json` |
+   | `PACKET_PASSWORD` | a password you choose; it opens the results archive |
+   | `JOOBLE_API_KEY` | free key from https://jooble.org/api/about (main source for the Gulf) |
+   | `ADZUNA_APP_ID`, `ADZUNA_APP_KEY` | free keys from https://developer.adzuna.com (Canada) |
+
+3. Optional, to get results by email instead of downloading them: `SMTP_HOST` (for Gmail `smtp.gmail.com`),
+   `SMTP_USER` (your address), `SMTP_PASSWORD` (a Gmail *app password*, not your login password),
+   and `NOTIFY_TO` if it should go to a different address.
+4. The schedule only runs from the default branch, so merge this into `main`. To run it right away:
+   **Actions > job-hunter > Run workflow**.
+
+## Getting the results
+
+- **Email** (if set up): a message listing the new jobs, with `job-packets.zip` attached. Unzip and open
+  `index.html`.
+- **Download**: open the run under **Actions > job-hunter**, download the `job-packets` artifact, and open it
+  with 7-Zip using your `PACKET_PASSWORD`. Open `index.html`.
+
+The run summary on that page shows how many postings each source returned and any source that failed.
+
+## Tuning
+
+Everything is in `config.json`:
+
+- `tracks`: title phrases that qualify a job and the keywords that raise its score.
+- `exclude_title`: titles to drop (developer, intern and so on).
+- `locations`: countries and the city names that count for each.
+- `min_score`, `retention_days`, `max_posting_age_days`.
+- `sources`: switch sources on or off; add company career boards (Greenhouse, Lever, Ashby,
+  SmartRecruiters, Workday) and any RSS or Atom feed.
+
+LinkedIn, Indeed, Bayt, GulfTalent and Naukrigulf have no public API and prohibit scraping, so they are not
+fetched directly. Jooble aggregates many of the same postings.
+
+## Run it on your own computer
+
+```bash
+python -m jobhunter run
+```
+
+Results are written to `output/`. Set the API keys as environment variables first. PDFs need Chrome or
+Chromium installed; otherwise you get Word and web versions.
+
+```bash
+python -m unittest discover -s tests
+```

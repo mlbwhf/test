@@ -1,0 +1,97 @@
+{
+  "_sample": true,
+  "_how_to": "Copy to resume.json and replace everything with your real details. Lists under headlines, summaries and cover_letter.tracks are keyed by track (agile, transformation, ai, default). Tag skills and bullets with the tracks they prove; the app only reorders and selects what you write here.",
+  "contact": {
+    "name": "Sample Candidate",
+    "location": "Toronto, Canada",
+    "phone": "+1 555 010 0100",
+    "email": "sample.candidate@example.com",
+    "linkedin": "linkedin.com/in/sample-candidate"
+  },
+  "headlines": {
+    "agile": "Enterprise Agile Coach and SAFe Transformation Leader",
+    "transformation": "Business and Digital Transformation Leader",
+    "ai": "AI Transformation and Adoption Leader",
+    "default": "Transformation Leader"
+  },
+  "summaries": {
+    "agile": "Enterprise agile coach with 15 years leading SAFe and Scrum adoption across banking, telecom and government. Launches Agile Release Trains, coaches executives and builds internal coaching capability that lasts.",
+    "transformation": "Transformation leader with 15 years turning strategy into operating-model change across banking, telecom and government. Runs transformation offices, aligns executives and delivers measurable outcomes.",
+    "ai": "Transformation leader helping enterprises adopt AI responsibly: selecting use cases, setting governance and changing how teams work so AI delivers measurable value.",
+    "default": "Transformation leader with 15 years of enterprise change across banking, telecom and government."
+  },
+  "skills": [
+    { "name": "SAFe", "aliases": ["scaled agile", "agile release train", "pi planning"], "tracks": ["agile"] },
+    { "name": "Scrum", "aliases": ["scrum master"], "tracks": ["agile"] },
+    { "name": "Kanban", "tracks": ["agile"] },
+    { "name": "Lean Portfolio Management", "aliases": ["lpm", "portfolio"], "tracks": ["agile", "transformation"] },
+    { "name": "Executive Coaching", "aliases": ["coaching"], "tracks": ["agile", "transformation"] },
+    { "name": "Change Management", "aliases": ["organizational change"], "tracks": ["transformation", "ai"] },
+    { "name": "Operating Model Design", "aliases": ["operating model"], "tracks": ["transformation"] },
+    { "name": "Transformation Office (PMO)", "aliases": ["pmo", "program management"], "tracks": ["transformation"] },
+    { "name": "OKRs", "aliases": ["okr"], "tracks": ["agile", "transformation"] },
+    { "name": "Stakeholder Management", "tracks": ["transformation", "ai"] },
+    { "name": "AI Adoption", "aliases": ["generative ai", "genai", "artificial intelligence"], "tracks": ["ai"] },
+    { "name": "AI Governance", "aliases": ["responsible ai"], "tracks": ["ai"] },
+    { "name": "Jira", "tracks": ["agile"] },
+    { "name": "Facilitation", "aliases": ["workshops"], "tracks": ["agile", "transformation"] }
+  ],
+  "experience": [
+    {
+      "title": "Enterprise Transformation Lead",
+      "company": "Example Consulting",
+      "location": "Toronto, Canada",
+      "start": "2019",
+      "end": "Present",
+      "bullets": [
+        { "text": "Launched 6 Agile Release Trains covering 700 people using SAFe, cutting average release cycle from 12 weeks to 4.", "tracks": ["agile"] },
+        { "text": "Set up and ran a transformation office reporting to the COO, tracking 40 initiatives against OKRs.", "tracks": ["transformation"] },
+        { "text": "Led a generative AI adoption program: prioritized 25 use cases, defined AI governance and trained 300 staff.", "tracks": ["ai"] },
+        { "text": "Coached 30 executives on lean portfolio management and outcome-based funding.", "tracks": ["agile", "transformation"] },
+        { "text": "Redesigned the operating model for a 1,200-person technology division around value streams.", "tracks": ["transformation", "agile"] },
+        { "text": "Built an internal coaching community of 45 Scrum Masters and Release Train Engineers.", "tracks": ["agile"] },
+        { "text": "Ran change management for a core banking replacement affecting 5,000 employees.", "tracks": ["transformation"] }
+      ]
+    },
+    {
+      "title": "Senior Agile Coach",
+      "company": "Example Bank",
+      "location": "Dubai, UAE",
+      "start": "2014",
+      "end": "2019",
+      "bullets": [
+        { "text": "Coached 25 Scrum and Kanban teams across retail and digital banking.", "tracks": ["agile"] },
+        { "text": "Facilitated quarterly PI planning for a 150-person Agile Release Train.", "tracks": ["agile"] },
+        { "text": "Introduced OKRs and a quarterly portfolio review for the digital transformation program.", "tracks": ["transformation"] },
+        { "text": "Piloted machine learning use cases for customer service with the data team.", "tracks": ["ai"] }
+      ]
+    },
+    {
+      "title": "Project Manager",
+      "company": "Example Telecom",
+      "location": "Riyadh, Saudi Arabia",
+      "start": "2009",
+      "end": "2014",
+      "bullets": [
+        "Delivered a billing platform migration for 3 million subscribers on time and on budget.",
+        "Moved the delivery organization from waterfall to Scrum across 8 teams."
+      ]
+    }
+  ],
+  "certifications": ["SAFe Practice Consultant (SPC)", "Certified Scrum Master (CSM)", "Prosci Change Practitioner"],
+  "education": ["MBA, Example University", "BSc Computer Science, Example University"],
+  "languages": ["English", "Arabic"],
+  "cover_letter": {
+    "greeting": "Dear Hiring Team,",
+    "opening": "I am writing to apply for the {title} role at {company}.",
+    "tracks": {
+      "agile": "For 15 years I have helped large organizations adopt agile ways of working at scale, from launching Agile Release Trains to coaching executives and growing internal coaches.",
+      "transformation": "For 15 years I have led enterprise transformations end to end: shaping the strategy, redesigning the operating model and running the transformation office that delivers it.",
+      "ai": "My recent work has focused on helping enterprises adopt AI in a way that sticks: choosing the right use cases, putting governance in place and leading the change in how people work.",
+      "default": "For 15 years I have led enterprise change across banking, telecom and government."
+    },
+    "proof_intro": "A few results from my recent work that relate to this role:",
+    "closing": "I would welcome the chance to discuss how I can contribute to {company}.",
+    "signoff": "Kind regards,\n{name}"
+  }
+}

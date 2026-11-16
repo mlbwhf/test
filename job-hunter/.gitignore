@@ -1,0 +1,7 @@
+# Your real resume and everything generated from it stay out of git.
+resume.json
+output/
+state/
+__pycache__/
+*.zip
+*.7z

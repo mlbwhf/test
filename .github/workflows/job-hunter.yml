@@ -1,0 +1,86 @@
+# Daily job search: fetch new postings, rank them, build a tailored resume and cover letter per job.
+# Plain Python, no AI calls. Setup and secrets are described in job-hunter/README.md.
+name: job-hunter
+on:
+  schedule:
+    - cron: "23 2 * * *" # every day 02:23 UTC (before the working day in the Gulf, evening in Canada)
+  workflow_dispatch:
+  push:
+    paths: ["job-hunter/**", ".github/workflows/job-hunter.yml"]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: job-hunter-${{ github.ref }}
+  cancel-in-progress: false
+
+defaults:
+  run:
+    working-directory: job-hunter
+
+jobs:
+  hunt:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      RESUME_JSON: ${{ secrets.RESUME_JSON }}
+      PACKET_PASSWORD: ${{ secrets.PACKET_PASSWORD }}
+      JOOBLE_API_KEY: ${{ secrets.JOOBLE_API_KEY }}
+      ADZUNA_APP_ID: ${{ secrets.ADZUNA_APP_ID }}
+      ADZUNA_APP_KEY: ${{ secrets.ADZUNA_APP_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.12" }
+      - name: Tests
+        run: python -m unittest discover -s tests
+
+      - name: Load resume
+        run: |
+          if [ -n "$RESUME_JSON" ]; then
+            if [ -z "$PACKET_PASSWORD" ]; then
+              echo "::error::RESUME_JSON is set but PACKET_PASSWORD is not. Results contain your resume, so they are only uploaded encrypted. Add a PACKET_PASSWORD secret."
+              exit 1
+            fi
+            printf '%s' "$RESUME_JSON" > resume.json
+            python -c "import json; json.load(open('resume.json', encoding='utf-8'))"
+            echo "PRIVATE=1" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No RESUME_JSON secret yet; using the sample resume."
+            cp resume.example.json resume.json
+          fi
+
+      - name: Restore seen jobs
+        uses: actions/cache@v4
+        with:
+          path: job-hunter/state
+          key: job-hunter-state-${{ github.run_id }}
+          restore-keys: job-hunter-state-
+
+      - name: Fetch, rank and build packets
+        run: python -m jobhunter run
+
+      - name: Encrypt results
+        if: env.PRIVATE == '1'
+        run: 7z a -bso0 -mhe=on -p"$PACKET_PASSWORD" job-packets.7z ./output/*
+
+      - name: Upload results (encrypted)
+        if: env.PRIVATE == '1'
+        uses: actions/upload-artifact@v4
+        with: { name: job-packets, path: job-hunter/job-packets.7z, retention-days: 14 }
+
+      - name: Upload results (sample resume)
+        if: env.PRIVATE != '1'
+        uses: actions/upload-artifact@v4
+        with: { name: job-packets-sample, path: job-hunter/output, retention-days: 7 }
+
+      - name: Email results to me
+        if: github.event_name != 'push'
+        env:
+          SMTP_HOST: ${{ secrets.SMTP_HOST }}
+          SMTP_PORT: ${{ secrets.SMTP_PORT }}
+          SMTP_USER: ${{ secrets.SMTP_USER }}
+          SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+          NOTIFY_TO: ${{ secrets.NOTIFY_TO }}
+        run: python -m jobhunter notify
