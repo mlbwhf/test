@@ -10,6 +10,8 @@
  *   - an optional note you type in Tools → Newsletter (used once, then cleared)
  *   - the next dates of the main classes, read from the registration schedule
  *   - up to three blog posts published since the last issue
+ *   - four salary benchmarks, rotating monthly, from the site's own salary data
+ *     and its sources line
  *   - the team-training link
  *
  * NOTHING IS INVENTED. No salary figures, no prices, no claims: only class
@@ -118,6 +120,44 @@ function aa_sf_nl_posts( $since ) {
 	return $out;
 }
 
+/**
+ * SALARY BENCHMARKS, from the figures the site already publishes in its salary
+ * sections (aa_salary_data() in the registration snippet, with its own sources
+ * line). Nothing is computed or added here: four roles per issue, rotating by
+ * month so a reader sees the whole set over a quarter. Empty when the
+ * registration snippet is not loaded.
+ */
+function aa_sf_nl_salaries( $ym ) {
+	if ( ! function_exists( 'aa_salary_data' ) ) { return array(); }
+	$d     = aa_salary_data();
+	$bands = array();
+	foreach ( (array) ( isset( $d['bands'] ) ? $d['bands'] : array() ) as $b ) {
+		if ( ! empty( $b['code'] ) && ! empty( $b['median'] ) ) { $bands[ $b['code'] ] = $b; }
+	}
+	foreach ( (array) ( isset( $d['extra'] ) ? $d['extra'] : array() ) as $code => $median ) {
+		if ( ! isset( $bands[ $code ] ) && (int) $median > 0 ) { $bands[ $code ] = array( 'code' => $code, 'median' => (int) $median ); }
+	}
+	$order = apply_filters( 'aa_sf_nl_salary_order', array( 'SPC', 'RTE', 'POPM', 'SSM', 'AINF', 'AINVA', 'LPM', 'APM', 'ASPC', 'SDP', 'ARCH', 'AINORG' ) );
+	$order = array_values( array_filter( $order, function ( $c ) use ( $bands ) { return isset( $bands[ $c ] ); } ) );
+	if ( ! $order ) { return array(); }
+	$n     = count( $order );
+	$start = ( ( (int) substr( $ym, 0, 4 ) * 12 + (int) substr( $ym, 5, 2 ) ) * 4 ) % $n;
+	$rows  = array();
+	for ( $i = 0; $i < min( 4, $n ); $i++ ) {
+		$b    = $bands[ $order[ ( $start + $i ) % $n ] ];
+		$name = function_exists( 'aa_salary_label' ) ? aa_salary_label( $b['code'] ) : $b['code'];
+		$url  = function_exists( 'aa_salary_url' ) ? aa_salary_url( $b['code'] ) : '';
+		$rows[] = array(
+			'code'   => $b['code'],
+			'name'   => ( $name === $b['code'] || strpos( $name, '(' . $b['code'] . ')' ) !== false ) ? $name : $name . ' (' . $b['code'] . ')',
+			'median' => (int) $b['median'],
+			'range'  => ! empty( $b['lo'] ) && ! empty( $b['hi'] ) ? array( (int) $b['lo'], (int) $b['hi'] ) : null,
+			'url'    => $url ? home_url( $url ) : '',
+		);
+	}
+	return array( 'rows' => $rows, 'sources' => isset( $d['sources'] ) ? (string) $d['sources'] : '' );
+}
+
 /** array( subject, html ) for one recipient, or null when there is nothing to say. */
 function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	$s       = aa_sf_nl_settings();
@@ -126,6 +166,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	$since   = $s['last_at'] !== '' ? $s['last_at'] : ( new DateTime( 'now', wp_timezone() ) )->modify( '-35 days' )->format( 'Y-m-d H:i:s' );
 	$posts   = aa_sf_nl_posts( $since );
 	$note    = trim( (string) $s['note'] );
+	$pay     = aa_sf_nl_salaries( $ym );
 	if ( ! $classes && ! $posts && $note === '' ) { return null; }
 
 	$utm  = function ( $url ) use ( $ym ) { return add_query_arg( array( 'utm_source' => 'newsletter', 'utm_medium' => 'email', 'utm_campaign' => 'monthly-' . $ym ), $url ); };
@@ -149,7 +190,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 
 	$b .= '<tr><td style="padding:24px 24px 6px;font:16px/1.6 Arial,Helvetica,sans-serif;color:#0B2E35;">';
 	if ( $note !== '' ) { foreach ( preg_split( '/\R{2,}/', $note ) as $para ) { $b .= '<p style="margin:0 0 14px;">' . nl2br( $e( trim( $para ) ) ) . '</p>'; } }
-	else { $b .= '<p style="margin:0 0 14px;">Here are the next class dates' . ( $posts ? ' and what we published this month' : '' ) . '.</p>'; }
+	else { $b .= '<p style="margin:0 0 14px;">Here are the next class dates, what the roles pay' . ( $posts ? ', and what we published this month' : '' ) . '.</p>'; }
 	$b .= '</td></tr>';
 
 	if ( $classes ) {
@@ -162,6 +203,19 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 			    . '<a href="' . esc_url( $utm( $c['url'] ) . '#enroll' ) . '" style="display:inline-block;margin-top:6px;color:#0E8074;font-weight:700;font-size:14px;text-decoration:none;">See dates and register ⟶</a></td></tr>';
 		}
 		$b .= '</table><p style="margin:10px 0 0;font:13px/1.5 Arial,Helvetica,sans-serif;color:#5C7479;">The exam fee is included in every class. All classes: <a href="' . esc_url( $utm( home_url( '/training/' ) ) ) . '" style="color:#0E8074;">agile-agilist.com/training</a></p></td></tr>';
+	}
+
+	if ( ! empty( $pay['rows'] ) ) {
+		$b .= '<tr><td style="padding:22px 24px 8px;"><p style="' . $eye . '">Salary benchmarks</p><h2 style="' . $h2 . '">What these roles pay</h2>'
+		    . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #DCEAE8;">';
+		foreach ( $pay['rows'] as $r ) {
+			$label = $r['url'] ? '<a href="' . esc_url( $utm( $r['url'] ) ) . '" style="color:#0B2E35;text-decoration:none;">' . $e( $r['name'] ) . '</a>' : $e( $r['name'] );
+			$b .= '<tr><td style="padding:10px 0;border-bottom:1px solid #DCEAE8;font:15px/1.4 Arial,Helvetica,sans-serif;color:#0B2E35;">' . $label
+			    . ( $r['range'] ? '<span style="display:block;margin-top:2px;color:#5C7479;font-size:13px;">Range USD ' . (int) $r['range'][0] . 'K–' . (int) $r['range'][1] . 'K</span>' : '' ) . '</td>'
+			    . '<td align="right" style="padding:10px 0;border-bottom:1px solid #DCEAE8;font:700 17px/1.2 Arial,Helvetica,sans-serif;color:#0E8074;white-space:nowrap;">USD ' . (int) $r['median'] . 'K<span style="display:block;font:400 11px/1.3 Arial,Helvetica,sans-serif;color:#5C7479;">median</span></td></tr>';
+		}
+		$b .= '</table><p style="margin:10px 0 0;font:12.5px/1.5 Arial,Helvetica,sans-serif;color:#5C7479;">US base salary. Pay varies with market, industry and employer more than with any certificate. '
+		    . $e( $pay['sources'] ) . '</p></td></tr>';
 	}
 
 	if ( $posts ) {
@@ -182,7 +236,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	    . 'You are receiving this because you subscribed at agile-agilist.com. <a href="' . esc_url( $unsub ) . '" style="color:#7C9296;text-decoration:underline;">Unsubscribe</a>.</td></tr>';
 
 	$pre  = $classes ? 'Next dates: ' . $classes[0]['name'] . ' ' . $classes[0]['dates'][0] . ( isset( $classes[1] ) ? ', ' . $classes[1]['name'] . ' ' . $classes[1]['dates'][0] : '' ) . '.' : 'What we published this month.';
-	$subj = 'Agile Agilist · ' . $month . ': new class dates' . ( $posts ? ' and what we published' : '' );
+	$subj = 'Agile Agilist · ' . $month . ': new class dates' . ( ! empty( $pay['rows'] ) ? ', salary benchmarks' : '' ) . ( $posts ? ' and what we published' : '' );
 	$html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . $e( $subj ) . '</title></head>'
 	      . '<body style="margin:0;padding:0;background:#EEF4F3;"><div style="display:none;max-height:0;overflow:hidden;color:#EEF4F3;">' . $e( $pre ) . '</div>'
 	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF4F3;"><tr><td align="center" style="padding:20px 10px;">'
