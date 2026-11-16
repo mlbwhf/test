@@ -131,6 +131,9 @@ def main():
         S["main_acc"] = summarise_main(R, "acc")
         S["main_auc"] = summarise_main(R, "auc")
         S["single_split"] = single_split(R)
+        R12 = [r for r in R_all if r["model"] != "TabPFN v2"]
+        S["single_split_12"] = single_split(R12)
+        S["main_acc_12"] = {t["model"]: dict(mean=t["mean"], mean_rank=t["mean_rank"], wins=t["wins"]) for t in summarise_main(R12, "acc")["table"]}
         t = defaultdict(list)
         for r in R:
             t[r["model"]].append(r["fit_s"] + r["pred_s"])

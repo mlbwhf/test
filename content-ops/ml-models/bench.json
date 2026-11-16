@@ -1,0 +1,2388 @@
+{
+ "slug": "machine-learning-models-compared",
+ "path": "/reports/machine-learning-models-compared/",
+ "parent_path": "/reports/",
+ "csv": "report-ai-data-machine-learning-models-compared.csv",
+ "trail": [
+  [
+   "Reports",
+   "/reports/"
+  ],
+  [
+   "Machine-Learning Models Compared",
+   "/reports/machine-learning-models-compared/"
+  ]
+ ],
+ "eyebrow": "Report AI &middot; Reports &middot; Original benchmark &middot; Updated semi-annually",
+ "title": "Machine-Learning Models Compared: We Ran 13 Algorithms on 19 Datasets",
+ "dek": "A viral clip ranked nine models on one unnamed dataset. We ran 13, from Naive Bayes to the TabPFN transformer, on 19 public benchmark datasets with five random splits each, to show what wins, by how much, and how much the answer depends on how you test.",
+ "cadence_note": "Cadence: semi-annual (STABLE) &middot; Next update May 2027",
+ "edition": "November 2026 edition",
+ "coverage": "2022/2026",
+ "nav_active": "ML models compared",
+ "nav": [
+  [
+   "Technical Benchmarks",
+   "/indexes/technical-benchmarks/"
+  ],
+  [
+   "ML models compared",
+   "/reports/machine-learning-models-compared/"
+  ],
+  [
+   "LLM taxonomy",
+   "/indexes/technical-benchmarks/llm-taxonomy-2026/"
+  ],
+  [
+   "AI benchmarks statistics",
+   "/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"
+  ],
+  [
+   "How AI developed",
+   "/reports/how-ai-developed-1950-2026/"
+  ]
+ ],
+ "tiles": [
+  {
+   "value": "TabPFN v2",
+   "label": "ranked first, with 76.7% mean accuracy and the best result on 17 of 19 datasets",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "7",
+   "label": "different models came first in at least one of 95 single dataset-and-split runs",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "80.0%",
+   "label": "of single runs put the overall winner first; the rest crowned another model",
+   "confidence": "DERIVED"
+  },
+  {
+   "value": "1.0 pts",
+   "label": "average accuracy gap between first (TabPFN v2) and second (CatBoost)",
+   "confidence": "DERIVED"
+  }
+ ],
+ "at_a_glance": [
+  "Report AI ran 13 machine-learning classifiers on 19 public tabular datasets from the Grinsztajn, Oyallon and Varoquaux (2022) benchmark, with 1,000 training rows and five random splits per dataset, in November 2026.",
+  "TabPFN v2 had the highest mean accuracy, 76.7%, and was best on 17 of 19 datasets; CatBoost was second at 75.7%. Naive Bayes ranked last on average.",
+  "Single runs mislead: across 95 combinations of one dataset and one random split, 7 different models came first, and the overall winner was first in only 80.0% of them.",
+  "Gradient-boosted trees (CatBoost, LightGBM, XGBoost, HistGB) and random forests occupy most of the top half; the nine-model viral chart's order is not reproducible because it names no dataset.",
+  "In TabArena's default leaderboard view of 11 November 2026, the top 21 of 108 entries are tabular foundation models; the best non-foundation entry is the TabM-A neural network (tuned and ensembled, Elo 1517, 22nd), and the best tree model is LightGBM tuned and ensembled (Elo 1411, 32nd)."
+ ],
+ "toc_extra": [
+  [
+   "stop-quoting",
+   "Claims to stop repeating"
+  ],
+  [
+   "definitions",
+   "Definitions"
+  ],
+  [
+   "faq",
+   "FAQ"
+  ],
+  [
+   "about",
+   "About the data"
+  ]
+ ],
+ "analysis": [
+  "Rankings of machine-learning models are everywhere, and most are built on one dataset and one random split. We wanted to know how much of such a ranking is signal. So we ran 13 widely used classifiers, from Naive Bayes and logistic regression to gradient-boosted trees and the TabPFN tabular transformer, on 19 datasets that researchers use precisely because they are hard, and repeated every comparison on five random splits.",
+  "The headline is clear but narrower than viral charts suggest. TabPFN v2 finished first on average with 76.7% accuracy, 1.0 points ahead of CatBoost. Below the top, gradient-boosted trees and random forests sit within a point or two of each other, and the order among them changes from dataset to dataset. Simple models are not useless: in a 10-split comparison of the other 12 models, logistic regression won outright on 2 datasets. But single trees, k-nearest neighbours and Naive Bayes trail by a wide margin on these tasks.",
+  "How you test changes what you see. On a single dataset with a single split, even a model as dominant as TabPFN v2 came first in 80.0% of runs, and 7 different models won at least once; without it, the best of the other 12 models topped only 55.3% of single runs. Ranking by ROC AUC instead of accuracy moved Random forest by 2 places. Turning off feature scaling cost SVM (RBF) 7.9 points of accuracy. Making the positive class rare (10%) pushed every model's accuracy towards the 90.0% a do-nothing majority-class guess scores, while balanced accuracy exposed which ones actually learned.",
+  "The literature agrees with the shape of our results and adds a time dimension. Tree ensembles beat deep networks on medium-sized tables in the 2021–23 studies; since 2025, pretrained tabular foundation models such as TabPFN have taken the top of the TabArena leaderboard, while classic tree models remain the fast, cheap and robust default. The models that decide what people see online, from ad clicks to feeds and spam filters, span the whole range, from logistic regression to trillion-parameter transformers."
+ ],
+ "takeaways": [
+  "On these 19 benchmark datasets at 1,000 training rows, TabPFN v2 ranked first and boosted trees and random forests filled most of the top half.",
+  "Never trust a ranking from one dataset and one split: the winner changed in a large share of single runs.",
+  "Accuracy alone hides problems; check ROC AUC, and balanced accuracy when one class is rare.",
+  "Scale features before using k-nearest neighbours, SVMs, neural networks or logistic regression.",
+  "TabPFN's newer, stronger versions are non-commercial; the openly licensed v2 used here is capped at 10,000 rows."
+ ],
+ "chapters": [
+  {
+   "id": "viral-chart",
+   "kicker": "1. The viral chart",
+   "action_title": "A nine-model chart from one unnamed dataset cannot tell you which model is best",
+   "paras": [
+    "The chart that prompted this report is a short video captioned '13 machine learning models in 60 seconds', labelled as AI content. It shows nine of the thirteen: TabPFN 79.5%, a neural network 74.0%, random forest 73.5%, gradient boosting 72.7%, a support vector machine 72.0%, k-nearest neighbours 68.3%, a decision tree 64.1%, logistic regression 59.3% and Naive Bayes 42.1%.",
+    "Report AI could not find the original video or the dataset behind it, so its figures cannot be checked or reproduced. A Naive Bayes score of 42.1% is below the 50% a coin toss scores on a balanced two-class problem, which suggests a multi-class task or an unusual split. The table compares the video's order with our averages over many datasets. The top agrees: TabPFN ranked first in our benchmark too. Below it the order differs; the video's second-placed neural network ranked 5th of the same nine models in our test, a sign that the middle of the pack depends on the data."
+   ],
+   "tables": [
+    {
+     "title": "The viral chart against Report AI's benchmark",
+     "columns": [
+      "Model in the video",
+      "Video accuracy",
+      "Video rank",
+      "Report AI model",
+      "Report AI mean accuracy (19 datasets)",
+      "Report AI rank (same 9)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "TabPFN, a transformer",
+       "79.5%",
+       "1",
+       "TabPFN v2",
+       "76.7%",
+       "1",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Neural network",
+       "74.0%",
+       "2",
+       "Neural network (MLP)",
+       "72.5%",
+       "5",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Random forest",
+       "73.5%",
+       "3",
+       "Random forest",
+       "74.6%",
+       "2",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Gradient boosting",
+       "72.7%",
+       "4",
+       "Gradient boosting (HistGB)",
+       "74.3%",
+       "3",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Support vector machine",
+       "72.0%",
+       "5",
+       "SVM (RBF)",
+       "73.1%",
+       "4",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "K-nearest neighbours",
+       "68.3%",
+       "6",
+       "k-nearest neighbours",
+       "69.3%",
+       "7",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Decision tree",
+       "64.1%",
+       "7",
+       "Decision tree",
+       "68.1%",
+       "8",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "59.3%",
+       "8",
+       "Logistic regression",
+       "71.7%",
+       "6",
+       "MEDIUM / DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "42.1%",
+       "9",
+       "Naive Bayes",
+       "61.7%",
+       "9",
+       "MEDIUM / DERIVED"
+      ]
+     ],
+     "note": "Video figures as shown on screen (MEDIUM: unverified source, no dataset named). Report AI figures are not comparable task by task; they average 19 different datasets."
+    }
+   ]
+  },
+  {
+   "id": "ranking",
+   "kicker": "2. The ranking",
+   "action_title": "TabPFN v2 finished first; boosted trees and random forests filled most of the top half",
+   "paras": [
+    "Each model was trained with its library's default settings on 1,000 rows and tested on 2,000 different rows, five times per dataset with fresh random splits. All 19 tasks are balanced yes/no problems, so 50% accuracy is chance. We rank models by their average rank across datasets, the standard way to compare learners across tasks of different difficulty, and also report mean accuracy, ROC AUC and wins.",
+    "TabPFN v2 averaged 76.7% accuracy and a mean rank of 1.32. CatBoost followed at 75.7%. The fastest model, Naive Bayes, took a median 2.1 milliseconds to train and predict; the slowest, TabPFN v2, took 49.3 seconds on our 4-core CPU."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "TabPFN v2 had the highest average accuracy across 19 datasets",
+     "subtitle": "Mean test accuracy over 19 datasets × 5 random splits, 1,000 training rows, default settings (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Mean accuracy",
+       "points": [
+        [
+         "TabPFN v2",
+         76.7
+        ],
+        [
+         "CatBoost",
+         75.7
+        ],
+        [
+         "Random forest",
+         74.6
+        ],
+        [
+         "Extra trees",
+         74.3
+        ],
+        [
+         "Gradient boosting (HistGB)",
+         74.3
+        ],
+        [
+         "LightGBM",
+         74.3
+        ],
+        [
+         "XGBoost",
+         73.9
+        ],
+        [
+         "SVM (RBF)",
+         73.1
+        ],
+        [
+         "Neural network (MLP)",
+         72.5
+        ],
+        [
+         "Logistic regression",
+         71.7
+        ],
+        [
+         "k-nearest neighbours",
+         69.3
+        ],
+        [
+         "Decision tree",
+         68.1
+        ],
+        [
+         "Naive Bayes",
+         61.7
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI benchmark, November 2026, on the Grinsztajn et al. (2022) datasets",
+     "notes": "Balanced binary tasks, so 50% is chance. Ranked by mean accuracy; the table below also gives mean rank.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Overall results, 13 models × 19 datasets",
+     "columns": [
+      "Model",
+      "Mean accuracy (%)",
+      "Mean ROC AUC (%)",
+      "Mean rank",
+      "Datasets won",
+      "Top-3 finishes",
+      "Median time (s)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "TabPFN v2",
+       "76.7",
+       "83.2",
+       "1.32",
+       "17 of 19",
+       "18",
+       "49.3",
+       "DERIVED"
+      ],
+      [
+       "CatBoost",
+       "75.7",
+       "82.1",
+       "2.32",
+       "1 of 19",
+       "16",
+       "1.5",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "74.6",
+       "80.8",
+       "5.11",
+       "0 of 19",
+       "5",
+       "0.208",
+       "DERIVED"
+      ],
+      [
+       "LightGBM",
+       "74.3",
+       "80.6",
+       "5.26",
+       "0 of 19",
+       "5",
+       "0.080",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "74.3",
+       "80.6",
+       "5.50",
+       "0 of 19",
+       "4",
+       "0.155",
+       "DERIVED"
+      ],
+      [
+       "Extra trees",
+       "74.3",
+       "80.4",
+       "5.53",
+       "1 of 19",
+       "4",
+       "0.164",
+       "DERIVED"
+      ],
+      [
+       "XGBoost",
+       "73.9",
+       "80.1",
+       "7.26",
+       "0 of 19",
+       "0",
+       "0.068",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "73.1",
+       "79.3",
+       "7.34",
+       "0 of 19",
+       "2",
+       "0.114",
+       "DERIVED"
+      ],
+      [
+       "Neural network (MLP)",
+       "72.5",
+       "78.1",
+       "8.37",
+       "0 of 19",
+       "1",
+       "1.8",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "71.7",
+       "78.0",
+       "8.53",
+       "0 of 19",
+       "2",
+       "0.005",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "69.3",
+       "74.2",
+       "10.89",
+       "0 of 19",
+       "0",
+       "0.023",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "68.1",
+       "68.1",
+       "11.79",
+       "0 of 19",
+       "0",
+       "0.007",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "61.7",
+       "72.0",
+       "11.79",
+       "0 of 19",
+       "0",
+       "0.002",
+       "DERIVED"
+      ]
+     ],
+     "note": "Mean rank: average of each model's rank on each dataset (1 = best). Time: median seconds to train and predict on a 4-core CPU, no GPU."
+    }
+   ]
+  },
+  {
+   "id": "datasets",
+   "kicker": "3. Dataset by dataset",
+   "action_title": "The winner depends on the dataset, and margins are often under a point",
+   "paras": [
+    "The datasets come from the benchmark that Grinsztajn, Oyallon and Varoquaux assembled for NeurIPS 2022, published on Hugging Face as inria-soda/tabular-benchmark. They range from 3,434 to 940,160 rows and from 7 to 419 features, covering credit, medicine, physics, housing and public records.",
+    "One caveat favours complex models: the benchmark's authors removed datasets that were 'too easy', where a linear model or a single tree came within 5% of a neural network and of gradient boosting. Logistic regression and decision trees therefore look worse here than they would on a random sample of business datasets."
+   ],
+   "tables": [
+    {
+     "title": "Winner and margin on each dataset",
+     "columns": [
+      "Dataset",
+      "What it predicts",
+      "Rows",
+      "Features",
+      "Best model",
+      "Best accuracy (%)",
+      "Runner-up",
+      "Margin (pts)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Bioresponse",
+       "Molecules: biological response from chemistry descriptors",
+       "3,434",
+       "419",
+       "Extra trees",
+       "75.8",
+       "CatBoost",
+       "0.2",
+       "DERIVED"
+      ],
+      [
+       "compas-two-years",
+       "Criminal-justice records: re-arrest within two years (COMPAS)",
+       "4,966",
+       "11",
+       "TabPFN v2",
+       "67.7",
+       "Logistic regression",
+       "1.2",
+       "DERIVED"
+      ],
+      [
+       "eye_movements",
+       "Eye-tracking: whether a sentence being read was relevant",
+       "7,608",
+       "23",
+       "CatBoost",
+       "58.5",
+       "TabPFN v2",
+       "0.0",
+       "DERIVED"
+      ],
+      [
+       "heloc",
+       "FICO home-equity credit-line applications: repayment risk",
+       "10,000",
+       "22",
+       "TabPFN v2",
+       "72.5",
+       "CatBoost",
+       "0.9",
+       "DERIVED"
+      ],
+      [
+       "pol",
+       "Telecommunications (pole) problem",
+       "10,082",
+       "26",
+       "TabPFN v2",
+       "97.4",
+       "CatBoost",
+       "0.3",
+       "DERIVED"
+      ],
+      [
+       "bank-marketing",
+       "Portuguese bank: term-deposit subscription",
+       "10,578",
+       "7",
+       "TabPFN v2",
+       "79.1",
+       "CatBoost",
+       "0.3",
+       "DERIVED"
+      ],
+      [
+       "default-of-credit-card-clients",
+       "Taiwanese credit-card clients: default next month",
+       "13,272",
+       "21",
+       "TabPFN v2",
+       "70.6",
+       "CatBoost",
+       "0.4",
+       "DERIVED"
+      ],
+      [
+       "MagicTelescope",
+       "Gamma-ray telescope: signal or background",
+       "13,376",
+       "10",
+       "TabPFN v2",
+       "85.2",
+       "CatBoost",
+       "1.4",
+       "DERIVED"
+      ],
+      [
+       "house_16H",
+       "US census areas: house price above the median",
+       "13,488",
+       "16",
+       "TabPFN v2",
+       "88.2",
+       "CatBoost",
+       "0.7",
+       "DERIVED"
+      ],
+      [
+       "credit",
+       "Consumer credit: serious delinquency within two years",
+       "16,714",
+       "10",
+       "TabPFN v2",
+       "77.4",
+       "CatBoost",
+       "0.8",
+       "DERIVED"
+      ],
+      [
+       "california",
+       "California census blocks: house value above the median",
+       "20,634",
+       "8",
+       "TabPFN v2",
+       "88.4",
+       "CatBoost",
+       "2.1",
+       "DERIVED"
+      ],
+      [
+       "electricity",
+       "Australian (New South Wales) electricity market: price up or down",
+       "38,474",
+       "8",
+       "TabPFN v2",
+       "80.2",
+       "CatBoost",
+       "0.9",
+       "DERIVED"
+      ],
+      [
+       "jannis",
+       "AutoML challenge task with anonymised features",
+       "57,580",
+       "54",
+       "TabPFN v2",
+       "76.2",
+       "CatBoost",
+       "1.6",
+       "DERIVED"
+      ],
+      [
+       "albert",
+       "AutoML challenge task with anonymised features",
+       "58,252",
+       "31",
+       "TabPFN v2",
+       "65.6",
+       "CatBoost",
+       "1.2",
+       "DERIVED"
+      ],
+      [
+       "Diabetes130US",
+       "US hospital records: readmission of diabetic patients",
+       "71,090",
+       "7",
+       "TabPFN v2",
+       "59.6",
+       "Logistic regression",
+       "0.4",
+       "DERIVED"
+      ],
+      [
+       "MiniBooNE",
+       "Neutrino experiment: particle identification",
+       "72,998",
+       "50",
+       "TabPFN v2",
+       "92.4",
+       "CatBoost",
+       "0.8",
+       "DERIVED"
+      ],
+      [
+       "road-safety",
+       "UK road-accident records",
+       "111,762",
+       "32",
+       "TabPFN v2",
+       "74.0",
+       "CatBoost",
+       "0.7",
+       "DERIVED"
+      ],
+      [
+       "covertype",
+       "US forest cover type from map variables (two largest classes)",
+       "423,680",
+       "54",
+       "TabPFN v2",
+       "79.3",
+       "Extra trees",
+       "1.0",
+       "DERIVED"
+      ],
+      [
+       "Higgs",
+       "Particle physics: Higgs-boson signal or background",
+       "940,160",
+       "24",
+       "TabPFN v2",
+       "69.7",
+       "CatBoost",
+       "1.7",
+       "DERIVED"
+      ]
+     ]
+    },
+    {
+     "title": "Mean accuracy of every model on every dataset (%)",
+     "columns": [
+      "Dataset",
+      "TabPFN v2",
+      "CatBoost",
+      "Rand. forest",
+      "LightGBM",
+      "HistGB",
+      "Extra trees",
+      "XGBoost",
+      "SVM",
+      "MLP",
+      "Log. reg.",
+      "k-NN",
+      "Dec. tree",
+      "Naive Bayes"
+     ],
+     "rows": [
+      [
+       "Bioresponse",
+       "74.8",
+       "75.6",
+       "75.2",
+       "75.2",
+       "75.3",
+       "75.8",
+       "74.6",
+       "74.0",
+       "74.1",
+       "71.8",
+       "71.5",
+       "66.5",
+       "56.7"
+      ],
+      [
+       "Diabetes130US",
+       "59.6",
+       "57.3",
+       "55.8",
+       "55.6",
+       "55.5",
+       "55.0",
+       "54.5",
+       "58.7",
+       "56.1",
+       "59.3",
+       "55.6",
+       "53.6",
+       "56.5"
+      ],
+      [
+       "Higgs",
+       "69.7",
+       "68.0",
+       "66.7",
+       "66.8",
+       "66.5",
+       "64.1",
+       "66.1",
+       "60.9",
+       "60.3",
+       "61.5",
+       "55.7",
+       "59.3",
+       "57.9"
+      ],
+      [
+       "MagicTelescope",
+       "85.2",
+       "83.8",
+       "83.0",
+       "83.0",
+       "82.7",
+       "82.9",
+       "82.2",
+       "82.5",
+       "82.9",
+       "76.8",
+       "77.2",
+       "76.5",
+       "65.8"
+      ],
+      [
+       "MiniBooNE",
+       "92.4",
+       "91.6",
+       "90.0",
+       "91.1",
+       "91.0",
+       "90.1",
+       "91.0",
+       "83.4",
+       "89.5",
+       "83.6",
+       "84.5",
+       "83.8",
+       "58.1"
+      ],
+      [
+       "albert",
+       "65.6",
+       "64.4",
+       "63.6",
+       "61.7",
+       "62.4",
+       "63.3",
+       "61.5",
+       "62.0",
+       "57.5",
+       "63.0",
+       "56.0",
+       "55.4",
+       "57.8"
+      ],
+      [
+       "bank-marketing",
+       "79.1",
+       "78.8",
+       "78.5",
+       "76.5",
+       "76.5",
+       "78.1",
+       "76.1",
+       "77.7",
+       "76.9",
+       "74.8",
+       "74.2",
+       "70.0",
+       "71.6"
+      ],
+      [
+       "california",
+       "88.4",
+       "86.3",
+       "84.8",
+       "85.7",
+       "85.8",
+       "86.0",
+       "85.6",
+       "83.1",
+       "84.5",
+       "82.6",
+       "80.3",
+       "77.9",
+       "63.2"
+      ],
+      [
+       "compas-two-years",
+       "67.7",
+       "65.8",
+       "61.3",
+       "62.8",
+       "63.1",
+       "60.6",
+       "61.9",
+       "65.9",
+       "66.4",
+       "66.6",
+       "62.4",
+       "58.5",
+       "62.9"
+      ],
+      [
+       "covertype",
+       "79.3",
+       "77.6",
+       "77.8",
+       "76.6",
+       "76.6",
+       "78.3",
+       "76.1",
+       "76.1",
+       "74.5",
+       "76.0",
+       "71.5",
+       "70.2",
+       "67.4"
+      ],
+      [
+       "credit",
+       "77.4",
+       "76.6",
+       "75.8",
+       "74.4",
+       "74.1",
+       "75.3",
+       "74.0",
+       "71.2",
+       "73.9",
+       "72.3",
+       "64.4",
+       "68.0",
+       "60.0"
+      ],
+      [
+       "default-of-credit-card-clients",
+       "70.6",
+       "70.2",
+       "69.7",
+       "67.8",
+       "67.9",
+       "68.8",
+       "67.6",
+       "69.2",
+       "65.4",
+       "65.6",
+       "65.4",
+       "61.1",
+       "55.2"
+      ],
+      [
+       "electricity",
+       "80.2",
+       "79.2",
+       "78.7",
+       "78.8",
+       "78.9",
+       "77.6",
+       "78.5",
+       "75.3",
+       "75.5",
+       "72.6",
+       "72.5",
+       "73.6",
+       "70.9"
+      ],
+      [
+       "eye_movements",
+       "58.4",
+       "58.5",
+       "57.5",
+       "56.6",
+       "56.7",
+       "58.0",
+       "56.4",
+       "56.7",
+       "55.5",
+       "56.0",
+       "54.1",
+       "52.4",
+       "52.3"
+      ],
+      [
+       "heloc",
+       "72.5",
+       "71.5",
+       "71.3",
+       "69.8",
+       "69.8",
+       "70.9",
+       "69.2",
+       "71.3",
+       "66.6",
+       "70.3",
+       "66.4",
+       "62.5",
+       "66.9"
+      ],
+      [
+       "house_16H",
+       "88.2",
+       "87.5",
+       "86.1",
+       "86.9",
+       "87.1",
+       "86.4",
+       "86.9",
+       "84.8",
+       "84.6",
+       "82.4",
+       "82.0",
+       "79.4",
+       "56.5"
+      ],
+      [
+       "jannis",
+       "76.2",
+       "74.6",
+       "73.3",
+       "73.7",
+       "73.6",
+       "73.1",
+       "73.7",
+       "72.7",
+       "70.5",
+       "71.9",
+       "67.6",
+       "65.1",
+       "66.1"
+      ],
+      [
+       "pol",
+       "97.4",
+       "97.0",
+       "95.9",
+       "96.5",
+       "96.7",
+       "96.3",
+       "96.4",
+       "93.3",
+       "96.1",
+       "86.0",
+       "91.7",
+       "94.0",
+       "71.2"
+      ],
+      [
+       "road-safety",
+       "74.0",
+       "73.3",
+       "71.8",
+       "72.0",
+       "71.7",
+       "71.4",
+       "71.2",
+       "69.6",
+       "67.1",
+       "68.6",
+       "64.2",
+       "65.3",
+       "56.1"
+      ]
+     ],
+     "note": "Each cell is the mean of five random splits with 1,000 training and 2,000 test rows."
+    }
+   ]
+  },
+  {
+   "id": "how-you-test",
+   "kicker": "4. How the test changes what you see",
+   "action_title": "One dataset and one split crowned 7 different winners",
+   "paras": [
+    "A chart built from a single dataset and a single random split, like the viral one, is one draw from a noisy process. Across our 95 single runs, 7 different models came first at least once. The overall winner, TabPFN v2, was first in 80.0% of runs, and the average gap between first and second place in a single run was just 0.9 points. The agreement between a single run's ranking and the overall ranking (Kendall's tau) averaged 0.68, where 1 would mean identical.",
+    "The metric matters too. Accuracy counts right answers at one threshold; ROC AUC measures how well a model orders cases from least to most likely, across all thresholds. Switching from accuracy to AUC moved Random forest 2 places and Extra trees 2.",
+    "The effect is stronger when no model dominates. Re-running the comparison without TabPFN, on 10 splits per dataset (190 single runs), 9 different models came first at least once, and the best of the 12, CatBoost, topped only 55.3% of single runs. A one-dataset, one-split chart has roughly the reliability of a coin toss weighted towards the favourite."
+   ],
+   "exhibits": [
+    {
+     "type": "hbar",
+     "title": "Single runs crown many different winners",
+     "subtitle": "Share of 95 single dataset-and-split runs in which each model came first (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Share of runs won",
+       "points": [
+        [
+         "TabPFN v2",
+         79.5
+        ],
+        [
+         "CatBoost",
+         7.9
+        ],
+        [
+         "Extra trees",
+         6.3
+        ],
+        [
+         "SVM (RBF)",
+         3.2
+        ],
+        [
+         "Neural network (MLP)",
+         1.1
+        ],
+        [
+         "Random forest",
+         1.1
+        ],
+        [
+         "Logistic regression",
+         1.1
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI benchmark, November 2026",
+     "notes": "Ties split equally. 19 datasets × 5 random splits.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "How often each model won a single run, and how much its accuracy moved between splits",
+     "columns": [
+      "Model",
+      "Share of single runs won",
+      "Average spread between best and worst split (pts)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "TabPFN v2",
+       "79.5%",
+       "2.3",
+       "DERIVED"
+      ],
+      [
+       "CatBoost",
+       "7.9%",
+       "2.0",
+       "DERIVED"
+      ],
+      [
+       "Extra trees",
+       "6.3%",
+       "2.1",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "3.2%",
+       "3.1",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "1.1%",
+       "2.3",
+       "DERIVED"
+      ],
+      [
+       "Neural network (MLP)",
+       "1.1%",
+       "2.5",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "1.1%",
+       "2.6",
+       "DERIVED"
+      ],
+      [
+       "LightGBM",
+       "0.0%",
+       "2.3",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "0.0%",
+       "2.2",
+       "DERIVED"
+      ],
+      [
+       "XGBoost",
+       "0.0%",
+       "2.6",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "0.0%",
+       "3.3",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "0.0%",
+       "2.9",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "0.0%",
+       "7.1",
+       "DERIVED"
+      ]
+     ]
+    },
+    {
+     "title": "Rank by accuracy versus rank by ROC AUC",
+     "columns": [
+      "Model",
+      "Mean accuracy (%)",
+      "Rank (accuracy)",
+      "Mean ROC AUC (%)",
+      "Rank (AUC)",
+      "Places moved",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "TabPFN v2",
+       "76.7",
+       "1",
+       "83.2",
+       "1",
+       "0",
+       "DERIVED"
+      ],
+      [
+       "CatBoost",
+       "75.7",
+       "2",
+       "82.1",
+       "2",
+       "0",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "74.6",
+       "3",
+       "80.8",
+       "5",
+       "-2",
+       "DERIVED"
+      ],
+      [
+       "LightGBM",
+       "74.3",
+       "4",
+       "80.6",
+       "3",
+       "+1",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "74.3",
+       "5",
+       "80.6",
+       "6",
+       "-1",
+       "DERIVED"
+      ],
+      [
+       "Extra trees",
+       "74.3",
+       "6",
+       "80.4",
+       "4",
+       "+2",
+       "DERIVED"
+      ],
+      [
+       "XGBoost",
+       "73.9",
+       "7",
+       "80.1",
+       "7",
+       "0",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "73.1",
+       "8",
+       "79.3",
+       "8",
+       "0",
+       "DERIVED"
+      ],
+      [
+       "Neural network (MLP)",
+       "72.5",
+       "9",
+       "78.1",
+       "10",
+       "-1",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "71.7",
+       "10",
+       "78.0",
+       "9",
+       "+1",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "69.3",
+       "11",
+       "74.2",
+       "12",
+       "-1",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "68.1",
+       "12",
+       "68.1",
+       "13",
+       "-1",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "61.7",
+       "13",
+       "72.0",
+       "11",
+       "+2",
+       "DERIVED"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "data-size",
+   "kicker": "5. Training-set size",
+   "action_title": "With 100 rows and with 10,000, different models lead",
+   "paras": [
+    "We repeated the test with 100, 300, 1,000, 3,000 and 10,000 training rows on the 13 datasets large enough for every size. Accuracy rises for every model as data grows, but not equally: models that rely on strong built-in assumptions do relatively well with very little data, while flexible ensembles and neural networks gain most from more rows. TabPFN v2 led at every size it was run (up to 1,000 rows); Naive Bayes was the only model whose accuracy fell as data grew, from 63.0% at 100 rows to 59.0% at 10,000, because more data cannot fix its wrong independence assumption."
+   ],
+   "exhibits": [
+    {
+     "type": "line",
+     "title": "More training data helps every model, but the order changes as data grows",
+     "subtitle": "Mean accuracy by training-set size on the 13 datasets large enough for every size, four contrasting models (%)",
+     "unit": "%",
+     "ymin": 55,
+     "series": [
+      {
+       "name": "TabPFN v2",
+       "points": [
+        [
+         "100",
+         71.7
+        ],
+        [
+         "300",
+         75.0
+        ],
+        [
+         "1,000",
+         77.5
+        ]
+       ]
+      },
+      {
+       "name": "CatBoost",
+       "points": [
+        [
+         "100",
+         70.5
+        ],
+        [
+         "300",
+         73.7
+        ],
+        [
+         "1,000",
+         76.2
+        ],
+        [
+         "3,000",
+         77.8
+        ],
+        [
+         "10,000",
+         79.2
+        ]
+       ]
+      },
+      {
+       "name": "Neural network",
+       "points": [
+        [
+         "100",
+         67.4
+        ],
+        [
+         "300",
+         70.0
+        ],
+        [
+         "1,000",
+         72.5
+        ],
+        [
+         "3,000",
+         74.0
+        ],
+        [
+         "10,000",
+         75.8
+        ]
+       ]
+      },
+      {
+       "name": "Naive Bayes",
+       "points": [
+        [
+         "100",
+         63.0
+        ],
+        [
+         "300",
+         63.0
+        ],
+        [
+         "1,000",
+         60.4
+        ],
+        [
+         "3,000",
+         60.9
+        ],
+        [
+         "10,000",
+         59.0
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI benchmark, November 2026 (3 random splits per size)",
+     "notes": "TabPFN v2 was run up to 1,000 training rows (CPU time). Axis starts at 55%. All 13 models are in the table below.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Mean accuracy by training-set size (%)",
+     "columns": [
+      "Model",
+      "100 rows",
+      "300 rows",
+      "1,000 rows",
+      "3,000 rows",
+      "10,000 rows",
+      "Rank at 100",
+      "Rank at 10,000",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "TabPFN v2",
+       "71.7",
+       "75.0",
+       "77.5",
+       "–",
+       "–",
+       "1",
+       "–",
+       "DERIVED"
+      ],
+      [
+       "CatBoost",
+       "70.5",
+       "73.7",
+       "76.2",
+       "77.8",
+       "79.2",
+       "2",
+       "1",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "70.1",
+       "72.7",
+       "75.2",
+       "76.8",
+       "78.1",
+       "3",
+       "5",
+       "DERIVED"
+      ],
+      [
+       "LightGBM",
+       "68.2",
+       "72.1",
+       "75.0",
+       "76.9",
+       "78.7",
+       "6",
+       "2",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "68.1",
+       "72.0",
+       "75.1",
+       "76.9",
+       "78.6",
+       "7",
+       "3",
+       "DERIVED"
+      ],
+      [
+       "Extra trees",
+       "69.7",
+       "72.3",
+       "74.9",
+       "76.4",
+       "77.7",
+       "4",
+       "6",
+       "DERIVED"
+      ],
+      [
+       "XGBoost",
+       "68.6",
+       "71.8",
+       "74.6",
+       "76.3",
+       "78.1",
+       "5",
+       "4",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "67.7",
+       "70.5",
+       "73.1",
+       "74.4",
+       "75.4",
+       "8",
+       "8",
+       "DERIVED"
+      ],
+      [
+       "Neural network (MLP)",
+       "67.4",
+       "70.0",
+       "72.5",
+       "74.0",
+       "75.8",
+       "10",
+       "7",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "67.5",
+       "70.4",
+       "72.1",
+       "72.5",
+       "72.9",
+       "9",
+       "9",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "65.1",
+       "66.5",
+       "69.0",
+       "70.4",
+       "71.9",
+       "11",
+       "10",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "64.2",
+       "66.4",
+       "68.8",
+       "70.0",
+       "71.5",
+       "12",
+       "11",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "63.0",
+       "63.0",
+       "60.4",
+       "60.9",
+       "59.0",
+       "13",
+       "12",
+       "DERIVED"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "setup",
+   "kicker": "6. Scaling, imbalance and tuning",
+   "action_title": "Three setup choices change the scoreboard as much as the choice of model",
+   "paras": [
+    "Four models measure distances or weighted sums directly on the raw features, so a feature measured in thousands drowns one measured in fractions unless the data is standardised first. Removing that one preprocessing line changed their accuracy by: SVM (RBF) -7.9 points; Neural network (MLP) -6.4 points; k-nearest neighbours -5.6 points; Logistic regression -1.0 points.",
+    "When only 10% of cases are positive, a model that always answers 'no' scores 90.0% accuracy while learning nothing; its balanced accuracy is 50.0%. Of the 12 real models, 9 scored within two points above that do-nothing baseline and 3 (Neural network (MLP), Decision tree, Naive Bayes) scored below it, yet their balanced accuracy ranged between 55.6% and 63.6% balanced accuracy. The leader changes with the metric: CatBoost had the highest accuracy, Neural network (MLP) the highest balanced accuracy. On imbalanced data, an accuracy figure is meaningless without the base rate. (TabPFN was not run in this test.)",
+    "Default settings are not the whole story. A modest search over 20 hyperparameter configurations, scored by 3-fold cross-validation, helped Decision tree most (+3.4 points) and moved XGBoost to the top of the nine tuned models, from 3rd at default settings. McElfresh et al. (2023) reached the same conclusion at larger scale: light tuning of gradient-boosted trees often matters more than the choice between model families."
+   ],
+   "exhibits": [
+    {
+     "type": "grouped",
+     "title": "Forgetting to scale features costs the distance-based models most",
+     "subtitle": "Mean accuracy with and without standardised features, 19 datasets × 10 splits (%)",
+     "unit": "%",
+     "series": [
+      {
+       "name": "Scaled",
+       "points": [
+        [
+         "MLP",
+         72.4
+        ],
+        [
+         "SVM",
+         73.0
+        ],
+        [
+         "k-NN",
+         69.2
+        ],
+        [
+         "Log. reg.",
+         71.6
+        ]
+       ]
+      },
+      {
+       "name": "Not scaled",
+       "points": [
+        [
+         "MLP",
+         66.1
+        ],
+        [
+         "SVM",
+         65.1
+        ],
+        [
+         "k-NN",
+         63.6
+        ],
+        [
+         "Log. reg.",
+         70.6
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI benchmark, November 2026",
+     "notes": "Tree-based models and TabPFN do not need scaling and are not shown.",
+     "confidence": "DERIVED"
+    },
+    {
+     "type": "hbar",
+     "title": "Tuning helps the models with the weakest defaults most",
+     "subtitle": "Change in mean accuracy after a 20-configuration random search, 19 datasets × 3 splits (percentage points)",
+     "unit": "pts",
+     "series": [
+      {
+       "name": "Gain from tuning",
+       "points": [
+        [
+         "Decision tree",
+         3.4
+        ],
+        [
+         "Naive Bayes",
+         2.4
+        ],
+        [
+         "k-nearest neighbours",
+         2.3
+        ],
+        [
+         "XGBoost",
+         1.5
+        ],
+        [
+         "Neural network (MLP)",
+         1.0
+        ],
+        [
+         "Gradient boosting (HistGB)",
+         0.9
+        ],
+        [
+         "Random forest",
+         0.6
+        ],
+        [
+         "SVM (RBF)",
+         0.5
+        ],
+        [
+         "Logistic regression",
+         0.2
+        ]
+       ]
+      }
+     ],
+     "source": "Source: Report AI benchmark, November 2026",
+     "notes": "CatBoost, LightGBM, extra trees and TabPFN were not tuned.",
+     "confidence": "DERIVED"
+    }
+   ],
+   "tables": [
+    {
+     "title": "Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",
+     "columns": [
+      "Model",
+      "Accuracy (%)",
+      "Balanced accuracy (%)",
+      "ROC AUC (%)",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Neural network (MLP)",
+       "89.8",
+       "63.6",
+       "74.8",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "85.9",
+       "62.7",
+       "62.7",
+       "DERIVED"
+      ],
+      [
+       "XGBoost",
+       "90.8",
+       "62.5",
+       "77.8",
+       "DERIVED"
+      ],
+      [
+       "LightGBM",
+       "91.1",
+       "62.2",
+       "78.5",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "91.0",
+       "62.0",
+       "78.3",
+       "DERIVED"
+      ],
+      [
+       "CatBoost",
+       "91.5",
+       "61.3",
+       "80.0",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "69.3",
+       "60.3",
+       "69.8",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "91.3",
+       "59.5",
+       "78.5",
+       "DERIVED"
+      ],
+      [
+       "Extra trees",
+       "91.1",
+       "59.0",
+       "78.5",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "90.5",
+       "58.3",
+       "68.6",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "90.9",
+       "57.7",
+       "76.5",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "91.0",
+       "55.6",
+       "73.4",
+       "DERIVED"
+      ],
+      [
+       "Majority class",
+       "90.0",
+       "50.0",
+       "50.0",
+       "DERIVED"
+      ]
+     ]
+    },
+    {
+     "title": "Default versus tuned accuracy",
+     "columns": [
+      "Model",
+      "Default (%)",
+      "Tuned (%)",
+      "Change (pts)",
+      "Rank default",
+      "Rank tuned",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "XGBoost",
+       "73.9",
+       "75.4",
+       "+1.5",
+       "3",
+       "1",
+       "DERIVED"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "74.4",
+       "75.3",
+       "+0.9",
+       "2",
+       "2",
+       "DERIVED"
+      ],
+      [
+       "Random forest",
+       "74.6",
+       "75.3",
+       "+0.6",
+       "1",
+       "3",
+       "DERIVED"
+      ],
+      [
+       "SVM (RBF)",
+       "73.1",
+       "73.7",
+       "+0.5",
+       "4",
+       "4",
+       "DERIVED"
+      ],
+      [
+       "Neural network (MLP)",
+       "72.5",
+       "73.5",
+       "+1.0",
+       "5",
+       "5",
+       "DERIVED"
+      ],
+      [
+       "Logistic regression",
+       "71.7",
+       "72.0",
+       "+0.2",
+       "6",
+       "6",
+       "DERIVED"
+      ],
+      [
+       "Decision tree",
+       "68.3",
+       "71.7",
+       "+3.4",
+       "8",
+       "7",
+       "DERIVED"
+      ],
+      [
+       "k-nearest neighbours",
+       "69.3",
+       "71.6",
+       "+2.3",
+       "7",
+       "8",
+       "DERIVED"
+      ],
+      [
+       "Naive Bayes",
+       "61.3",
+       "63.7",
+       "+2.4",
+       "9",
+       "9",
+       "DERIVED"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "literature",
+   "kicker": "7. What the research says",
+   "action_title": "Trees led until 2023; pretrained tabular transformers lead the 2026 leaderboards",
+   "paras": [
+    "Grinsztajn, Oyallon and Varoquaux (arXiv July 2022; NeurIPS 2022) benchmarked tree-based models against deep learning on 45 tabular datasets and found that tree-based models such as XGBoost and random forests remain state-of-the-art on medium-sized data of about 10,000 samples. McElfresh et al. (2023) found that the neural-net-versus-boosted-tree debate is overemphasised: for many datasets the gap is negligible, or light hyperparameter tuning of a GBDT matters more than the choice between model families.",
+    "On TabArena's live leaderboard (default view: single models, 51 datasets, data regenerated 11 November 2026), the top five entries are NVIDIA's Kumo-Tabular (Elo 1971), LimiX-2 (1959), Kumo-Tabular-Medium (1909), Neuralk-AI's Seldon (1903) and Prior Labs' TabPFN-3.5 (1868), all tabular foundation models run with default settings. On TabArena's default leaderboard (11 November 2026), classic models rank far below: tuned-and-ensembled CatBoost scores Elo 1402, XGBoost 1360, RandomForest 1172, k-nearest neighbours 993 and linear models 990, against 1971 for the leader.",
+    "Our results sit between these: at 1,000 training rows and default settings, without the ensembling and long tuning budgets of the leaderboards, TabPFN v2 led, and the gaps among the top tree ensembles were small."
+   ],
+   "tables": [
+    {
+     "title": "Key studies and leaderboards",
+     "columns": [
+      "Source",
+      "Finding",
+      "Link",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Grinsztajn",
+       "Grinsztajn, Oyallon and Varoquaux (arXiv July 2022; NeurIPS 2022) benchmarked tree-based models against deep learning on 45 tabular datasets and found that tree-based models such as XGBoost and random forests remain state-of-the-art on medium-sized data of about 10,000 samples.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2207.08815"
+       },
+       "HIGH"
+      ],
+      [
+       "Grinsztajn et al.",
+       "Grinsztajn et al. (2022) give three reasons neural networks lag trees on tabular data: neural networks are biased towards overly smooth solutions, MLP-like networks are hurt more by uninformative features, and tabular data are not invariant to rotation, so learners should not be either.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/html/2207.08815"
+       },
+       "HIGH"
+      ],
+      [
+       "arXiv 2207.08815 Sec. 3.1; Hugging Face dataset card",
+       "Datasets in the Grinsztajn benchmark had to have at least 4 features and 3,000 samples, a feature-to-sample ratio below 1/10, and were dropped as 'too easy' if a simple linear model or single tree scored within 5% of both a default ResNet and a default HistGradientBoosting model.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/html/2207.08815"
+       },
+       "HIGH"
+      ],
+      [
+       "Shwartz-Ziv & Armon",
+       "Shwartz-Ziv and Armon (arXiv June 2021; Information Fusion 2022) found that XGBoost outperformed recently proposed deep tabular models on the datasets tested, including those used in the deep models' own papers, needed much less tuning, and that an ensemble of deep models plus XGBoost beat XGBoost alone.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2106.03253"
+       },
+       "HIGH"
+      ],
+      [
+       "McElfresh et al.",
+       "McElfresh et al. (NeurIPS 2023 Datasets and Benchmarks track) compared 19 algorithms on 176 tabular datasets, which the authors described as the largest tabular data analysis to date.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2305.02997"
+       },
+       "HIGH"
+      ],
+      [
+       "McElfresh et al.",
+       "McElfresh et al. (2023) found that the neural-net-versus-boosted-tree debate is overemphasised: for many datasets the gap is negligible, or light hyperparameter tuning of a GBDT matters more than the choice between model families.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2305.02997"
+       },
+       "HIGH"
+      ],
+      [
+       "Hollmann et al.",
+       "TabPFN v2 was published by Hollmann, Müller, Purucker and colleagues (University of Freiburg / Prior Labs) in Nature volume 637, pages 319-326, in January 2025, under the title \"Accurate predictions on small data with a tabular foundation model\".",
+       {
+        "text": "source",
+        "href": "https://doi.org/10.1038/s41586-024-08328-6"
+       },
+       "HIGH"
+      ],
+      [
+       "Hollmann et al.",
+       "According to the abstract of Hollmann et al. (Nature, January 2025), TabPFN outperforms all previous methods on datasets with up to 10,000 samples \"by a wide margin\".",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2505.20003"
+       },
+       "HIGH"
+      ],
+      [
+       "TabPFN-2.5 technical report abstract (vendor self-report)",
+       "The TabPFN-2.5 report (Prior Labs, November 2025) claims a 100% win rate against default XGBoost on small and medium classification datasets (up to 10,000 rows and 500 features), 87% on larger datasets (up to 100,000 rows) and 85% for regression.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2511.08667"
+       },
+       "HIGH"
+      ],
+      [
+       "PriorLabs/TabPFN README; TabPFN-3.5 technical report arXiv 2",
+       "As of November 2026, Prior Labs' default model TabPFN-3.5 (technical report first posted 15 September 2026; weights file dated 2026-09-09) accepts up to 1,000,000 rows and 20,000 features according to the PriorLabs/TabPFN README.",
+       {
+        "text": "source",
+        "href": "https://github.com/PriorLabs/TabPFN"
+       },
+       "HIGH"
+      ],
+      [
+       "PriorLabs/TabPFN README",
+       "As of November 2026 the PriorLabs/TabPFN GitHub README states that the TabPFN-2.5, 2.6, 3, 3.5 and 3.5-Fast weights are released under non-commercial licences, while the code is Apache 2.0 and the TabPFN-2 weights remain Apache 2.0 with an attribution requirement.",
+       {
+        "text": "source",
+        "href": "https://github.com/PriorLabs/TabPFN"
+       },
+       "HIGH"
+      ],
+      [
+       "Erickson et al.",
+       "TabArena (Erickson et al., arXiv June 2025; NeurIPS 2025 Datasets and Benchmarks spotlight) is a continuously maintained 'living' benchmark that curated 51 datasets from 1,053 datasets used in 14 earlier benchmarks.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2506.16791"
+       },
+       "HIGH"
+      ],
+      [
+       "TabArena leaderboard (Hugging Face Space TabArena/leaderboar",
+       "On TabArena's live leaderboard (default view: single models, 51 datasets, data regenerated 11 November 2026), the top five entries are NVIDIA's Kumo-Tabular (Elo 1971), LimiX-2 (1959), Kumo-Tabular-Medium (1909), Neuralk-AI's Seldon (1903) and Prior Labs' TabPFN-3.5 (1868), all tabular foundation models run with default settings.",
+       {
+        "text": "source",
+        "href": "https://huggingface.co/spaces/TabArena/leaderboard"
+       },
+       "HIGH"
+      ],
+      [
+       "TabArena leaderboard CSV (default view)",
+       "In TabArena's default leaderboard view of 11 November 2026, the top 21 of 108 entries are tabular foundation models; the best non-foundation entry is the TabM-A neural network (tuned and ensembled, Elo 1517, 22nd), and the best tree model is LightGBM tuned and ensembled (Elo 1411, 32nd).",
+       {
+        "text": "source",
+        "href": "https://huggingface.co/spaces/TabArena/leaderboard"
+       },
+       "HIGH"
+      ],
+      [
+       "TabArena leaderboard CSV (default view)",
+       "On TabArena's default leaderboard (11 November 2026), classic models rank far below: tuned-and-ensembled CatBoost scores Elo 1402, XGBoost 1360, RandomForest 1172, k-nearest neighbours 993 and linear models 990, against 1971 for the leader.",
+       {
+        "text": "source",
+        "href": "https://huggingface.co/spaces/TabArena/leaderboard"
+       },
+       "HIGH"
+      ],
+      [
+       "TabArena leaderboard CSV (default view)",
+       "Successive TabPFN releases climb TabArena's default leaderboard (11 November 2026): TabPFN v2 default scores Elo 1251 (with 35% of runs imputed), TabPFN-2.6 1583, TabPFN-3 1631 and TabPFN-3.5 1868.",
+       {
+        "text": "source",
+        "href": "https://huggingface.co/spaces/TabArena/leaderboard"
+       },
+       "HIGH"
+      ],
+      [
+       "Wolpert",
+       "Wolpert's 1996 no-free-lunch theorems for supervised learning (Neural Computation, vol. 8, pp. 1341-1390) show that, averaged uniformly over all possible target functions, no learning algorithm has lower expected off-training-set error than any other, so any advantage must come from assumptions that match the problem.",
+       {
+        "text": "source",
+        "href": "https://en.wikipedia.org/wiki/No_free_lunch_theorem"
+       },
+       "MEDIUM"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "what-you-see",
+   "kicker": "8. How these models shape what you see",
+   "action_title": "From spam filters to feeds, every model family in this test decides something people see",
+   "paras": [
+    "The same families compete inside the systems that choose what appears on screens. Early spam filters were Naive Bayes classifiers; ad-click prediction at Facebook in 2014 combined boosted trees with logistic regression; feeds and video recommendations moved to deep neural networks and, by 2024–26, to transformers with billions or trillions of parameters. The model decides the ranking, but the weights a company puts on each predicted action (a like, a reply, a report) decide what the ranking rewards.",
+    "X's For You README (update of 14 August 2026) warns that action weights scale each viewer's predicted probability of an action, so a report weighted 468 times a like does not mean one report cancels 468 likes."
+   ],
+   "tables": [
+    {
+     "title": "Model families behind ads, feeds, search, spam and credit",
+     "columns": [
+      "Where",
+      "Model family",
+      "What is documented",
+      "Link",
+      "Confidence"
+     ],
+     "rows": [
+      [
+       "Ads",
+       "Boosted trees + logistic regression",
+       "Facebook's 2014 paper 'Practical Lessons from Predicting Clicks on Ads at Facebook' (He et al., ADKDD 2014) combined boosted decision trees with logistic regression and reported that the hybrid beat either method alone by more than 3%.",
+       {
+        "text": "source",
+        "href": "https://research.facebook.com/publications/practical-lessons-from-predicting-clicks-on-ads-at-facebook/"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Video recommendations",
+       "Deep neural networks",
+       "Google's 'Deep Neural Networks for YouTube Recommendations' (Covington, Adams & Sargin, RecSys 2016, Boston) describes a two-stage system: a deep candidate-generation network that narrows the video corpus, followed by a separate deep ranking network.",
+       {
+        "text": "source",
+        "href": "https://research.google/pubs/pub45530/"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Social feed",
+       "Neural network (MaskNet)",
+       "Twitter's open-sourced recommendation code (March 2023) describes the For You 'heavy ranker' as a neural network (a parallel MaskNet) that predicts the probability of ten engagement types, combined by a weighted sum in which, as of 5 April 2023, a predicted report carried weight -369 and a predicted like +0.5.",
+       {
+        "text": "source",
+        "href": "https://github.com/twitter/the-algorithm-ml/blob/main/projects/home/recap/README.md"
+       },
+       "HIGH"
+      ],
+      [
+       "Social feed",
+       "Transformer",
+       "X's current open-source For You repository (xai-org/x-algorithm, updated through November 2026) says posts are ranked by a transformer model called Phoenix, which also uses a transformer two-tower model for retrieval; earlier releases shipped a sample transformer ported from xAI's Grok-1.",
+       {
+        "text": "source",
+        "href": "https://github.com/xai-org/x-algorithm"
+       },
+       "HIGH"
+      ],
+      [
+       "Recommendations",
+       "Transformer (generative recommender)",
+       "Meta's 'Actions Speak Louder than Words' paper (Zhai et al., ICML 2024) reports that a 1.5-trillion-parameter generative recommender built on its HSTU transformer architecture improved online A/B-test metrics by 12.4% and was deployed on multiple surfaces of a platform with billions of users.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2402.17152"
+       },
+       "HIGH"
+      ],
+      [
+       "Recommendations",
+       "Real-time embedding models",
+       "ByteDance's Monolith paper (arXiv September 2022; ORSUM workshop at RecSys 2022) describes a real-time recommendation training system with a collisionless embedding table that updates models from user feedback online and is deployed in the BytePlus Recommend product.",
+       {
+        "text": "source",
+        "href": "https://arxiv.org/abs/2209.07663"
+       },
+       "HIGH"
+      ],
+      [
+       "Search",
+       "Transformer (BERT)",
+       "Google said in October 2019 that its BERT transformer model would help Search understand about one in ten English-language searches in the United States.",
+       {
+        "text": "source",
+        "href": "https://blog.google/products/search/search-language-understanding-bert/"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Spam filtering",
+       "Naive Bayes",
+       "The first scholarly publication applying a naive Bayes classifier to spam filtering was Sahami, Dumais, Heckerman and Horvitz's 'A Bayesian approach to filtering junk e-mail' at the AAAI-98 Workshop on Learning for Text Categorization in 1998.",
+       {
+        "text": "source",
+        "href": "https://en.wikipedia.org/wiki/Naive_Bayes_spam_filtering"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Spam filtering",
+       "ML and rules (TensorFlow)",
+       "Google said in February 2019 that its machine-learning and rules-based protections block more than 99.9% of spam, phishing and malware in Gmail, and that adding TensorFlow models blocked about 100 million additional spam messages a day.",
+       {
+        "text": "source",
+        "href": "https://workspace.google.com/blog/product-announcements/ridding-gmail-of-100-million-more-spam-messages-with-tensorflow"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Credit",
+       "Logistic regression",
+       "Logistic regression is described as the most popular statistical technique for building credit scorecards, predicting a binary outcome of default or no default.",
+       {
+        "text": "source",
+        "href": "https://en.wikipedia.org/wiki/Credit_score"
+       },
+       "MEDIUM"
+      ],
+      [
+       "Credit",
+       "Machine-learning credit model",
+       "A BIS working paper by Gambacorta, Huang, Qiu and Wang (No. 834, December 2019) found that a Chinese fintech's machine-learning credit model using non-traditional data predicted losses and defaults better than traditional bank models when credit supply was hit by a negative shock.",
+       {
+        "text": "source",
+        "href": "https://www.bis.org/publ/work834.htm"
+       },
+       "HIGH"
+      ],
+      [
+       "Finance",
+       "Machine learning (various)",
+       "The Bank of England and FCA's 2022 survey 'Machine learning in UK financial services' found that 72% of responding firms were using or developing ML applications.",
+       {
+        "text": "source",
+        "href": "https://www.bankofengland.co.uk/report/2022/machine-learning-in-uk-financial-services"
+       },
+       "MEDIUM"
+      ]
+     ]
+    }
+   ]
+  },
+  {
+   "id": "models",
+   "kicker": "9. The 13 models",
+   "action_title": "What each model does, where it is strong and where it fails",
+   "paras": [
+    "The guide below describes each model in one line, with its rank in our benchmark. Strengths and weaknesses are Report AI's summary of the standard literature and of our results. For the large language models that power chatbots, see the LLM Taxonomy 2026."
+   ],
+   "tables": [
+    {
+     "title": "Model guide",
+     "columns": [
+      "Model",
+      "How it works",
+      "Strengths",
+      "Weaknesses",
+      "Rank in our benchmark"
+     ],
+     "rows": [
+      [
+       "TabPFN v2",
+       "A transformer pretrained on millions of synthetic datasets; it reads the training table as context and predicts in one forward pass, with no per-dataset training in the usual sense (Hollmann et al., Nature, 2025).",
+       "Strongest on small tables (up to 10,000 rows in v2); no tuning",
+       "Slow on a CPU; v2 limited to 10,000 rows and 500 features; later versions need a commercial licence for production",
+       "1 of 13"
+      ],
+      [
+       "CatBoost",
+       "Gradient-boosted decision trees from Yandex with 'ordered boosting' and symmetric trees.",
+       "Excellent defaults; handles categorical data natively",
+       "Slower to train than other boosting libraries",
+       "2 of 13"
+      ],
+      [
+       "LightGBM",
+       "Microsoft's gradient-boosting library that grows trees leaf by leaf on binned features.",
+       "Very fast on large tables",
+       "Can overfit small data at default settings",
+       "4 of 13"
+      ],
+      [
+       "XGBoost",
+       "Regularised gradient-boosted trees; the library that dominated Kaggle competitions from 2014.",
+       "Fast, mature, widely deployed",
+       "Benefits more from tuning than CatBoost",
+       "7 of 13"
+      ],
+      [
+       "Gradient boosting (HistGB)",
+       "scikit-learn's histogram-based gradient boosting: trees added one after another, each correcting the last one's errors.",
+       "Strong default in a standard library",
+       "Same family, slightly different defaults",
+       "5 of 13"
+      ],
+      [
+       "Random forest",
+       "Averages hundreds of decision trees, each trained on a random sample of rows and features.",
+       "Robust, hard to break, little tuning",
+       "Large models; less accurate than boosting on most tables",
+       "3 of 13"
+      ],
+      [
+       "Extra trees",
+       "A random forest that also picks split thresholds at random.",
+       "Fast; often matches a random forest",
+       "Similar limits to a random forest",
+       "6 of 13"
+      ],
+      [
+       "Neural network (MLP)",
+       "A multilayer perceptron: layers of weighted sums and non-linear activations, trained by gradient descent.",
+       "Flexible; the basis of deep learning",
+       "Needs scaling and tuning; trails trees on most tables at default settings",
+       "9 of 13"
+      ],
+      [
+       "SVM (RBF)",
+       "A support vector machine draws the widest-margin boundary between classes in a transformed feature space.",
+       "Strong on small, clean data",
+       "Needs scaling; slow beyond tens of thousands of rows",
+       "8 of 13"
+      ],
+      [
+       "k-nearest neighbours",
+       "Predicts by a vote of the k most similar training rows.",
+       "No training; easy to explain",
+       "Needs scaling; weak with many or irrelevant features",
+       "11 of 13"
+      ],
+      [
+       "Logistic regression",
+       "A weighted sum of features turned into a probability.",
+       "Transparent and stable; the credit-scorecard standard",
+       "Cannot capture interactions unless they are engineered",
+       "10 of 13"
+      ],
+      [
+       "Decision tree",
+       "A single tree of if-then splits.",
+       "Fully readable",
+       "Unstable and overfits; the weakest learner here",
+       "12 of 13"
+      ],
+      [
+       "Naive Bayes",
+       "Applies Bayes' rule assuming every feature is independent given the class (Gaussian variant here).",
+       "Very fast; a strong baseline for text and spam",
+       "The independence assumption is badly wrong for most tables",
+       "13 of 13"
+      ]
+     ]
+    }
+   ]
+  }
+ ],
+ "stop_quoting": [
+  {
+   "claim": "TabPFN scores 79.5%, a neural network 74.0% and Naive Bayes 42.1%.",
+   "fact": "These figures come from a short AI-labelled video that names no dataset; they cannot be checked. Accuracy is a property of a model on a dataset, not of a model. On Report AI's 19-dataset benchmark the order of the middle of the table differs.",
+   "link": ""
+  },
+  {
+   "claim": "Trees always beat neural networks on tabular data.",
+   "fact": "That held in 2021–23 studies of tuned MLP-style networks on medium-sized data (Grinsztajn et al., 2022; McElfresh et al., 2023). By November 2026, pretrained tabular foundation models held the top 21 places of the TabArena leaderboard, while tuned gradient-boosted trees remained strong and far cheaper.",
+   "link": ""
+  },
+  {
+   "claim": "TabPFN is open source.",
+   "fact": "The code and the TabPFN v2 weights are openly licensed (Apache 2.0 with an attribution clause). The weights of TabPFN-2.5, 2.6, 3 and 3.5 are released under non-commercial licences; production use needs a commercial licence from Prior Labs.",
+   "link": ""
+  },
+  {
+   "claim": "The No Free Lunch theorem means every algorithm is equally good.",
+   "fact": "Wolpert's 1996 theorems average over all possible problems. Real-world data has structure, which is why some model families win consistently on real benchmarks.",
+   "link": ""
+  }
+ ],
+ "definitions": [
+  {
+   "term": "Accuracy",
+   "def": "The share of test cases a model classifies correctly at its default decision threshold. On a balanced two-class problem, guessing scores 50%."
+  },
+  {
+   "term": "ROC AUC",
+   "def": "The probability that the model scores a randomly chosen positive case above a randomly chosen negative one; 0.5 is chance and 1.0 is perfect. It ignores the decision threshold."
+  },
+  {
+   "term": "Balanced accuracy",
+   "def": "The average of the accuracy on each class. It stops a model that always predicts the majority class from looking good on imbalanced data."
+  },
+  {
+   "term": "Train/test split",
+   "def": "Rows used to fit the model are kept apart from rows used to score it. Repeating with several random splits shows how much a result depends on the luck of the draw."
+  },
+  {
+   "term": "Gradient boosting",
+   "def": "An ensemble that adds decision trees one at a time, each fitted to the errors of the trees before it. CatBoost, LightGBM, XGBoost and HistGB are implementations."
+  },
+  {
+   "term": "Tabular foundation model",
+   "def": "A model pretrained on many (often synthetic) tables that predicts on a new table from its rows as context, without conventional training on it. TabPFN is the best-known example."
+  },
+  {
+   "term": {
+    "text": "Benchmark",
+    "href": "/glossary/benchmark/"
+   },
+   "def": "A fixed set of tasks and a scoring rule used to compare models. Results hold for the benchmark's tasks, not for every problem."
+  }
+ ],
+ "faq": [
+  {
+   "q": "Which machine-learning model is the most accurate?",
+   "a": "There is no single most accurate model; it depends on the data. On Report AI's November 2026 benchmark of 13 classifiers on 19 public tabular datasets with 1,000 training rows, TabPFN v2 had the highest mean accuracy (76.7%) and won 17 of 19 datasets, ahead of CatBoost (75.7%)."
+  },
+  {
+   "q": "Do neural networks beat decision trees?",
+   "a": "A single decision tree is one of the weakest models, but ensembles of trees are among the strongest. In Report AI's benchmark a default multilayer-perceptron neural network ranked 9 of 13 and a single decision tree 12, while gradient-boosted tree ensembles filled most of the top half. Pretrained tabular transformers such as TabPFN now lead the TabArena leaderboard."
+  },
+  {
+   "q": "What is TabPFN?",
+   "a": "TabPFN is a transformer pretrained on millions of synthetic datasets that predicts on a new table in a single forward pass. Hollmann et al. described version 2 in Nature in January 2025 and reported that it outperforms previous methods on datasets of up to 10,000 samples. Later versions from Prior Labs handle up to 1 million rows but are licensed for non-commercial use only."
+  },
+  {
+   "q": "Why do machine-learning rankings disagree?",
+   "a": "Because results depend on the dataset, the random split, the metric, the amount of training data, preprocessing and tuning. In Report AI's benchmark, 7 different models won at least one of 95 single dataset-and-split runs, and the overall winner was first in only 80.0% of them."
+  },
+  {
+   "q": "Which algorithms decide what I see online?",
+   "a": "Many. Facebook described combining boosted decision trees with logistic regression to predict ad clicks in 2014; YouTube used deep neural networks for recommendations in 2016; X's For You feed is ranked by a transformer model according to its open-source repository (November 2026); and Naive Bayes classifiers were the first academic spam filters (1998)."
+  }
+ ],
+ "methodology_extra": "Report AI's benchmark used 19 binary classification datasets from the Grinsztajn et al. (2022) tabular benchmark (Hugging Face inria-soda/tabular-benchmark; mixed-feature versions where available), with classes balanced by the benchmark's authors. For each dataset and random seed we drew 1,000 training and 2,000 test rows (stratified), trained each model with library defaults (scikit-learn 1.9.1, XGBoost 3.2.0, LightGBM 4.7.0, CatBoost 1.2.10, TabPFN v2 weights via the tabpfn 10.0.0 package), standardised features for the four scale-sensitive models, and recorded accuracy, balanced accuracy, ROC AUC and time on a 4-core CPU without a GPU. The main ranking uses five splits per dataset for all 13 models (TabPFN costs 25–80 seconds per fit on a CPU); a 10-split run of the other 12 models is reported as a robustness check. Further experiments varied training size (100 to 10,000 rows, 3 seeds, TabPFN to 1,000 rows, on the 13 datasets with at least 6,000 rows per class), feature scaling (10 seeds), class balance (10% positives, 3 seeds, without TabPFN) and hyperparameter tuning (20-configuration random search with 3-fold cross-validation, 3 seeds, nine models). Categorical features were left in the benchmark's ordinal coding. All averages, ranks and shares are Report AI calculations (DERIVED); literature figures carry their source and confidence. Built with PriorLabs-TabPFN. ",
+ "related": "<a href=\"/indexes/technical-benchmarks/llm-taxonomy-2026/\">How to categorize LLMs: the LLM Taxonomy 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/\">AI models benchmarks statistics 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/best-ai-models-2026/\">Best AI models 2026</a> &middot; <a href=\"/indexes/technical-benchmarks/test-time-compute-reasoning-2026/\">Test-time compute and reasoning</a> &middot; <a href=\"/reports/how-ai-developed-1950-2026/\">How AI developed, 1950–2026</a> &middot; <a href=\"/reports/ai-statistics-fact-check/\">AI statistics fact-check</a> &middot; <a href=\"/glossary/benchmark/\">Glossary: benchmark</a> &middot; <a href=\"/glossary/foundation-model/\">Glossary: foundation model</a> &middot; <a href=\"/glossary/mlops/\">Glossary: MLOps</a>",
+ "about": {
+  "@type": "Thing",
+  "name": "Machine learning model comparison"
+ }
+}

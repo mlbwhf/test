@@ -12,7 +12,7 @@ F = {f['id']: f for f in R['facts']}
 SELF = '/reports/machine-learning-models-compared/'
 TAX = '/indexes/technical-benchmarks/llm-taxonomy-2026/'
 
-ACC = S['main_acc']; AUC = S['main_auc']; SS = S['single_split']
+ACC = S['main_acc']; AUC = S['main_auc']; SS = S['single_split']; S12 = S['single_split_12']
 T = {t['model']: t for t in ACC['table']}
 TA = {t['model']: t for t in AUC['table']}
 MODELS = [t['model'] for t in ACC['table']]           # ordered by mean rank (accuracy)
@@ -28,6 +28,10 @@ def short(m):
     return {'Gradient boosting (HistGB)': 'HistGB', 'Neural network (MLP)': 'MLP', 'k-nearest neighbours': 'k-NN',
             'Logistic regression': 'Log. reg.', 'Random forest': 'Rand. forest', 'Decision tree': 'Dec. tree',
             'SVM (RBF)': 'SVM', 'Naive Bayes': 'Naive Bayes', 'Extra trees': 'Extra trees'}.get(m, m)
+
+
+def ordn(n):
+    return f"{n}{'th' if 10 <= n % 100 <= 20 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th')}"
 
 
 def fact(i):
@@ -102,10 +106,10 @@ video_rows = [[lab, f'{v:.1f}%', str(vid_rank[m]), m, pts(T[m]['mean']) + '%', s
 ex_size = None; size_rows = []
 if SZ:
     ns_ = sorted({int(n) for m in SZ['curve'] for n in SZ['curve'][m]})
-    pick = [m for m in ['TabPFN v2', 'CatBoost', 'Random forest', 'Neural network (MLP)', 'Logistic regression', 'k-nearest neighbours'] if m in SZ['curve']]
-    ex_size = {"type": "line", "title": "More training data helps every model, but the order changes as data grows", "subtitle": f"Mean accuracy by training-set size on the {len(SZ['common_datasets'])} datasets large enough for every size (%)", "unit": "%",
-               "series": [{"name": m, "points": [[f"{n:,}", round(100 * SZ['curve'][m][str(n)], 1)] for n in ns_ if str(n) in SZ['curve'][m]]} for m in pick],
-               "source": "Source: Report AI benchmark, November 2026 (3 random splits per size)", "notes": "TabPFN v2 was run up to 3,000 training rows on a CPU.", "confidence": "DERIVED"}
+    pick = [m for m in ['TabPFN v2', 'CatBoost', 'Neural network (MLP)', 'Naive Bayes'] if m in SZ['curve']]
+    ex_size = {"type": "line", "title": "More training data helps every model, but the order changes as data grows", "subtitle": f"Mean accuracy by training-set size on the {len(SZ['common_datasets'])} datasets large enough for every size, four contrasting models (%)", "unit": "%", "ymin": 55,
+               "series": [{"name": {"Neural network (MLP)": "Neural network"}.get(m, m), "points": [[f"{n:,}", round(100 * SZ['curve'][m][str(n)], 1)] for n in ns_ if str(n) in SZ['curve'][m]]} for m in pick],
+               "source": "Source: Report AI benchmark, November 2026 (3 random splits per size)", "notes": "TabPFN v2 was run up to 1,000 training rows (CPU time). Axis starts at 55%. All 13 models are in the table below.", "confidence": "DERIVED"}
     size_rows = [[m] + [pts(SZ['curve'][m][str(n)]) if str(n) in SZ['curve'][m] else '–' for n in ns_] + [str(int(SZ['rank_by_n'][str(ns_[0])].get(m, 0))) if m in SZ['rank_by_n'][str(ns_[0])] else '–',
                  str(int(SZ['rank_by_n'][str(ns_[-1])].get(m, 0))) if m in SZ['rank_by_n'][str(ns_[-1])] else '–', 'DERIVED'] for m in MODELS if m in SZ['curve']]
 
@@ -121,7 +125,7 @@ see_rows = [[a, fam, F[i]['sentence'], {'text': 'source', 'href': F[i]['url']} i
 guide_rows = [[g[0], g[1], g[2], g[3], f"{rank_acc[g[0]]} of {NM}"] for g in MODEL_GUIDE if g[0] in rank_acc]
 
 exhibits_main = [
-    {"type": "hbar", "title": f"{TOP} had the highest average accuracy across {ND} datasets", "subtitle": f"Mean test accuracy over {ND} datasets × 10 random splits, 1,000 training rows, default settings (%)", "unit": "%",
+    {"type": "hbar", "title": f"{TOP} had the highest average accuracy across {ND} datasets", "subtitle": f"Mean test accuracy over {ND} datasets × 5 random splits, 1,000 training rows, default settings (%)", "unit": "%",
      "series": [{"name": "Mean accuracy", "points": [[t['model'], round(100 * t['mean'], 1)] for t in by_mean]}],
      "source": "Source: Report AI benchmark, November 2026, on the Grinsztajn et al. (2022) datasets", "notes": "Balanced binary tasks, so 50% is chance. Ranked by mean accuracy; the table below also gives mean rank.", "confidence": "DERIVED"}]
 
@@ -133,7 +137,7 @@ page = {
  "trail": [["Reports", "/reports/"], ["Machine-Learning Models Compared", SELF]],
  "eyebrow": "Report AI &middot; Reports &middot; Original benchmark &middot; Updated semi-annually",
  "title": f"Machine-Learning Models Compared: We Ran {NM} Algorithms on {ND} Datasets",
- "dek": f"A viral clip ranked nine models on one unnamed dataset. We ran {NM}, from Naive Bayes to the TabPFN transformer, on {ND} public benchmark datasets and {NRUNS} random splits each, to show what wins, by how much, and how much the answer depends on how you test.",
+ "dek": f"A viral clip ranked nine models on one unnamed dataset. We ran {NM}, from Naive Bayes to the TabPFN transformer, on {ND} public benchmark datasets with five random splits each, to show what wins, by how much, and how much the answer depends on how you test.",
  "cadence_note": "Cadence: semi-annual (STABLE) &middot; Next update May 2027",
  "edition": "November 2026 edition",
  "coverage": "2022/2026",
@@ -147,7 +151,7 @@ page = {
     {"value": f"{pts(gap_top2)} pts", "label": f"average accuracy gap between first ({TOP}) and second ({SECOND})", "confidence": "DERIVED"},
  ],
  "at_a_glance": [
-    f"Report AI ran {NM} machine-learning classifiers on {ND} public tabular datasets from the Grinsztajn, Oyallon and Varoquaux (2022) benchmark, with 1,000 training rows and 10 random splits per dataset, in November 2026.",
+    f"Report AI ran {NM} machine-learning classifiers on {ND} public tabular datasets from the Grinsztajn, Oyallon and Varoquaux (2022) benchmark, with 1,000 training rows and five random splits per dataset, in November 2026.",
     f"{TOP} had the highest mean accuracy, {pts(T[TOP]['mean'])}%, and was best on {top_wins} of {ND} datasets; {SECOND} was second at {pts(T[SECOND]['mean'])}%. {LAST} ranked last on average.",
     f"Single runs mislead: across {NRUNS} combinations of one dataset and one random split, {SS['distinct_winners']} different models came first, and the overall winner was first in only {p1(SS['share_runs_overall_best_first'])} of them.",
     f"Gradient-boosted trees (CatBoost, LightGBM, XGBoost, HistGB) and random forests occupy most of the top half; the nine-model viral chart's order is not reproducible because it names no dataset.",
@@ -155,9 +159,9 @@ page = {
  ],
  "toc_extra": [["stop-quoting", "Claims to stop repeating"], ["definitions", "Definitions"], ["faq", "FAQ"], ["about", "About the data"]],
  "analysis": [
-    f"Rankings of machine-learning models are everywhere, and most are built on one dataset and one random split. We wanted to know how much of such a ranking is signal. So we ran {NM} widely used classifiers, from Naive Bayes and logistic regression to gradient-boosted trees and the TabPFN tabular transformer, on {ND} datasets that researchers use precisely because they are hard, and repeated every comparison on 10 random splits.",
-    f"The headline is clear but narrower than viral charts suggest. {TOP} finished first on average with {pts(T[TOP]['mean'])}% accuracy, {pts(gap_top2)} points ahead of {SECOND}. Below the top, gradient-boosted trees and random forests sit within a point or two of each other, and the order among them changes from dataset to dataset. Simple models are not useless: logistic regression won outright on {wins.get('Logistic regression', 0)} datasets. But single trees, k-nearest neighbours and Naive Bayes trail by a wide margin on these tasks.",
-    f"How you test changes what you see. On a single dataset with a single split, the overall winner came first only {p1(SS['share_runs_overall_best_first'])} of the time, and {SS['distinct_winners']} different models won at least once. Ranking by ROC AUC instead of accuracy moved {moved[0]} by {abs(rank_acc[moved[0]] - rank_auc[moved[0]])} places. Turning off feature scaling cost {worst_ns} {abs(100 * NS[worst_ns]['delta']):.1f} points of accuracy. Making the positive class rare (10%) pushed every model's accuracy towards the {pts(IM['Majority class']['acc'])}% a do-nothing majority-class guess scores, while balanced accuracy exposed which ones actually learned." if NS and IM else "",
+    f"Rankings of machine-learning models are everywhere, and most are built on one dataset and one random split. We wanted to know how much of such a ranking is signal. So we ran {NM} widely used classifiers, from Naive Bayes and logistic regression to gradient-boosted trees and the TabPFN tabular transformer, on {ND} datasets that researchers use precisely because they are hard, and repeated every comparison on five random splits.",
+    f"The headline is clear but narrower than viral charts suggest. {TOP} finished first on average with {pts(T[TOP]['mean'])}% accuracy, {pts(gap_top2)} points ahead of {SECOND}. Below the top, gradient-boosted trees and random forests sit within a point or two of each other, and the order among them changes from dataset to dataset. Simple models are not useless: in a 10-split comparison of the other 12 models, logistic regression won outright on {S['main_acc_12']['Logistic regression']['wins']} datasets. But single trees, k-nearest neighbours and Naive Bayes trail by a wide margin on these tasks.",
+    f"How you test changes what you see. On a single dataset with a single split, even a model as dominant as {TOP} came first in {p1(SS['share_runs_overall_best_first'])} of runs, and {SS['distinct_winners']} different models won at least once; without it, the best of the other 12 models topped only {p1(S12['share_runs_overall_best_first'])} of single runs. Ranking by ROC AUC instead of accuracy moved {moved[0]} by {abs(rank_acc[moved[0]] - rank_auc[moved[0]])} places. Turning off feature scaling cost {worst_ns} {abs(100 * NS[worst_ns]['delta']):.1f} points of accuracy. Making the positive class rare (10%) pushed every model's accuracy towards the {pts(IM['Majority class']['acc'])}% a do-nothing majority-class guess scores, while balanced accuracy exposed which ones actually learned." if NS and IM else "",
     "The literature agrees with the shape of our results and adds a time dimension. Tree ensembles beat deep networks on medium-sized tables in the 2021–23 studies; since 2025, pretrained tabular foundation models such as TabPFN have taken the top of the TabArena leaderboard, while classic tree models remain the fast, cheap and robust default. The models that decide what people see online, from ad clicks to feeds and spam filters, span the whole range, from logistic regression to trillion-parameter transformers.",
  ],
  "takeaways": [
@@ -170,11 +174,11 @@ page = {
  "chapters": [
   {"id": "viral-chart", "kicker": "1. The viral chart", "action_title": "A nine-model chart from one unnamed dataset cannot tell you which model is best",
    "paras": ["The chart that prompted this report is a short video captioned '13 machine learning models in 60 seconds', labelled as AI content. It shows nine of the thirteen: TabPFN 79.5%, a neural network 74.0%, random forest 73.5%, gradient boosting 72.7%, a support vector machine 72.0%, k-nearest neighbours 68.3%, a decision tree 64.1%, logistic regression 59.3% and Naive Bayes 42.1%.",
-             "Report AI could not find the original video or the dataset behind it, so its figures cannot be checked or reproduced. A Naive Bayes score of 42.1% is below the 50% a coin toss scores on a balanced two-class problem, which suggests a multi-class task or an unusual split. The table compares the video's order with our averages over many datasets; it shows that the order of the middle of the pack depends on the data."],
+             f"Report AI could not find the original video or the dataset behind it, so its figures cannot be checked or reproduced. A Naive Bayes score of 42.1% is below the 50% a coin toss scores on a balanced two-class problem, which suggests a multi-class task or an unusual split. The table compares the video's order with our averages over many datasets. The top agrees: TabPFN ranked first in our benchmark too. Below it the order differs; the video's second-placed neural network ranked {ordn(our_rank9['Neural network (MLP)'])} of the same nine models in our test, a sign that the middle of the pack depends on the data."],
    "tables": [{"title": "The viral chart against Report AI's benchmark", "columns": ["Model in the video", "Video accuracy", "Video rank", "Report AI model", f"Report AI mean accuracy ({ND} datasets)", "Report AI rank (same 9)", "Confidence"], "rows": video_rows,
                "note": "Video figures as shown on screen (MEDIUM: unverified source, no dataset named). Report AI figures are not comparable task by task; they average 19 different datasets."}]},
   {"id": "ranking", "kicker": "2. The ranking", "action_title": f"{TOP} finished first; boosted trees and random forests filled most of the top half",
-   "paras": [f"Each model was trained with its library's default settings on 1,000 rows and tested on 2,000 different rows, 10 times per dataset with fresh random splits. All {ND} tasks are balanced yes/no problems, so 50% accuracy is chance. We rank models by their average rank across datasets, the standard way to compare learners across tasks of different difficulty, and also report mean accuracy, ROC AUC and wins.",
+   "paras": [f"Each model was trained with its library's default settings on 1,000 rows and tested on 2,000 different rows, five times per dataset with fresh random splits. All {ND} tasks are balanced yes/no problems, so 50% accuracy is chance. We rank models by their average rank across datasets, the standard way to compare learners across tasks of different difficulty, and also report mean accuracy, ROC AUC and wins.",
              f"{TOP} averaged {pts(T[TOP]['mean'])}% accuracy and a mean rank of {T[TOP]['mean_rank']:.2f}. {SECOND} followed at {pts(T[SECOND]['mean'])}%. The fastest model, {fastest}, took a median {tm[fastest] * 1000:.1f} milliseconds to train and predict; the slowest, {slowest}, took {tm[slowest]:.1f} seconds on our 4-core CPU."],
    "exhibits": exhibits_main,
    "tables": [{"title": f"Overall results, {NM} models × {ND} datasets", "columns": ["Model", "Mean accuracy (%)", "Mean ROC AUC (%)", "Mean rank", "Datasets won", "Top-3 finishes", "Median time (s)", "Confidence"], "rows": overall_rows,
@@ -184,13 +188,14 @@ page = {
              "One caveat favours complex models: the benchmark's authors removed datasets that were 'too easy', where a linear model or a single tree came within 5% of a neural network and of gradient boosting. Logistic regression and decision trees therefore look worse here than they would on a random sample of business datasets."],
    "tables": [{"title": "Winner and margin on each dataset", "columns": ["Dataset", "What it predicts", "Rows", "Features", "Best model", "Best accuracy (%)", "Runner-up", "Margin (pts)", "Confidence"], "rows": ds_rows},
               {"title": "Mean accuracy of every model on every dataset (%)", "columns": ["Dataset"] + [short(m) for m in MODELS], "rows": matrix_rows,
-               "note": "Each cell is the mean of 10 random splits with 1,000 training and 2,000 test rows."}]},
+               "note": "Each cell is the mean of five random splits with 1,000 training and 2,000 test rows."}]},
   {"id": "how-you-test", "kicker": "4. How the test changes what you see", "action_title": f"One dataset and one split crowned {SS['distinct_winners']} different winners",
    "paras": [f"A chart built from a single dataset and a single random split, like the viral one, is one draw from a noisy process. Across our {NRUNS} single runs, {SS['distinct_winners']} different models came first at least once. The overall winner, {SS['overall_best']}, was first in {p1(SS['share_runs_overall_best_first'])} of runs, and the average gap between first and second place in a single run was just {pts(SS['mean_gap_first_second'])} points. The agreement between a single run's ranking and the overall ranking (Kendall's tau) averaged {SS['mean_kendall_tau']:.2f}, where 1 would mean identical.",
-             f"The metric matters too. Accuracy counts right answers at one threshold; ROC AUC measures how well a model orders cases from least to most likely, across all thresholds. Switching from accuracy to AUC moved {moved[0]} {abs(rank_acc[moved[0]] - rank_auc[moved[0]])} places and {moved[1]} {abs(rank_acc[moved[1]] - rank_auc[moved[1]])}."],
+             f"The metric matters too. Accuracy counts right answers at one threshold; ROC AUC measures how well a model orders cases from least to most likely, across all thresholds. Switching from accuracy to AUC moved {moved[0]} {abs(rank_acc[moved[0]] - rank_auc[moved[0]])} places and {moved[1]} {abs(rank_acc[moved[1]] - rank_auc[moved[1]])}.",
+             f"The effect is stronger when no model dominates. Re-running the comparison without TabPFN, on 10 splits per dataset ({S12['n_runs']} single runs), {S12['distinct_winners']} different models came first at least once, and the best of the 12, {S12['overall_best']}, topped only {p1(S12['share_runs_overall_best_first'])} of single runs. A one-dataset, one-split chart has roughly the reliability of a coin toss weighted towards the favourite."],
    "exhibits": [{"type": "hbar", "title": "Single runs crown many different winners", "subtitle": f"Share of {NRUNS} single dataset-and-split runs in which each model came first (%)", "unit": "%",
                  "series": [{"name": "Share of runs won", "points": [[m, round(100 * ws[m], 1)] for m in sorted(ws, key=lambda m: -ws[m])]}],
-                 "source": "Source: Report AI benchmark, November 2026", "notes": "Ties split equally. 19 datasets × 10 random splits.", "confidence": "DERIVED"}],
+                 "source": "Source: Report AI benchmark, November 2026", "notes": "Ties split equally. 19 datasets × 5 random splits.", "confidence": "DERIVED"}],
    "tables": [{"title": "How often each model won a single run, and how much its accuracy moved between splits", "columns": ["Model", "Share of single runs won", "Average spread between best and worst split (pts)", "Confidence"], "rows": split_rows},
               {"title": "Rank by accuracy versus rank by ROC AUC", "columns": ["Model", "Mean accuracy (%)", "Rank (accuracy)", "Mean ROC AUC (%)", "Rank (AUC)", "Places moved", "Confidence"], "rows": auc_rows}]},
  ],
@@ -216,7 +221,7 @@ page = {
     {"q": "Why do machine-learning rankings disagree?", "a": f"Because results depend on the dataset, the random split, the metric, the amount of training data, preprocessing and tuning. In Report AI's benchmark, {SS['distinct_winners']} different models won at least one of {NRUNS} single dataset-and-split runs, and the overall winner was first in only {p1(SS['share_runs_overall_best_first'])} of them."},
     {"q": "Which algorithms decide what I see online?", "a": "Many. Facebook described combining boosted decision trees with logistic regression to predict ad clicks in 2014; YouTube used deep neural networks for recommendations in 2016; X's For You feed is ranked by a transformer model according to its open-source repository (November 2026); and Naive Bayes classifiers were the first academic spam filters (1998)."},
  ],
- "methodology_extra": f"Report AI's benchmark used {ND} binary classification datasets from the Grinsztajn et al. (2022) tabular benchmark (Hugging Face inria-soda/tabular-benchmark; mixed-feature versions where available), with classes balanced by the benchmark's authors. For each dataset and random seed we drew 1,000 training and 2,000 test rows (stratified), trained each model with library defaults (scikit-learn 1.9.1, XGBoost 3.2.0, LightGBM 4.7.0, CatBoost 1.2.10, TabPFN v2 weights via the tabpfn 10.0.0 package), standardised features for the four scale-sensitive models, and recorded accuracy, balanced accuracy, ROC AUC and time on a 4-core CPU without a GPU. Further experiments varied training size (100 to 10,000 rows, 3 seeds), feature scaling, class balance (10% positives, 3 seeds) and hyperparameter tuning (20-configuration random search with 3-fold cross-validation, 3 seeds). Categorical features were left in the benchmark's ordinal coding. All averages, ranks and shares are Report AI calculations (DERIVED); literature figures carry their source and confidence. Built with PriorLabs-TabPFN. ",
+ "methodology_extra": f"Report AI's benchmark used {ND} binary classification datasets from the Grinsztajn et al. (2022) tabular benchmark (Hugging Face inria-soda/tabular-benchmark; mixed-feature versions where available), with classes balanced by the benchmark's authors. For each dataset and random seed we drew 1,000 training and 2,000 test rows (stratified), trained each model with library defaults (scikit-learn 1.9.1, XGBoost 3.2.0, LightGBM 4.7.0, CatBoost 1.2.10, TabPFN v2 weights via the tabpfn 10.0.0 package), standardised features for the four scale-sensitive models, and recorded accuracy, balanced accuracy, ROC AUC and time on a 4-core CPU without a GPU. The main ranking uses five splits per dataset for all 13 models (TabPFN costs 25–80 seconds per fit on a CPU); a 10-split run of the other 12 models is reported as a robustness check. Further experiments varied training size (100 to 10,000 rows, 3 seeds, TabPFN to 1,000 rows, on the 13 datasets with at least 6,000 rows per class), feature scaling (10 seeds), class balance (10% positives, 3 seeds, without TabPFN) and hyperparameter tuning (20-configuration random search with 3-fold cross-validation, 3 seeds, nine models). Categorical features were left in the benchmark's ordinal coding. All averages, ranks and shares are Report AI calculations (DERIVED); literature figures carry their source and confidence. Built with PriorLabs-TabPFN. ",
  "related": ' &middot; '.join(f'<a href="{u}">{t}</a>' for t, u in [
     ("How to categorize LLMs: the LLM Taxonomy 2026", TAX), ("AI models benchmarks statistics 2026", "/indexes/technical-benchmarks/ai-models-benchmarks-statistics-2026/"),
     ("Best AI models 2026", "/indexes/technical-benchmarks/best-ai-models-2026/"), ("Test-time compute and reasoning", "/indexes/technical-benchmarks/test-time-compute-reasoning-2026/"),
@@ -228,7 +233,7 @@ page = {
 ch = page['chapters']
 if SZ:
     ch.append({"id": "data-size", "kicker": "5. Training-set size", "action_title": "With 100 rows and with 10,000, different models lead",
-               "paras": [f"We repeated the test with 100, 300, 1,000, 3,000 and 10,000 training rows on the {len(SZ['common_datasets'])} datasets large enough for every size. Accuracy rises for every model as data grows, but not equally: models that rely on strong built-in assumptions do relatively well with very little data, while flexible ensembles and neural networks gain most from more rows."],
+               "paras": [f"We repeated the test with 100, 300, 1,000, 3,000 and 10,000 training rows on the {len(SZ['common_datasets'])} datasets large enough for every size. Accuracy rises for every model as data grows, but not equally: models that rely on strong built-in assumptions do relatively well with very little data, while flexible ensembles and neural networks gain most from more rows. TabPFN v2 led at every size it was run (up to 1,000 rows); Naive Bayes was the only model whose accuracy fell as data grew, from {pts(SZ['curve']['Naive Bayes']['100'])}% at 100 rows to {pts(SZ['curve']['Naive Bayes']['10000'])}% at 10,000, because more data cannot fix its wrong independence assumption."],
                "exhibits": [ex_size],
                "tables": [{"title": "Mean accuracy by training-set size (%)", "columns": ["Model"] + [f"{n:,} rows" for n in ns_] + [f"Rank at {ns_[0]:,}", f"Rank at {ns_[-1]:,}", "Confidence"], "rows": size_rows}]})
 if NS or IM or TU:
@@ -242,14 +247,15 @@ if NS or IM or TU:
         maj = IM['Majority class']
         real = {m: v for m, v in IM.items() if m != 'Majority class'}
         top_acc = max(real, key=lambda m: real[m]['acc']); top_bal = max(real, key=lambda m: real[m]['bal_acc'])
-        paras.append(f"When only 10% of cases are positive, a model that always answers 'no' scores {pts(maj['acc'])}% accuracy while learning nothing; its balanced accuracy is {pts(maj['bal_acc'])}%. The real models scored between {pts(min(v['acc'] for v in real.values()))}% and {pts(max(v['acc'] for v in real.values()))}% accuracy, barely above that do-nothing baseline, but between {pts(min(v['bal_acc'] for v in real.values()))}% and {pts(max(v['bal_acc'] for v in real.values()))}% balanced accuracy. The leader changes with the metric: {top_acc} had the highest accuracy, {top_bal} the highest balanced accuracy. On imbalanced data, an accuracy figure is meaningless without the base rate. (TabPFN was not run in this test.)")
+        paras.append(f"When only 10% of cases are positive, a model that always answers 'no' scores {pts(maj['acc'])}% accuracy while learning nothing; its balanced accuracy is {pts(maj['bal_acc'])}%. Of the {len(real)} real models, {sum(1 for v in real.values() if 0 <= v['acc'] - maj['acc'] <= 0.02)} scored within two points above that do-nothing baseline and {sum(1 for v in real.values() if v['acc'] < maj['acc'])} ({', '.join(m for m, v in real.items() if v['acc'] < maj['acc'])}) scored below it, yet their balanced accuracy ranged between {pts(min(v['bal_acc'] for v in real.values()))}% and {pts(max(v['bal_acc'] for v in real.values()))}% balanced accuracy. The leader changes with the metric: {top_acc} had the highest accuracy, {top_bal} the highest balanced accuracy. On imbalanced data, an accuracy figure is meaningless without the base rate. (TabPFN was not run in this test.)")
         tbs.append({"title": "Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)", "columns": ["Model", "Accuracy (%)", "Balanced accuracy (%)", "ROC AUC (%)", "Confidence"],
                     "rows": [[m, pts(v['acc']), pts(v['bal_acc']), pts(v['auc']), 'DERIVED'] for m, v in sorted(IM.items(), key=lambda kv: -kv[1]['bal_acc'])]})
     if TU:
         best_gain = max(TU, key=lambda m: TU[m]['delta'])
-        paras.append(f"Default settings are not the whole story. A modest search over 20 hyperparameter configurations, scored by 3-fold cross-validation, helped {best_gain} most ({100 * TU[best_gain]['delta']:+.1f} points). McElfresh et al. (2023) reached the same conclusion at larger scale: light tuning of gradient-boosted trees often matters more than the choice between model families.")
-        exs.append({"type": "grouped", "title": "Tuning helps the models with the weakest defaults most", "subtitle": "Mean accuracy at default settings and after a 20-configuration random search, 19 datasets × 3 splits (%)", "unit": "%",
-                    "series": [{"name": "Default", "points": [[short(m), round(100 * v['default'], 1)] for m, v in TU.items()]}, {"name": "Tuned", "points": [[short(m), round(100 * v['tuned'], 1)] for m, v in TU.items()]}],
+        top_tuned = min(S['tune_rank_tuned'], key=S['tune_rank_tuned'].get)
+        paras.append(f"Default settings are not the whole story. A modest search over 20 hyperparameter configurations, scored by 3-fold cross-validation, helped {best_gain} most ({100 * TU[best_gain]['delta']:+.1f} points) and moved {top_tuned} to the top of the nine tuned models, from {ordn(int(S['tune_rank_default'][top_tuned]))} at default settings. McElfresh et al. (2023) reached the same conclusion at larger scale: light tuning of gradient-boosted trees often matters more than the choice between model families.")
+        exs.append({"type": "hbar", "title": "Tuning helps the models with the weakest defaults most", "subtitle": "Change in mean accuracy after a 20-configuration random search, 19 datasets × 3 splits (percentage points)", "unit": "pts",
+                    "series": [{"name": "Gain from tuning", "points": [[m, round(100 * v['delta'], 1)] for m, v in sorted(TU.items(), key=lambda kv: -kv[1]['delta'])]}],
                     "source": "Source: Report AI benchmark, November 2026", "notes": "CatBoost, LightGBM, extra trees and TabPFN were not tuned.", "confidence": "DERIVED"})
         tbs.append({"title": "Default versus tuned accuracy", "columns": ["Model", "Default (%)", "Tuned (%)", "Change (pts)", "Rank default", "Rank tuned", "Confidence"],
                     "rows": [[m, pts(v['default']), pts(v['tuned']), f"{100 * v['delta']:+.1f}", f"{S['tune_rank_default'][m]:g}", f"{S['tune_rank_tuned'][m]:g}", 'DERIVED'] for m, v in sorted(TU.items(), key=lambda kv: -kv[1]['tuned'])]})

@@ -1,0 +1,1133 @@
+page_url,page_updated,table_no,table_section,row,column,value
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Video accuracy,79.5%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Video rank,1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Report AI model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Report AI mean accuracy (19 datasets),76.7%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Report AI rank (same 9),1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,"TabPFN, a transformer",Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Video accuracy,74.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Video rank,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Report AI model,Neural network (MLP)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Report AI mean accuracy (19 datasets),72.5%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Report AI rank (same 9),5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Neural network,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Video accuracy,73.5%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Video rank,3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Report AI model,Random forest
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Report AI mean accuracy (19 datasets),74.6%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Report AI rank (same 9),2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Random forest,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Video accuracy,72.7%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Video rank,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Report AI model,Gradient boosting (HistGB)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Report AI mean accuracy (19 datasets),74.3%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Report AI rank (same 9),3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Gradient boosting,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Video accuracy,72.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Video rank,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Report AI model,SVM (RBF)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Report AI mean accuracy (19 datasets),73.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Report AI rank (same 9),4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Support vector machine,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Video accuracy,68.3%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Video rank,6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Report AI model,k-nearest neighbours
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Report AI mean accuracy (19 datasets),69.3%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Report AI rank (same 9),7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,K-nearest neighbours,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Video accuracy,64.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Video rank,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Report AI model,Decision tree
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Report AI mean accuracy (19 datasets),68.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Report AI rank (same 9),8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Decision tree,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Video accuracy,59.3%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Video rank,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Report AI model,Logistic regression
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Report AI mean accuracy (19 datasets),71.7%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Report AI rank (same 9),6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Logistic regression,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Video accuracy,42.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Video rank,9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Report AI model,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Report AI mean accuracy (19 datasets),61.7%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Report AI rank (same 9),9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,1,The viral chart against Report AI's benchmark,Naive Bayes,Confidence,MEDIUM / DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,TabPFN v2,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,TabPFN v2,%,76.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,CatBoost,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,CatBoost,%,75.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Random forest,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Random forest,%,74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Extra trees,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Extra trees,%,74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Gradient boosting (HistGB),Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Gradient boosting (HistGB),%,74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,LightGBM,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,LightGBM,%,74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,XGBoost,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,XGBoost,%,73.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,SVM (RBF),Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,SVM (RBF),%,73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Neural network (MLP),Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Neural network (MLP),%,72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Logistic regression,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Logistic regression,%,71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,k-nearest neighbours,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,k-nearest neighbours,%,69.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Decision tree,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Decision tree,%,68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Naive Bayes,Series,Mean accuracy
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,2,TabPFN v2 had the highest average accuracy across 19 datasets,Naive Bayes,%,61.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Mean accuracy (%),76.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Mean ROC AUC (%),83.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Mean rank,1.32
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Datasets won,17 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Top-3 finishes,18
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Median time (s),49.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",TabPFN v2,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Mean accuracy (%),75.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Mean ROC AUC (%),82.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Mean rank,2.32
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Datasets won,1 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Top-3 finishes,16
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Median time (s),1.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",CatBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Mean accuracy (%),74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Mean ROC AUC (%),80.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Mean rank,5.11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Top-3 finishes,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Median time (s),0.208
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Mean ROC AUC (%),80.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Mean rank,5.26
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Top-3 finishes,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Median time (s),0.080
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",LightGBM,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Mean ROC AUC (%),80.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Mean rank,5.50
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Top-3 finishes,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Median time (s),0.155
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Mean ROC AUC (%),80.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Mean rank,5.53
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Datasets won,1 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Top-3 finishes,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Median time (s),0.164
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Extra trees,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Mean accuracy (%),73.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Mean ROC AUC (%),80.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Mean rank,7.26
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Top-3 finishes,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Median time (s),0.068
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Mean accuracy (%),73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Mean ROC AUC (%),79.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Mean rank,7.34
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Top-3 finishes,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Median time (s),0.114
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Mean accuracy (%),72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Mean ROC AUC (%),78.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Mean rank,8.37
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Top-3 finishes,1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Median time (s),1.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Mean accuracy (%),71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Mean ROC AUC (%),78.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Mean rank,8.53
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Top-3 finishes,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Median time (s),0.005
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Mean accuracy (%),69.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Mean ROC AUC (%),74.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Mean rank,10.89
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Top-3 finishes,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Median time (s),0.023
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Mean accuracy (%),68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Mean ROC AUC (%),68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Mean rank,11.79
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Top-3 finishes,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Median time (s),0.007
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Mean accuracy (%),61.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Mean ROC AUC (%),72.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Mean rank,11.79
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Datasets won,0 of 19
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Top-3 finishes,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Median time (s),0.002
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,3,"Overall results, 13 models × 19 datasets",Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,What it predicts,Molecules: biological response from chemistry descriptors
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Rows,"3,434"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Features,419
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Best model,Extra trees
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Best accuracy (%),75.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Margin (pts),0.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Bioresponse,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,What it predicts,Criminal-justice records: re-arrest within two years (COMPAS)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Rows,"4,966"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Features,11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Best accuracy (%),67.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Runner-up,Logistic regression
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Margin (pts),1.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,compas-two-years,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,What it predicts,Eye-tracking: whether a sentence being read was relevant
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Rows,"7,608"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Features,23
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Best model,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Best accuracy (%),58.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Runner-up,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Margin (pts),0.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,eye_movements,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,What it predicts,FICO home-equity credit-line applications: repayment risk
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Rows,"10,000"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Features,22
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Best accuracy (%),72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Margin (pts),0.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,heloc,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,What it predicts,Telecommunications (pole) problem
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Rows,"10,082"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Features,26
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Best accuracy (%),97.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Margin (pts),0.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,pol,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,What it predicts,Portuguese bank: term-deposit subscription
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Rows,"10,578"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Features,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Best accuracy (%),79.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Margin (pts),0.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,bank-marketing,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,What it predicts,Taiwanese credit-card clients: default next month
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Rows,"13,272"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Features,21
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Best accuracy (%),70.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Margin (pts),0.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,default-of-credit-card-clients,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,What it predicts,Gamma-ray telescope: signal or background
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Rows,"13,376"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Features,10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Best accuracy (%),85.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Margin (pts),1.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MagicTelescope,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,What it predicts,US census areas: house price above the median
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Rows,"13,488"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Features,16
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Best accuracy (%),88.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Margin (pts),0.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,house_16H,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,What it predicts,Consumer credit: serious delinquency within two years
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Rows,"16,714"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Features,10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Best accuracy (%),77.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Margin (pts),0.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,credit,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,What it predicts,California census blocks: house value above the median
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Rows,"20,634"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Features,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Best accuracy (%),88.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Margin (pts),2.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,california,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,What it predicts,Australian (New South Wales) electricity market: price up or down
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Rows,"38,474"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Features,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Best accuracy (%),80.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Margin (pts),0.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,electricity,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,What it predicts,AutoML challenge task with anonymised features
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Rows,"57,580"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Features,54
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Best accuracy (%),76.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Margin (pts),1.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,jannis,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,What it predicts,AutoML challenge task with anonymised features
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Rows,"58,252"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Features,31
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Best accuracy (%),65.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Margin (pts),1.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,albert,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,What it predicts,US hospital records: readmission of diabetic patients
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Rows,"71,090"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Features,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Best accuracy (%),59.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Runner-up,Logistic regression
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Margin (pts),0.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Diabetes130US,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,What it predicts,Neutrino experiment: particle identification
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Rows,"72,998"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Features,50
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Best accuracy (%),92.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Margin (pts),0.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,MiniBooNE,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,What it predicts,UK road-accident records
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Rows,"111,762"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Features,32
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Best accuracy (%),74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Margin (pts),0.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,road-safety,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,What it predicts,US forest cover type from map variables (two largest classes)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Rows,"423,680"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Features,54
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Best accuracy (%),79.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Runner-up,Extra trees
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Margin (pts),1.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,covertype,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,What it predicts,Particle physics: Higgs-boson signal or background
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Rows,"940,160"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Features,24
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Best model,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Best accuracy (%),69.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Runner-up,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Margin (pts),1.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,4,Winner and margin on each dataset,Higgs,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,TabPFN v2,74.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,CatBoost,75.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,Rand. forest,75.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,LightGBM,75.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,HistGB,75.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,Extra trees,75.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,XGBoost,74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,SVM,74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,MLP,74.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,Log. reg.,71.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,k-NN,71.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,Dec. tree,66.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Bioresponse,Naive Bayes,56.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,TabPFN v2,59.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,CatBoost,57.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,Rand. forest,55.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,LightGBM,55.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,HistGB,55.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,Extra trees,55.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,XGBoost,54.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,SVM,58.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,MLP,56.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,Log. reg.,59.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,k-NN,55.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,Dec. tree,53.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Diabetes130US,Naive Bayes,56.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,TabPFN v2,69.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,CatBoost,68.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,Rand. forest,66.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,LightGBM,66.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,HistGB,66.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,Extra trees,64.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,XGBoost,66.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,SVM,60.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,MLP,60.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,Log. reg.,61.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,k-NN,55.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,Dec. tree,59.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),Higgs,Naive Bayes,57.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,TabPFN v2,85.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,CatBoost,83.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,Rand. forest,83.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,LightGBM,83.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,HistGB,82.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,Extra trees,82.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,XGBoost,82.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,SVM,82.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,MLP,82.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,Log. reg.,76.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,k-NN,77.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,Dec. tree,76.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MagicTelescope,Naive Bayes,65.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,TabPFN v2,92.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,CatBoost,91.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,Rand. forest,90.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,LightGBM,91.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,HistGB,91.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,Extra trees,90.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,XGBoost,91.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,SVM,83.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,MLP,89.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,Log. reg.,83.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,k-NN,84.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,Dec. tree,83.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),MiniBooNE,Naive Bayes,58.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,TabPFN v2,65.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,CatBoost,64.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,Rand. forest,63.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,LightGBM,61.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,HistGB,62.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,Extra trees,63.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,XGBoost,61.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,SVM,62.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,MLP,57.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,Log. reg.,63.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,k-NN,56.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,Dec. tree,55.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),albert,Naive Bayes,57.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,TabPFN v2,79.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,CatBoost,78.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,Rand. forest,78.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,LightGBM,76.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,HistGB,76.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,Extra trees,78.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,XGBoost,76.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,SVM,77.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,MLP,76.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,Log. reg.,74.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,k-NN,74.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,Dec. tree,70.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),bank-marketing,Naive Bayes,71.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,TabPFN v2,88.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,CatBoost,86.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,Rand. forest,84.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,LightGBM,85.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,HistGB,85.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,Extra trees,86.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,XGBoost,85.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,SVM,83.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,MLP,84.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,Log. reg.,82.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,k-NN,80.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,Dec. tree,77.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),california,Naive Bayes,63.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,TabPFN v2,67.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,CatBoost,65.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,Rand. forest,61.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,LightGBM,62.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,HistGB,63.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,Extra trees,60.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,XGBoost,61.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,SVM,65.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,MLP,66.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,Log. reg.,66.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,k-NN,62.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,Dec. tree,58.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),compas-two-years,Naive Bayes,62.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,TabPFN v2,79.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,CatBoost,77.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,Rand. forest,77.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,LightGBM,76.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,HistGB,76.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,Extra trees,78.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,XGBoost,76.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,SVM,76.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,MLP,74.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,Log. reg.,76.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,k-NN,71.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,Dec. tree,70.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),covertype,Naive Bayes,67.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,TabPFN v2,77.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,CatBoost,76.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,Rand. forest,75.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,LightGBM,74.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,HistGB,74.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,Extra trees,75.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,XGBoost,74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,SVM,71.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,MLP,73.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,Log. reg.,72.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,k-NN,64.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,Dec. tree,68.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),credit,Naive Bayes,60.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,TabPFN v2,70.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,CatBoost,70.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,Rand. forest,69.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,LightGBM,67.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,HistGB,67.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,Extra trees,68.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,XGBoost,67.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,SVM,69.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,MLP,65.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,Log. reg.,65.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,k-NN,65.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,Dec. tree,61.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),default-of-credit-card-clients,Naive Bayes,55.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,TabPFN v2,80.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,CatBoost,79.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,Rand. forest,78.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,LightGBM,78.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,HistGB,78.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,Extra trees,77.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,XGBoost,78.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,SVM,75.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,MLP,75.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,Log. reg.,72.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,k-NN,72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,Dec. tree,73.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),electricity,Naive Bayes,70.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,TabPFN v2,58.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,CatBoost,58.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,Rand. forest,57.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,LightGBM,56.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,HistGB,56.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,Extra trees,58.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,XGBoost,56.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,SVM,56.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,MLP,55.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,Log. reg.,56.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,k-NN,54.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,Dec. tree,52.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),eye_movements,Naive Bayes,52.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,TabPFN v2,72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,CatBoost,71.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,Rand. forest,71.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,LightGBM,69.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,HistGB,69.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,Extra trees,70.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,XGBoost,69.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,SVM,71.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,MLP,66.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,Log. reg.,70.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,k-NN,66.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,Dec. tree,62.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),heloc,Naive Bayes,66.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,TabPFN v2,88.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,CatBoost,87.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,Rand. forest,86.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,LightGBM,86.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,HistGB,87.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,Extra trees,86.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,XGBoost,86.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,SVM,84.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,MLP,84.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,Log. reg.,82.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,k-NN,82.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,Dec. tree,79.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),house_16H,Naive Bayes,56.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,TabPFN v2,76.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,CatBoost,74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,Rand. forest,73.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,LightGBM,73.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,HistGB,73.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,Extra trees,73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,XGBoost,73.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,SVM,72.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,MLP,70.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,Log. reg.,71.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,k-NN,67.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,Dec. tree,65.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),jannis,Naive Bayes,66.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,TabPFN v2,97.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,CatBoost,97.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,Rand. forest,95.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,LightGBM,96.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,HistGB,96.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,Extra trees,96.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,XGBoost,96.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,SVM,93.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,MLP,96.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,Log. reg.,86.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,k-NN,91.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,Dec. tree,94.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),pol,Naive Bayes,71.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,TabPFN v2,74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,CatBoost,73.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,Rand. forest,71.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,LightGBM,72.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,HistGB,71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,Extra trees,71.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,XGBoost,71.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,SVM,69.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,MLP,67.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,Log. reg.,68.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,k-NN,64.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,Dec. tree,65.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,5,Mean accuracy of every model on every dataset (%),road-safety,Naive Bayes,56.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,TabPFN v2,Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,TabPFN v2,%,79.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,CatBoost,Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,CatBoost,%,7.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Extra trees,Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Extra trees,%,6.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,SVM (RBF),Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,SVM (RBF),%,3.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Neural network (MLP),Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Neural network (MLP),%,1.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Random forest,Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Random forest,%,1.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Logistic regression,Series,Share of runs won
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,6,Single runs crown many different winners,Logistic regression,%,1.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",TabPFN v2,Share of single runs won,79.5%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",TabPFN v2,Average spread between best and worst split (pts),2.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",TabPFN v2,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",CatBoost,Share of single runs won,7.9%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",CatBoost,Average spread between best and worst split (pts),2.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",CatBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Extra trees,Share of single runs won,6.3%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Extra trees,Average spread between best and worst split (pts),2.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Extra trees,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",SVM (RBF),Share of single runs won,3.2%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",SVM (RBF),Average spread between best and worst split (pts),3.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Random forest,Share of single runs won,1.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Random forest,Average spread between best and worst split (pts),2.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Neural network (MLP),Share of single runs won,1.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Neural network (MLP),Average spread between best and worst split (pts),2.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Logistic regression,Share of single runs won,1.1%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Logistic regression,Average spread between best and worst split (pts),2.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",LightGBM,Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",LightGBM,Average spread between best and worst split (pts),2.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",LightGBM,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Gradient boosting (HistGB),Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Gradient boosting (HistGB),Average spread between best and worst split (pts),2.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",XGBoost,Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",XGBoost,Average spread between best and worst split (pts),2.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",k-nearest neighbours,Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",k-nearest neighbours,Average spread between best and worst split (pts),3.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Decision tree,Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Decision tree,Average spread between best and worst split (pts),2.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Naive Bayes,Share of single runs won,0.0%
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Naive Bayes,Average spread between best and worst split (pts),7.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,7,"How often each model won a single run, and how much its accuracy moved between splits",Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Mean accuracy (%),76.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Rank (accuracy),1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Mean ROC AUC (%),83.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Rank (AUC),1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Places moved,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,TabPFN v2,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Mean accuracy (%),75.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Rank (accuracy),2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Mean ROC AUC (%),82.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Rank (AUC),2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Places moved,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,CatBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Mean accuracy (%),74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Rank (accuracy),3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Mean ROC AUC (%),80.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Rank (AUC),5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Places moved,-2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Rank (accuracy),4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Mean ROC AUC (%),80.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Rank (AUC),3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Places moved,+1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,LightGBM,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Rank (accuracy),5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Mean ROC AUC (%),80.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Rank (AUC),6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Places moved,-1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Mean accuracy (%),74.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Rank (accuracy),6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Mean ROC AUC (%),80.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Rank (AUC),4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Places moved,+2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Extra trees,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Mean accuracy (%),73.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Rank (accuracy),7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Mean ROC AUC (%),80.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Rank (AUC),7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Places moved,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Mean accuracy (%),73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Rank (accuracy),8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Mean ROC AUC (%),79.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Rank (AUC),8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Places moved,0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Mean accuracy (%),72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Rank (accuracy),9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Mean ROC AUC (%),78.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Rank (AUC),10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Places moved,-1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Mean accuracy (%),71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Rank (accuracy),10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Mean ROC AUC (%),78.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Rank (AUC),9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Places moved,+1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Mean accuracy (%),69.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Rank (accuracy),11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Mean ROC AUC (%),74.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Rank (AUC),12
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Places moved,-1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Mean accuracy (%),68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Rank (accuracy),12
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Mean ROC AUC (%),68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Rank (AUC),13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Places moved,-1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Mean accuracy (%),61.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Rank (accuracy),13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Mean ROC AUC (%),72.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Rank (AUC),11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Places moved,+2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,8,Rank by accuracy versus rank by ROC AUC,Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,Series,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,%,71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,Series,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,%,75.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",Series,TabPFN v2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",%,77.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,Series,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,%,70.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,Series,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,%,73.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",Series,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",%,76.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",Series,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",%,77.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",Series,CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",%,79.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,Series,Neural network
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,%,67.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,Series,Neural network
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,%,70.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",Series,Neural network
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",%,72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",Series,Neural network
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",%,74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",Series,Neural network
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",%,75.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,Series,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",100,%,63.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,Series,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows",300,%,63.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",Series,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","1,000",%,60.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",Series,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","3,000",%,60.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",Series,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,9,"More training data helps every model, but the order changes as data grows","10,000",%,59.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,100 rows,71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,300 rows,75.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,"1,000 rows",77.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,"3,000 rows",–
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,"10,000 rows",–
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,Rank at 100,1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,"Rank at 10,000",–
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),TabPFN v2,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,100 rows,70.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,300 rows,73.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,"1,000 rows",76.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,"3,000 rows",77.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,"10,000 rows",79.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,Rank at 100,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,"Rank at 10,000",1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),CatBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,100 rows,70.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,300 rows,72.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,"1,000 rows",75.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,"3,000 rows",76.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,"10,000 rows",78.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,Rank at 100,3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,"Rank at 10,000",5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,100 rows,68.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,300 rows,72.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,"1,000 rows",75.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,"3,000 rows",76.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,"10,000 rows",78.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,Rank at 100,6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,"Rank at 10,000",2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),LightGBM,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),100 rows,68.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),300 rows,72.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),"1,000 rows",75.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),"3,000 rows",76.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),"10,000 rows",78.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),Rank at 100,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),"Rank at 10,000",3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,100 rows,69.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,300 rows,72.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,"1,000 rows",74.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,"3,000 rows",76.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,"10,000 rows",77.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,Rank at 100,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,"Rank at 10,000",6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Extra trees,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,100 rows,68.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,300 rows,71.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,"1,000 rows",74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,"3,000 rows",76.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,"10,000 rows",78.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,Rank at 100,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,"Rank at 10,000",4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),100 rows,67.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),300 rows,70.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),"1,000 rows",73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),"3,000 rows",74.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),"10,000 rows",75.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),Rank at 100,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),"Rank at 10,000",8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),100 rows,67.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),300 rows,70.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),"1,000 rows",72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),"3,000 rows",74.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),"10,000 rows",75.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),Rank at 100,10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),"Rank at 10,000",7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,100 rows,67.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,300 rows,70.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,"1,000 rows",72.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,"3,000 rows",72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,"10,000 rows",72.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,Rank at 100,9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,"Rank at 10,000",9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,100 rows,65.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,300 rows,66.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,"1,000 rows",69.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,"3,000 rows",70.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,"10,000 rows",71.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,Rank at 100,11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,"Rank at 10,000",10
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,100 rows,64.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,300 rows,66.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,"1,000 rows",68.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,"3,000 rows",70.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,"10,000 rows",71.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,Rank at 100,12
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,"Rank at 10,000",11
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,100 rows,63.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,300 rows,63.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,"1,000 rows",60.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,"3,000 rows",60.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,"10,000 rows",59.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,Rank at 100,13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,"Rank at 10,000",12
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,10,Mean accuracy by training-set size (%),Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,MLP,Series,Scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,MLP,%,72.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,SVM,Series,Scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,SVM,%,73.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,k-NN,Series,Scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,k-NN,%,69.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,Log. reg.,Series,Scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,Log. reg.,%,71.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,MLP,Series,Not scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,MLP,%,66.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,SVM,Series,Not scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,SVM,%,65.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,k-NN,Series,Not scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,k-NN,%,63.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,Log. reg.,Series,Not scaled
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,11,Forgetting to scale features costs the distance-based models most,Log. reg.,%,70.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Decision tree,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Decision tree,pts,3.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Naive Bayes,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Naive Bayes,pts,2.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,k-nearest neighbours,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,k-nearest neighbours,pts,2.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,XGBoost,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,XGBoost,pts,1.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Neural network (MLP),Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Neural network (MLP),pts,1.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Gradient boosting (HistGB),Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Gradient boosting (HistGB),pts,0.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Random forest,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Random forest,pts,0.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,SVM (RBF),Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,SVM (RBF),pts,0.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Logistic regression,Series,Gain from tuning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,12,Tuning helps the models with the weakest defaults most,Logistic regression,pts,0.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Neural network (MLP),Accuracy (%),89.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Neural network (MLP),Balanced accuracy (%),63.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Neural network (MLP),ROC AUC (%),74.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Decision tree,Accuracy (%),85.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Decision tree,Balanced accuracy (%),62.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Decision tree,ROC AUC (%),62.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",XGBoost,Accuracy (%),90.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",XGBoost,Balanced accuracy (%),62.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",XGBoost,ROC AUC (%),77.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",LightGBM,Accuracy (%),91.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",LightGBM,Balanced accuracy (%),62.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",LightGBM,ROC AUC (%),78.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",LightGBM,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Gradient boosting (HistGB),Accuracy (%),91.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Gradient boosting (HistGB),Balanced accuracy (%),62.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Gradient boosting (HistGB),ROC AUC (%),78.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",CatBoost,Accuracy (%),91.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",CatBoost,Balanced accuracy (%),61.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",CatBoost,ROC AUC (%),80.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",CatBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Naive Bayes,Accuracy (%),69.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Naive Bayes,Balanced accuracy (%),60.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Naive Bayes,ROC AUC (%),69.8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Random forest,Accuracy (%),91.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Random forest,Balanced accuracy (%),59.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Random forest,ROC AUC (%),78.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Extra trees,Accuracy (%),91.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Extra trees,Balanced accuracy (%),59.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Extra trees,ROC AUC (%),78.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Extra trees,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",k-nearest neighbours,Accuracy (%),90.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",k-nearest neighbours,Balanced accuracy (%),58.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",k-nearest neighbours,ROC AUC (%),68.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Logistic regression,Accuracy (%),90.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Logistic regression,Balanced accuracy (%),57.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Logistic regression,ROC AUC (%),76.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",SVM (RBF),Accuracy (%),91.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",SVM (RBF),Balanced accuracy (%),55.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",SVM (RBF),ROC AUC (%),73.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Majority class,Accuracy (%),90.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Majority class,Balanced accuracy (%),50.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Majority class,ROC AUC (%),50.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,13,"Accuracy hides failure when one class is rare (10% positives, 1,000 training rows)",Majority class,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Default (%),73.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Tuned (%),75.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Change (pts),+1.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Rank default,3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Rank tuned,1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,XGBoost,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Default (%),74.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Tuned (%),75.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Change (pts),+0.9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Rank default,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Rank tuned,2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Gradient boosting (HistGB),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Default (%),74.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Tuned (%),75.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Change (pts),+0.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Rank default,1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Rank tuned,3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Random forest,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Default (%),73.1
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Tuned (%),73.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Change (pts),+0.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Rank default,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Rank tuned,4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,SVM (RBF),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Default (%),72.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Tuned (%),73.5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Change (pts),+1.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Rank default,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Rank tuned,5
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Neural network (MLP),Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Default (%),71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Tuned (%),72.0
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Change (pts),+0.2
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Rank default,6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Rank tuned,6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Logistic regression,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Default (%),68.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Tuned (%),71.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Change (pts),+3.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Rank default,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Rank tuned,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Decision tree,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Default (%),69.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Tuned (%),71.6
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Change (pts),+2.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Rank default,7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Rank tuned,8
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,k-nearest neighbours,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Default (%),61.3
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Tuned (%),63.7
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Change (pts),+2.4
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Rank default,9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Rank tuned,9
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,14,Default versus tuned accuracy,Naive Bayes,Confidence,DERIVED
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn,Finding,"Grinsztajn, Oyallon and Varoquaux (arXiv July 2022; NeurIPS 2022) benchmarked tree-based models against deep learning on 45 tabular datasets and found that tree-based models such as XGBoost and random forests remain state-of-the-art on medium-sized data of about 10,000 samples."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn et al.,Finding,"Grinsztajn et al. (2022) give three reasons neural networks lag trees on tabular data: neural networks are biased towards overly smooth solutions, MLP-like networks are hurt more by uninformative features, and tabular data are not invariant to rotation, so learners should not be either."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Grinsztajn et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,arXiv 2207.08815 Sec. 3.1; Hugging Face dataset card,Finding,"Datasets in the Grinsztajn benchmark had to have at least 4 features and 3,000 samples, a feature-to-sample ratio below 1/10, and were dropped as 'too easy' if a simple linear model or single tree scored within 5% of both a default ResNet and a default HistGradientBoosting model."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,arXiv 2207.08815 Sec. 3.1; Hugging Face dataset card,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,arXiv 2207.08815 Sec. 3.1; Hugging Face dataset card,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Shwartz-Ziv & Armon,Finding,"Shwartz-Ziv and Armon (arXiv June 2021; Information Fusion 2022) found that XGBoost outperformed recently proposed deep tabular models on the datasets tested, including those used in the deep models' own papers, needed much less tuning, and that an ensemble of deep models plus XGBoost beat XGBoost alone."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Shwartz-Ziv & Armon,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Shwartz-Ziv & Armon,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Finding,"McElfresh et al. (NeurIPS 2023 Datasets and Benchmarks track) compared 19 algorithms on 176 tabular datasets, which the authors described as the largest tabular data analysis to date."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Finding,"McElfresh et al. (2023) found that the neural-net-versus-boosted-tree debate is overemphasised: for many datasets the gap is negligible, or light hyperparameter tuning of a GBDT matters more than the choice between model families."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,McElfresh et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Finding,"TabPFN v2 was published by Hollmann, Müller, Purucker and colleagues (University of Freiburg / Prior Labs) in Nature volume 637, pages 319-326, in January 2025, under the title ""Accurate predictions on small data with a tabular foundation model""."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Finding,"According to the abstract of Hollmann et al. (Nature, January 2025), TabPFN outperforms all previous methods on datasets with up to 10,000 samples ""by a wide margin""."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Hollmann et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabPFN-2.5 technical report abstract (vendor self-report),Finding,"The TabPFN-2.5 report (Prior Labs, November 2025) claims a 100% win rate against default XGBoost on small and medium classification datasets (up to 10,000 rows and 500 features), 87% on larger datasets (up to 100,000 rows) and 85% for regression."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabPFN-2.5 technical report abstract (vendor self-report),Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabPFN-2.5 technical report abstract (vendor self-report),Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README; TabPFN-3.5 technical report arXiv 2,Finding,"As of November 2026, Prior Labs' default model TabPFN-3.5 (technical report first posted 15 September 2026; weights file dated 2026-09-09) accepts up to 1,000,000 rows and 20,000 features according to the PriorLabs/TabPFN README."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README; TabPFN-3.5 technical report arXiv 2,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README; TabPFN-3.5 technical report arXiv 2,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README,Finding,"As of November 2026 the PriorLabs/TabPFN GitHub README states that the TabPFN-2.5, 2.6, 3, 3.5 and 3.5-Fast weights are released under non-commercial licences, while the code is Apache 2.0 and the TabPFN-2 weights remain Apache 2.0 with an attribution requirement."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,PriorLabs/TabPFN README,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Erickson et al.,Finding,"TabArena (Erickson et al., arXiv June 2025; NeurIPS 2025 Datasets and Benchmarks spotlight) is a continuously maintained 'living' benchmark that curated 51 datasets from 1,053 datasets used in 14 earlier benchmarks."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Erickson et al.,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Erickson et al.,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard (Hugging Face Space TabArena/leaderboar,Finding,"On TabArena's live leaderboard (default view: single models, 51 datasets, data regenerated 11 November 2026), the top five entries are NVIDIA's Kumo-Tabular (Elo 1971), LimiX-2 (1959), Kumo-Tabular-Medium (1909), Neuralk-AI's Seldon (1903) and Prior Labs' TabPFN-3.5 (1868), all tabular foundation models run with default settings."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard (Hugging Face Space TabArena/leaderboar,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard (Hugging Face Space TabArena/leaderboar,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Finding,"In TabArena's default leaderboard view of 11 November 2026, the top 21 of 108 entries are tabular foundation models; the best non-foundation entry is the TabM-A neural network (tuned and ensembled, Elo 1517, 22nd), and the best tree model is LightGBM tuned and ensembled (Elo 1411, 32nd)."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Finding,"On TabArena's default leaderboard (11 November 2026), classic models rank far below: tuned-and-ensembled CatBoost scores Elo 1402, XGBoost 1360, RandomForest 1172, k-nearest neighbours 993 and linear models 990, against 1971 for the leader."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Finding,"Successive TabPFN releases climb TabArena's default leaderboard (11 November 2026): TabPFN v2 default scores Elo 1251 (with 35% of runs imputed), TabPFN-2.6 1583, TabPFN-3 1631 and TabPFN-3.5 1868."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,TabArena leaderboard CSV (default view),Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Wolpert,Finding,"Wolpert's 1996 no-free-lunch theorems for supervised learning (Neural Computation, vol. 8, pp. 1341-1390) show that, averaged uniformly over all possible target functions, no learning algorithm has lower expected off-training-set error than any other, so any advantage must come from assumptions that match the problem."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Wolpert,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,15,Key studies and leaderboards,Wolpert,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Ads,Model family,Boosted trees + logistic regression
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Ads,What is documented,"Facebook's 2014 paper 'Practical Lessons from Predicting Clicks on Ads at Facebook' (He et al., ADKDD 2014) combined boosted decision trees with logistic regression and reported that the hybrid beat either method alone by more than 3%."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Ads,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Ads,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Video recommendations,Model family,Deep neural networks
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Video recommendations,What is documented,"Google's 'Deep Neural Networks for YouTube Recommendations' (Covington, Adams & Sargin, RecSys 2016, Boston) describes a two-stage system: a deep candidate-generation network that narrows the video corpus, followed by a separate deep ranking network."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Video recommendations,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Video recommendations,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Model family,Neural network (MaskNet)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,What is documented,"Twitter's open-sourced recommendation code (March 2023) describes the For You 'heavy ranker' as a neural network (a parallel MaskNet) that predicts the probability of ten engagement types, combined by a weighted sum in which, as of 5 April 2023, a predicted report carried weight -369 and a predicted like +0.5."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Model family,Transformer
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,What is documented,"X's current open-source For You repository (xai-org/x-algorithm, updated through November 2026) says posts are ranked by a transformer model called Phoenix, which also uses a transformer two-tower model for retrieval; earlier releases shipped a sample transformer ported from xAI's Grok-1."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Social feed,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Model family,Transformer (generative recommender)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,What is documented,"Meta's 'Actions Speak Louder than Words' paper (Zhai et al., ICML 2024) reports that a 1.5-trillion-parameter generative recommender built on its HSTU transformer architecture improved online A/B-test metrics by 12.4% and was deployed on multiple surfaces of a platform with billions of users."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Model family,Real-time embedding models
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,What is documented,ByteDance's Monolith paper (arXiv September 2022; ORSUM workshop at RecSys 2022) describes a real-time recommendation training system with a collisionless embedding table that updates models from user feedback online and is deployed in the BytePlus Recommend product.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Recommendations,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Search,Model family,Transformer (BERT)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Search,What is documented,Google said in October 2019 that its BERT transformer model would help Search understand about one in ten English-language searches in the United States.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Search,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Search,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Model family,Naive Bayes
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,What is documented,"The first scholarly publication applying a naive Bayes classifier to spam filtering was Sahami, Dumais, Heckerman and Horvitz's 'A Bayesian approach to filtering junk e-mail' at the AAAI-98 Workshop on Learning for Text Categorization in 1998."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Model family,ML and rules (TensorFlow)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,What is documented,"Google said in February 2019 that its machine-learning and rules-based protections block more than 99.9% of spam, phishing and malware in Gmail, and that adding TensorFlow models blocked about 100 million additional spam messages a day."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Spam filtering,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Model family,Logistic regression
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,What is documented,"Logistic regression is described as the most popular statistical technique for building credit scorecards, predicting a binary outcome of default or no default."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Model family,Machine-learning credit model
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,What is documented,"A BIS working paper by Gambacorta, Huang, Qiu and Wang (No. 834, December 2019) found that a Chinese fintech's machine-learning credit model using non-traditional data predicted losses and defaults better than traditional bank models when credit supply was hit by a negative shock."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Credit,Confidence,HIGH
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Finance,Model family,Machine learning (various)
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Finance,What is documented,The Bank of England and FCA's 2022 survey 'Machine learning in UK financial services' found that 72% of responding firms were using or developing ML applications.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Finance,Link,source
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,16,"Model families behind ads, feeds, search, spam and credit",Finance,Confidence,MEDIUM
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,TabPFN v2,How it works,"A transformer pretrained on millions of synthetic datasets; it reads the training table as context and predicts in one forward pass, with no per-dataset training in the usual sense (Hollmann et al., Nature, 2025)."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,TabPFN v2,Strengths,"Strongest on small tables (up to 10,000 rows in v2); no tuning"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,TabPFN v2,Weaknesses,"Slow on a CPU; v2 limited to 10,000 rows and 500 features; later versions need a commercial licence for production"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,TabPFN v2,Rank in our benchmark,1 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,CatBoost,How it works,Gradient-boosted decision trees from Yandex with 'ordered boosting' and symmetric trees.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,CatBoost,Strengths,Excellent defaults; handles categorical data natively
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,CatBoost,Weaknesses,Slower to train than other boosting libraries
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,CatBoost,Rank in our benchmark,2 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,LightGBM,How it works,Microsoft's gradient-boosting library that grows trees leaf by leaf on binned features.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,LightGBM,Strengths,Very fast on large tables
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,LightGBM,Weaknesses,Can overfit small data at default settings
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,LightGBM,Rank in our benchmark,4 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,XGBoost,How it works,Regularised gradient-boosted trees; the library that dominated Kaggle competitions from 2014.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,XGBoost,Strengths,"Fast, mature, widely deployed"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,XGBoost,Weaknesses,Benefits more from tuning than CatBoost
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,XGBoost,Rank in our benchmark,7 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Gradient boosting (HistGB),How it works,"scikit-learn's histogram-based gradient boosting: trees added one after another, each correcting the last one's errors."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Gradient boosting (HistGB),Strengths,Strong default in a standard library
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Gradient boosting (HistGB),Weaknesses,"Same family, slightly different defaults"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Gradient boosting (HistGB),Rank in our benchmark,5 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Random forest,How it works,"Averages hundreds of decision trees, each trained on a random sample of rows and features."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Random forest,Strengths,"Robust, hard to break, little tuning"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Random forest,Weaknesses,Large models; less accurate than boosting on most tables
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Random forest,Rank in our benchmark,3 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Extra trees,How it works,A random forest that also picks split thresholds at random.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Extra trees,Strengths,Fast; often matches a random forest
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Extra trees,Weaknesses,Similar limits to a random forest
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Extra trees,Rank in our benchmark,6 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Neural network (MLP),How it works,"A multilayer perceptron: layers of weighted sums and non-linear activations, trained by gradient descent."
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Neural network (MLP),Strengths,Flexible; the basis of deep learning
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Neural network (MLP),Weaknesses,Needs scaling and tuning; trails trees on most tables at default settings
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Neural network (MLP),Rank in our benchmark,9 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,SVM (RBF),How it works,A support vector machine draws the widest-margin boundary between classes in a transformed feature space.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,SVM (RBF),Strengths,"Strong on small, clean data"
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,SVM (RBF),Weaknesses,Needs scaling; slow beyond tens of thousands of rows
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,SVM (RBF),Rank in our benchmark,8 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,k-nearest neighbours,How it works,Predicts by a vote of the k most similar training rows.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,k-nearest neighbours,Strengths,No training; easy to explain
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,k-nearest neighbours,Weaknesses,Needs scaling; weak with many or irrelevant features
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,k-nearest neighbours,Rank in our benchmark,11 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Logistic regression,How it works,A weighted sum of features turned into a probability.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Logistic regression,Strengths,Transparent and stable; the credit-scorecard standard
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Logistic regression,Weaknesses,Cannot capture interactions unless they are engineered
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Logistic regression,Rank in our benchmark,10 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Decision tree,How it works,A single tree of if-then splits.
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Decision tree,Strengths,Fully readable
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Decision tree,Weaknesses,Unstable and overfits; the weakest learner here
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Decision tree,Rank in our benchmark,12 of 13
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Naive Bayes,How it works,Applies Bayes' rule assuming every feature is independent given the class (Gaussian variant here).
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Naive Bayes,Strengths,Very fast; a strong baseline for text and spam
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Naive Bayes,Weaknesses,The independence assumption is badly wrong for most tables
+https://report-ai.org/reports/machine-learning-models-compared/,2026-11-15,17,Model guide,Naive Bayes,Rank in our benchmark,13 of 13

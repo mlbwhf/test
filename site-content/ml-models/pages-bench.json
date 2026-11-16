@@ -1,0 +1,14 @@
+[
+ {
+  "slug": "machine-learning-models-compared",
+  "title": "Machine-Learning Models Compared: We Ran 13 Algorithms on 19 Datasets \u2014 Report AI",
+  "excerpt": "A viral clip ranked nine models on one unnamed dataset. We ran 13, from Naive Bayes to the TabPFN transformer, on 19 public benchmark datasets with five random splits each, to show what wins, by how much, and how much the answer depends on how you test.",
+  "csv": "report-ai-data-machine-learning-models-compared.csv",
+  "url": "https://report-ai.org/reports/machine-learning-models-compared/",
+  "exhibits": 5,
+  "tables": 17,
+  "csv_rows": 1132,
+  "parent_path": "/reports/",
+  "file": "machine-learning-models-compared.html"
+ }
+]

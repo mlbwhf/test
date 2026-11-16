@@ -216,7 +216,7 @@ def line_chart(ex):
     vals = [num(p[1]) for s in series for p in s['points'] if num(p[1]) is not None]
     if not vals or len(labs) < 2:
         return ''
-    lo = min(0, min(vals)); hi = nice_max(max(vals))
+    lo = ex['ymin'] if 'ymin' in ex else min(0, min(vals)); hi = nice_max(max(vals))  # ymin: optional axis floor
     top = 46 if len(series) > 1 else 30
     h = H; x0, x1, y0, y1 = 70, W - 120, top, h - 44
     T = {l: when(l) for l in labs}
