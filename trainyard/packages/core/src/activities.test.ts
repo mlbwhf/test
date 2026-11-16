@@ -64,14 +64,14 @@ describe("the RTE class", () => {
     const { CLASSES, classBoard } = await import("./index.js");
     const b = classBoard(CLASSES.find((c) => c.id === "rte")!);
     const top = b.frames.filter((f) => !f.parentId).sort((x, y) => x.y - y.y);
-    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Facilitating ART Events, Flow and DevOps", "Lesson 5: Measuring and Improving Flow", "Lesson 6: Improving the ART", "Lesson 7: Sustaining the ART"]);
+    expect(top.map((f) => f.title)).toEqual(["Welcome", "Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Supporting PI Execution", "Lesson 5: Optimizing Flow", "Lesson 6: Improving Relentlessly", "Lesson 7: Coaching the ART", "Lesson 8: Get Certified"]);
     const kids = (id: string) => b.frames.filter((f) => f.parentId === id).sort((x, y) => x.y - y.y).map((f) => f.title);
     expect(kids(top[0]!.id).sort()).toEqual(["Activity: Quick agenda", "Icebreaker: introduce yourself"]);
     // The agenda is a kanban board (apps/web agenda view): three columns, a ticket per lesson, kept in the frame's state.
     const agenda = b.frames.find((f) => f.title === "Activity: Quick agenda")!;
     expect(agenda.activity).toMatchObject({ board: "agenda", config: { lanes: ["To do", "WIP", "Done"] } });
-    expect((agenda.activity!.config!.items as { id: string; t: string }[]).map((i) => i.t)).toEqual(["01 Exploring the RTE Role and Responsibilities", "02 Organizing the ART", "03 Facilitating PI Planning", "04 Facilitating ART Events, Flow and DevOps", "05 Measuring and Improving Flow", "06 Improving the ART", "07 Sustaining the ART"]);
-    expect(new Set((agenda.activity!.config!.items as { id: string }[]).map((i) => i.id)).size).toBe(7);
+    expect((agenda.activity!.config!.items as { id: string; t: string }[]).map((i) => i.t)).toEqual(["Lesson 1: Exploring the RTE Role and Responsibilities", "Lesson 2: Organizing the ART", "Lesson 3: Facilitating PI Planning", "Lesson 4: Supporting PI Execution", "Lesson 5: Optimizing Flow", "Lesson 6: Improving Relentlessly", "Lesson 7: Coaching the ART", "Lesson 8: Get Certified"]);
+    expect(new Set((agenda.activity!.config!.items as { id: string }[]).map((i) => i.id)).size).toBe(8);
     expect(kids(top[1]!.id)).toHaveLength(5);
     expect(kids(top[3]!.id)).toEqual(["Activity: How much preparation is enough?", "Activity: PI Planning readiness preparation", "Activity: Reading the ART planning board in PI Planning", "Activity: Conflicting views of value", "Activity: ROAM ART PI risks", "Discussion: Confidence not high? Plan rework.", "Discussion: AI-empowered PI Planning"]);
     // Every exercise is a Class Studio board with its setup; the workshop's steps share one board.
@@ -187,7 +187,7 @@ describe("upgrading a class to its template's current version", () => {
 
     const u = upgradeFromTemplate(b, newT, "2026-04-01T00:00:00.000Z");
     expect(needsTemplateUpgrade(u, newT)).toBe(false);
-    expect(u.frames.filter((f) => !f.parentId).map((f) => f.title)).toHaveLength(8);
+    expect(u.frames.filter((f) => !f.parentId).map((f) => f.title)).toHaveLength(9);
     const renamed = u.frames.find((f) => f.title === "Activity: Conflicting views of value")!;
     expect(renamed.done).toBe(true);
     const mine = u.nodes.find((n) => n.id === "n-mine")!;
@@ -195,10 +195,30 @@ describe("upgrading a class to its template's current version", () => {
     expect(mine.x - renamed.x).toBe(40);
     // The readiness board keeps its answers.
     expect(u.frames.find((f) => f.title.endsWith("readiness preparation"))!.state).toEqual({ "chk:0": "Y" });
-    expect(u.fields).toMatchObject({ students: [{ id: "s1", name: "Ana" }], lessons: 7 });
+    expect(u.fields).toMatchObject({ students: [{ id: "s1", name: "Ana" }], lessons: 8 });
     expect(u.frames.some((f) => f.activity?.board === "roam")).toBe(true);
     // The agenda lists every chapter once.
     const agenda = u.frames.find((f) => f.activity?.board === "agenda")!;
-    expect((agenda.activity!.config!.items as unknown[]).length).toBe(7);
+    expect((agenda.activity!.config!.items as unknown[]).length).toBe(8);
+  });
+});
+
+describe("a class made before its lesson titles were corrected", () => {
+  it("keeps the work in a renamed lesson when it moves to the current template", async () => {
+    const { CLASSES, classBoard, classTemplates, upgradeFromTemplate, instantiate } = await import("./index.js");
+    const t = classTemplates().find((x) => x.info.id === "class-rte")!;
+    const old = instantiate(t, "b-1", "RTE", "2026-01-01T00:00:00.000Z");
+    // As it was: lesson 4 under its earlier title, with an exercise done and work on it.
+    const l4 = old.frames.find((f) => f.title === "Lesson 4: Supporting PI Execution")!;
+    l4.title = "Lesson 4: Facilitating ART Events, Flow and DevOps";
+    const ex = old.frames.find((f) => f.parentId === l4.id)!;
+    ex.done = true;
+    ex.state = { answers: [{ id: "a1", text: "ours" }] };
+    const up = upgradeFromTemplate(old, t, "2026-02-01T00:00:00.000Z");
+    const l4up = up.frames.find((f) => f.title === "Lesson 4: Supporting PI Execution")!;
+    const exUp = up.frames.find((f) => f.parentId === l4up.id && f.title === ex.title)!;
+    expect(exUp.done).toBe(true);
+    expect(exUp.state).toEqual({ answers: [{ id: "a1", text: "ours" }] });
+    expect(classBoard(CLASSES.find((c) => c.id === "rte")!).frames.some((f) => f.title === "Lesson 8: Get Certified")).toBe(true);
   });
 });

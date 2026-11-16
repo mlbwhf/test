@@ -508,13 +508,14 @@ const lesson7: ActivitySpec[] = [
   },
 ];
 
-// Lessons 4–7 are named after what their exercises cover until the course's own lesson titles are in.
+// The course's own lesson titles, word for word.
 export const RTE_COURSE: { title: string; activities: ActivitySpec[] }[] = [
   { title: "Exploring the RTE Role and Responsibilities", activities: lesson1 },
   { title: "Organizing the ART", activities: lesson2 },
   { title: "Facilitating PI Planning", activities: lesson3 },
-  { title: "Facilitating ART Events, Flow and DevOps", activities: lesson4 },
-  { title: "Measuring and Improving Flow", activities: lesson5 },
-  { title: "Improving the ART", activities: lesson6 },
-  { title: "Sustaining the ART", activities: lesson7 },
+  { title: "Supporting PI Execution", activities: lesson4 },
+  { title: "Optimizing Flow", activities: lesson5 },
+  { title: "Improving Relentlessly", activities: lesson6 },
+  { title: "Coaching the ART", activities: lesson7 },
+  { title: "Get Certified", activities: [] },
 ];

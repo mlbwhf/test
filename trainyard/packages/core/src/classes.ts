@@ -140,7 +140,8 @@ function renderExercise(b: Builder, ex: Exercise, x: number, y: number, parentId
       const h = 220;
       const used = new Set<string>();
       const items = ex.items.map((t) => {
-        let id = slug(t.replace(/^\d+\s+/, "")).slice(0, 40) || "item";
+        // The ticket's id is its lesson title alone, so renumbering or relabelling never moves a ticket.
+        let id = slug(t.replace(/^(\d+|Lesson\s+\d+:)\s+/i, "")).slice(0, 40) || "item";
         while (used.has(id)) id += "-";
         used.add(id);
         return { id, t };
@@ -276,7 +277,7 @@ function startHere(b: Builder, spec: ClassSpec, x: number, y: number): number {
   };
   const welcome: Exercise[] = [
     { kind: "slide", title: "Board intro: how to work here", body: "This board is an infinite shared canvas, like a whiteboard: everyone works on it at the same time, and most of the class happens here.", steps: ["Undo: Ctrl+Z (Cmd+Z on a Mac) undoes your most recent edit", "Zoom: the + and − buttons, the mouse wheel with Ctrl, or pinch; Fit shows the whole lesson", "Move: drag the background, or two fingers on a touch screen", "Tools: + Card adds a sticky note; double-click or double-tap a card to write; drag to move it; Connect draws an arrow", "Lessons: each lesson has its own tab at the top; Full screen hides everything else"] },
-    { kind: "kanban", title: "Quick agenda", lanes: ["To do", "WIP", "Done"], items: spec.lessons.map((l, i) => `${String(i + 1).padStart(2, "0")} ${l.title}`) },
+    { kind: "kanban", title: "Quick agenda", lanes: ["To do", "WIP", "Done"], items: spec.lessons.map((l, i) => `Lesson ${i + 1}: ${l.title}`) },
     { kind: "table", title: "Logistics for the day", columns: ["What", "When or where"], rows: [["Start", "9:00"], ["Morning break", "10:30 (15 min)"], ["Lunch", "12:15 (45 min)"], ["Afternoon break", "14:30 (15 min)"], ["Close and feedback", "16:45"], ["Video call link", ""], ["Breakout rooms", "Group A to E: links on this board"], ["Trainer contact", ""]] },
     { kind: "stickies", title: "Icebreaker: introduce yourself", lanes: ["Name and role", "Where I join from", "What I want from this class", "Something people would not guess about me"], hint: "One sticky per column; we read them out in turn.", rows: 4 },
     { kind: "stickies", title: "Presenting our team & challenge", lanes: ["The awesome team", "Our challenge"], hint: spec.challenge ?? "Use this to describe your challenge: what we are solving, and what we want by the end of the class.", rows: 3 },
@@ -958,6 +959,9 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
   };
   for (const f of [...old.frames].sort((a, b) => depth(a) - depth(b))) {
     let to = freshBy.get(oldPath(f));
+    // A lesson whose title was corrected is still that lesson: the one with the same number.
+    const num = !f.parentId ? /^Lesson\s+(\d+)\s*:/i.exec(f.title)?.[1] : undefined;
+    if (!to && num) to = fresh.frames.find((x) => !x.parentId && new RegExp(`^Lesson\\s+${num}\\s*:`, "i").test(x.title) && ![...map.values()].includes(x));
     if (!to && f.activity?.steps) {
       const parent = f.parentId ? map.get(f.parentId) : undefined;
       to = fresh.frames.find((x) => x.parentId === parent?.id && x.activity?.steps === f.activity!.steps && ![...map.values()].includes(x));

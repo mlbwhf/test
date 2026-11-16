@@ -29,7 +29,8 @@ const lessonName = (f: Frame) => {
   return m ? { n: m[1]!.padStart(2, "0"), title: m[2] || f.title } : { n: "", title: f.title };
 };
 const minutesOf = (f: Frame) => (f.activity?.prepare ?? 0) + (f.activity?.share ?? 0);
-const titleOf = (f: Frame) => (f.activity ? f.title.replace(new RegExp(`^${f.activity.kind}:\\s*`), "") : f.title);
+// The welcome canvas (the icebreaker, the team, the working agreements) is listed as "Icebreaker", after the agenda.
+const titleOf = (f: Frame) => (f.activity ? f.title.replace(new RegExp(`^${f.activity.kind}:\\s*`), "") : !f.parentId && f.title === "Welcome" ? "Icebreaker" : f.title);
 
 type View = { at: "overview" } | { at: "exercise"; id: string } | { at: "lesson"; id: string };
 const viewFromHash = (): View => {
@@ -79,7 +80,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     const m = new Map<string, Frame[]>();
     // A numbered lesson lists its frames; the Welcome strip is itself the first exercise (the start-here
     // canvas), followed by any course activities placed inside it (a course's own Welcome chapter).
-    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [l, ...board.frames.filter((f) => f.parentId === l.id && f.activity).sort((a, b) => a.y - b.y || a.x - b.x)]);
+    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [...board.frames.filter((f) => f.parentId === l.id && f.activity).sort((a, b) => a.y - b.y || a.x - b.x), l]);
     return m;
   }, [board.frames, lessons]);
   const flat = useMemo(() => lessons.flatMap((l) => (exercisesOf.get(l.id) ?? []).map((e) => ({ lesson: l, ex: e }))), [lessons, exercisesOf]);
