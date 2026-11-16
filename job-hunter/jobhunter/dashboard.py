@@ -85,10 +85,12 @@ function card(j) {
   const tags = el('div', {class:'tags'});
   if (j.is_new) tags.append(el('span', {class:'tag new', text:'NEW'}));
   [D.track_labels[j.track] || j.track, j.country, j.source, j.posted ? 'Posted ' + j.posted : 'Found ' + j.first_seen].forEach(t => tags.append(el('span', {class:'tag', text:t})));
+  if (j.resume_version) tags.append(el('span', {class:'tag', text:'Resume: ' + j.resume_version}));
   if (st) tags.append(el('span', {class:'tag', text: st === 'applied' ? 'Applied' : 'Skipped'}));
   n.append(tags);
   if (j.matched && j.matched.length) { const k = el('div', {class:'kw'}); k.append(el('b', {text:'Your resume matches: '}), j.matched.join(', ')); n.append(k); }
   if (j.missing && j.missing.length) { const k = el('div', {class:'kw gap'}); k.append(el('b', {text:'In the posting, not in your resume: '}), j.missing.join(', ')); n.append(k); }
+  if (j.tweaks && j.tweaks.length) { const d = el('details', {}, el('summary', {text:'How this resume was adjusted for the posting'})); const u = el('ul', {}); j.tweaks.forEach(t => u.append(el('li', {text:t}))); d.append(u); n.append(d); }
   if (j.snippet) n.append(el('details', {}, el('summary', {text:'Posting excerpt'}), el('pre', {text: j.snippet})));
   if (j.cover) n.append(el('details', {}, el('summary', {text:'Cover letter'}), el('pre', {text: j.cover})));
   const a = el('div', {class:'actions'});

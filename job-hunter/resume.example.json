@@ -1,6 +1,6 @@
 {
   "_sample": true,
-  "_how_to": "Copy to resume.json and replace everything with your real details. Lists under headlines, summaries and cover_letter.tracks are keyed by track (agile, transformation, ai, default). Tag skills and bullets with the tracks they prove; the app only reorders and selects what you write here.",
+  "_how_to": "Copy to resume.json and replace everything with your real details. headlines, summaries and cover_letter.tracks are keyed by track (agile, transformation, ai, default). Tag skills and bullets with the tracks they prove. Write aliases the way you want them printed: when a posting uses an alias instead of the skill name, the resume shows the posting's wording. A skill with only_if_asked is listed only when the posting asks for it. A bullet can carry your own alternative wording per track under by_track. Under versions, each regional version replaces whole sections of the base resume (for example contact, personal, summaries, experience); which countries get which version is set in config.json > resume_versions. The app only selects, reorders and relabels what you write here; it never invents experience.",
   "contact": {
     "name": "Sample Candidate",
     "location": "Toronto, Canada",
@@ -21,20 +21,152 @@
     "default": "Transformation leader with 15 years of enterprise change across banking, telecom and government."
   },
   "skills": [
-    { "name": "SAFe", "aliases": ["scaled agile", "agile release train", "pi planning"], "tracks": ["agile"] },
-    { "name": "Scrum", "aliases": ["scrum master"], "tracks": ["agile"] },
-    { "name": "Kanban", "tracks": ["agile"] },
-    { "name": "Lean Portfolio Management", "aliases": ["lpm", "portfolio"], "tracks": ["agile", "transformation"] },
-    { "name": "Executive Coaching", "aliases": ["coaching"], "tracks": ["agile", "transformation"] },
-    { "name": "Change Management", "aliases": ["organizational change"], "tracks": ["transformation", "ai"] },
-    { "name": "Operating Model Design", "aliases": ["operating model"], "tracks": ["transformation"] },
-    { "name": "Transformation Office (PMO)", "aliases": ["pmo", "program management"], "tracks": ["transformation"] },
-    { "name": "OKRs", "aliases": ["okr"], "tracks": ["agile", "transformation"] },
-    { "name": "Stakeholder Management", "tracks": ["transformation", "ai"] },
-    { "name": "AI Adoption", "aliases": ["generative ai", "genai", "artificial intelligence"], "tracks": ["ai"] },
-    { "name": "AI Governance", "aliases": ["responsible ai"], "tracks": ["ai"] },
-    { "name": "Jira", "tracks": ["agile"] },
-    { "name": "Facilitation", "aliases": ["workshops"], "tracks": ["agile", "transformation"] }
+    {
+      "name": "SAFe",
+      "aliases": [
+        "Scaled Agile",
+        "Agile Release Train",
+        "PI Planning"
+      ],
+      "tracks": [
+        "agile"
+      ]
+    },
+    {
+      "name": "Scrum",
+      "aliases": [
+        "Scrum Master"
+      ],
+      "tracks": [
+        "agile"
+      ]
+    },
+    {
+      "name": "Kanban",
+      "tracks": [
+        "agile"
+      ]
+    },
+    {
+      "name": "Lean Portfolio Management",
+      "aliases": [
+        "LPM",
+        "Portfolio"
+      ],
+      "tracks": [
+        "agile",
+        "transformation"
+      ]
+    },
+    {
+      "name": "Executive Coaching",
+      "aliases": [
+        "Coaching"
+      ],
+      "tracks": [
+        "agile",
+        "transformation"
+      ]
+    },
+    {
+      "name": "Change Management",
+      "aliases": [
+        "Organizational Change"
+      ],
+      "tracks": [
+        "transformation",
+        "ai"
+      ]
+    },
+    {
+      "name": "Operating Model Design",
+      "aliases": [
+        "Operating Model"
+      ],
+      "tracks": [
+        "transformation"
+      ]
+    },
+    {
+      "name": "Transformation Office (PMO)",
+      "aliases": [
+        "PMO",
+        "Program Management"
+      ],
+      "tracks": [
+        "transformation"
+      ]
+    },
+    {
+      "name": "OKRs",
+      "aliases": [
+        "OKR"
+      ],
+      "tracks": [
+        "agile",
+        "transformation"
+      ]
+    },
+    {
+      "name": "Stakeholder Management",
+      "tracks": [
+        "transformation",
+        "ai"
+      ]
+    },
+    {
+      "name": "AI Adoption",
+      "aliases": [
+        "Generative AI",
+        "GenAI",
+        "Artificial Intelligence"
+      ],
+      "tracks": [
+        "ai"
+      ]
+    },
+    {
+      "name": "AI Governance",
+      "aliases": [
+        "Responsible AI"
+      ],
+      "tracks": [
+        "ai"
+      ]
+    },
+    {
+      "name": "Jira",
+      "tracks": [
+        "agile"
+      ]
+    },
+    {
+      "name": "Facilitation",
+      "aliases": [
+        "Workshops"
+      ],
+      "tracks": [
+        "agile",
+        "transformation"
+      ]
+    },
+    {
+      "name": "PRINCE2",
+      "tracks": [
+        "transformation"
+      ],
+      "only_if_asked": true
+    },
+    {
+      "name": "Lean Six Sigma",
+      "aliases": [
+        "Six Sigma"
+      ],
+      "tracks": [
+        "transformation"
+      ],
+      "only_if_asked": true
+    }
   ],
   "experience": [
     {
@@ -44,13 +176,53 @@
       "start": "2019",
       "end": "Present",
       "bullets": [
-        { "text": "Launched 6 Agile Release Trains covering 700 people using SAFe, cutting average release cycle from 12 weeks to 4.", "tracks": ["agile"] },
-        { "text": "Set up and ran a transformation office reporting to the COO, tracking 40 initiatives against OKRs.", "tracks": ["transformation"] },
-        { "text": "Led a generative AI adoption program: prioritized 25 use cases, defined AI governance and trained 300 staff.", "tracks": ["ai"] },
-        { "text": "Coached 30 executives on lean portfolio management and outcome-based funding.", "tracks": ["agile", "transformation"] },
-        { "text": "Redesigned the operating model for a 1,200-person technology division around value streams.", "tracks": ["transformation", "agile"] },
-        { "text": "Built an internal coaching community of 45 Scrum Masters and Release Train Engineers.", "tracks": ["agile"] },
-        { "text": "Ran change management for a core banking replacement affecting 5,000 employees.", "tracks": ["transformation"] }
+        {
+          "text": "Launched 6 Agile Release Trains covering 700 people using SAFe, cutting average release cycle from 12 weeks to 4.",
+          "tracks": [
+            "agile"
+          ]
+        },
+        {
+          "text": "Set up and ran a transformation office reporting to the COO, tracking 40 initiatives against OKRs.",
+          "tracks": [
+            "transformation"
+          ]
+        },
+        {
+          "text": "Led a generative AI adoption program: prioritized 25 use cases, defined AI governance and trained 300 staff.",
+          "tracks": [
+            "ai"
+          ]
+        },
+        {
+          "text": "Coached 30 executives on lean portfolio management and outcome-based funding.",
+          "tracks": [
+            "agile",
+            "transformation"
+          ],
+          "by_track": {
+            "transformation": "Advised 30 executives on portfolio governance and outcome-based funding, redirecting 20% of budget to strategic priorities."
+          }
+        },
+        {
+          "text": "Redesigned the operating model for a 1,200-person technology division around value streams.",
+          "tracks": [
+            "transformation",
+            "agile"
+          ]
+        },
+        {
+          "text": "Built an internal coaching community of 45 Scrum Masters and Release Train Engineers.",
+          "tracks": [
+            "agile"
+          ]
+        },
+        {
+          "text": "Ran change management for a core banking replacement affecting 5,000 employees.",
+          "tracks": [
+            "transformation"
+          ]
+        }
       ]
     },
     {
@@ -60,10 +232,30 @@
       "start": "2014",
       "end": "2019",
       "bullets": [
-        { "text": "Coached 25 Scrum and Kanban teams across retail and digital banking.", "tracks": ["agile"] },
-        { "text": "Facilitated quarterly PI planning for a 150-person Agile Release Train.", "tracks": ["agile"] },
-        { "text": "Introduced OKRs and a quarterly portfolio review for the digital transformation program.", "tracks": ["transformation"] },
-        { "text": "Piloted machine learning use cases for customer service with the data team.", "tracks": ["ai"] }
+        {
+          "text": "Coached 25 Scrum and Kanban teams across retail and digital banking.",
+          "tracks": [
+            "agile"
+          ]
+        },
+        {
+          "text": "Facilitated quarterly PI planning for a 150-person Agile Release Train.",
+          "tracks": [
+            "agile"
+          ]
+        },
+        {
+          "text": "Introduced OKRs and a quarterly portfolio review for the digital transformation program.",
+          "tracks": [
+            "transformation"
+          ]
+        },
+        {
+          "text": "Piloted machine learning use cases for customer service with the data team.",
+          "tracks": [
+            "ai"
+          ]
+        }
       ]
     },
     {
@@ -78,9 +270,19 @@
       ]
     }
   ],
-  "certifications": ["SAFe Practice Consultant (SPC)", "Certified Scrum Master (CSM)", "Prosci Change Practitioner"],
-  "education": ["MBA, Example University", "BSc Computer Science, Example University"],
-  "languages": ["English", "Arabic"],
+  "certifications": [
+    "SAFe Practice Consultant (SPC)",
+    "Certified Scrum Master (CSM)",
+    "Prosci Change Practitioner"
+  ],
+  "education": [
+    "MBA, Example University",
+    "BSc Computer Science, Example University"
+  ],
+  "languages": [
+    "English",
+    "Arabic"
+  ],
   "cover_letter": {
     "greeting": "Dear Hiring Team,",
     "opening": "I am writing to apply for the {title} role at {company}.",
@@ -93,5 +295,34 @@
     "proof_intro": "A few results from my recent work that relate to this role:",
     "closing": "I would welcome the chance to discuss how I can contribute to {company}.",
     "signoff": "Kind regards,\n{name}"
+  },
+  "versions": {
+    "north_america": {
+      "contact": {
+        "name": "Sample Candidate",
+        "location": "Toronto, Canada",
+        "phone": "+1 555 010 0100",
+        "email": "sample.candidate@example.com",
+        "linkedin": "linkedin.com/in/sample-candidate"
+      }
+    },
+    "international": {
+      "contact": {
+        "name": "Sample Candidate",
+        "location": "Toronto, Canada",
+        "phone": "+971 50 010 0100",
+        "email": "sample.candidate@example.com",
+        "linkedin": "linkedin.com/in/sample-candidate"
+      },
+      "personal": [
+        "Nationality: Canadian",
+        "UAE residence visa",
+        "Available to relocate within the GCC"
+      ],
+      "languages": [
+        "English (fluent)",
+        "Arabic (native)"
+      ]
+    }
   }
 }

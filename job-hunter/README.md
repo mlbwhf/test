@@ -46,6 +46,30 @@ and results are uploaded as a password-protected archive.
 4. The schedule only runs from the default branch, so merge this into `main`. To run it right away:
    **Actions > job-hunter > Run workflow**.
 
+## Two resume versions and how each resume is matched to the posting
+
+`resume.json` holds one base resume plus a `versions` section. By default (`config.json` >
+`resume_versions`) jobs in Canada and the US get the `north_america` version, and jobs in the Middle East
+and everywhere else, including worldwide remote, get the `international` version. A version replaces whole
+sections of the base resume, so the international one can carry a different phone number, a personal
+details line (nationality, visa status), more bullets per role, or a different summary.
+
+On top of the version, every resume is adjusted to its posting by rules:
+
+- headline, profile and cover letter paragraph are the ones you wrote for that track;
+- skills the posting asks for move to the front, shown in the posting's own wording when it uses one of
+  your aliases (the posting says "Scaled Agile", your resume shows "Scaled Agile (SAFe)");
+- skills marked `only_if_asked` appear only when the posting asks for them;
+- the profile ends with the strengths that posting asks for;
+- each role leads with the bullets that match the posting best, and a bullet can have your own alternative
+  wording per track (`by_track`).
+
+The review page lists these adjustments for each job, and the keywords the posting uses that your resume
+does not. The more aliases, optional skills and bullet wordings you put in `resume.json`, the closer the
+match; nothing is ever added that you did not write.
+
+On GitHub the `RESUME_JSON` secret holds this one file, both versions included.
+
 ## Getting the results
 
 - **Email** (if set up): a message listing the new jobs, with `job-packets.zip` attached. Unzip and open

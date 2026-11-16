@@ -67,7 +67,9 @@
   "resume": {
     "max_skills": 18,
     "max_bullets_recent": 6,
-    "max_bullets_older": 3
+    "max_bullets_older": 3,
+    "strengths_line": true,
+    "max_strengths": 5
   },
   "exclude_title": [
     "intern",
@@ -509,6 +511,27 @@
           }
         }
       ]
+    }
+  },
+  "resume_versions": {
+    "north_america": {
+      "label": "Canada / US",
+      "countries": [
+        "Canada",
+        "United States"
+      ],
+      "limits": {
+        "max_bullets_recent": 5,
+        "max_bullets_older": 2
+      }
+    },
+    "international": {
+      "label": "Middle East / international",
+      "countries": "*",
+      "limits": {
+        "max_bullets_recent": 7,
+        "max_bullets_older": 4
+      }
     }
   }
 }

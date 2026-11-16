@@ -29,6 +29,14 @@ def _contact_line(contact):
     return [str(contact[k]) for k in keys if contact.get(k)]
 
 
+def _personal(view):
+    """Optional personal details line (nationality, visa status...) used by some regional versions."""
+    items = view.get("personal") or []
+    if isinstance(items, dict):
+        items = [f"{k}: {v}" for k, v in items.items() if v]
+    return " | ".join(str(i) for i in items)
+
+
 def _line(entry):
     if isinstance(entry, str):
         return entry
@@ -42,6 +50,8 @@ def resume_html(view):
            f"<h1>{escape(c.get('name', ''))}</h1>",
            f"<div class='headline'>{escape(view['headline'])}</div>",
            f"<div class='contact'>{escape(' | '.join(_contact_line(c)))}</div>"]
+    if _personal(view):
+        out.append(f"<div class='contact'>{escape(_personal(view))}</div>")
     if view["summary"]:
         out.append(f"<h2>Profile</h2><p>{escape(view['summary'])}</p>")
     if view["skills"]:
@@ -74,7 +84,9 @@ def resume_docx(view, path):
     c = view["contact"]
     body = [_p(c.get("name", ""), bold=True, size=40, after=0),
             _p(view["headline"], bold=True, size=24, color="1F4E79", after=20),
-            _p(" | ".join(_contact_line(c)), size=19, color="46505C", after=160)]
+            _p(" | ".join(_contact_line(c)), size=19, color="46505C", after=20 if _personal(view) else 160)]
+    if _personal(view):
+        body.append(_p(_personal(view), size=19, color="46505C", after=160))
 
     def heading(text):
         body.append(_p(text, bold=True, size=22, color="1F4E79", after=60, caps=True))
@@ -123,6 +135,12 @@ def find_chrome():
         found = shutil.which(name)
         if found:
             return found
+    for path in ("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+                 "/Applications/Chromium.app/Contents/MacOS/Chromium",
+                 r"C:\Program Files\Google\Chrome\Application\chrome.exe",
+                 r"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe"):
+        if os.path.exists(path):
+            return path
     return None
 
 

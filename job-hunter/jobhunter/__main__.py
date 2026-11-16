@@ -82,7 +82,8 @@ def select(raw, config, today):
 
 
 def write_packet(job, resume, config, out_dir, chrome):
-    view = tailor.tailor(resume, job, config)
+    resume, version, limits = tailor.for_region(resume, job["country"], config)
+    view = tailor.tailor(resume, job, config, limits)
     letter = tailor.cover_letter(resume, job, view)
     folder = f"packets/{slug(job['company'] or 'company', 24)}-{slug(job['title'], 36)}-{job['id'][:6]}"
     os.makedirs(os.path.join(out_dir, folder), exist_ok=True)
@@ -103,7 +104,8 @@ def write_packet(job, resume, config, out_dir, chrome):
         name = resume.get("contact", {}).get("name", "")
         mailto = "mailto:" + job["apply_email"] + "?" + urllib.parse.urlencode(
             {"subject": f"Application: {job['title']} - {name}", "body": letter[:1800]}, quote_via=urllib.parse.quote)
-    return {"matched": view["matched"], "missing": view["missing"], "cover": letter, "files": files, "mailto": mailto}
+    return {"matched": view["matched"], "missing": view["missing"], "tweaks": view["tweaks"],
+            "resume_version": version, "cover": letter, "files": files, "mailto": mailto}
 
 
 def cmd_run(args):
@@ -147,7 +149,7 @@ def cmd_run(args):
     with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as fh:
         fh.write(dashboard.build(data))
     with open(os.path.join(out_dir, "jobs.json"), "w", encoding="utf-8") as fh:
-        json.dump([{k: v for k, v in r.items() if k not in ("cover", "snippet")} for r in rows], fh, indent=1, ensure_ascii=False)
+        json.dump([{k: v for k, v in r.items() if k not in ("cover", "snippet", "tweaks")} for r in rows], fh, indent=1, ensure_ascii=False)
 
     new = [r for r in rows if r["is_new"]]
     lines = ["## Job Hunter run " + today.isoformat(), "",

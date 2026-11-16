@@ -63,13 +63,17 @@ class TailorTests(unittest.TestCase):
         self.picked = {j["title"]: j for j in cli.select(JOBS, CONFIG, TODAY).values()}
 
     def test_only_reorders_source_content(self):
-        source_bullets = {(b["text"] if isinstance(b, dict) else b) for r in RESUME["experience"] for b in r["bullets"]}
+        source_bullets = set()
+        for r in RESUME["experience"]:
+            for b in r["bullets"]:
+                source_bullets |= {b} if isinstance(b, str) else {b["text"], *b.get("by_track", {}).values()}
         source_skills = {s["name"] for s in RESUME["skills"]}
         for job in self.picked.values():
             view = tailor.tailor(RESUME, job, CONFIG)
             for role in view["experience"]:
                 self.assertTrue(set(role["bullets"]) <= source_bullets)
-            self.assertTrue(set(view["skills"]) <= source_skills)
+            for shown in view["skills"]:
+                self.assertTrue(shown in source_skills or any(shown.endswith(f"({n})") for n in source_skills), shown)
 
     def test_each_track_leads_with_its_own_evidence(self):
         agile = tailor.tailor(RESUME, self.picked["Senior Agile Coach"], CONFIG)
@@ -81,6 +85,37 @@ class TailorTests(unittest.TestCase):
         self.assertIn("generative AI", ai["experience"][0]["bullets"][0])
         gaps = tailor.tailor(RESUME, self.picked["Director, Business Transformation"], CONFIG)["missing"]
         self.assertIn("vision 2030", gaps)
+
+    def test_regional_versions(self):
+        ca, label_ca, limits_ca = tailor.for_region(RESUME, "Canada", CONFIG)
+        gulf, label_gulf, limits_gulf = tailor.for_region(RESUME, "Saudi Arabia", CONFIG)
+        remote, label_remote, _ = tailor.for_region(RESUME, "Remote", CONFIG)
+        self.assertEqual((label_ca, label_gulf, label_remote),
+                         ("Canada / US", "Middle East / international", "Middle East / international"))
+        self.assertFalse(ca.get("personal"))
+        self.assertIn("Nationality: Canadian", gulf["personal"])
+        self.assertLess(limits_ca["max_bullets_recent"], limits_gulf["max_bullets_recent"])
+        view = tailor.tailor(gulf, self.picked["Director, Business Transformation"], CONFIG, limits_gulf)
+        self.assertIn("Nationality: Canadian", render.resume_html(view))
+        self.assertNotIn("Nationality", render.resume_html(tailor.tailor(ca, self.picked["Senior Agile Coach"], CONFIG, limits_ca)))
+
+    def test_posting_wording_and_optional_skills(self):
+        job = {"title": "Agile Coach", "track": "agile", "country": "Canada",
+               "description": "Scaled Agile experience and Six Sigma required. Coaching leaders."}
+        view = tailor.tailor(RESUME, job, CONFIG)
+        self.assertEqual(view["skills"][0], "Scaled Agile (SAFe)")
+        self.assertIn("Six Sigma (Lean Six Sigma)", view["skills"])
+        self.assertNotIn("PRINCE2", view["skills"])
+        self.assertIn("Strengths most relevant to this role: Scaled Agile (SAFe)", view["summary"])
+        plain = tailor.tailor(RESUME, self.picked["Senior Agile Coach"], CONFIG)
+        self.assertNotIn("Lean Six Sigma", " ".join(plain["skills"]))
+        self.assertTrue(any("posting's wording" in t for t in view["tweaks"]))
+
+    def test_bullet_wording_per_track(self):
+        view = tailor.tailor(RESUME, self.picked["Director, Business Transformation"], CONFIG)
+        self.assertIn("Advised 30 executives on portfolio governance", " ".join(view["experience"][0]["bullets"]))
+        agile = tailor.tailor(RESUME, self.picked["Senior Agile Coach"], CONFIG)
+        self.assertIn("Coached 30 executives", " ".join(agile["experience"][0]["bullets"]))
 
     def test_cover_letter_is_filled(self):
         job = self.picked["Director, Business Transformation"]
