@@ -66,8 +66,35 @@ Everything is in `config.json`:
 - `sources`: switch sources on or off; add company career boards (Greenhouse, Lever, Ashby,
   SmartRecruiters, Workday) and any RSS or Atom feed.
 
-LinkedIn, Indeed, Bayt, GulfTalent and Naukrigulf have no public API and prohibit scraping, so they are not
-fetched directly. Jooble aggregates many of the same postings.
+## LinkedIn, Indeed, Bayt, GulfTalent and Naukrigulf (your computer only)
+
+These sites have no public API, so they are read through your own signed-in browser. This part runs only
+on your computer, never on GitHub, and your login never leaves your machine.
+
+```bash
+pip install playwright
+```
+
+```bash
+python -m jobhunter login
+```
+
+A Chrome window opens with a separate profile (`state/browser-profile`). Sign in to each site once, then
+press Enter in the terminal. After that, every `python -m jobhunter run` on your computer also reads your
+searches on those sites, in a visible window, a few seconds apart, and reads the full posting only for jobs
+whose title already fits. It never clicks Apply.
+
+Know the trade-off: all five sites prohibit automated access in their terms, and LinkedIn in particular can
+restrict an account. The defaults keep volume low (8 searches per country per site, once a day). To reduce
+risk further, set `"enabled": false` on a site under `sources.browser.sites` in `config.json`, shorten
+`queries`, or raise `delay_seconds`. If a site shows a sign-in or verification page, the run reports
+"no job links found" for it; run `login` again and clear the check by hand.
+
+Each site's search address and job-link pattern are in `config.json`, so they can be corrected there if a
+site changes its addresses.
+
+To run it daily, schedule `python -m jobhunter run` with Windows Task Scheduler or cron while you are
+logged in to your computer.
 
 ## Run it on your own computer
 
@@ -75,7 +102,7 @@ fetched directly. Jooble aggregates many of the same postings.
 python -m jobhunter run
 ```
 
-Results are written to `output/`. Set the API keys as environment variables first. PDFs need Chrome or
+Put your resume in `resume.json` first. Results are written to `output/`; open `output/index.html`. Set the API keys as environment variables first. PDFs need Chrome or
 Chromium installed; otherwise you get Word and web versions.
 
 ```bash

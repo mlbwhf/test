@@ -1,100 +1,513 @@
 {
   "queries": [
-    "agile coach", "agile transformation", "scrum master", "release train engineer",
-    "transformation lead", "business transformation", "digital transformation",
-    "change management", "AI transformation", "AI strategy"
+    "agile coach",
+    "agile transformation",
+    "scrum master",
+    "release train engineer",
+    "transformation director",
+    "business transformation",
+    "digital transformation",
+    "change management",
+    "AI transformation",
+    "AI strategy"
   ],
   "locations": {
-    "Canada": ["canada", "toronto", "ontario", "mississauga", "ottawa", "montreal", "quebec", "vancouver",
-               "british columbia", "calgary", "edmonton", "alberta", "winnipeg", "halifax", "waterloo"],
-    "UAE": ["united arab emirates", "uae", "dubai", "abu dhabi", "sharjah"],
-    "Saudi Arabia": ["saudi arabia", "saudi", "ksa", "riyadh", "jeddah", "dammam", "khobar", "neom", "dhahran"],
-    "Qatar": ["qatar", "doha"],
-    "Kuwait": ["kuwait"],
-    "Oman": ["oman", "muscat"]
+    "Canada": [
+      "canada",
+      "toronto",
+      "ontario",
+      "mississauga",
+      "ottawa",
+      "montreal",
+      "quebec",
+      "vancouver",
+      "british columbia",
+      "calgary",
+      "edmonton",
+      "alberta",
+      "winnipeg",
+      "halifax",
+      "waterloo"
+    ],
+    "UAE": [
+      "united arab emirates",
+      "uae",
+      "dubai",
+      "abu dhabi",
+      "sharjah"
+    ],
+    "Saudi Arabia": [
+      "saudi arabia",
+      "saudi",
+      "ksa",
+      "riyadh",
+      "jeddah",
+      "dammam",
+      "khobar",
+      "neom",
+      "dhahran"
+    ],
+    "Qatar": [
+      "qatar",
+      "doha"
+    ],
+    "Kuwait": [
+      "kuwait"
+    ],
+    "Oman": [
+      "oman",
+      "muscat"
+    ]
   },
   "include_remote_worldwide": true,
   "min_score": 55,
   "max_posting_age_days": 30,
   "retention_days": 14,
   "max_packets": 60,
-  "resume": { "max_skills": 18, "max_bullets_recent": 6, "max_bullets_older": 3 },
+  "resume": {
+    "max_skills": 18,
+    "max_bullets_recent": 6,
+    "max_bullets_older": 3
+  },
   "exclude_title": [
-    "intern", "internship", "junior", "graduate", "trainee", "software engineer", "developer", "data engineer",
-    "machine learning engineer", "ml engineer", "ai engineer", "data scientist", "research scientist",
-    "qa engineer", "devops engineer", "architect", "financial analyst", "compliance", "sales", "account executive", "recruiter"
+    "intern",
+    "internship",
+    "junior",
+    "graduate",
+    "trainee",
+    "analyst",
+    "specialist",
+    "coordinator",
+    "executive assistant",
+    "administrative assistant",
+    "administrator",
+    "product owner",
+    "software engineer",
+    "developer",
+    "data engineer",
+    "machine learning engineer",
+    "ml engineer",
+    "ai engineer",
+    "data scientist",
+    "research scientist",
+    "qa engineer",
+    "devops engineer",
+    "architect",
+    "compliance",
+    "sales",
+    "account executive",
+    "recruiter"
   ],
   "tracks": {
     "agile": {
       "label": "Agile",
-      "title": ["agile", "scrum master", "release train engineer", "rte", "safe", "scaled agile", "lean portfolio",
-                "agility", "delivery lead", "value stream", "product owner", "kanban"],
-      "keywords": ["safe", "scaled agile", "scrum", "kanban", "lean", "agile release train", "pi planning", "coaching",
-                   "lean portfolio management", "okr", "jira", "value stream", "devops", "product management",
-                   "facilitation", "enterprise agility", "servant leadership", "continuous improvement", "spc", "training"]
+      "title": [
+        "agile coach",
+        "enterprise coach",
+        "agile consultant",
+        "agile trainer",
+        "safe",
+        "scaled agile",
+        "spc",
+        "agile transformation",
+        "head of agile",
+        "agile lead",
+        "agile practice",
+        "agility",
+        "agile center of excellence",
+        "agile centre of excellence",
+        "release train engineer",
+        "rte",
+        "solution train engineer",
+        "scrum master",
+        "agile delivery",
+        "agile program",
+        "agile programme",
+        "agile project",
+        "agile portfolio",
+        "lean portfolio",
+        "value stream",
+        "agile pmo",
+        "agile"
+      ],
+      "keywords": [
+        "safe",
+        "scaled agile",
+        "scrum",
+        "kanban",
+        "lean",
+        "agile release train",
+        "pi planning",
+        "coaching",
+        "lean portfolio management",
+        "okr",
+        "jira",
+        "value stream",
+        "devops",
+        "product management",
+        "facilitation",
+        "enterprise agility",
+        "servant leadership",
+        "continuous improvement",
+        "spc",
+        "training"
+      ]
     },
     "transformation": {
       "label": "Transformation",
-      "title": ["transformation", "change management", "change manager", "change lead", "operating model",
-                "organizational change", "organisational change", "transformation office", "pmo", "strategy execution",
-                "operational excellence", "business excellence"],
-      "keywords": ["business transformation", "digital transformation", "change management", "operating model",
-                   "stakeholder management", "governance", "roadmap", "pmo", "portfolio", "program management",
-                   "process improvement", "benefits realization", "strategy", "organizational design", "kpi",
-                   "executive", "c-suite", "vision 2030", "lean six sigma", "culture"]
+      "title": [
+        "transformation",
+        "change management",
+        "change manager",
+        "change lead",
+        "head of change",
+        "director of change",
+        "organizational change",
+        "organisational change",
+        "operating model",
+        "transformation office",
+        "enterprise pmo",
+        "epmo",
+        "head of pmo",
+        "pmo director",
+        "pmo lead",
+        "strategy execution"
+      ],
+      "keywords": [
+        "business transformation",
+        "digital transformation",
+        "change management",
+        "operating model",
+        "stakeholder management",
+        "governance",
+        "roadmap",
+        "pmo",
+        "portfolio",
+        "program management",
+        "process improvement",
+        "benefits realization",
+        "strategy",
+        "organizational design",
+        "kpi",
+        "executive",
+        "c-suite",
+        "vision 2030",
+        "lean six sigma",
+        "culture"
+      ]
     },
     "ai": {
       "label": "AI",
-      "title": ["ai transformation", "ai strategy", "ai adoption", "ai program", "ai programme", "ai enablement",
-                "ai governance", "head of ai", "director of ai", "ai lead", "ai consultant", "ai product",
-                "ai delivery", "ai change", "generative ai", "genai", "artificial intelligence", "ai center of excellence",
-                "ai coe", "ai advisory", "ai portfolio", "ai operations"],
-      "keywords": ["artificial intelligence", "generative ai", "genai", "llm", "machine learning", "ai governance",
-                   "ai adoption", "ai strategy", "responsible ai", "use cases", "automation", "copilot", "data strategy",
-                   "ai literacy", "change management", "roadmap", "stakeholder management", "ai agents", "agentic"]
+      "title": [
+        "ai transformation",
+        "ai adoption",
+        "ai enablement",
+        "ai change",
+        "ai strategy",
+        "head of ai",
+        "director of ai",
+        "director ai",
+        "vp ai",
+        "chief ai",
+        "ai center of excellence",
+        "ai centre of excellence",
+        "ai coe",
+        "ai advisory",
+        "ai consultant",
+        "ai consulting",
+        "ai lead",
+        "ai program",
+        "ai programme",
+        "ai delivery",
+        "ai portfolio",
+        "ai governance",
+        "responsible ai",
+        "ai product",
+        "generative ai",
+        "genai",
+        "artificial intelligence"
+      ],
+      "keywords": [
+        "artificial intelligence",
+        "generative ai",
+        "genai",
+        "llm",
+        "machine learning",
+        "ai governance",
+        "ai adoption",
+        "ai strategy",
+        "responsible ai",
+        "use cases",
+        "automation",
+        "copilot",
+        "data strategy",
+        "ai literacy",
+        "change management",
+        "roadmap",
+        "stakeholder management",
+        "ai agents",
+        "agentic"
+      ]
     }
   },
   "sources": {
     "jooble": {
       "enabled": true,
-      "locations": ["Canada", "United Arab Emirates", "Saudi Arabia", "Qatar", "Kuwait", "Oman"],
-      "queries": ["agile", "transformation", "AI transformation"]
+      "locations": [
+        "Canada",
+        "United Arab Emirates",
+        "Saudi Arabia",
+        "Qatar",
+        "Kuwait",
+        "Oman"
+      ],
+      "queries": [
+        "agile",
+        "transformation",
+        "AI transformation"
+      ]
     },
     "adzuna": {
       "enabled": true,
-      "countries": ["ca"],
-      "queries": ["agile coach", "scrum master", "release train engineer", "transformation lead", "digital transformation", "change management", "AI transformation", "AI strategy"]
+      "countries": [
+        "ca"
+      ],
+      "queries": [
+        "agile coach",
+        "scrum master",
+        "release train engineer",
+        "transformation lead",
+        "digital transformation",
+        "change management",
+        "AI transformation",
+        "AI strategy"
+      ]
     },
-    "remotive": { "enabled": true, "queries": ["agile", "scrum", "transformation"] },
-    "jobicy": { "enabled": true, "tags": ["agile", "scrum", "transformation", "change management"] },
-    "remoteok": { "enabled": true },
-    "greenhouse": { "enabled": true, "boards": ["careem", "hootsuite", "dropbox", "stripe", "cloudflare", "databricks"] },
-    "lever": { "enabled": true, "boards": ["wealthsimple"] },
-    "ashby": { "enabled": true, "boards": ["1password", "cohere"] },
+    "remotive": {
+      "enabled": true,
+      "queries": [
+        "agile",
+        "scrum",
+        "transformation"
+      ]
+    },
+    "jobicy": {
+      "enabled": true,
+      "tags": [
+        "agile",
+        "scrum",
+        "transformation",
+        "change management"
+      ]
+    },
+    "remoteok": {
+      "enabled": true
+    },
+    "greenhouse": {
+      "enabled": true,
+      "boards": [
+        "careem",
+        "hootsuite",
+        "dropbox",
+        "stripe",
+        "cloudflare",
+        "databricks"
+      ]
+    },
+    "lever": {
+      "enabled": true,
+      "boards": [
+        "wealthsimple"
+      ]
+    },
+    "ashby": {
+      "enabled": true,
+      "boards": [
+        "1password",
+        "cohere"
+      ]
+    },
     "smartrecruiters": {
       "enabled": true,
-      "companies": ["Visa", "Publicis", "AECOM", "Bosch", "Devoteam", "PublicStorage"],
-      "queries": ["agile", "transformation", "AI strategy"]
+      "companies": [
+        "Visa",
+        "Publicis",
+        "AECOM",
+        "Bosch",
+        "Devoteam",
+        "PublicStorage"
+      ],
+      "queries": [
+        "agile",
+        "transformation",
+        "AI strategy"
+      ]
     },
     "workday": {
       "enabled": true,
-      "queries": ["agile", "transformation"],
+      "queries": [
+        "agile",
+        "transformation"
+      ],
       "sites": [
-        { "name": "RBC", "host": "rbc.wd3.myworkdayjobs.com", "tenant": "rbc", "site": "RBCGLOBAL1" },
-        { "name": "TD Bank", "host": "td.wd3.myworkdayjobs.com", "tenant": "td", "site": "TD_Bank_Careers" },
-        { "name": "CIBC", "host": "cibc.wd3.myworkdayjobs.com", "tenant": "cibc", "site": "search" },
-        { "name": "BMO", "host": "bmo.wd3.myworkdayjobs.com", "tenant": "bmo", "site": "External" },
-        { "name": "Manulife", "host": "manulife.wd3.myworkdayjobs.com", "tenant": "manulife", "site": "MFCJH_Jobs" },
-        { "name": "Sun Life", "host": "sunlife.wd3.myworkdayjobs.com", "tenant": "sunlife", "site": "Experienced-Jobs" },
-        { "name": "PwC", "host": "pwc.wd3.myworkdayjobs.com", "tenant": "pwc", "site": "Global_Experienced_Careers" },
-        { "name": "Mastercard", "host": "mastercard.wd1.myworkdayjobs.com", "tenant": "mastercard", "site": "CorporateCareers" }
+        {
+          "name": "RBC",
+          "host": "rbc.wd3.myworkdayjobs.com",
+          "tenant": "rbc",
+          "site": "RBCGLOBAL1"
+        },
+        {
+          "name": "TD Bank",
+          "host": "td.wd3.myworkdayjobs.com",
+          "tenant": "td",
+          "site": "TD_Bank_Careers"
+        },
+        {
+          "name": "CIBC",
+          "host": "cibc.wd3.myworkdayjobs.com",
+          "tenant": "cibc",
+          "site": "search"
+        },
+        {
+          "name": "BMO",
+          "host": "bmo.wd3.myworkdayjobs.com",
+          "tenant": "bmo",
+          "site": "External"
+        },
+        {
+          "name": "Manulife",
+          "host": "manulife.wd3.myworkdayjobs.com",
+          "tenant": "manulife",
+          "site": "MFCJH_Jobs"
+        },
+        {
+          "name": "Sun Life",
+          "host": "sunlife.wd3.myworkdayjobs.com",
+          "tenant": "sunlife",
+          "site": "Experienced-Jobs"
+        },
+        {
+          "name": "PwC",
+          "host": "pwc.wd3.myworkdayjobs.com",
+          "tenant": "pwc",
+          "site": "Global_Experienced_Careers"
+        },
+        {
+          "name": "Mastercard",
+          "host": "mastercard.wd1.myworkdayjobs.com",
+          "tenant": "mastercard",
+          "site": "CorporateCareers"
+        }
       ]
     },
     "rss": {
       "enabled": true,
       "feeds": [
-        { "name": "Job Bank Canada", "location": "Canada", "url": "https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?searchstring=agile&sort=D" },
-        { "name": "Job Bank Canada", "location": "Canada", "url": "https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?searchstring=transformation&sort=D" }
+        {
+          "name": "Job Bank Canada",
+          "location": "Canada",
+          "url": "https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?searchstring=agile&sort=D"
+        },
+        {
+          "name": "Job Bank Canada",
+          "location": "Canada",
+          "url": "https://www.jobbank.gc.ca/jobsearch/feed/jobSearchRSSfeed?searchstring=transformation&sort=D"
+        }
+      ]
+    },
+    "browser": {
+      "enabled": true,
+      "channel": "chrome",
+      "delay_seconds": [
+        4,
+        9
+      ],
+      "max_details": 40,
+      "queries": [
+        "agile coach",
+        "agile transformation",
+        "release train engineer",
+        "transformation director",
+        "digital transformation",
+        "change management",
+        "AI transformation",
+        "AI strategy"
+      ],
+      "sites": [
+        {
+          "name": "LinkedIn",
+          "enabled": true,
+          "login": "https://www.linkedin.com/login",
+          "search": "https://www.linkedin.com/jobs/search/?keywords={q}&location={place}&f_TPR=r604800&sortBy=DD",
+          "link": "/jobs/view/(?:[^/?#]*-)?(\\d{6,})",
+          "canonical": "https://www.linkedin.com/jobs/view/{id}",
+          "countries": {
+            "Canada": "Canada",
+            "UAE": "United Arab Emirates",
+            "Saudi Arabia": "Saudi Arabia",
+            "Qatar": "Qatar",
+            "Kuwait": "Kuwait",
+            "Oman": "Oman"
+          }
+        },
+        {
+          "name": "Indeed",
+          "enabled": true,
+          "login": "https://secure.indeed.com/auth",
+          "search": "https://{place-raw}.indeed.com/jobs?q={q}&fromage=7&sort=date",
+          "link": "[?&]jk=([0-9a-f]{8,})",
+          "canonical": "{origin}/viewjob?jk={id}",
+          "countries": {
+            "Canada": "ca",
+            "UAE": "ae",
+            "Saudi Arabia": "sa",
+            "Qatar": "qa",
+            "Kuwait": "kw",
+            "Oman": "om"
+          }
+        },
+        {
+          "name": "Bayt",
+          "enabled": true,
+          "login": "https://www.bayt.com/en/login/",
+          "search": "https://www.bayt.com/en/{place-raw}/jobs/{q-dash}-jobs/",
+          "link": "bayt\\.com/en/[a-z-]+/jobs/[^/?#]*?-(\\d{5,})/?",
+          "countries": {
+            "UAE": "uae",
+            "Saudi Arabia": "saudi-arabia",
+            "Qatar": "qatar",
+            "Kuwait": "kuwait",
+            "Oman": "oman"
+          }
+        },
+        {
+          "name": "GulfTalent",
+          "enabled": true,
+          "login": "https://www.gulftalent.com/login",
+          "search": "https://www.gulftalent.com/{place-raw}/jobs/title/{q-dash}",
+          "link": "gulftalent\\.com/[a-z-]+/jobs/[^/?#]*?-(\\d{5,})",
+          "countries": {
+            "UAE": "uae",
+            "Saudi Arabia": "saudi-arabia",
+            "Qatar": "qatar",
+            "Kuwait": "kuwait",
+            "Oman": "oman"
+          }
+        },
+        {
+          "name": "Naukrigulf",
+          "enabled": true,
+          "login": "https://www.naukrigulf.com/",
+          "search": "https://www.naukrigulf.com/{q-dash}-jobs-in-{place-raw}",
+          "link": "naukrigulf\\.com/[^?#]*-jid-(\\d+)",
+          "countries": {
+            "UAE": "uae",
+            "Saudi Arabia": "saudi-arabia",
+            "Qatar": "qatar",
+            "Kuwait": "kuwait",
+            "Oman": "oman"
+          }
+        }
       ]
     }
   }

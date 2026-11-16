@@ -250,7 +250,14 @@ class SkipSource(Exception):
     """A source that is switched on but missing its key."""
 
 
+def browser(cfg, ctx):
+    """Signed-in sites (LinkedIn, Indeed, Bayt, GulfTalent, Naukrigulf) through your own browser. Local only."""
+    from . import browser as local_browser
+    return local_browser.fetch(cfg, ctx)
+
+
 REGISTRY = {
+    "browser": browser,
     "jooble": jooble, "adzuna": adzuna, "remotive": remotive, "jobicy": jobicy, "remoteok": remoteok,
     "greenhouse": greenhouse, "lever": lever, "ashby": ashby, "smartrecruiters": smartrecruiters,
     "workday": workday, "rss": rss,

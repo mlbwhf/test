@@ -1,4 +1,4 @@
-"""Command line: python -m jobhunter run | notify"""
+"""Command line: python -m jobhunter run | login | notify"""
 import argparse
 import contextlib
 import json
@@ -215,6 +215,10 @@ def main(argv=None):
     run.add_argument("--date", help="run date override, YYYY-MM-DD")
     run.add_argument("--no-pdf", action="store_true")
     run.set_defaults(func=cmd_run)
+    login = sub.add_parser("login", help="sign in to LinkedIn, Indeed, Bayt and others in the local browser profile")
+    login.add_argument("--config", default=os.path.join(HERE, "config.json"))
+    login.set_defaults(func=lambda a: __import__("jobhunter.browser", fromlist=["login"]).login(
+        load_json(a.config)["sources"].get("browser", {})))
     notify = sub.add_parser("notify", help="email the results to yourself")
     notify.add_argument("--always", action="store_true", help="send even when nothing is new")
     notify.set_defaults(func=cmd_notify)
