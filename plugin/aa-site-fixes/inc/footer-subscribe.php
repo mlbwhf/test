@@ -95,7 +95,10 @@ function aa_sf_sub_handle() {
 	$list = get_option( 'aa_sf_subscribers', array() );
 	$list = is_array( $list ) ? $list : array();
 	$k    = strtolower( $email );
-	$list = array( $k => array( 't' => current_time( 'mysql' ), 'page' => $page, 'lang' => $lang, 'hs' => 'pending' ) ) + $list;
+	$row  = array( 't' => current_time( 'mysql' ), 'page' => $page, 'lang' => $lang, 'hs' => 'pending' );
+	if ( isset( $list[ $k ]['nl'] ) ) { $row['nl'] = $list[ $k ]['nl']; }   /* the last newsletter issue this address got; a new sign-up also clears an earlier unsubscribe */
+	unset( $list[ $k ] );
+	$list = array( $k => $row ) + $list;
 	update_option( 'aa_sf_subscribers', array_slice( $list, 0, 5000, true ), false );
 
 	/* Answer the visitor now; HubSpot can take a second or two. */
