@@ -421,21 +421,22 @@ function aa_reg_courses() {
 			   pointing the other way, which is how it got to 1 in the first
 			   place. */
 			'days'     => 2,
-			'weeks'    => 52,         // four a month over a year: ~48 dates
+			'weeks'    => 52,
+			/* THROUGH MARCH 2027, asked for on 16 Nov 2026. No start is offered
+			   after this date; move it when the next quarter is decided. */
+			'until'    => '2027-03-31',
 			'proof'    => array( 'Live online', 'Exam fee included', 'No prerequisites' ),
-			/* FOUR A MONTH, asked for on 3 Nov 2026 ("at least 4 times a
-			   month"). The two Thursdays are the original rows and are kept, so
-			   every cohort id already published or sold still exists; the two
-			   Mondays are added in the weeks Value Architect has its Thursdays. */
+			/* WEEKLY, asked for on 16 Nov 2026: a Monday start and a Thursday
+			   start every week, plus a Saturday-Sunday class on the 1st and 3rd
+			   weekends of every month. This replaces the 3 Nov "four a month"
+			   rows (1st Thu, 2nd Mon, the Saturday after it, 3rd Thu, 4th Mon).
+			   Every weekday date those rows published is still a Monday or a
+			   Thursday, so no cohort id already sent to a buyer disappears. */
 			'cadence'  => array(
-				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 1 ),
-				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 2 ),
-				/* THE WEEKEND CLASS, asked for on 3 Nov 2026: the Saturday
-				   after the week-2 Monday, so the same week offers a weekday
-				   and a weekend batch. Sat-Sun. */
-				array( 'dow' => 'Sat', 'slot' => 'morning', 'after' => array( 'dow' => 'Mon', 'week' => 2 ) ),
-				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 3 ),
-				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 4 ),
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 1 ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 3 ),
 			),
 		),
 		'ai-native-change-agent' => array(
@@ -1049,24 +1050,37 @@ function aa_reg_no_self_overlap( $out, $course, $slug = '' ) {
 /**
  * December, for two-day courses only.
  *
- * Asked for explicitly: in December every two-day course runs 21-22, 26-27,
- * 27-28 and 29-30 rather than whatever its weekly cadence would produce. The
- * list is the whole December offering for those courses, not an addition to
- * it, so the cadence's own December starts are dropped first.
+ * THE HOLIDAY WEEK, asked for on 16 Nov 2026: every two-day course runs
+ * 26-27, 27-28, 28-29, 29-30 and 30-31 December. 21-22 December stays from
+ * the earlier list (it has been on sale since October and a seat is sold on
+ * it). Before that the list was 21-22, 26-27, 27-28 and 29-30.
+ *
+ * For most two-day courses this list is still the WHOLE December offering:
+ * the cadence's own December starts are dropped first, as originally asked.
+ * A course named in aa_reg_december_keeps_cadence() keeps its normal pattern
+ * up to 20 December and gets the list from the 21st, so its holiday classes
+ * are an addition to the pattern rather than a replacement for it.
  *
  * Longer courses are untouched -- a three- or four-day span cannot be fitted
  * into these gaps without crossing the blackout.
  *
- * NOTE THE OVERLAP: 26-27 and 27-28 share Sunday the 27th, so one course
- * cannot run both. They are generated as asked; whether a single course keeps
- * both, or the two spans are split across different courses, is a scheduling
- * decision rather than a code one.
+ * NOTE THE OVERLAP: the five holiday spans share days with each other on
+ * purpose (a class starts every day from the 26th to the 30th), so one
+ * trainer cannot teach all of them. They are generated as asked; which ones
+ * run is decided by where the bookings land.
  */
+function aa_reg_december_keeps_cadence() {
+	/* AI-Native Foundations: "in addition to that pattern, not instead of
+	   it" (16 Nov 2026). Add a slug here to do the same for another course. */
+	return apply_filters( 'aa_reg_december_keeps_cadence', array( 'ai-native-foundations' ) );
+}
+
 function aa_reg_december_two_day( $slug, $course, $out ) {
 	if ( (int) $course['days'] !== 2 ) { return $out; }
 
 	$year   = (int) ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y' );
-	$starts = array( '-12-21', '-12-26', '-12-27', '-12-29' );
+	$starts = array( '-12-21', '-12-26', '-12-27', '-12-28', '-12-29', '-12-30' );
+	$keeps  = in_array( $slug, (array) aa_reg_december_keeps_cadence(), true );
 
 	/* Only the years the generated window actually reaches, so a 52-week
 	   course gets next December too and a 26-week one does not invent it. */
@@ -1076,14 +1090,18 @@ function aa_reg_december_two_day( $slug, $course, $out ) {
 
 	$kept = array();
 	foreach ( $out as $c ) {
-		if ( substr( $c['start'], 5, 2 ) !== '12' ) { $kept[] = $c; }
+		if ( substr( $c['start'], 5, 2 ) !== '12' ) { $kept[] = $c; continue; }
+		/* The ordinary weeks of December, for a course that keeps them. */
+		if ( $keeps && (int) substr( $c['start'], 8, 2 ) < 21 ) { $kept[] = $c; }
 	}
 
 	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
+	$until = ! empty( $course['until'] ) ? (string) $course['until'] : '';
 	foreach ( array_keys( $years ) as $y ) {
 		foreach ( $starts as $tail ) {
 			$d = $y . $tail;
 			if ( $d < $today ) { continue; }
+			if ( $until !== '' && $d > $until ) { continue; }   // past the last date the course is offered
 			if ( ! aa_reg_span_ok( $d, 2 ) ) { continue; }   // never across the blackout
 			$kept[] = aa_reg_make( $slug, $course, $d, 'morning' );
 		}
@@ -1331,6 +1349,14 @@ function aa_reg_generate( $slug, $course ) {
 		if ( $f > $floor ) { $floor = $f; }
 	}
 	$limit = ( clone $floor )->modify( '+' . $weeks . ' weeks' );
+	/* LAST DATE THIS COURSE IS OFFERED, if the schedule is only decided up to
+	   a point. 'until' is a hard stop on start dates; without it the window
+	   is simply 'weeks' long, as before. */
+	if ( ! empty( $course['until'] ) ) {
+		$u = new DateTime( $course['until'], $tz );
+		$u->setTime( 23, 59, 59 );
+		if ( $u < $limit ) { $limit = $u; }
+	}
 
 	// A course with cities is scheduled per city, not on a weekly cadence.
 	if ( ! empty( $course['schedule'] ) ) {
@@ -1425,6 +1451,11 @@ function aa_reg_generate( $slug, $course ) {
 		}
 	}
 	foreach ( $blocked as $p ) {
+		/* A two-day class blocked in the holiday week (21-31 Dec) needs no
+		   replacement: aa_reg_december_two_day() below puts a class on every
+		   day from the 26th to the 30th. Without this, the Thursday 31 Dec
+		   start reappeared as odd Sunday and Tuesday classes in January. */
+		if ( $days === 2 && substr( $p['start'], 5, 2 ) === '12' && (int) substr( $p['start'], 8, 2 ) >= 21 ) { continue; }
 		$added = 0;
 		$probe = new DateTime( $p['start'], $tz );
 		for ( $i = 1; $i <= 7 && $added < aa_reg_backfill(); $i++ ) {
@@ -1444,8 +1475,8 @@ function aa_reg_generate( $slug, $course ) {
 
 	/* DECEMBER IS SET BY HAND FOR EVERY TWO-DAY COURSE.
 	   The cadence is built for an ordinary working month and the week between
-	   Christmas and New Year is not one. These four spans are the ones asked
-	   for, and they replace whatever the cadence would otherwise have put in
+	   Christmas and New Year is not one. The spans in
+	   aa_reg_december_two_day() are the ones asked for, and they replace whatever the cadence would otherwise have put in
 	   December -- so a buyer sees the dates we will actually run rather than
 	   a Monday nobody is going to teach on. Applied before the per-month cap,
 	   so the cap still governs how many of them show. */
