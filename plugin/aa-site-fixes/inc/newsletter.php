@@ -24,7 +24,8 @@
  *   - The FIRST issue is not sent until someone presses "Approve and start
  *     sending" in that preview (or on the settings page). After that it runs
  *     on its own.
- *   - Only people who subscribed in the footer get it. Every email has a
+ *   - Only subscribers get it: the footer box, and (with the HubSpot token)
+ *     HubSpot contacts marked Subscribed. HubSpot email opt-outs are respected. Every email has a
  *     one-click unsubscribe link (also offered to the mail app as
  *     List-Unsubscribe) and the business postal address.
  *   - Sent in small batches, one email per person, never a shared To/Bcc.
@@ -34,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if ( ! function_exists( 'aa_sf_nl_settings' ) ) :
 
 function aa_sf_nl_settings() {
-	$d = array( 'on' => 1, 'approved' => 0, 'week' => 1, 'dow' => 'tuesday', 'hour' => 10, 'notify' => 'info@agile-agilist.com', 'note' => '', 'skip' => '', 'preview' => '', 'last' => '', 'last_at' => '' );
+	$d = array( 'on' => 1, 'approved' => 0, 'week' => 1, 'dow' => 'tuesday', 'hour' => 10, 'notify' => 'info@agile-agilist.com', 'note' => '', 'skip' => '', 'preview' => '', 'last' => '', 'last_at' => '', 'audience' => 'both' );
 	$s = get_option( 'aa_sf_nl', array() );
 	return array_merge( $d, is_array( $s ) ? $s : array() );
 }
@@ -74,11 +75,84 @@ function aa_sf_nl_next( $now = null ) {
 	return array( 'ym' => $ym, 'at' => $at );
 }
 
+/**
+ * HUBSPOT AS THE CONTACT LIST.
+ *
+ * With the HubSpot private app token (wp-config AA_HUBSPOT_TOKEN or the
+ * aa_hubspot_token option), the audience can include HubSpot contacts whose
+ * "Agile Agilist — newsletter" property (aa_newsletter) says "Subscribed",
+ * however they got there: the footer box, a HubSpot form, an import, or set by
+ * hand in HubSpot. Anyone who has opted out of email in HubSpot
+ * (hs_email_optout) or whose property says "Unsubscribed" is dropped, here and
+ * in the site's own list. Read with the contacts read scope the token already
+ * has; no list API needed.
+ *
+ * The sync copies HubSpot subscribers into the site list (marked src=hubspot)
+ * so each address still gets exactly one email per issue, and runs at most every
+ * six hours, plus once just before each send.
+ */
+function aa_sf_nl_hs_search( $filters, $after = '' ) {
+	if ( ! function_exists( 'aa_sf_sub_token' ) || aa_sf_sub_token() === '' ) { return null; }
+	$body = array( 'filterGroups' => array( array( 'filters' => $filters ) ), 'properties' => array( 'email', 'firstname', 'aa_newsletter', 'hs_email_optout' ), 'limit' => 100 );
+	if ( $after !== '' ) { $body['after'] = $after; }
+	$res = wp_remote_post( 'https://api.hubapi.com/crm/v3/objects/contacts/search', array( 'timeout' => 15,
+		'headers' => array( 'Authorization' => 'Bearer ' . aa_sf_sub_token(), 'Content-Type' => 'application/json' ), 'body' => wp_json_encode( $body ) ) );
+	if ( is_wp_error( $res ) || (int) wp_remote_retrieve_response_code( $res ) !== 200 ) { return null; }
+	$j = json_decode( wp_remote_retrieve_body( $res ), true );
+	return is_array( $j ) ? $j : null;
+}
+function aa_sf_nl_hs_all( $filters ) {
+	$out = array(); $after = '';
+	for ( $page = 0; $page < 50; $page++ ) {
+		$j = aa_sf_nl_hs_search( $filters, $after );
+		if ( $j === null ) { return $page ? $out : null; }
+		foreach ( (array) ( isset( $j['results'] ) ? $j['results'] : array() ) as $r ) {
+			$p = isset( $r['properties'] ) ? $r['properties'] : array();
+			$e = isset( $p['email'] ) ? strtolower( trim( (string) $p['email'] ) ) : '';
+			if ( is_email( $e ) ) { $out[ $e ] = $p; }
+		}
+		$after = isset( $j['paging']['next']['after'] ) ? (string) $j['paging']['next']['after'] : '';
+		if ( $after === '' ) { break; }
+	}
+	return $out;
+}
+function aa_sf_nl_sync( $force = false ) {
+	$s = aa_sf_nl_settings();
+	if ( $s['audience'] === 'local' ) { return 'Audience is the site list only; HubSpot not read.'; }
+	if ( ! $force && get_transient( 'aa_sf_nl_synced' ) ) { return 'Synced recently.'; }
+	$subs = aa_sf_nl_hs_all( array( array( 'propertyName' => 'aa_newsletter', 'operator' => 'CONTAINS_TOKEN', 'value' => 'Subscribed' ) ) );
+	if ( $subs === null ) { return 'HubSpot could not be read (token missing or refused).'; }
+	$outs = aa_sf_nl_hs_all( array( array( 'propertyName' => 'hs_email_optout', 'operator' => 'EQ', 'value' => 'true' ) ) );
+	$outs = is_array( $outs ) ? $outs : array();
+	$list = get_option( 'aa_sf_subscribers', array() ); $list = is_array( $list ) ? $list : array();
+	$added = 0; $dropped = 0; $now = current_time( 'mysql' );
+	foreach ( $subs as $email => $p ) {
+		$optout = ( isset( $p['hs_email_optout'] ) && (string) $p['hs_email_optout'] === 'true' ) || isset( $outs[ $email ] );
+		if ( $optout ) { continue; }
+		if ( ! isset( $list[ $email ] ) ) { $list[ $email ] = array( 't' => $now, 'page' => '', 'lang' => 'en', 'hs' => 'from HubSpot', 'src' => 'hubspot' ); $added++; }
+	}
+	foreach ( $list as $email => $r ) {
+		if ( ! empty( $r['unsub'] ) ) { continue; }
+		$hs_unsub = isset( $subs[ $email ] ) ? false : null;
+		if ( isset( $outs[ $email ] ) ) { $list[ $email ]['unsub'] = $now; $list[ $email ]['why'] = 'opted out in HubSpot'; $dropped++; continue; }
+		/* Came from HubSpot and HubSpot no longer says Subscribed: drop it too. */
+		if ( ! empty( $r['src'] ) && $r['src'] === 'hubspot' && $hs_unsub === null ) { $list[ $email ]['unsub'] = $now; $list[ $email ]['why'] = 'no longer subscribed in HubSpot'; $dropped++; }
+	}
+	update_option( 'aa_sf_subscribers', $list, false );
+	set_transient( 'aa_sf_nl_synced', 1, 6 * HOUR_IN_SECONDS );
+	aa_sf_nl_set( 'synced', current_time( 'mysql' ) . ' · ' . count( $subs ) . ' subscribed in HubSpot, ' . $added . ' added, ' . $dropped . ' dropped' );
+	return 'HubSpot: ' . count( $subs ) . ' subscribed, ' . $added . ' new to the site list, ' . $dropped . ' dropped.';
+}
+
 function aa_sf_nl_recipients() {
 	$list = get_option( 'aa_sf_subscribers', array() );
 	$out  = array();
 	foreach ( is_array( $list ) ? $list : array() as $email => $r ) {
 		if ( ! is_email( $email ) || ! empty( $r['unsub'] ) ) { continue; }
+		$hs = ! empty( $r['src'] ) && $r['src'] === 'hubspot';
+		$mode = aa_sf_nl_settings()['audience'];
+		if ( $mode === 'local' && $hs ) { continue; }
+		if ( $mode === 'hubspot' && ! $hs && ! preg_match( '/contact 2\d\d/', (string) ( isset( $r['hs'] ) ? $r['hs'] : '' ) ) ) { continue; }   /* HubSpot-only: the address must be on a HubSpot contact */
 		$out[ $email ] = is_array( $r ) ? $r : array();
 	}
 	return $out;
@@ -262,6 +336,7 @@ function aa_sf_nl_send_preview( $ym ) {
 function aa_sf_nl_tick() {
 	$s = aa_sf_nl_settings();
 	if ( ! $s['on'] ) { return; }
+	aa_sf_nl_sync();
 	$now  = new DateTime( 'now', wp_timezone() );
 	$next = aa_sf_nl_next( $now );
 	$ym   = $next['ym']; $at = $next['at'];
@@ -271,6 +346,7 @@ function aa_sf_nl_tick() {
 		if ( aa_sf_nl_send_preview( $ym ) ) { aa_sf_nl_set( 'preview', $ym ); }
 	}
 	if ( $now < $at || $s['skip'] === $ym || ! $s['approved'] ) { return; }
+	if ( $s['last'] !== $ym && ! get_transient( 'aa_sf_nl_presend_' . $ym ) ) { set_transient( 'aa_sf_nl_presend_' . $ym, 1, DAY_IN_SECONDS ); aa_sf_nl_sync( true ); }
 
 	/* The issue, in batches. Each row remembers the last issue it was sent. */
 	$list = get_option( 'aa_sf_subscribers', array() );
@@ -320,9 +396,10 @@ function aa_sf_nl_handle() {
 	if ( $do === 'unsub' ) {
 		$email = strtolower( (string) base64_decode( strtr( $a, '-_', '+/' ) ) );
 		$list  = get_option( 'aa_sf_subscribers', array() ); $list = is_array( $list ) ? $list : array();
-		if ( isset( $list[ $email ] ) && empty( $list[ $email ]['unsub'] ) ) {
-			$list[ $email ]['unsub'] = current_time( 'mysql' );
+		if ( is_email( $email ) && empty( $list[ $email ]['unsub'] ) ) {
+			$list[ $email ] = array_merge( isset( $list[ $email ] ) ? (array) $list[ $email ] : array( 't' => current_time( 'mysql' ) ), array( 'unsub' => current_time( 'mysql' ), 'why' => 'unsubscribe link' ) );
 			update_option( 'aa_sf_subscribers', $list, false );
+			/* HubSpot too, so the contact list and the next sync agree. */
 			if ( function_exists( 'aa_sf_sub_token' ) && aa_sf_sub_token() !== '' ) {
 				aa_sf_sub_hs( 'PATCH', '/crm/v3/objects/contacts/' . rawurlencode( $email ) . '?idProperty=email', array( 'properties' => array( 'aa_newsletter' => 'Unsubscribed ' . current_time( 'Y-m-d' ) ) ) );
 			}
@@ -346,7 +423,10 @@ function aa_sf_nl_admin() {
 	$post = esc_url( admin_url( 'admin-post.php' ) );
 	echo '<div class="wrap"><h1>Newsletter</h1>';
 	if ( isset( $_GET['msg'] ) ) { echo '<div class="notice notice-success"><p>' . esc_html( sanitize_text_field( wp_unslash( $_GET['msg'] ) ) ) . '</p></div>'; } // phpcs:ignore
-	echo '<p><strong>' . (int) $n . '</strong> subscriber(s) (<a href="' . esc_url( admin_url( 'tools.php?page=aa-sf-subscribers' ) ) . '">list</a>). '
+	$all = get_option( 'aa_sf_subscribers', array() ); $all = is_array( $all ) ? $all : array(); $nh = 0; $nu = 0;
+	foreach ( $all as $r ) { if ( ! empty( $r['unsub'] ) ) { $nu++; } elseif ( ! empty( $r['src'] ) && $r['src'] === 'hubspot' ) { $nh++; } }
+	echo '<p><strong>' . (int) $n . '</strong> will get the next issue (' . (int) ( $n - $nh ) . ' from the footer box, ' . (int) $nh . ' from HubSpot; ' . (int) $nu . ' unsubscribed). <a href="' . esc_url( admin_url( 'tools.php?page=aa-sf-subscribers' ) ) . '">See the list</a>. '
+	   . ( ! empty( $s['synced'] ) ? 'Last HubSpot sync: ' . esc_html( $s['synced'] ) . '. ' : '' ) . '</p><p>'
 	   . 'Next issue: <strong>' . esc_html( $next['at']->format( 'l, F j, Y \a\t g:i a' ) ) . '</strong> (site time)'
 	   . ( $s['skip'] === $next['ym'] ? ' — <strong>skipped</strong>' : '' ) . '. A preview goes to ' . esc_html( $s['notify'] ) . ' two days before.</p>';
 	if ( ! $s['on'] ) { echo '<p><strong>Sending is switched off.</strong></p>'; }
@@ -359,10 +439,16 @@ function aa_sf_nl_admin() {
 	echo '</select> <select name="dow">';
 	foreach ( array( 'monday', 'tuesday', 'wednesday', 'thursday', 'friday' ) as $d ) { echo '<option value="' . esc_attr( $d ) . '"' . selected( $d, $s['dow'], false ) . '>' . esc_html( ucfirst( $d ) ) . '</option>'; }
 	echo '</select> of the month at <input type="number" name="hour" min="0" max="23" value="' . (int) $s['hour'] . '" style="width:64px">:00 (site time)</td></tr>'
+	   . '<tr><th>Who gets it</th><td><select name="audience">'
+	   . '<option value="both"' . selected( 'both', $s['audience'], false ) . '>Footer sign-ups and HubSpot contacts marked Subscribed (recommended)</option>'
+	   . '<option value="hubspot"' . selected( 'hubspot', $s['audience'], false ) . '>HubSpot contacts marked Subscribed only</option>'
+	   . '<option value="local"' . selected( 'local', $s['audience'], false ) . '>Footer sign-ups only (HubSpot not read)</option>'
+	   . '</select><p class="description">HubSpot: contacts whose "Agile Agilist — newsletter" property says Subscribed. Anyone opted out of email in HubSpot is never sent to.</p></td></tr>'
 	   . '<tr><th>Preview goes to</th><td><input type="email" name="notify" value="' . esc_attr( $s['notify'] ) . '" class="regular-text"></td></tr>'
 	   . '<tr><th>Your note for the next issue</th><td><textarea name="note" rows="5" class="large-text" placeholder="Optional. Appears at the top of the next issue only, in your words.">' . esc_textarea( $s['note'] ) . '</textarea></td></tr></table>'
 	   . '<p><button class="button button-primary" name="go" value="save">Save</button> '
 	   . '<button class="button" name="go" value="preview">Save and send me a preview now</button> '
+	   . '<button class="button" name="go" value="sync">Save and read HubSpot now</button> '
 	   . ( $s['approved'] ? '' : '<button class="button" name="go" value="approve">Approve and start sending</button> ' )
 	   . '<button class="button" name="go" value="' . ( $s['skip'] === $next['ym'] ? 'unskip' : 'skip' ) . '">' . ( $s['skip'] === $next['ym'] ? 'Do not skip the next issue' : 'Skip the next issue' ) . '</button></p></form>';
 
@@ -381,6 +467,7 @@ add_action( 'admin_post_aa_sf_nl_admin', function () {
 	$s['hour']   = max( 0, min( 23, (int) ( isset( $p['hour'] ) ? $p['hour'] : 10 ) ) );
 	$s['notify'] = isset( $p['notify'] ) && is_email( $p['notify'] ) ? sanitize_email( $p['notify'] ) : $s['notify'];
 	$s['note']   = isset( $p['note'] ) ? sanitize_textarea_field( $p['note'] ) : '';
+	$s['audience'] = isset( $p['audience'] ) && in_array( $p['audience'], array( 'both', 'hubspot', 'local' ), true ) ? $p['audience'] : 'both';
 	$go  = isset( $p['go'] ) ? sanitize_key( $p['go'] ) : 'save';
 	$msg = 'Saved.';
 	if ( $go === 'approve' ) { $s['approved'] = 1; $msg = 'Approved. The newsletter will go out on its scheduled date.'; }
@@ -388,6 +475,7 @@ add_action( 'admin_post_aa_sf_nl_admin', function () {
 	$next = aa_sf_nl_next();
 	if ( $go === 'skip' )   { aa_sf_nl_set( 'skip', $next['ym'] ); $msg = 'The next issue will be skipped.'; }
 	if ( $go === 'unskip' ) { aa_sf_nl_set( 'skip', '' ); $msg = 'The next issue will be sent.'; }
+	if ( $go === 'sync' ) { $msg = aa_sf_nl_sync( true ); }
 	if ( $go === 'preview' ) { $msg = aa_sf_nl_send_preview( $next['ym'] ) ? 'Preview sent to ' . $s['notify'] . '.' : 'Nothing to preview: no class dates, no new posts and no note.'; }
 	wp_safe_redirect( add_query_arg( array( 'page' => 'aa-sf-newsletter', 'msg' => rawurlencode( $msg ) ), admin_url( 'tools.php' ) ) );
 	exit;

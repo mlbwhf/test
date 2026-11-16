@@ -8,13 +8,16 @@
  * their address in the URL, and nothing was recorded as a subscription. On
  * 10 Nov 2026 a paid-search visitor (SPC page) did exactly that and left.
  *
- * Now the box is handled in place:
+ * Now the box is handled in place, as its own process:
+ *   0. When the page loads, the footer <form> is replaced by a plain group of
+ *      fields (no <form> element). HubSpot's form tracker only watches forms,
+ *      so it can no longer capture the box and re-submit it to /about/, which
+ *      is what happened on 16 Nov 2026 (the visitor landed on About, and the
+ *      site recorded nothing).
  *   1. The browser posts the address to this plugin (no page change, and the
  *      address is never put in a URL).
  *   2. It is saved on the site (Tools → Newsletter sign-ups, with CSV).
- *   3. It goes to HubSpot as a lead-form submission named
- *      "Newsletter signup — <page>", tied to the visitor's HubSpot cookie so
- *      the ad click and pages viewed stay attached to the contact.
+ *   3. (No HubSpot form submission: see aa_sf_sub_to_hubspot.)
  *   4. With the HubSpot private app token (wp-config AA_HUBSPOT_TOKEN or the
  *      aa_hubspot_token option), the contact also gets the property
  *      "Agile Agilist — newsletter" = "Subscribed <date> · <page>", so a
@@ -44,18 +47,13 @@ function aa_sf_sub_hs( $method, $path, $body = null ) {
 
 /** After the visitor has their answer: HubSpot form submission, then the contact property. Returns a short status. */
 function aa_sf_sub_to_hubspot( $email, $page, $title, $hutk ) {
-	$portal = '46316757'; $hsform = 'c6f0d4c1-d233-4875-9b0c-4528cda02237';
-	if ( function_exists( 'aa_ct_settings' ) ) { $s = aa_ct_settings(); if ( ! empty( $s['hs_portal'] ) ) { $portal = $s['hs_portal']; } if ( ! empty( $s['hs_form'] ) ) { $hsform = $s['hs_form']; } }
-	$ctx = array( 'pageUri' => home_url( $page ), 'pageName' => mb_substr( 'Newsletter signup — ' . ( $title !== '' ? $title : $page ), 0, 250 ) );
-	if ( preg_match( '/^[a-f0-9]{32}$/', $hutk ) ) { $ctx['hutk'] = $hutk; }
-	$res  = wp_remote_post( 'https://api.hsforms.com/submissions/v3/integration/submit/' . rawurlencode( $portal ) . '/' . rawurlencode( $hsform ), array(
-		'timeout' => 10, 'headers' => array( 'Content-Type' => 'application/json' ),
-		'body'    => wp_json_encode( array( 'fields' => array( array( 'name' => 'email', 'value' => $email ) ), 'context' => $ctx ) ),
-	) );
-	$form = is_wp_error( $res ) ? 0 : (int) wp_remote_retrieve_response_code( $res );
-	$out  = 'form ' . $form;
-
-	if ( aa_sf_sub_token() === '' ) { return $out; }
+	/* NO HUBSPOT FORM SUBMISSION. An earlier version also posted each sign-up
+	   to a HubSpot form, and the only one wired up was the Mutation Readiness
+	   Assessment form, so every sign-up showed up in HubSpot as a Mutation
+	   Readiness entry. The sign-up is written straight onto the contact instead:
+	   one contact, one property, nothing posing as another form. */
+	$out = '';
+	if ( aa_sf_sub_token() === '' ) { return 'no HubSpot token'; }
 	if ( ! get_transient( 'aa_sf_sub_prop' ) ) {
 		$c = aa_sf_sub_hs( 'POST', '/crm/v3/properties/contacts', array( 'name' => 'aa_newsletter', 'label' => 'Agile Agilist — newsletter', 'type' => 'string', 'fieldType' => 'text', 'groupName' => 'contactinformation', 'description' => 'Set when someone subscribes in the website footer: date and the page they were on.' ) );
 		if ( $c === 201 || $c === 409 ) { set_transient( 'aa_sf_sub_prop', 1, WEEK_IN_SECONDS ); }
@@ -69,7 +67,7 @@ function aa_sf_sub_to_hubspot( $email, $page, $title, $hutk ) {
 		if ( $c === 409 ) { $c = aa_sf_sub_hs( 'PATCH', $path, array( 'properties' => $props ) ); }                               /* the form submission created it first */
 		elseif ( $c >= 400 ) { $c = aa_sf_sub_hs( 'POST', '/crm/v3/objects/contacts', array( 'properties' => $props + array( 'email' => $email ) ) ); }
 	}
-	return $out . ', contact ' . $c;
+	return 'contact ' . $c;
 }
 
 function aa_sf_sub_handle() {
@@ -123,29 +121,43 @@ add_action( 'wp_footer', function () {
 	if ( is_admin() ) { return; }
 	?>
 <script id="aa-sf-subscribe">(function(){
+/* The footer box is turned into a plain group of fields (no <form>), so
+   HubSpot's form tracker has nothing to capture and re-submit to /about/.
+   Without JavaScript the original form stays and behaves as before. */
 var URL=<?php echo wp_json_encode( admin_url( 'admin-ajax.php' ) ); ?>,T0=Date.now(),L=(document.documentElement.lang||'en').slice(0,2).toLowerCase();
 var M={en:['Thanks. You’re on the list.','Please enter a valid email address.','That didn’t go through. Please try again, or email info@agile-agilist.com.'],
 fr:['Merci. Vous êtes inscrit.','Veuillez saisir une adresse courriel valide.','L’envoi a échoué. Réessayez, ou écrivez à info@agile-agilist.com.'],
 es:['Gracias. Ya estás en la lista.','Introduce un correo electrónico válido.','No se pudo enviar. Inténtalo de nuevo o escribe a info@agile-agilist.com.']};
 var S=M[L]||M.en,OK=L==='ar'?'✓':S[0];
-function form(el){var f=el&&el.closest&&el.closest('form');if(!f)return null;
-  if(f.classList.contains('aa-foot-news-form'))return f;
-  return /\/about\/#message$/.test(f.getAttribute('action')||'')&&f.querySelector('input[type=email]')&&f.querySelectorAll('input:not([type=hidden]),textarea,select').length===1?f:null}
-function note(f,t,bad){var p=f.querySelector('.aa-sf-sub-msg');if(!p){p=document.createElement('p');p.className='aa-sf-sub-msg';p.setAttribute('role','status');p.setAttribute('aria-live','polite');f.appendChild(p)}p.textContent=t;p.classList.toggle('is-bad',!!bad)}
-document.addEventListener('focusin',function(ev){var f=form(ev.target);if(!f||f.__aaTrap)return;f.__aaTrap=1;
-  var h=document.createElement('input');h.type='text';h.name='company_site';h.tabIndex=-1;h.autocomplete='off';h.setAttribute('aria-hidden','true');h.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;opacity:0';f.appendChild(h)});
-document.addEventListener('submit',function(ev){var f=form(ev.target);if(!f)return;ev.preventDefault();if(f.__aaBusy)return;
-  var e=f.querySelector('input[type=email]'),b=f.querySelector('button,[type=submit]'),v=String(e.value||'').trim();
-  if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){note(f,S[1],1);try{e.focus()}catch(x){}return}
-  f.__aaBusy=1;if(b)b.disabled=true;
+function isNews(f){if(!f||f.tagName!=='FORM')return false;if(f.classList.contains('aa-foot-news-form'))return true;
+  return /\/about\/#message$/.test(f.getAttribute('action')||'')&&!!f.querySelector('input[type=email]')&&f.querySelectorAll('input:not([type=hidden]),textarea,select').length===1}
+function note(w,t,bad){var p=w.querySelector('.aa-sf-sub-msg');if(!p){p=document.createElement('p');p.className='aa-sf-sub-msg';p.setAttribute('role','status');p.setAttribute('aria-live','polite');w.appendChild(p)}p.textContent=t;p.classList.toggle('is-bad',!!bad)}
+function send(w){if(w.__aaBusy)return;var e=w.querySelector('input[type=email]'),b=w.querySelector('button'),v=String(e.value||'').trim();
+  if(!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(v)){note(w,S[1],1);try{e.focus()}catch(x){}return}
+  w.__aaBusy=1;if(b)b.disabled=true;
   var d=new FormData();d.append('action','aa_sf_subscribe');d.append('email',v);d.append('page',location.pathname);d.append('title',document.title);d.append('lang',L);d.append('t',String(Date.now()-T0));d.append('js','ok');
-  var h=f.querySelector('[name=company_site]');d.append('company_site',h?h.value:'');
+  var h=w.querySelector('.aa-sf-sub-trap');d.append('company_site',h?h.value:'');
   fetch(URL,{method:'POST',body:d,credentials:'same-origin'}).then(function(r){return r.json()}).then(function(j){
-    if(j&&j.ok){f.innerHTML='';var p=document.createElement('p');p.className='aa-sf-sub-msg is-ok';p.setAttribute('role','status');p.textContent=OK;f.appendChild(p);
+    if(j&&j.ok){w.innerHTML='';var p=document.createElement('p');p.className='aa-sf-sub-msg is-ok';p.setAttribute('role','status');p.textContent=OK;w.appendChild(p);
       try{(window.dataLayer=window.dataLayer||[]).push({event:'newsletter_subscribed',page_path:location.pathname})}catch(x){}}
-    else{f.__aaBusy=0;if(b)b.disabled=false;note(f,j&&j.why==='email'?S[1]:S[2],1)}
-  }).catch(function(){f.__aaBusy=0;if(b)b.disabled=false;note(f,S[2],1)});
-},true);
+    else{w.__aaBusy=0;if(b)b.disabled=false;note(w,j&&j.why==='email'?S[1]:S[2],1)}
+  }).catch(function(){w.__aaBusy=0;if(b)b.disabled=false;note(w,S[2],1)});
+}
+function swap(f){if(f.__aaSwapped)return;f.__aaSwapped=1;
+  var old=f.querySelector('input[type=email]'),ob=f.querySelector('button,[type=submit]'),w=document.createElement('div');
+  w.className=f.className+' aa-sf-sub';w.setAttribute('role','group');w.setAttribute('aria-label','Newsletter sign-up');
+  var e=document.createElement('input');e.type='email';e.autocomplete='email';e.inputMode='email';e.required=true;e.placeholder=old&&old.placeholder||'your@workemail.com';e.setAttribute('aria-label','Email address');if(old&&old.className)e.className=old.className;if(old&&old.value)e.value=old.value;
+  var h=document.createElement('input');h.type='text';h.className='aa-sf-sub-trap';h.tabIndex=-1;h.autocomplete='off';h.setAttribute('aria-hidden','true');h.style.cssText='position:absolute;left:-9999px;width:1px;height:1px;opacity:0';
+  var b=document.createElement('button');b.type='button';b.textContent=ob?ob.textContent:'Subscribe →';if(ob&&ob.className)b.className=ob.className;
+  w.appendChild(e);w.appendChild(h);w.appendChild(b);
+  b.addEventListener('click',function(){send(w)});
+  e.addEventListener('keydown',function(ev){if(ev.key==='Enter'){ev.preventDefault();send(w)}});
+  f.parentNode.replaceChild(w,f);
+}
+function all(){[].forEach.call(document.querySelectorAll('form'),function(f){if(isNews(f))swap(f)})}
+all();if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',all);
+/* Belt and braces: if a form is still there (added later), never let it leave the page. */
+document.addEventListener('submit',function(ev){var f=ev.target;if(!isNews(f))return;ev.preventDefault();ev.stopImmediatePropagation();swap(f)},true);
 })();</script>
 <style id="aa-sf-subscribe-css">.aa-sf-sub-msg{margin:6px 0 0;font-size:13.5px;line-height:1.45;color:#8FCFCF}.aa-sf-sub-msg.is-ok{font-size:15px;font-weight:600;color:#fff}.aa-sf-sub-msg.is-bad{color:#F2B66D}</style>
 	<?php
