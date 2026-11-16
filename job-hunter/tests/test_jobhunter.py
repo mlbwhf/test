@@ -35,6 +35,9 @@ class MatchTests(unittest.TestCase):
         self.assertIsNone(match.country_of("A woman-led clinic in Romania", "", CONFIG))
         self.assertEqual(match.country_of("Remote - Worldwide", "", CONFIG), "Remote")
         self.assertIsNone(match.country_of("Remote - USA", "", CONFIG))
+        self.assertIsNone(match.country_of("Remote - Netherlands", "", CONFIG))
+        self.assertEqual(match.country_of("Remote", "", CONFIG), "Remote")
+        self.assertEqual(match.country_of("Remote - Canada", "", CONFIG), "Canada")
         self.assertIsNone(match.country_of("Berlin, Germany", "", CONFIG))
 
     def test_tracks(self):

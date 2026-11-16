@@ -11,11 +11,11 @@ def country_of(location, description, config):
     for country, names in config["locations"].items():
         if any(has_phrase(loc, n) for n in names):
             return country
-    if any(has_phrase(loc, w) for w in REMOTE_WORDS):
-        if config.get("include_remote_worldwide", True):
-            blocked = config.get("remote_exclude", [])
-            if not any(has_phrase(loc, b) for b in blocked) or any(has_phrase(loc, w) for w in ("worldwide", "anywhere", "global")):
-                return "Remote"
+    if any(has_phrase(loc, w) for w in REMOTE_WORDS) and config.get("include_remote_worldwide", True):
+        # "Remote - Worldwide" or a bare "Remote" qualifies; "Remote - Germany" does not.
+        open_to_all = any(has_phrase(loc, w) for w in ("anywhere", "worldwide", "global"))
+        if open_to_all or not [w for w in loc.split() if w not in ("remote", "work", "from", "home")]:
+            return "Remote"
     if not loc.strip():
         # Some feeds carry no location field; fall back to the first lines of the text.
         head = norm((description or "")[:300])

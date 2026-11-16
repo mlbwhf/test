@@ -14,7 +14,6 @@
     "Oman": ["oman", "muscat"]
   },
   "include_remote_worldwide": true,
-  "remote_exclude": ["usa only", "us only", "united states", "usa", "uk", "europe", "emea", "latam", "india", "apac", "germany", "brazil"],
   "min_score": 55,
   "max_posting_age_days": 30,
   "retention_days": 14,
@@ -23,7 +22,7 @@
   "exclude_title": [
     "intern", "internship", "junior", "graduate", "trainee", "software engineer", "developer", "data engineer",
     "machine learning engineer", "ml engineer", "ai engineer", "data scientist", "research scientist",
-    "qa engineer", "devops engineer", "sales", "account executive", "recruiter"
+    "qa engineer", "devops engineer", "architect", "financial analyst", "compliance", "sales", "account executive", "recruiter"
   ],
   "tracks": {
     "agile": {
@@ -69,8 +68,8 @@
     "remotive": { "enabled": true, "queries": ["agile", "scrum", "transformation"] },
     "jobicy": { "enabled": true, "tags": ["agile", "scrum", "transformation", "change management"] },
     "remoteok": { "enabled": true },
-    "greenhouse": { "enabled": true, "boards": ["careem", "hootsuite", "lightspeedhq", "tabby", "dropbox", "stripe", "cloudflare", "databricks"] },
-    "lever": { "enabled": true, "boards": ["wealthsimple", "kitopi", "foodics"] },
+    "greenhouse": { "enabled": true, "boards": ["careem", "hootsuite", "dropbox", "stripe", "cloudflare", "databricks"] },
+    "lever": { "enabled": true, "boards": ["wealthsimple"] },
     "ashby": { "enabled": true, "boards": ["1password", "cohere"] },
     "smartrecruiters": {
       "enabled": true,
@@ -88,8 +87,7 @@
         { "name": "Manulife", "host": "manulife.wd3.myworkdayjobs.com", "tenant": "manulife", "site": "MFCJH_Jobs" },
         { "name": "Sun Life", "host": "sunlife.wd3.myworkdayjobs.com", "tenant": "sunlife", "site": "Experienced-Jobs" },
         { "name": "PwC", "host": "pwc.wd3.myworkdayjobs.com", "tenant": "pwc", "site": "Global_Experienced_Careers" },
-        { "name": "Mastercard", "host": "mastercard.wd1.myworkdayjobs.com", "tenant": "mastercard", "site": "CorporateCareers" },
-        { "name": "Accenture Federal", "host": "accenture.wd3.myworkdayjobs.com", "tenant": "accenture", "site": "AccentureCareers" }
+        { "name": "Mastercard", "host": "mastercard.wd1.myworkdayjobs.com", "tenant": "mastercard", "site": "CorporateCareers" }
       ]
     },
     "rss": {
