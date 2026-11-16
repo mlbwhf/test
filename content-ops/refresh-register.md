@@ -48,6 +48,12 @@ against its primary source in this workstream.
 | `/indexes/enterprise-ai/ai-video-generation-statistics-2026/` + market-size report | 124M users, Kling ~$500M ARR, $47.8B by 2034 | Vendor disclosures + forecasters | 2026-08 | ✅ |
 | `/indexes/state-of-ai/` (2022–2026 series) | Year snapshots | Historical, but the current year keeps moving | 2026-08 | ⏳ |
 | `/indexes/ai-by-industry/` | Sector adoption rates | Sector surveys, annual | unknown | ⚠️ |
+| **NEW 2026-11-16** `/indexes/state-of-ai/state-of-ai-{usage,spending,finance,work,models-prices,tokens,infrastructure-energy,geography,industries,regulation,risk}/` (11 theme reports: 3521, 3524, 3526, 3626, 3628, 3633, 3695, 3704, 3705, 3757, 3756) | Every 2026 headline in tiles, exhibits and FAQ; CSV per page | Data in content-ops/state-of-ai/data/*.json; rebuild with tools/state-of-ai/build.py — next edition Q1 2027 (Feb) | 2026-11-16 | ✅ |
+| **NEW 2026-11-16** `/indexes/state-of-ai/state-of-ai-year-over-year/` (3851) + 2024/2025 editions (4007, 4009; replaced 322/358) | 2024→2025→2026 comparisons | Inherits the theme data; rebuilt together | 2026-11-16 | ✅ |
+| **NEW 2026-11-16** `/indexes/state-of-ai/ai-development-index/` (3789) + `/reports/how-ai-developed-1950-2026/` (3788) + `/reports/ai-technological-revolution-perez/` (3821) | Epoch compute series, milestones, Perez-phase indicators | Epoch AI database, OWID — content-ops/ai-history; next Feb 2027 | 2026-11-16 | ✅ |
+| **NEW 2026-11-16** `/indexes/geography-of-ai/ai-use-by-country-2026/` (3916) | 147-economy use shares (Microsoft AI Diffusion Q2 2026 = 18.8% world) | Microsoft AI Diffusion (quarterly), KPMG, Ipsos, Eurostat — content-ops/geo/make_use.py; next Feb 2027 | 2026-11-16 | ✅ |
+| **REBUILT 2026-11-16** `/indexes/geography-of-ai/sovereign-ai-index-2026/` (3915; replaced 934) | 58 model families, HF downloads, AA ranks; Jais 3 / Qwen3.8-Max corrected 16 Nov | HF, Artificial Analysis, OpenRouter — content-ops/geo/make_sovereign.py; next Feb 2027 | 2026-11-16 | ✅ |
+| **NEW 2026-11-16** `/indexes/technical-benchmarks/llm-taxonomy-2026/` (4094) | 93-model classification, category shares, Epoch ≥10²⁵ counts, HF model count, AA open–closed gap | Model cards, Epoch, AA, HF — content-ops/ml-models/make_taxonomy.py; next Feb 2027 | 2026-11-16 | ✅ |
 
 ## STABLE — semi-annual (1 Jan / 1 Jul)
 
@@ -57,6 +63,8 @@ against its primary source in this workstream.
 | `/about/` methodology & corrections policy | Confidence definitions match what the pages actually do | 2026-08 | ✅ |
 | `/reports/real-world-ai/` (8-part series) | Case studies still accurate; outcomes updated | unknown | ⚠️ |
 | Historical `state-of-ai` years 2022–2025 | Only if a source restates history | 2026-08 | ✅ |
+| **NEW 2026-11-16** `/reports/machine-learning-models-compared/` (4104) — Report AI's own 13-model benchmark | Re-run tools/ml-benchmark with current library versions; refresh TabArena leaderboard facts and TabPFN licence notes | 2026-11-16 | ✅ |
+| **NEW 2026-11-16** `/site-map/` (AIOSEO HTML sitemap shortcode) | Generated automatically; check it renders | 2026-11-16 | ✅ |
 
 ---
 

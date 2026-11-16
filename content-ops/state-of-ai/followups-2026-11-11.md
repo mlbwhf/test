@@ -181,3 +181,13 @@ Network: us.aws.cdn.hf.co added to the environment allowlist (15 Nov, HF file CD
 
 **Chatbot (AI Engine "Default" bot, option mwai_chatbots) — 16 Nov:**
 Visitors got bare paths in code formatting (not clickable) and invented URLs (e.g. /indexes/ai-economics/global-token-volume-2023-2025/, none exist). Instructions replaced: full clickable Markdown links only, no tables, only addresses from an embedded directory of the 148 published pages, fallback to a site-search link. Backup of the previous option: backups/mwai_chatbots-20261116.json; new instructions text: site-content/chatbot/default-bot-instructions-20261116.txt. The directory must be regenerated when pages are published (e.g. at go-live).
+
+## O. Go-live (16 Nov 2026, owner approved in chat)
+
+- Runbook: content-ops/golive/RUNBOOK.md; per-draft date edits in content-ops/golive/plan.json (pre-go-live commit b709e4a, targets at da203db).
+- Site-wide, done directly 16 Nov:
+  - Footer Bar widget block-18 added: About · Editorial standards · Corrections · Contact · Site map (/site-map/). Undo: remove block-18.
+  - blogname "AI Indexes" → "Report AI" (page titles were "X - AI Indexes"; footer "© 2026 AI Indexes"). Brand rule in CLAUDE.md. Verified on /about/.
+  - Timezone: gmt_offset is a fixed -5 with no timezone_string, so the site clock is an hour off during US daylight time. Owner: set Settings → General → Timezone to "New York".
+- Owner security settings (Hostinger): Force HTTPS on; application passwords off only after checking Users → Profile → Application Passwords is empty; keep XML-RPC on while Jetpack (Social/Stats) is used.
+- XML sitemap index: /sitemap.xml (post/page/category sub-sitemaps); llms.txt enabled; human site map: /site-map/ (AIOSEO [aioseo_html_sitemap] shortcode).
