@@ -170,3 +170,14 @@ Network: us.aws.cdn.hf.co added to the environment allowlist (15 Nov, HF file CD
 **Llama 5 error (found 15 Nov):** no Llama 5 exists (meta-llama HF org newest = Llama 4, Apr 2025; Wikipedia); Meta's 8 Apr 2026 release was Muse Spark (closed). Fixed locally in models.json + narrative; drafts 3628/3847/3851 patched (IDENTICAL 135,586 / 268,771 / 121,668) with CSVs re-issued rev20261115 → media 4107/4108/4109 (old 3784/4005/3922 unlinked). Live pages: correction agent in progress (964 etc., 3229 rows, 3227 #fc-llama-5).
 
 **Other possible site errors from the taxonomy research (not yet fixed):** Jais 3 "from scratch" (paper: continual pretraining of K2 Horizon) and Qwen3.8-Max "closed" (2.4T base weights open on HF since 8 Aug 2026) in sovereign-data.json → drafts 3915 / live 934?; open–closed gap on 861/964 now ~18 pts (Fable 5.2 64.6 vs Kimi K3.1 Pro 46.5, AA 15 Nov) — refresh item; HF public models 3,239,530 (15 Nov) vs site "2 million in 2025" — refresh item.
+
+**16 Nov follow-ups:**
+- Live page 964 corrected (agent): Llama 5 removed, Muse Spark Open card added; CSV re-issued → media 4121; corrections-log row on 3229; fact-check entry #fc-llama-5 on 3227 (verdict Wrong). Stamps 16 Nov. Backups: backups/964-, 3229-, 3227-20261115.html.
+- Draft 3628: three more Llama 5 mentions in the frontier-milestones chart (SVG label, SVG title, data-table row) → "Muse Spark (closed)"; IDENTICAL 135,622 bytes.
+- models.json note now says the 5M figure was corrected on 16 Nov (log date). The uploaded rev20261115 CSVs (4107–4109) still say 15 Nov in that one note cell; they will be re-issued at go-live anyway (page_updated changes on publish).
+- Qwen3.8-Max shown as closed on live 1654, 964 (card text) and 6 (home strip): its 2.4T base weights are open on HF since 8 Aug 2026 → correction pending owner OK. Jais 3 "from scratch" only in draft 3915.
+- Page 964's methodology still says "Next review: October 2026" — overdue review.
+- Site clock: the agent saw post_modified ~3h38m behind GMT, not the expected 5h for Eastern — check the WordPress timezone setting (Settings → General).
+
+**Chatbot (AI Engine "Default" bot, option mwai_chatbots) — 16 Nov:**
+Visitors got bare paths in code formatting (not clickable) and invented URLs (e.g. /indexes/ai-economics/global-token-volume-2023-2025/, none exist). Instructions replaced: full clickable Markdown links only, no tables, only addresses from an embedded directory of the 148 published pages, fallback to a site-search link. Backup of the previous option: backups/mwai_chatbots-20261116.json; new instructions text: site-content/chatbot/default-bot-instructions-20261116.txt. The directory must be regenerated when pages are published (e.g. at go-live).

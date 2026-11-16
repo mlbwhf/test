@@ -102,7 +102,7 @@
             {"label": "Llama 3.1 405B", "start": "2024-07", "end": "2024-07", "group": "Meta / xAI", "milestone": true},
             {"label": "Llama 4", "start": "2025-04", "end": "2025-04", "group": "Meta / xAI", "milestone": true},
             {"label": "Grok 4", "start": "2025-07", "end": "2025-07", "group": "Meta / xAI", "milestone": true},
-            {"label": "Llama 5", "start": "2026-04", "end": "2026-04", "group": "Meta / xAI", "milestone": true},
+            {"label": "Muse Spark (closed)", "start": "2026-04", "end": "2026-04", "group": "Meta / xAI", "milestone": true},
             {"label": "Grok 4.5", "start": "2026-07", "end": "2026-07", "group": "Meta / xAI", "milestone": true},
             {"label": "Muse Spark Open", "start": "2026-10", "end": "2026-10", "group": "Meta / xAI", "milestone": true},
             {"label": "DeepSeek-V3", "start": "2024-12", "end": "2024-12", "group": "China", "milestone": true},
