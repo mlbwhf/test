@@ -156,3 +156,17 @@ Open: "Qwen up 58×" unverified; refresh-register row for 1266 lists old figures
 global top four" stale on Artificial Analysis v5.0.1 (Kimi K3.1 Pro #10 is the top Chinese model).
 - 12 Nov ET: 1266 stamps → 12 Nov; five 1266 rows on 3229 (Russia, Korea, Japan, US/Europe/UK shares, non-work figure);
   fact-check entry #fc-russia-perplexity on 3227; CSV re-issued as media 4063 (*-rev20261112.csv, commit 3f4d191), old media 3271 unlinked.
+
+## N. ML models benchmark + LLM taxonomy (15–16 Nov ET)
+
+| Page | Draft ID | CSV media | Notes |
+|---|---|---|---|
+| Machine-Learning Models Compared (report, parent 40) | 4104 | 4142 | slug machine-learning-models-compared; IDENTICAL 111,109 bytes. Built from tools/ml-benchmark (raw results in results/*.jsonl) via content-ops/ml-models/make_bench.py |
+| How to Categorize LLMs: LLM Taxonomy 2026 (index, parent 394) | 4094 | 4138 | slug llm-taxonomy-2026; IDENTICAL 131,275 bytes. Built via content-ops/ml-models/make_taxonomy.py from llm-taxonomy-data.json (93 models) |
+
+Benchmark: 13 models × 19 Grinsztajn datasets; main ranking 5 splits (TabPFN v2 76.7%, CatBoost 75.7%); 12-model 10-split robustness; size, scaling, imbalance, tuning experiments. TabPFN v2 weights (Apache-2.0 + "Built with PriorLabs-TabPFN"); later versions non-commercial — not used.
+Network: us.aws.cdn.hf.co added to the environment allowlist (15 Nov, HF file CDN).
+
+**Llama 5 error (found 15 Nov):** no Llama 5 exists (meta-llama HF org newest = Llama 4, Apr 2025; Wikipedia); Meta's 8 Apr 2026 release was Muse Spark (closed). Fixed locally in models.json + narrative; drafts 3628/3847/3851 patched (IDENTICAL 135,586 / 268,771 / 121,668) with CSVs re-issued rev20261115 → media 4107/4108/4109 (old 3784/4005/3922 unlinked). Live pages: correction agent in progress (964 etc., 3229 rows, 3227 #fc-llama-5).
+
+**Other possible site errors from the taxonomy research (not yet fixed):** Jais 3 "from scratch" (paper: continual pretraining of K2 Horizon) and Qwen3.8-Max "closed" (2.4T base weights open on HF since 8 Aug 2026) in sovereign-data.json → drafts 3915 / live 934?; open–closed gap on 861/964 now ~18 pts (Fable 5.2 64.6 vs Kimi K3.1 Pro 46.5, AA 15 Nov) — refresh item; HF public models 3,239,530 (15 Nov) vs site "2 million in 2025" — refresh item.
