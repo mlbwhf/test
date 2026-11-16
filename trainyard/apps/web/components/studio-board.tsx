@@ -13,13 +13,15 @@ import { aartModel } from "@/components/studio-model-aart";
 import { labModel } from "@/components/studio-model-lab";
 import { lpmModel } from "@/components/studio-model-lpm";
 import { agendaModel } from "@/components/studio-model-agenda";
+import { RTE_KINDS, rteModel } from "@/components/studio-model-rte";
+import * as Rte from "@/components/studio-views-rte";
 import { AgendaView } from "@/components/studio-views-agenda";
 import * as Views from "@/components/studio-views";
 import * as Lsa from "@/components/studio-views-lsa";
 import type { BoardProps } from "@/components/exercise-boards";
 import { api } from "@/lib/api";
 
-export { STUDIO_KINDS, LSA_KINDS };
+export { STUDIO_KINDS, LSA_KINDS, RTE_KINDS };
 
 // The two largest views come in their own bundles, only for the classes that use them: the
 // Launching AI-Native ARTs board (planning-views.tsx, shared with the planning room) and the
@@ -36,6 +38,8 @@ const VIEWS: Record<string, React.ComponentType<{ v: any }>> = {
   // Leading SAFe (studio-views-lsa.tsx); an overview board picks its view from the exercise's setup.
   vote: Lsa.VoteView, vsid: Lsa.VsidView, delay: Lsa.DelayView, prin: Lsa.PrinView, sbd: Lsa.SbdView, dec: Lsa.DecView, emp: Lsa.EmpView, feat: Lsa.FeatView, wsjf: Lsa.WsjfView, rse: Lsa.RseView, cap: Lsa.CapView, attr: Lsa.AttrView,
   ov: ({ v }) => (v.view === "bp" ? <Lsa.OvBView v={v} /> : v.view === "pri" ? <Lsa.OvPView v={v} /> : <Lsa.OvDView v={v} />),
+  // SAFe Release Train Engineer, lessons 6 and 7 (studio-views-rte.tsx, studio-model-rte.ts).
+  tta: Rte.TtaView, tuck: Rte.TuckView, fac: Rte.FacView, sus: Rte.SusView,
   // Launching AI-Native ARTs (planning-views.tsx, studio-model-aart.ts): one board kind, the step picks what it shows.
   aart: AartView,
   // The AI-Native Value Architect Mini Lab (studio-views-lab.tsx, studio-model-lab.ts).
@@ -70,7 +74,7 @@ export function StudioBoard({ kind, board, frame, config, st, op, readOnly, trai
     };
   }, [needsStudents, board.id, setUi]);
   const ctx = { kind, cfg: config, S: st, op, ui, setUi, trainer, readOnly, board, frame, ask, team: team ?? null };
-  const v = kind === "aart" ? aartModel(ctx) : kind === "lpm" ? lpmModel(ctx) : kind === "lab" ? labModel(ctx) : kind === "agenda" ? agendaModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
+  const v = kind === "aart" ? aartModel(ctx) : kind === "lpm" ? lpmModel(ctx) : kind === "lab" ? labModel(ctx) : kind === "agenda" ? agendaModel(ctx) : RTE_KINDS.has(kind) ? rteModel(ctx) : LSA_KINDS.has(kind) ? lsaModel(ctx) : studioModel(ctx);
   const View = VIEWS[kind]!;
   return (
     <div className="studio-board">

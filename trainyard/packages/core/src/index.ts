@@ -26,6 +26,7 @@ export { AI_NATIVE_SUCCESS_FACTORS } from "./courses/ai-native-arts.js";
 export { LPM_LESSONS, LPM_WORKSHOP_SECTIONS, type LpmExercise, type LpmLesson } from "./courses/lpm.js";
 export * from "./stack.js";
 export { VALUE_ARCHITECT_LAB } from "./courses/ai-native-value-architect.js";
+export { RTE_TTA, RTE_TUCKMAN_QUESTIONS } from "./courses/rte.js";
 export * from "./teams.js";
 export * from "./class-meta.js";
 export * from "./export.js";

@@ -414,13 +414,13 @@ const lesson6: ActivitySpec[] = [
     ...BOARD,
   },
   {
-    title: "Business Agility Self Assessment",
+    title: "Team and Technical Agility Self Assessment",
     kind: "Activity",
     prepare: 10,
     share: 5,
     steps:
-      "Step 1: Individually, fill in the Business Agility assessment in your workbook\nStep 2: Share some opportunities for the improvement you identified",
-    board: "ba",
+      "Step 1: Individually, rate each statement for your team: True, More true than false, Neither, More false than true, False, or Not applicable.\nStep 2: Review your radar: which sub-dimension is lowest, and which statements pull it down?\nStep 3: Share some opportunities for improvement you identified.",
+    board: "tta",
     ...BOARD,
   },
   {
@@ -491,19 +491,34 @@ const lesson7: ActivitySpec[] = [
     ...BOARD,
   },
   {
+    title: "The RTE and ART group dynamics",
+    kind: "Discussion",
+    prepare: 7,
+    steps:
+      "Step 1: As a class, consider each Tuckman stage: Forming, Storming, Norming, Performing.\nStep 2: What can you observe that would indicate that the ART is at this stage?\nStep 3: What RTE behaviors or activities can help the ART grow as a team of teams and progress to the next stage?",
+    board: "tuck",
+    ...BOARD,
+  },
+  {
+    title: "Share your facilitation techniques",
+    kind: "Discussion",
+    prepare: 10,
+    share: 5,
+    steps:
+      "Step 1: In your group, share techniques you use to facilitate ART Sync, PI Planning and the Inspect & Adapt event.\nStep 2: Name one more event in the fourth box and add techniques for it.\nStep 3: Star the technique you would recommend most and be prepared to share it with the class.",
+    board: "fac",
+    config: { shared: "facilitation" },
+    ...BOARD,
+  },
+  {
     title: "Sustaining the victory",
     kind: "Discussion",
-    steps: "Sustaining the victory",
-    board: "disc",
-    config: {
-      intro: "Discuss how the RTE keeps the momentum going once a win has landed.",
-      qs: [
-        "How are you connecting team victories to the vision?",
-        "How are you creating connections between yourself and the teams?",
-        "Discuss an upcoming PI event and how the RTE could sustain the victory.",
-      ],
-      quad: true,
-    },
+    prepare: 10,
+    share: 10,
+    steps:
+      "Step 1: As an RTE, consider how you will sustain the victory: how are you connecting team victories to the vision? How are you creating connections between yourself and the teams?\nStep 2: In your group, select one person’s context. Discuss an upcoming PI event and how the RTE could sustain the victory. Build on the facilitation skills to practice what you will say during the event.\nStep 3: Be prepared to share with the class.",
+    board: "sus",
+    config: { shared: "facilitation" },
     ...BOARD,
   },
 ];
@@ -519,3 +534,25 @@ export const RTE_COURSE: { title: string; activities: ActivitySpec[] }[] = [
   { title: "Coaching the ART", activities: lesson7 },
   { title: "Get Certified", activities: [] },
 ];
+
+/** The Team and Technical Agility self assessment (lesson 6), word for word from Scaled Agile's workbook. */
+export const RTE_TTA = {
+  dimensions: ["Agile Teams", "Built-in Quality", "Team of Agile Teams"],
+  // Sub-dimension: its dimension, name, statements.
+  subs: [
+    [0, "Teamwork", ["Our team is goal-oriented", "Our team operates in an environment of psychological safety", "Our team is empowered to make decisions on how best to do our work", "Our team has all the skills necessary to deliver our work", "Our team operates at a sustainable pace", "Our team addresses conflict in a constructive way", "Our team holds each other accountable for meeting our commitments"]],
+    [0, "Value Delivery", ["Our team understands how our work aligns to the strategy", "All of our team’s work comes through the Team Backlog", "Our team has clearly defined acceptance criteria for our work", "Our team delivers increments of value each Iteration", "Our team delivers predictably on our commitments", "Our team is responsive to change"]],
+    [0, "Learning and Improving", ["We continuously improve our ways of working as a team", "We support each other to develop T-shaped skills", "We incorporate feedback from both customers and stakeholders throughout development", "We continuously improve the flow of value"]],
+    [1, "Quality Practices", ["Our team adheres to well-defined quality standards", "Our team practices both pairing and peer review", "Our team applies collective ownership to our work", "Our team’s testing practices catch defects early", "Our team validates work in a ‘production-like environment’", "Our team contributes to maintaining the health of the Solution"]],
+    [1, "Customer Satisfaction", ["Our Solution(s) meet appropriate performance, security, and usability standards", "Our team gathers feedback from users", "Our team addresses problems in a timely manner", "Our team prevents problems from reoccurring by addressing the root cause"]],
+    [2, "Organization and Alignment", ["The ART is organized to optimize value delivery", "The ART includes the necessary people to develop and deliver the Solution", "Our team works well with the other teams", "Our team achieves alignment with the other teams, and stakeholders, as a result of PI Planning", "Our team can rely on the other teams to deliver work on which we are dependent", "Our team synchronizes with the other teams throughout the PI"]],
+    [2, "Delivery Execution", ["Our team continuously integrates work with the other teams", "The ART develops the Solution incrementally", "The ART measures progress based on the objective evaluation of the working Solution", "The ART can release on demand", "The ART meets on a cadence to identify problems and implement improvements"]],
+  ] as [number, string, string[]][],
+  // Answer: its score, name, short form.
+  scale: [[5, "True", "T"], [4, "More true than false", "MT"], [3, "Neither false nor true", "N"], [2, "More false than true", "MF"], [1, "False", "F"], [0, "Not applicable", "N/A"]] as [number, string, string][],
+  // The answers in the workbook's own example sheet, in statement order.
+  example: [5, 5, 4, 4, 4, 4, 5, 5, 4, 1, 2, 4, 3, 4, 5, 5, 5, 1, 1, 1, 4, 2, 2, 5, 4, 2, 3, 3, 2, 2, 2, 4, 4, 5, 5, 5, 3, 2],
+};
+
+/** The two questions asked of each Tuckman stage (lesson 7, slide 7-13). */
+export const RTE_TUCKMAN_QUESTIONS = ["What can you observe that would indicate that the ART is at this stage?", "What RTE behaviors or activities can help the ART grow as a team of teams and progress to the next stage?"];

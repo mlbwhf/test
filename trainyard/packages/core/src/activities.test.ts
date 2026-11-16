@@ -82,6 +82,14 @@ describe("the RTE class", () => {
     expect(rca.map((f) => f.activity!.config!.rstep)).toEqual(["all", "agree", "rca", "restate", "brainstorm", "readout"]);
     expect(new Set(rca.map((f) => f.activity!.config!.shared)).size).toBe(1);
     expect(kids(top[6]!.id)).toHaveLength(13);
+    // Lesson 6 assesses Team and Technical Agility; lesson 7 runs trust, group dynamics, facilitation techniques and sustaining the victory.
+    expect(b.frames.find((f) => f.title === "Activity: Team and Technical Agility Self Assessment")!.activity).toMatchObject({ board: "tta", prepare: 10, share: 5 });
+    expect(b.frames.some((f) => f.title === "Activity: Business Agility Self Assessment")).toBe(false);
+    expect(kids(top[7]!.id)).toEqual(["Activity: The ART can’t run without trust", "Discussion: The RTE and ART group dynamics", "Discussion: Share your facilitation techniques", "Discussion: Sustaining the victory"]);
+    const l7 = b.frames.filter((f) => f.parentId === top[7]!.id).sort((x, y) => x.y - y.y).map((f) => f.activity!);
+    expect(l7.map((a) => [a.board, a.prepare, a.share ?? 0])).toEqual([["trust", 10, 5], ["tuck", 7, 0], ["fac", 10, 5], ["sus", 10, 10]]);
+    // The techniques a team captures are there to pick from in Sustaining the victory: one shared state.
+    expect(l7[2]!.config!.shared).toBe(l7[3]!.config!.shared);
     const disc = b.frames.find((f) => f.title === "Discussion: Preparing for the PI System Demo")!.activity!.config!;
     expect(disc).toMatchObject({ quad: true, qs: expect.arrayContaining(["Who can assist the RTE with these preparations?"]) });
     // Lessons never overlap.

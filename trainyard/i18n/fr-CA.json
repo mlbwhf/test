@@ -1500,6 +1500,12 @@
   "phase": "3",
   "where": "apps/web/app/terms/page.tsx:20"
  },
+ "). Biggest opportunity:": {
+  "fr": "). Plus grande possibilité d’amélioration :",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:110"
+ },
  "). Changes are written to this customer&apos;s audit log under your name.": {
   "fr": "",
   "status": "new",
@@ -1590,6 +1596,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:720"
+ },
+ "[...] name an event": {
+  "fr": "[...] nommez un événement",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:71"
  },
  "[Add additional working agreements]": {
   "fr": "[Ajoutez d’autres accords de travail]",
@@ -2676,7 +2688,7 @@
   "fr": "+ note, appuyez sur Entrée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:193"
+  "where": "apps/web/components/exercise-boards.tsx:194"
  },
  "+ opportunity, Enter": {
   "fr": "+ opportunité, Entrée",
@@ -2688,7 +2700,7 @@
   "fr": "+ opportunité, appuyez sur Entrée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views.tsx:202"
+  "where": "apps/web/components/studio-views-rte.tsx:36 apps/web/components/studio-views.tsx:202"
  },
  "+ option, Enter": {
   "fr": "+ option, Entrée",
@@ -2774,11 +2786,17 @@
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:675 apps/web/components/studio-views-lpm.tsx:344"
  },
+ "+ sticky, Enter": {
+  "fr": "+ post-it, Entrée",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:54"
+ },
  "+ sticky, press Enter": {
   "fr": "+ post-it, appuyez sur Entrée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:60 apps/web/components/studio-views-lpm.tsx:19 apps/web/components/studio-views-lpm.tsx:167"
+  "where": "apps/web/components/exercise-boards.tsx:61 apps/web/components/studio-views-lpm.tsx:19 apps/web/components/studio-views-lpm.tsx:167"
  },
  "+ strategy, Enter (aim for 3–5)": {
   "fr": "+ stratégie, Entrée (visez 3 à 5)",
@@ -2797,6 +2815,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:340"
+ },
+ "+ technique, press Enter": {
+  "fr": "+ technique, appuyez sur Entrée",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:73"
  },
  "+ threat, Enter": {
   "fr": "+ menace, Entrée",
@@ -3018,6 +3042,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:265"
  },
+ "▼ chips go here": {
+  "fr": "▼ les pastilles vont ici",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:144"
+ },
  "▼ WHY?": {
   "fr": "▼ POURQUOI?",
   "status": "draft",
@@ -3041,6 +3071,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:838"
+ },
+ "◆ YOUR ART": {
+  "fr": "◆ VOTRE ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:123"
  },
  "◇ Market event": {
   "fr": "◇ Événement de marché",
@@ -3162,6 +3198,12 @@
   "phase": "1",
   "where": "apps/web/app/(app)/classroom/company/page.tsx:157",
   "note": "source contains &apos; entities; French uses ’ directly"
+ },
+ "✓ Ready to share": {
+  "fr": "✓ Prêt à partager",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:183"
  },
  "✓ teaches this course": {
   "fr": "✓ enseigne ce cours",
@@ -3409,6 +3451,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/portfolio/vision/page.tsx:122"
+ },
+ "1 · INDIVIDUALLY, RATE EACH STATEMENT FOR YOUR TEAM": {
+  "fr": "1 · INDIVIDUELLEMENT, ÉVALUEZ CHAQUE ÉNONCÉ POUR VOTRE ÉQUIPE",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:15"
  },
  "1 · INDIVIDUALLY, SCORE EACH COMPETENCY (1–5) FROM YOUR WORKBOOK": {
   "fr": "1 · INDIVIDUELLEMENT, NOTEZ CHAQUE COMPÉTENCE (1–5) À PARTIR DE VOTRE CAHIER D’EXERCICES",
@@ -3742,7 +3790,7 @@
   "fr": "2 · PARTAGEZ LES OPPORTUNITÉS D’AMÉLIORATION QUE VOUS AVEZ IDENTIFIÉES",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-views.tsx:200"
+  "where": "apps/web/components/studio-views-rte.tsx:33 apps/web/components/studio-views.tsx:200"
  },
  "2 · Solutions": {
   "fr": "",
@@ -5834,6 +5882,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:318"
  },
+ "ADD TECHNIQUES AS STICKIES · DRAG A CHIP ONTO A BOX, OR CLICK A BOX THEN CLICK CHIPS · ☆ STAR YOUR BEST ONE": {
+  "fr": "AJOUTEZ DES TECHNIQUES SUR DES POST-IT · GLISSEZ UNE PASTILLE SUR UNE CASE, OU CLIQUEZ SUR UNE CASE PUIS SUR DES PASTILLES · ☆ MARQUEZ VOTRE MEILLEURE D’UNE ÉTOILE",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:68"
+ },
  "Add the first risk from any of the three lenses.": {
   "fr": "Ajoutez le premier risque selon l’un des trois angles.",
   "status": "draft",
@@ -6357,6 +6411,12 @@
   "phase": "3",
   "where": "apps/web/lib/examples.ts:66 apps/web/lib/public.ts:142"
  },
+ "Agile Teams": {
+  "fr": "Équipes agiles",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:540"
+ },
  "Agile Teams (SM/TCs, POs)": {
   "fr": "Équipes agiles (SM/TC, PO)",
   "status": "draft",
@@ -6846,6 +6906,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:107"
  },
+ "All of our team’s work comes through the Team Backlog": {
+  "fr": "Tout le travail de notre équipe passe par le carnet de l’équipe",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
  "All rooms": {
   "fr": "",
   "status": "new",
@@ -7297,6 +7363,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-board.tsx:760"
+ },
+ "Answer the statements to draw your radar.": {
+  "fr": "Répondez aux énoncés pour tracer votre radar.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:110"
  },
  "Answered by a confirmed decision or action": {
   "fr": "",
@@ -7832,6 +7904,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:395"
  },
+ "ART events feel like overhead": {
+  "fr": "Les événements de l’ART sont perçus comme une surcharge",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "ART Kanban": {
   "fr": "",
   "status": "new",
@@ -8025,7 +8103,7 @@
   "fr": "Synchro ART",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model.ts:52 packages/core/src/frameworks.ts:106 packages/core/src/templates.ts:82",
+  "where": "apps/web/components/studio-model-rte.ts:39 apps/web/components/studio-model-rte.ts:41 apps/web/components/studio-model.ts:52",
   "note": "SAFe event 'ART Sync'; could stay in English."
  },
  "ART Sync · PO Sync": {
@@ -8572,6 +8650,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/lpm.ts:67"
+ },
+ "AS A CLASS, WORK EACH TUCKMAN STAGE · ADD STICKIES IN EACH CELL": {
+  "fr": "EN PLÉNIÈRE, TRAVAILLEZ CHAQUE STADE DE TUCKMAN · AJOUTEZ DES POST-IT DANS CHAQUE CASE",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:48"
  },
  "As a commentator, I can remove a comment at any time, so that I can reconsider how I participate and have more control over my privacy.": {
   "fr": "En tant que commentateur, je peux supprimer un commentaire à tout moment, afin de reconsidérer ma participation et de mieux contrôler ma vie privée.",
@@ -10596,6 +10680,12 @@
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:329 apps/web/lib/help.ts:79"
  },
+ "Breakout room hosts": {
+  "fr": "Hôtes de salles de sous-groupes",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Breakout rooms": {
   "fr": "Salles de sous-groupes",
   "status": "draft",
@@ -10648,14 +10738,14 @@
   "fr": "Importer la salle depuis Planifier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:267",
+  "where": "apps/web/components/exercise-boards.tsx:268",
   "note": "'Plan' is a menu name; match its translation"
  },
  "Bring the room you set up under Plan → Planning room into this class? It replaces whatever this class's room holds.": {
   "fr": "Importer dans cette formation la salle que vous avez configurée sous Planifier → Salle de planification? Elle remplace tout le contenu actuel de la salle de cette formation.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:251",
+  "where": "apps/web/components/exercise-boards.tsx:252",
   "note": "menu path 'Plan → Planning room' must match the translated menu labels"
  },
  "BRING YOUR BOARDS": {
@@ -11012,6 +11102,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:86"
  },
+ "Built-in Quality": {
+  "fr": "Qualité intégrée",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:540"
+ },
  "Built-in quality in your teams": {
   "fr": "La qualité intégrée dans vos équipes",
   "status": "draft",
@@ -11088,7 +11184,7 @@
   "fr": "Autoévaluation de l’agilité d’affaires",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/leading-safe.ts:123 packages/core/src/courses/rte.ts:417"
+  "where": "packages/core/src/courses/leading-safe.ts:123"
  },
  "Business alignment": {
   "fr": "Alignement métier",
@@ -11956,6 +12052,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:498"
  },
+ "Celebrate wins and connect them to the vision": {
+  "fr": "Célébrer les victoires et les relier à la vision",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
+ },
  "Centralize": {
   "fr": "Centraliser",
   "status": "draft",
@@ -11997,6 +12099,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/ainative.ts:682"
+ },
+ "Challenge the ART to the next level of flow": {
+  "fr": "Amener l’ART au niveau de flux suivant",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
  },
  "Challenges end after week 3": {
   "fr": "",
@@ -12259,6 +12367,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcomes/page.tsx:900"
  },
+ "Check-in / check-out": {
+  "fr": "Tour d’ouverture / tour de clôture",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Checking your payment…": {
   "fr": "",
   "status": "new",
@@ -12425,7 +12539,7 @@
   "fr": "Choisissez-en un ci-dessus pour commencer.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:183"
+  "where": "apps/web/components/exercise-boards.tsx:184"
  },
  "Choose one…": {
   "fr": "Choisissez-en un…",
@@ -12735,6 +12849,12 @@
   "phase": "1",
   "where": "apps/web/components/lane-board.tsx:574"
  },
+ "Clear my answers": {
+  "fr": "Effacer mes réponses",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:22"
+ },
  "Clear selection": {
   "fr": "Effacer la sélection",
   "status": "draft",
@@ -12913,7 +13033,7 @@
   "fr": "Cliquez pour ajouter un point, clic droit pour en retirer un",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:105"
+  "where": "apps/web/components/exercise-boards.tsx:106"
  },
  "Click to add here": {
   "fr": "Cliquez pour ajouter ici",
@@ -12950,6 +13070,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:518"
+ },
+ "Click to send chips here": {
+  "fr": "Cliquez pour envoyer les pastilles ici",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:144"
  },
  "Click to string these two together": {
   "fr": "",
@@ -13054,6 +13180,12 @@
   "where": "apps/web/components/studio-model.ts:327",
   "note": "Fragment (line 1)."
  },
+ "Coach Scrum Masters/Team Coaches on conflict": {
+  "fr": "Coacher les Scrum Masters/Team Coaches sur la gestion des conflits",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "Coach sync": {
   "fr": "Coach Sync",
   "status": "draft",
@@ -13136,7 +13268,7 @@
   "fr": "Coacher l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:519"
+  "where": "packages/core/src/courses/rte.ts:534"
  },
  "CoD ÷ Epic Cost (normalized)": {
   "fr": "CoD ÷ coût de l’épopée (normalisé)",
@@ -13714,6 +13846,12 @@
   "phase": "3",
   "where": "apps/web/components/pay-inline.tsx:112"
  },
+ "Conflict over priorities and dependencies": {
+  "fr": "Conflits sur les priorités et les dépendances",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "Conflicting views of value": {
   "fr": "Visions contradictoires de la valeur",
   "status": "draft",
@@ -13749,6 +13887,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/help.ts:95"
+ },
+ "Connect it to the vision": {
+  "fr": "Reliez-la à la vision",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
  },
  "Connect it with an access token (Miro, Lucid, Mural, Trello, monday.com) and choose a board, or upload an export (Miro CSV, Lucid shape data CSV, iObeya export, any CSV).": {
   "fr": "",
@@ -14027,6 +14171,12 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:443"
  },
+ "context,": {
+  "fr": "contexte,",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:97"
+ },
  "Contexts": {
   "fr": "",
   "status": "new",
@@ -14266,7 +14416,7 @@
   "fr": "Copier dans cette formation la salle configurée sous Planifier → Salle de planification",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:266",
+  "where": "apps/web/components/exercise-boards.tsx:267",
   "note": "menu path must match the translated menu labels"
  },
  "Copy the rows from your spreadsheet and paste them here, or upload a CSV file. Columns, in this order: Value Stream, Epic, Horizon, Epic Description, Est. Cost. A row whose name contains “Solution” is a Solution; the others are Epics. This replaces the current list; you can still edit every row below.": {
@@ -15172,7 +15322,7 @@
   "fr": "Satisfaction client",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:109"
+  "where": "apps/web/components/studio-model-lpm.ts:109 packages/core/src/courses/rte.ts:547"
  },
  "Customer segment pivot": {
   "fr": "Pivot de segment de clientèle",
@@ -16084,6 +16234,12 @@
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:40"
  },
+ "Delivery Execution": {
+  "fr": "Exécution de la livraison",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
+ },
  "Delivery location": {
   "fr": "Lieu de livraison",
   "status": "draft",
@@ -16928,7 +17084,7 @@
  },
  "Discuss an upcoming PI event and how the RTE could sustain the victory.": {
   "fr": "Discutez d’un prochain événement du PI et de la façon dont le RTE pourrait faire durer la victoire.",
-  "status": "draft",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:503"
  },
@@ -16946,7 +17102,7 @@
  },
  "Discuss how the RTE keeps the momentum going once a win has landed.": {
   "fr": "Discutez de la façon dont le RTE maintient l’élan une fois qu’une victoire est acquise.",
-  "status": "draft",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:499"
  },
@@ -17305,6 +17461,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:279"
+ },
+ "Dot voting": {
+  "fr": "Vote par gommettes",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
  },
  "Double-click an empty spot to add a sticky there · drag to move · double-click a card to write": {
   "fr": "Double-cliquez sur un espace vide pour y ajouter un post-it · faites glisser pour déplacer · double-cliquez sur une carte pour écrire",
@@ -19643,7 +19805,7 @@
   "fr": "Exemples",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:162"
+  "where": "apps/web/components/exercise-boards.tsx:163"
  },
  "EXAMPLES TO SPARK IDEAS": {
   "fr": "EXEMPLES POUR SUSCITER DES IDÉES",
@@ -20001,7 +20163,7 @@
   "fr": "Explorer le rôle et les responsabilités du RTE",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:513"
+  "where": "packages/core/src/courses/rte.ts:528"
  },
  "Exponential": {
   "fr": "Exponentielle",
@@ -20106,6 +20268,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:39 apps/web/components/studio-model.ts:327"
  },
+ "Facilitate conflict in the open, not in hallways": {
+  "fr": "Faciliter les conflits ouvertement, pas dans les couloirs",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "Facilitates portfolio operations": {
   "fr": "Facilite les opérations du portefeuille",
   "status": "draft",
@@ -20128,7 +20296,13 @@
   "fr": "Animer le PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:515"
+  "where": "packages/core/src/courses/rte.ts:530"
+ },
+ "Facilitation techniques you will use": {
+  "fr": "Techniques de facilitation que vous utiliserez",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:93"
  },
  "Facilitator and scribe in place; board and backlog open": {
   "fr": "Facilitateur et secrétaire en place; tableau et carnet ouverts",
@@ -20195,6 +20369,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:49"
+ },
+ "False": {
+  "fr": "Faux",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552"
  },
  "Family health as a shared habit": {
   "fr": "",
@@ -20509,6 +20689,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:327 apps/web/components/studio-model-lpm.ts:19"
+ },
+ "Few cross-team conversations": {
+  "fr": "Peu de conversations entre équipes",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
  },
  "Fewer teams": {
   "fr": "Moins d’équipes",
@@ -20861,6 +21047,18 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:604"
+ },
+ "Fishbowl": {
+  "fr": "Bocal à poissons (fishbowl)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
+ "Fist of five": {
+  "fr": "Vote à main levée de cinq doigts (fist of five)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
  },
  "Fist of five per team and for the ART.": {
   "fr": "",
@@ -21469,6 +21667,12 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:1027"
  },
+ "Forming": {
+  "fr": "Formation (Forming)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
+ },
  "Forward radar": {
   "fr": "Radar avant",
   "status": "draft",
@@ -22065,6 +22269,12 @@
   "phase": "2",
   "where": "apps/web/lib/spaces.ts:70"
  },
+ "Gallery walk": {
+  "fr": "Visite de galerie",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Gap": {
   "fr": "",
   "status": "new",
@@ -22171,7 +22381,7 @@
   "fr": "Obtenir la certification",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:520"
+  "where": "packages/core/src/courses/rte.ts:535"
  },
  "Get Certified and Start Training": {
   "fr": "Obtenir la certification et commencer à former",
@@ -22557,6 +22767,12 @@
   "where": "apps/web/components/studio-model-lpm.ts:40",
   "note": "check: may be a value."
  },
+ "Grow communities of practice": {
+  "fr": "Faire grandir les communautés de pratique",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
+ },
  "Grow lane": {
   "fr": "Agrandir le couloir",
   "status": "draft",
@@ -22925,6 +23141,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:494"
  },
+ "Hide idea prompts": {
+  "fr": "Masquer les pistes d’idées",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:122"
+ },
  "High": {
   "fr": "Élevé",
   "status": "draft",
@@ -23241,14 +23463,14 @@
  "How are you connecting team victories to the vision?": {
   "fr": "Comment reliez-vous les victoires des équipes à la vision?",
   "status": "draft",
-  "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:501"
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:176"
  },
  "How are you creating connections between yourself and the teams?": {
   "fr": "Comment créez-vous des liens entre vous et les équipes?",
   "status": "draft",
-  "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:502"
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:176"
  },
  "How are you feeling about [insert topic you are conducting empathy interviews on]?": {
   "fr": "Comment vous sentez-vous au sujet de [insérez le sujet de vos entretiens d’empathie]?",
@@ -23501,6 +23723,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:319"
+ },
+ "How this win moves the ART toward its vision or PI objectives": {
+  "fr": "Comment cette victoire rapproche l’ART de sa vision ou de ses objectifs de PI",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
  },
  "How to build the one-pager an executive team or a board reads: data sources from every system that holds the evidence, measures that combine them, outcomes kept apart from KPIs, initiatives with their funding and what the money bought, and one page per entity rolled up to the top. For associations, foundations, nonprofits and any organisation whose results live outside Jira.": {
   "fr": "",
@@ -24384,7 +24612,7 @@
   "fr": "S’améliorer sans relâche",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:518"
+  "where": "packages/core/src/courses/rte.ts:533"
  },
  "Improving the ART": {
   "fr": "Améliorer l’ART",
@@ -25002,7 +25230,7 @@
   "fr": "Inspecter et adapter",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/canvases.ts:650 packages/core/src/frameworks.ts:108 packages/core/src/templates.ts:89"
+  "where": "apps/web/components/studio-model-rte.ts:41 packages/core/src/canvases.ts:650 packages/core/src/frameworks.ts:108"
  },
  "Inspect & Adapt event": {
   "fr": "",
@@ -25345,6 +25573,12 @@
   "phase": "2",
   "where": "apps/web/components/board-list.tsx:111"
  },
+ "Invite the next step": {
+  "fr": "Invitez à la prochaine étape",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
+ },
  "Invited": {
   "fr": "Invité",
   "status": "draft",
@@ -25398,7 +25632,7 @@
   "fr": "Itération IP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:541 packages/core/src/templates.ts:80 packages/core/src/templates.ts:155"
+  "where": "apps/web/components/planning-pages.tsx:541 apps/web/components/studio-model-rte.ts:41 packages/core/src/templates.ts:80"
  },
  "IP iteration · Inspect & Adapt": {
   "fr": "",
@@ -25812,10 +26046,10 @@
   "where": "packages/core/src/frameworks.ts:102"
  },
  "Iteration Review": {
-  "fr": "",
-  "status": "new",
-  "phase": "2",
-  "where": "packages/core/src/frameworks.ts:101"
+  "fr": "Revue d’itération",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:41 packages/core/src/frameworks.ts:101"
  },
  "Iteration review and system demo": {
   "fr": "Revue d’itération et démonstration du système",
@@ -27035,6 +27269,12 @@
   "phase": "2",
   "where": "packages/core/src/insights.ts:617"
  },
+ "Lean Coffee": {
+  "fr": "Lean Coffee",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Lean governance": {
   "fr": "Gouvernance Lean",
   "status": "draft",
@@ -27136,6 +27376,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/components/landing.tsx:323"
+ },
+ "Learning and Improving": {
+  "fr": "Apprentissage et amélioration",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:545"
  },
  "Learning hours": {
   "fr": "",
@@ -27784,6 +28030,12 @@
   "phase": "1",
   "where": "packages/core/src/coachsync.ts:63"
  },
+ "Load workbook example": {
+  "fr": "Charger l’exemple du cahier",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:22"
+ },
  "Load your own list of Solutions and Epics": {
   "fr": "Chargez votre propre liste de solutions et d’épopées",
   "status": "draft",
@@ -27807,7 +28059,7 @@
   "fr": "Chargement de l’exercice…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:235"
+  "where": "apps/web/components/exercise-boards.tsx:236"
  },
  "Loading…": {
   "fr": "",
@@ -28231,6 +28483,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/portfolio/vision/page.tsx:81"
  },
+ "Make dependencies visible on the ART planning board": {
+  "fr": "Rendre les dépendances visibles sur le tableau de planification de l’ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "Make diet classification trustworthy": {
   "fr": "",
   "status": "new",
@@ -28266,6 +28524,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/help.ts:103"
+ },
+ "Make roles and the ART events explicit": {
+  "fr": "Rendre explicites les rôles et les événements de l’ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
  },
  "Make the cart the habit's home: nudges, challenges, family visibility.": {
   "fr": "",
@@ -28521,11 +28785,23 @@
   "phase": "2",
   "where": "packages/core/src/frameworks.ts:486"
  },
+ "Mark ready to share": {
+  "fr": "Marquer comme prêt à partager",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:183"
+ },
  "Mark the new ticket as an enabler": {
   "fr": "Marquer le nouveau ticket comme enabler",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:312"
+ },
+ "Mark your ART here": {
+  "fr": "Marquez votre ART ici",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:123"
  },
  "Market": {
   "fr": "",
@@ -28902,6 +29178,13 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:199"
+ },
+ "MF": {
+  "fr": "",
+  "status": "new",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552",
+  "note": "Answer code from the workbook, kept as is (not UI text to translate)."
  },
  "Mia": {
   "fr": "",
@@ -29321,6 +29604,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/billing/page.tsx:249"
  },
+ "More false than true": {
+  "fr": "Plutôt faux que vrai",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552"
+ },
  "More frequent releases; faster feature delivery": {
   "fr": "Mises en production plus fréquentes; livraison plus rapide des fonctionnalités",
   "status": "draft",
@@ -29368,6 +29657,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:93"
+ },
+ "More true than false": {
+  "fr": "Plutôt vrai que faux",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552"
  },
  "Morning": {
   "fr": "",
@@ -29537,6 +29832,13 @@
   "phase": "3",
   "where": "apps/web/app/compare/[tool]/page.tsx:50"
  },
+ "MT": {
+  "fr": "",
+  "status": "new",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552",
+  "note": "Answer code from the workbook, kept as is (not UI text to translate)."
+ },
  "Multi-factor authentication": {
   "fr": "Authentification multifacteur",
   "status": "draft",
@@ -29628,6 +29930,12 @@
   "phase": "1",
   "where": "packages/core/src/classes.ts:282"
  },
+ "Name and their ART": {
+  "fr": "Nom et son ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:90"
+ },
  "Name it and choose Create board from template.": {
   "fr": "",
   "status": "new",
@@ -29669,6 +29977,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/ainative.ts:151"
+ },
+ "Name the victory": {
+  "fr": "Nommez la victoire",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
  },
  "Name this class": {
   "fr": "Nommez cette formation",
@@ -29907,6 +30221,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:697"
+ },
+ "Neither false nor true": {
+  "fr": "Ni faux ni vrai",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552"
  },
  "Net Promoter Score (NPS)": {
   "fr": "Net Promoter Score (NPS)",
@@ -30978,6 +31298,12 @@
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:170"
  },
+ "No techniques picked yet": {
+  "fr": "Aucune technique choisie pour l’instant",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:185"
+ },
  "No TOWS canvas yet. Open the": {
   "fr": "",
   "status": "new",
@@ -31135,6 +31461,12 @@
   "where": "apps/web/components/studio-views-lpm.tsx:285",
   "note": "Decimal comma in 1,0."
  },
+ "Norming": {
+  "fr": "Normalisation (Norming)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
+ },
  "Northstar Bank": {
   "fr": "",
   "status": "new",
@@ -31175,7 +31507,7 @@
   "fr": "Non applicable",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:521"
+  "where": "packages/core/src/classes.ts:521 packages/core/src/courses/rte.ts:552"
  },
  "Not applicable at scale": {
   "fr": "Non applicable à l’échelle",
@@ -32638,6 +32970,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm-budget.tsx:49"
  },
+ "one person’s": {
+  "fr": "d’une personne",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:184"
+ },
  "One planning room for every": {
   "fr": "",
   "status": "new",
@@ -32937,7 +33275,7 @@
   "fr": "Ouvrir en plein écran ↗",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/exercise-boards.tsx:272"
+  "where": "apps/web/components/exercise-boards.tsx:273"
  },
  "open in": {
   "fr": "ouvrir dans",
@@ -33396,7 +33734,7 @@
   "fr": "Optimiser le flux",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:517"
+  "where": "packages/core/src/courses/rte.ts:532"
  },
  "Option": {
   "fr": "Option",
@@ -33578,6 +33916,12 @@
   "phase": "3",
   "where": "apps/web/app/classes/[id]/page.tsx:32 apps/web/app/guides/[slug]/page.tsx:29 apps/web/app/guides/[slug]/page.tsx:30"
  },
+ "Organization and Alignment": {
+  "fr": "Organisation et alignement",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
  "Organizational structure changes": {
   "fr": "Changements de structure organisationnelle",
   "status": "draft",
@@ -33619,7 +33963,7 @@
   "fr": "Organiser l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:514"
+  "where": "packages/core/src/courses/rte.ts:529"
  },
  "Other": {
   "fr": "",
@@ -33730,6 +34074,168 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:508"
+ },
+ "Our Solution(s) meet appropriate performance, security, and usability standards": {
+  "fr": "Notre ou nos solutions respectent les normes appropriées de performance, de sécurité et d’utilisabilité",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:547"
+ },
+ "Our team achieves alignment with the other teams, and stakeholders, as a result of PI Planning": {
+  "fr": "Notre équipe s’aligne avec les autres équipes et les parties prenantes grâce au PI Planning",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
+ "Our team addresses conflict in a constructive way": {
+  "fr": "Notre équipe traite les conflits de manière constructive",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team addresses problems in a timely manner": {
+  "fr": "Notre équipe traite les problèmes en temps opportun",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:547"
+ },
+ "Our team adheres to well-defined quality standards": {
+  "fr": "Notre équipe respecte des normes de qualité bien définies",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
+ "Our team applies collective ownership to our work": {
+  "fr": "Notre équipe applique la propriété collective à son travail",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
+ "Our team can rely on the other teams to deliver work on which we are dependent": {
+  "fr": "Notre équipe peut compter sur les autres équipes pour livrer le travail dont elle dépend",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
+ "Our team continuously integrates work with the other teams": {
+  "fr": "Notre équipe intègre continuellement son travail avec celui des autres équipes",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
+ },
+ "Our team contributes to maintaining the health of the Solution": {
+  "fr": "Notre équipe contribue à maintenir la santé de la solution",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
+ "Our team delivers increments of value each Iteration": {
+  "fr": "Notre équipe livre des incréments de valeur à chaque itération",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
+ "Our team delivers predictably on our commitments": {
+  "fr": "Notre équipe tient ses engagements de façon prévisible",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
+ "Our team gathers feedback from users": {
+  "fr": "Notre équipe recueille la rétroaction des utilisateurs",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:547"
+ },
+ "Our team has all the skills necessary to deliver our work": {
+  "fr": "Notre équipe possède toutes les compétences nécessaires pour livrer son travail",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team has clearly defined acceptance criteria for our work": {
+  "fr": "Notre équipe a des critères d’acceptation clairement définis pour son travail",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
+ "Our team holds each other accountable for meeting our commitments": {
+  "fr": "Les membres de notre équipe se tiennent mutuellement responsables du respect de nos engagements",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team is empowered to make decisions on how best to do our work": {
+  "fr": "Notre équipe a le pouvoir de décider de la meilleure façon de faire son travail",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team is goal-oriented": {
+  "fr": "Notre équipe est orientée vers ses objectifs",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team is responsive to change": {
+  "fr": "Notre équipe réagit bien au changement",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
+ "Our team operates at a sustainable pace": {
+  "fr": "Notre équipe travaille à un rythme soutenable",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team operates in an environment of psychological safety": {
+  "fr": "Notre équipe évolue dans un climat de sécurité psychologique",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
+ },
+ "Our team practices both pairing and peer review": {
+  "fr": "Notre équipe pratique à la fois le travail en binôme et la revue par les pairs",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
+ "Our team prevents problems from reoccurring by addressing the root cause": {
+  "fr": "Notre équipe empêche les problèmes de se reproduire en s’attaquant à la cause racine",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:547"
+ },
+ "Our team synchronizes with the other teams throughout the PI": {
+  "fr": "Notre équipe se synchronise avec les autres équipes tout au long du PI",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
+ "Our team understands how our work aligns to the strategy": {
+  "fr": "Notre équipe comprend comment son travail s’aligne sur la stratégie",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
+ },
+ "Our team validates work in a ‘production-like environment’": {
+  "fr": "Notre équipe valide son travail dans un « environnement semblable à la production »",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
+ "Our team works well with the other teams": {
+  "fr": "Notre équipe travaille bien avec les autres équipes",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
+ "Our team’s testing practices catch defects early": {
+  "fr": "Les pratiques de test de notre équipe détectent les défauts tôt",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
  },
  "Our Teams identify data requirements before beginning development work.": {
   "fr": "Nos équipes déterminent les exigences en matière de données avant de commencer le travail de développement.",
@@ -34250,7 +34756,7 @@
   "fr": "Stationnement",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/classroom.tsx:377 packages/core/src/classes.ts:285 packages/core/src/templates.ts:85",
+  "where": "apps/web/components/classroom.tsx:377 apps/web/components/studio-model-rte.ts:40 packages/core/src/classes.ts:285",
   "note": "agile 'parking lot' = « parking » in French usage"
  },
  "Part": {
@@ -34835,6 +35341,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:553"
  },
+ "Performing": {
+  "fr": "Performance (Performing)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
+ },
  "Period column": {
   "fr": "",
   "status": "new",
@@ -35018,6 +35530,12 @@
   "where": "packages/core/src/classes.ts:215",
   "note": "AV = actual value, kept"
  },
+ "PI objectives are mostly met": {
+  "fr": "Les objectifs de PI sont en grande partie atteints",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
+ },
  "PI objectives: committed · uncommitted (BV · AV)": {
   "fr": "",
   "status": "new",
@@ -35107,7 +35625,7 @@
   "fr": "PI Planning",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model.ts:327 packages/core/src/frameworks.ts:105 packages/core/src/templates.ts:78"
+  "where": "apps/web/components/studio-model-rte.ts:39 apps/web/components/studio-model-rte.ts:41 apps/web/components/studio-model.ts:327"
  },
  "PI PLANNING": {
   "fr": "",
@@ -35131,7 +35649,7 @@
   "fr": "Tableau de PI Planning",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/layout.tsx:18 apps/web/components/embed-bar.tsx:10 apps/web/components/exercise-boards.tsx:275",
+  "where": "apps/web/app/layout.tsx:18 apps/web/components/embed-bar.tsx:10 apps/web/components/exercise-boards.tsx:276",
   "note": "page title"
  },
  "PI Planning board": {
@@ -36195,6 +36713,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:402"
  },
+ "Polite, cautious; people wait to be told what to do": {
+  "fr": "Polis, prudents; les gens attendent qu’on leur dise quoi faire",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
+ },
  "Poor quality": {
   "fr": "Qualité insuffisante",
   "status": "draft",
@@ -36601,6 +37125,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:99"
  },
+ "Pre-reads sent early": {
+  "fr": "Lectures préalables envoyées tôt",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Pre-test score": {
   "fr": "",
   "status": "new",
@@ -36636,6 +37166,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/inspectadapt.ts:23"
+ },
+ "Predictability in the 80–100% band": {
+  "fr": "Prévisibilité dans la fourchette de 80 à 100 %",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
  },
  "Predictability sufficient to run the business": {
   "fr": "Prévisibilité suffisante pour piloter l’entreprise",
@@ -38127,6 +38663,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:541"
  },
+ "Quality Practices": {
+  "fr": "Pratiques de qualité",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:546"
+ },
  "Quantitative and qualitative measurement": {
   "fr": "Mesures quantitatives et qualitatives",
   "status": "draft",
@@ -38601,6 +39143,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/app/support/page.tsx:81"
+ },
+ "Readout:": {
+  "fr": "Compte rendu :",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:97"
  },
  "Ready": {
   "fr": "Prêt",
@@ -39227,6 +39775,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:109",
   "note": "\"Relentless improvement\": SAFe fr may use \"amélioration implacable\"; check."
+ },
+ "Relentless improvement is routine": {
+  "fr": "L’amélioration continue fait partie de la routine",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
  },
  "Relevance evals gate the semantic search rollout": {
   "fr": "",
@@ -40241,6 +40795,12 @@
   "where": "packages/core/src/courses/rte.ts:162",
   "note": "\"ROAM\" used as a verb in English; rendered \"appliquer ROAM\" / \"classement ROAM\"."
  },
+ "ROAM board": {
+  "fr": "Tableau ROAM",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "ROAM risk board": {
   "fr": "",
   "status": "new",
@@ -40435,6 +40995,12 @@
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:301"
  },
+ "Round robin": {
+  "fr": "Tour de table",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Route and purpose": {
   "fr": "",
   "status": "new",
@@ -40577,6 +41143,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:535"
+ },
+ "Run team-building in the ART launch": {
+  "fr": "Faire de la consolidation d’équipe au lancement de l’ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
  },
  "Run the agent on the proposal in Flowise, then paste its brutally honest assessment here.": {
   "fr": "Exécutez l’agent sur la proposition dans Flowise, puis collez ici son évaluation d’une franchise brutale.",
@@ -41905,6 +42477,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:73"
  },
+ "Serve and remove systemic impediments": {
+  "fr": "Servir et lever les obstacles systémiques",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
+ },
  "Server logs: kept for a short period for security and troubleshooting, then deleted.": {
   "fr": "",
   "status": "new",
@@ -42168,6 +42746,12 @@
   "phase": "1",
   "where": "apps/web/components/activity-editor.tsx:146"
  },
+ "Share a clear ART vision and working agreements": {
+  "fr": "Partager une vision claire de l’ART et des ententes de travail",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
+ },
  "Share a link": {
   "fr": "",
   "status": "new",
@@ -42209,6 +42793,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-value-architect.ts:76"
+ },
+ "Share your facilitation techniques": {
+  "fr": "Partagez vos techniques de facilitation",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:503"
  },
  "Shared": {
   "fr": "Partagé",
@@ -42421,6 +43011,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:607"
+ },
+ "Show idea prompts": {
+  "fr": "Afficher les pistes d’idées",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:122"
  },
  "Show nickname - comments": {
   "fr": "Afficher le pseudo – commentaires",
@@ -42665,6 +43261,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/login/page.tsx:141"
+ },
+ "Silent writing first": {
+  "fr": "Écriture en silence d’abord",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
  },
  "Simplicity": {
   "fr": "Simplicité",
@@ -43769,6 +44371,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/card-types/page.tsx:72 apps/web/app/(app)/card-types/page.tsx:132"
  },
+ "Star": {
+  "fr": "Étoile",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:72"
+ },
  "Start": {
   "fr": "Début",
   "status": "draft",
@@ -44204,6 +44812,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:309 packages/core/src/templates.ts:487"
  },
+ "STEP 1 · AS AN RTE, CONSIDER HOW YOU WILL SUSTAIN THE VICTORY": {
+  "fr": "ÉTAPE 1 · EN TANT QUE RTE, RÉFLÉCHISSEZ À LA FAÇON DE FAIRE DURER LA VICTOIRE",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:86"
+ },
  "Step 1: …": {
   "fr": "Étape 1 : …",
   "status": "draft",
@@ -44241,6 +44855,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:551"
  },
+ "Step 1: As a class, consider each Tuckman stage: Forming, Storming, Norming, Performing.": {
+  "fr": "Étape 1 : En plénière, examinez chaque stade de Tuckman : Forming (formation), Storming (turbulence), Norming (normalisation), Performing (performance).",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:498"
+ },
  "Step 1: As a class, read through the six risks on the next slide.": {
   "fr": "Étape 1 : En plénière, lisez les six risques présentés sur la diapositive suivante.",
   "status": "draft",
@@ -44252,6 +44872,12 @@
   "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:166"
+ },
+ "Step 1: As an RTE, consider how you will sustain the victory: how are you connecting team victories to the vision? How are you creating connections between yourself and the teams?": {
+  "fr": "Étape 1 : En tant que RTE, réfléchissez à la façon dont vous ferez durer la victoire : comment reliez-vous les victoires des équipes à la vision? Comment créez-vous des liens entre vous et les équipes?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:519"
  },
  "Step 1: Brainstorm potential causes of the problem and write down the ‘root-cause analysis’ on the template problem-solving board": {
   "fr": "Étape 1 : Faites un remue-méninges sur les causes possibles du problème et inscrivez l’« analyse des causes fondamentales » sur le modèle de tableau de résolution de problèmes",
@@ -44560,6 +45186,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:237"
  },
+ "Step 1: In your group, share techniques you use to facilitate ART Sync, PI Planning and the Inspect & Adapt event.": {
+  "fr": "Étape 1 : En groupe, partagez les techniques que vous utilisez pour faciliter la Synchro ART, le PI Planning et l’événement Inspecter et adapter.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:508"
+ },
  "Step 1: Individually brainstorm and write ideas on sticky notes and put them up on the board": {
   "fr": "Étape 1 : Individuellement, faites un remue-méninges, écrivez vos idées sur des post-it et placez-les sur le tableau",
   "status": "draft",
@@ -44610,7 +45242,7 @@
  },
  "Step 1: Individually, fill in the Business Agility assessment in your workbook": {
   "fr": "Étape 1 : Individuellement, remplissez l’évaluation de l’agilité d’affaires dans votre cahier du participant",
-  "status": "draft",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:422"
  },
@@ -44691,6 +45323,12 @@
   "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:408"
+ },
+ "Step 1: Individually, rate each statement for your team: True, More true than false, Neither, More false than true, False, or Not applicable.": {
+  "fr": "Étape 1 : Individuellement, évaluez chaque énoncé pour votre équipe : Vrai, Plutôt vrai que faux, Ni l’un ni l’autre, Plutôt faux que vrai, Faux ou Non applicable.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:422"
  },
  "Step 1: Individually, read the scenario.": {
   "fr": "Étape 1 : Individuellement, lisez le scénario.",
@@ -44947,6 +45585,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:309 packages/core/src/templates.ts:487"
  },
+ "STEP 2 · ONE PERSON’S CONTEXT, ONE UPCOMING PI EVENT, PRACTICE WHAT YOU WILL SAY": {
+  "fr": "ÉTAPE 2 · LE CONTEXTE D’UNE PERSONNE, UN ÉVÉNEMENT DE PI À VENIR, EXERCEZ-VOUS À CE QUE VOUS DIREZ",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:88"
+ },
  "Step 2: Add a sticky for how your organization responds today.": {
   "fr": "Étape 2 : Ajoutez un post-it décrivant comment votre organisation y réagit aujourd’hui.",
   "status": "draft",
@@ -45142,6 +45786,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:635"
  },
+ "Step 2: In your group, select one person’s context. Discuss an upcoming PI event and how the RTE could sustain the victory. Build on the facilitation skills to practice what you will say during the event.": {
+  "fr": "Étape 2 : En groupe, choisissez le contexte d’une personne. Discutez d’un événement de PI à venir et de la façon dont le RTE pourrait faire durer la victoire. Appuyez-vous sur les compétences de facilitation pour vous exercer à ce que vous direz pendant l’événement.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:519"
+ },
  "Step 2: In your workbook, identify some design options that might help to better ensure you can meet that milestone.": {
   "fr": "Étape 2 : Dans votre cahier d’exercices, trouvez quelques options de conception qui pourraient vous aider à mieux garantir l’atteinte de ce jalon.",
   "status": "draft",
@@ -45178,6 +45828,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:344"
+ },
+ "Step 2: Name one more event in the fourth box and add techniques for it.": {
+  "fr": "Étape 2 : Nommez un autre événement dans la quatrième case et ajoutez-y des techniques.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:508"
  },
  "Step 2: Note how long the work waits and what it is waiting for at each delay.": {
   "fr": "Étape 2 : Notez combien de temps le travail attend et ce qu’il attend à chaque délai.",
@@ -45221,6 +45877,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:285"
  },
+ "Step 2: Review your radar: which sub-dimension is lowest, and which statements pull it down?": {
+  "fr": "Étape 2 : Examinez votre radar : quelle sous-dimension est la plus basse, et quels énoncés la tirent vers le bas?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:422"
+ },
  "Step 2: Select which flow accelerators would help address that problem.": {
   "fr": "Étape 2 : Choisissez les accélérateurs de flux qui aideraient à résoudre ce problème.",
   "status": "draft",
@@ -45235,7 +45897,7 @@
  },
  "Step 2: Share some opportunities for the improvement you identified": {
   "fr": "Étape 2 : Partagez quelques possibilités d’amélioration que vous avez relevées",
-  "status": "draft",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:422"
  },
@@ -45282,6 +45944,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:107"
  },
+ "Step 2: What can you observe that would indicate that the ART is at this stage?": {
+  "fr": "Étape 2 : Que pouvez-vous observer qui indiquerait que l’ART en est à ce stade?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:498"
+ },
  "Step 2: Working in your group, discuss what your steps should be for solving this problem": {
   "fr": "Étape 2 : En groupe, discutez des étapes à suivre pour résoudre ce problème",
   "status": "draft",
@@ -45305,6 +45973,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:309 packages/core/src/templates.ts:487"
+ },
+ "STEP 3 · BE PREPARED TO SHARE WITH THE CLASS": {
+  "fr": "ÉTAPE 3 · PRÉPAREZ-VOUS À PARTAGER AVEC L’ENSEMBLE DES PARTICIPANTS",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:95"
  },
  "Step 3: Add the total values: zero to three = centralize; four to six = decentralize.": {
   "fr": "Étape 3 : Additionnez les valeurs : de zéro à trois = centraliser; de quatre à six = décentraliser.",
@@ -45438,6 +46112,18 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:385"
  },
+ "Step 3: Share some opportunities for improvement you identified.": {
+  "fr": "Étape 3 : Partagez quelques possibilités d’amélioration que vous avez relevées.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:422"
+ },
+ "Step 3: Star the technique you would recommend most and be prepared to share it with the class.": {
+  "fr": "Étape 3 : Marquez d’une étoile la technique que vous recommanderiez le plus et préparez-vous à la partager avec l’ensemble des participants.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:508"
+ },
  "Step 3: The class results shape where we spend extra time.": {
   "fr": "Étape 3 : Les résultats du groupe déterminent où nous passerons plus de temps.",
   "status": "draft",
@@ -45450,6 +46136,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:483",
   "note": "\"meet-after\" is not in the glossary; rendered « rencontre de suivi » with the English in brackets. Review."
+ },
+ "Step 3: What RTE behaviors or activities can help the ART grow as a team of teams and progress to the next stage?": {
+  "fr": "Étape 3 : Quels comportements ou activités du RTE peuvent aider l’ART à grandir comme équipe d’équipes et à passer au stade suivant?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:498"
  },
  "Step 3: With your group, evaluate the response and identify the following, with explanations for each:": {
   "fr": "Étape 3 : Avec votre groupe, évaluez la réponse et relevez les éléments suivants, en expliquant chacun :",
@@ -45542,6 +46234,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:466"
+ },
+ "Step back so teams self-organize": {
+  "fr": "Prendre du recul pour que les équipes s’auto-organisent",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
  },
  "Step name": {
   "fr": "",
@@ -45732,6 +46430,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/examples.ts:66 apps/web/lib/public.ts:142"
+ },
+ "Storming": {
+  "fr": "Turbulence (Storming)",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
  },
  "Story": {
   "fr": "Récit",
@@ -46003,6 +46707,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/components/landing.tsx:754"
+ },
+ "Strongest:": {
+  "fr": "Point le plus fort :",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:110"
  },
  "Structure and names": {
   "fr": "",
@@ -46278,7 +46988,7 @@
   "fr": "Soutenir l’exécution du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:516"
+  "where": "packages/core/src/courses/rte.ts:531"
  },
  "Supporting systems": {
   "fr": "",
@@ -46350,7 +47060,7 @@
   "fr": "Faire durer la victoire",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/rte.ts:494 packages/core/src/courses/rte.ts:496"
+  "where": "packages/core/src/courses/rte.ts:514"
  },
  "Swap-acceptance framing A/B test": {
   "fr": "",
@@ -46510,10 +47220,10 @@
   "where": "packages/core/src/canvases.ts:650"
  },
  "System Demo": {
-  "fr": "",
-  "status": "new",
-  "phase": "2",
-  "where": "packages/core/src/frameworks.ts:107"
+  "fr": "Démonstration du système",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:41 packages/core/src/frameworks.ts:107"
  },
  "SYSTEM PROMPT · PASTE INTO THE AGENT": {
   "fr": "PROMPT SYSTÈME · COLLEZ-LE DANS L’AGENT",
@@ -47029,13 +47739,19 @@
   "fr": "Agilité des équipes et agilité technique",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lsa.ts:36 apps/web/components/studio-model-lsa.ts:37"
+  "where": "apps/web/components/studio-model-lsa.ts:36 apps/web/components/studio-model-lsa.ts:37 apps/web/components/studio-views-rte.tsx:25"
  },
  "Team and Technical Agility (TTA)": {
   "fr": "Agilité technique et d’équipe (TTA)",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:406"
+ },
+ "Team and Technical Agility Self Assessment": {
+  "fr": "Autoévaluation de l’agilité technique et d’équipe",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:417"
  },
  "Team and Technical|Agility (TTA)": {
   "fr": "Agilité technique|et d’équipe (TTA)",
@@ -47224,6 +47940,12 @@
   "phase": "1",
   "where": "packages/core/src/coachsync.ts:58"
  },
+ "Team of Agile Teams": {
+  "fr": "Équipe d’équipes agiles",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:540"
+ },
  "Team outcome row": {
   "fr": "",
   "status": "new",
@@ -47321,6 +48043,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:92"
  },
+ "Teams blame each other for misses": {
+  "fr": "Les équipes se renvoient la responsabilité des ratés",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:34"
+ },
  "Teams consistently deprioritize enablers and tech debt because Business Owners push for more features each PI. The ART’s ability to integrate and release reliably is degrading.": {
   "fr": "Les équipes déprioritisent systématiquement les enablers et la dette technique, car les responsables d’affaires réclament plus de fonctionnalités à chaque PI. La capacité de l’ART à intégrer et à livrer de façon fiable se dégrade.",
   "status": "draft",
@@ -47338,6 +48066,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:29"
+ },
+ "Teams help each other with impediments": {
+  "fr": "Les équipes s’entraident pour lever les obstacles",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
  },
  "Teams keep working in their own tracker. Trainyard reads their work, and plan changes made here are queued and written back on the next sync. {0} {1}": {
   "fr": "",
@@ -47357,11 +48091,23 @@
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:159"
  },
+ "Teams solve cross-team issues themselves": {
+  "fr": "Les équipes règlent elles-mêmes les problèmes entre équipes",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:36"
+ },
  "Teams stay the same all class unless you change them.": {
   "fr": "Les équipes restent les mêmes pendant toute la formation, sauf si vous les changez.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:221"
+ },
+ "Teams unsure how their work fits the ART": {
+  "fr": "Les équipes ne savent pas trop comment leur travail s’inscrit dans l’ART",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:33"
  },
  "TEAMS WORKING ON IT": {
   "fr": "ÉQUIPES QUI Y TRAVAILLENT",
@@ -47380,6 +48126,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:96"
+ },
+ "Teamwork": {
+  "fr": "Travail d’équipe",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:543"
  },
  "Tech debt & maintenance": {
   "fr": "Dette technique et maintenance",
@@ -47428,6 +48180,30 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/lib/examples.ts:80"
+ },
+ "TECHNIQUE CHIPS": {
+  "fr": "PASTILLES DE TECHNIQUES",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:74"
+ },
+ "Techniques from “Share your facilitation techniques” appear here.": {
+  "fr": "Les techniques de « Partagez vos techniques de facilitation » apparaissent ici.",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:93"
+ },
+ "Techniques to facilitate": {
+  "fr": "Techniques pour faciliter",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:143"
+ },
+ "Techniques:": {
+  "fr": "Techniques :",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:99"
  },
  "Technology change": {
   "fr": "Évolution technologique",
@@ -47759,11 +48535,35 @@
   "phase": "2",
   "where": "packages/core/src/planning.ts:121"
  },
+ "The ART can release on demand": {
+  "fr": "L’ART peut mettre en service à la demande",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
+ },
  "The ART can’t run without trust": {
   "fr": "L’ART ne peut pas fonctionner sans confiance",
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:484"
+ },
+ "The ART develops the Solution incrementally": {
+  "fr": "L’ART développe la solution de façon incrémentale",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
+ },
+ "The ART includes the necessary people to develop and deliver the Solution": {
+  "fr": "L’ART comprend les personnes nécessaires pour développer et livrer la solution",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
+ },
+ "The ART is organized to optimize value delivery": {
+  "fr": "L’ART est organisé pour optimiser la livraison de valeur",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:548"
  },
  "The ART kanban is cluttered; work enters faster than it exits. Teams feel busy, but nothing is getting done.": {
   "fr": "Le Kanban de l’ART est encombré : le travail y entre plus vite qu’il n’en sort. Les équipes se sentent occupées, mais rien n’aboutit.",
@@ -47776,6 +48576,18 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/readiness/page.tsx:299"
+ },
+ "The ART measures progress based on the objective evaluation of the working Solution": {
+  "fr": "L’ART mesure les progrès à partir de l’évaluation objective de la solution fonctionnelle",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
+ },
+ "The ART meets on a cadence to identify problems and implement improvements": {
+  "fr": "L’ART se réunit à une cadence régulière pour cerner les problèmes et mettre en œuvre des améliorations",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:549"
  },
  "The autonomous delivery vehicle from the Leading SAFe handout: seven features, their stories and enabler spikes, sized as in the handout.": {
   "fr": "Le véhicule de livraison autonome du support de cours Leading SAFe : sept fonctionnalités, leurs récits et leurs spikes (enablers), dimensionnés comme dans le support.",
@@ -48073,6 +48885,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/app/examples/okrs-kpis/page.tsx:21"
+ },
+ "the Inspect & Adapt event": {
+  "fr": "l’événement Inspecter et adapter",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:39"
  },
  "The instructor": {
   "fr": "Le formateur",
@@ -48480,6 +49298,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:222"
+ },
+ "The RTE and ART group dynamics": {
+  "fr": "Le RTE et la dynamique de groupe de l’ART",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:494"
  },
  "The RTE class chapter by chapter: each exercise on its own tab with its timing, steps and references, the class timer, and exercises the trainer marks complete.": {
   "fr": "La formation RTE chapitre par chapitre : chaque exercice dans son propre onglet avec sa durée, ses étapes et ses références, le minuteur de la formation, et les exercices que le formateur marque comme terminés.",
@@ -50132,6 +50956,12 @@
   "phase": "1",
   "where": "apps/web/app/(app)/value-streams/page.tsx:668 packages/core/src/classes.ts:602 packages/core/src/valuestreams.ts:268"
  },
+ "True": {
+  "fr": "Vrai",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:552"
+ },
  "TRUST-BUILDING ACTIVITIES (": {
   "fr": "ACTIVITÉS QUI CRÉENT LA CONFIANCE (",
   "status": "draft",
@@ -50725,6 +51555,18 @@
   "phase": "2",
   "where": "packages/core/src/frameworks.ts:253"
  },
+ "upcoming PI event": {
+  "fr": "événement de PI à venir",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:184"
+ },
+ "Upcoming PI event": {
+  "fr": "Événement de PI à venir",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:91"
+ },
  "Update": {
   "fr": "",
   "status": "new",
@@ -50917,6 +51759,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:49"
+ },
+ "Use I&A to tackle systemic problems": {
+  "fr": "Utiliser l’I&A pour s’attaquer aux problèmes systémiques",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
  },
  "Use Note, Pen and Timer in the dock to run an alignment workshop on the same board.": {
   "fr": "",
@@ -51259,6 +52107,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/public.ts:99"
+ },
+ "Value Delivery": {
+  "fr": "Livraison de valeur",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:544"
  },
  "value flow": {
   "fr": "circuler la valeur",
@@ -51741,6 +52595,12 @@
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:155"
  },
+ "Visible timebox": {
+  "fr": "Timebox visible",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
+ },
  "Vision": {
   "fr": "",
   "status": "new",
@@ -52014,6 +52874,18 @@
   "phase": "3",
   "where": "apps/web/app/privacy/page.tsx:26"
  },
+ "We continuously improve our ways of working as a team": {
+  "fr": "Nous améliorons continuellement nos façons de travailler en équipe",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:545"
+ },
+ "We continuously improve the flow of value": {
+  "fr": "Nous améliorons continuellement le flux de valeur",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:545"
+ },
  "We did not have the ability to measure or test the full electrical load on vehicles in real operating conditions.": {
   "fr": "Nous n’avions pas la capacité de mesurer ou de tester la charge électrique complète des véhicules en conditions réelles d’exploitation.",
   "status": "draft",
@@ -52062,6 +52934,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-arts.ts:41"
  },
+ "We incorporate feedback from both customers and stakeholders throughout development": {
+  "fr": "Nous intégrons la rétroaction des clients et des parties prenantes tout au long du développement",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:545"
+ },
  "We live with it": {
   "fr": "",
   "status": "new",
@@ -52091,6 +52969,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/components/landing.tsx:661"
+ },
+ "We support each other to develop T-shaped skills": {
+  "fr": "Nous nous soutenons mutuellement pour développer des compétences en T",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:545"
  },
  "We use a small number of service providers, each only for the job listed and under their own data protection terms:": {
   "fr": "",
@@ -52491,6 +53375,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:324"
  },
+ "What can you observe that would indicate that the ART is at this stage?": {
+  "fr": "Que pouvez-vous observer qui indiquerait que l’ART en est à ce stade?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:558"
+ },
  "What challenges do you have with your current process? For example, are you satisfied with how quickly you make decisions?": {
   "fr": "Quels défis rencontrez-vous avec votre processus actuel? Par exemple, êtes-vous satisfaits de la rapidité avec laquelle vous prenez des décisions?",
   "status": "draft",
@@ -52646,6 +53536,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:319"
+ },
+ "What happened, who made it happen, and why it matters": {
+  "fr": "Ce qui s’est passé, qui l’a rendu possible et pourquoi c’est important",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
  },
  "What happened?": {
   "fr": "Que s’est-il passé?",
@@ -52971,6 +53867,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:525"
  },
+ "What RTE behaviors or activities can help the ART grow as a team of teams and progress to the next stage?": {
+  "fr": "Quels comportements ou activités du RTE peuvent aider l’ART à grandir comme équipe d’équipes et à passer au stade suivant?",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/rte.ts:558"
+ },
  "What should always remain a human responsibility?": {
   "fr": "Qu’est-ce qui doit toujours rester une responsabilité humaine?",
   "status": "draft",
@@ -53193,6 +54095,12 @@
   "phase": "3",
   "where": "apps/web/app/terms/page.tsx:53"
  },
+ "What you ask the teams to do or keep doing": {
+  "fr": "Ce que vous demandez aux équipes de faire ou de continuer à faire",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:42"
+ },
  "What you put in Trainyard": {
   "fr": "",
   "status": "new",
@@ -53384,6 +54292,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:295"
+ },
+ "Which event?": {
+  "fr": "Quel événement?",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:91"
  },
  "Which feature goes first when you divide cost of delay by job size?": {
   "fr": "Quelle fonctionnalité passe en premier lorsque vous divisez le coût du délai par la taille du travail?",
@@ -53672,6 +54586,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/lpm.ts:101"
+ },
+ "Whose context?": {
+  "fr": "Le contexte de qui?",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:90"
  },
  "Why": {
   "fr": "Pourquoi",
@@ -54107,6 +55027,18 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:109"
+ },
+ "Working agreements are followed without reminders": {
+  "fr": "Les ententes de travail sont respectées sans rappel",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:35"
+ },
+ "Working agreements up front": {
+  "fr": "Ententes de travail dès le départ",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-model-rte.ts:40"
  },
  "Working as a group, use the template to discuss the four pivots described in this lesson.": {
   "fr": "En groupe, utilisez le modèle pour discuter des quatre pivots décrits dans cette leçon.",
@@ -54805,6 +55737,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:211"
+ },
+ "Your lowest statements, click one to add it as an opportunity:": {
+  "fr": "Vos énoncés les plus bas; cliquez sur l’un d’eux pour l’ajouter comme possibilité d’amélioration :",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/studio-views-rte.tsx:34"
  },
  "your name": {
   "fr": "",
