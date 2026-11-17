@@ -1,0 +1,56 @@
+[
+ {
+  "key": "ml-benchmark",
+  "channel": "x",
+  "text": "We ran 13 machine-learning models on 19 public tabular benchmark datasets, five random splits each. TabPFN v2 averaged 76.7% accuracy and won 17 of 19 datasets; CatBoost was second at 75.7%. (Report AI benchmark, Nov 2026) https://report-ai.org/reports/machine-learning-models-compared/",
+  "weighted_len": 246
+ },
+ {
+  "key": "ml-splits",
+  "channel": "x",
+  "text": "Same 13 models, 95 single train/test runs: 7 different models came first at least once, and the overall winner topped only 80% of runs. One dataset and one split is not a ranking. (Report AI benchmark, Nov 2026) https://report-ai.org/reports/machine-learning-models-compared/",
+  "weighted_len": 235
+ },
+ {
+  "key": "ml-scaling",
+  "channel": "x",
+  "text": "Skip feature scaling and accuracy drops 7.9 points for SVM, 6.4 for a neural net (MLP) and 5.6 for k-nearest neighbours, averaged over 19 tabular datasets. Tree models don't notice. (Report AI benchmark, Nov 2026) https://report-ai.org/reports/machine-learning-models-compared/",
+  "weighted_len": 237
+ },
+ {
+  "key": "llm-taxonomy",
+  "channel": "x",
+  "text": "Eight ways large language models differ, from architecture and reasoning to openness, size, compute and origin, and 93 notable models classified on every one. Each row is sourced to a model card, paper or official page. https://report-ai.org/indexes/technical-benchmarks/llm-taxonomy-2026/",
+  "weighted_len": 243
+ },
+ {
+  "key": "soa-yoy",
+  "channel": "x",
+  "text": "ChatGPT had 300 million weekly users in 2024 and 800 million in 2025. Report AI's State of AI year-over-year page sets 11 themes side by side for 2024, 2025 and 2026 to date, each figure sourced and dated. https://report-ai.org/indexes/state-of-ai/state-of-ai-year-over-year/",
+  "weighted_len": 229
+ },
+ {
+  "key": "soa-series",
+  "channel": "x",
+  "text": "The State of AI series is live: 11 reports on AI usage, spending, finance, work, models and prices, tokens, infrastructure and energy, geography, industries, risk and regulation. Every figure dated, sourced and confidence-rated. https://report-ai.org/indexes/state-of-ai/",
+  "weighted_len": 252
+ },
+ {
+  "key": "sovereign",
+  "channel": "x",
+  "text": "58 national and sovereign AI models across 31 countries and regions. The Sovereign AI Index 2026 asks the question most coverage skips: does anyone use them? Downloads, users, leaderboard ranks and home-market share. https://report-ai.org/indexes/geography-of-ai/sovereign-ai-index-2026/",
+  "weighted_len": 240
+ },
+ {
+  "key": "ai-use-country",
+  "channel": "x",
+  "text": "How many people use AI in each of 147 economies, how fast that is changing, and which assistants they use. Report AI's AI Use by Country 2026 index, built on Microsoft's AI Diffusion data, national trackers and global surveys. https://report-ai.org/indexes/geography-of-ai/ai-use-by-country-2026/",
+  "weighted_len": 250
+ },
+ {
+  "key": "history",
+  "channel": "x",
+  "text": "From Turing's 1950 paper to models withheld for their cyber capabilities in 2026: seven decades of AI booms and winters, measured in training compute, cost, benchmark scores, money and users. https://report-ai.org/reports/how-ai-developed-1950-2026/",
+  "weighted_len": 215
+ }
+]
