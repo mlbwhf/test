@@ -4,11 +4,13 @@ This runs on your computer, never on GitHub. It opens a visible Chrome window wi
 (state/browser-profile), where you sign in once with `python -m jobhunter login`. It only reads search
 results and job pages, slowly; it never clicks Apply or submits anything.
 
-It needs the Playwright package:  pip install playwright
+Signing in needs only Google Chrome. Reading results needs the Playwright package:  pip install playwright
 """
 import os
 import random
 import re
+import socket
+import subprocess
 import time
 import urllib.parse
 
@@ -57,13 +59,39 @@ def _playwright():
     return sync_playwright
 
 
-def _open(playwright, cfg):
-    options = {"headless": os.environ.get("JOBHUNTER_HEADLESS") == "1", "viewport": {"width": 1280, "height": 900}}
-    if os.environ.get("JOBHUNTER_CHROME"):
-        options["executable_path"] = os.environ["JOBHUNTER_CHROME"]
-    else:
-        options["channel"] = cfg.get("channel", "chrome")  # your installed Google Chrome
-    return playwright.chromium.launch_persistent_context(cfg.get("profile") or PROFILE, **options)
+def _start_chrome(cfg, urls=(), debug_port=None):
+    """Start your normal Google Chrome on the job-hunter profile, as an ordinary browser window.
+    Sites refuse sign-in in a browser started by an automation tool, so Chrome is started plainly
+    and, for a run, the reader attaches to it afterwards."""
+    from .render import find_chrome
+    chrome = os.environ.get("JOBHUNTER_CHROME") or find_chrome()
+    if not chrome:
+        raise SystemExit("Google Chrome was not found. Install it, or set JOBHUNTER_CHROME to its path.")
+    profile = cfg.get("profile") or PROFILE
+    os.makedirs(profile, exist_ok=True)
+    args = [chrome, f"--user-data-dir={profile}", "--no-first-run", "--no-default-browser-check"]
+    if debug_port:
+        args.append(f"--remote-debugging-port={debug_port}")
+    if os.environ.get("JOBHUNTER_HEADLESS") == "1":
+        args += ["--headless=new", "--no-sandbox"]
+    return subprocess.Popen(args + list(urls), stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def _free_port():
+    with socket.socket() as s:
+        s.bind(("127.0.0.1", 0))
+        return s.getsockname()[1]
+
+
+def _attach(playwright, port):
+    last = None
+    for _ in range(40):
+        try:
+            return playwright.chromium.connect_over_cdp(f"http://127.0.0.1:{port}")
+        except Exception as exc:
+            last = exc
+            time.sleep(0.5)
+    raise RuntimeError("could not attach to Chrome. Close every job-hunter Chrome window and run again. " + str(last)[:120])
 
 
 def _pause(cfg):
@@ -82,8 +110,21 @@ def fetch(cfg, ctx):
 
     out, to_detail = [], []
     with sync_playwright() as p:
-        context = _open(p, cfg)
-        page = context.pages[0] if context.pages else context.new_page()
+        port = _free_port()
+        chrome = _start_chrome(cfg, debug_port=port)
+        try:
+            browser = _attach(p, port)
+            context = browser.contexts[0]
+            page = context.pages[0] if context.pages else context.new_page()
+            _read_sites(cfg, ctx, page, out, to_detail, _job)
+            browser.close()
+        finally:
+            chrome.terminate()
+    return out
+
+
+def _read_sites(cfg, ctx, page, out, to_detail, _job):
+    if True:
         for site in cfg.get("sites", []):
             if not site.get("enabled", True):
                 continue
@@ -123,27 +164,16 @@ def fetch(cfg, ctx):
             except Exception:
                 pass
             _pause(cfg)
-        context.close()
-    return out
 
 
 def login(cfg):
-    """Open the browser profile on each site's sign-in page so you can log in once."""
-    sync_playwright = _playwright()
-    if sync_playwright is None:
-        raise SystemExit("Install Playwright first:  pip install playwright")
-    os.makedirs(cfg.get("profile") or PROFILE, exist_ok=True)
-    with sync_playwright() as p:
-        context = _open(p, cfg)
-        first = True
-        for site in cfg.get("sites", []):
-            if site.get("enabled", True) and site.get("login"):
-                page = context.pages[0] if first and context.pages else context.new_page()
-                first = False
-                try:
-                    page.goto(site["login"], wait_until="domcontentloaded", timeout=45000)
-                except Exception as exc:
-                    print(f"Could not open {site['name']}: {exc}")
-        input("Sign in to each site in the browser window, then press Enter here to save and close... ")
-        context.close()
+    """Open the job-hunter Chrome profile on each site's sign-in page so you can log in once."""
+    urls = [site["login"] for site in cfg.get("sites", []) if site.get("enabled", True) and site.get("login")]
+    chrome = _start_chrome(cfg, urls)
+    input("Sign in to each site in the Chrome window, then press Enter here to save and close... ")
+    chrome.terminate()
+    try:
+        chrome.wait(timeout=15)
+    except subprocess.TimeoutExpired:
+        pass
     print("Saved. Run:  python -m jobhunter run")
