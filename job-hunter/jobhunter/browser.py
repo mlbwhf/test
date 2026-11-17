@@ -15,7 +15,11 @@ import time
 import urllib.parse
 
 HERE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-PROFILE = os.path.join(HERE, "state", "browser-profile")
+# Sign-ins are kept in your home folder so they survive downloading a newer copy of the app.
+# A profile created by an older copy inside the app folder is still used if it is the only one.
+_HOME_PROFILE = os.path.join(os.path.expanduser("~"), ".job-hunter", "browser-profile")
+_OLD_PROFILE = os.path.join(HERE, "state", "browser-profile")
+PROFILE = _OLD_PROFILE if os.path.isdir(_OLD_PROFILE) and not os.path.isdir(_HOME_PROFILE) else _HOME_PROFILE
 
 # Finds job links on any results page by URL shape, so it does not depend on a site's CSS classes.
 EXTRACT_JS = r"""

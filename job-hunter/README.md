@@ -103,7 +103,7 @@ pip install playwright
 python -m jobhunter login
 ```
 
-A Chrome window opens with a separate profile (`state/browser-profile`). Sign in to each site once, then
+A Chrome window opens with a separate profile (`.job-hunter/browser-profile` in your home folder, so sign-ins survive app updates). Sign in to each site once, then
 press Enter in the terminal. After that, every `python -m jobhunter run` on your computer also reads your
 searches on those sites, in a visible window, a few seconds apart, and reads the full posting only for jobs
 whose title already fits. It never clicks Apply.

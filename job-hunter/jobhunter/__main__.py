@@ -110,6 +110,9 @@ def write_packet(job, resume, config, out_dir, chrome):
 
 def cmd_run(args):
     config = load_json(args.config)
+    if not os.path.exists(args.resume) and os.path.exists(os.path.join(HERE, "resume.example.json")):
+        print("No resume.json yet: using the SAMPLE resume. Do not apply with these packets.\n")
+        args.resume = os.path.join(HERE, "resume.example.json")
     resume = load_json(args.resume)
     today = date.fromisoformat(args.date) if args.date else date.today()
     report = {"sources": {}, "errors": [], "skipped": []}
