@@ -1077,12 +1077,29 @@ function aa_reg_december_keeps_cadence() {
 	return apply_filters( 'aa_reg_december_keeps_cadence', array( 'ai-native-foundations' ) );
 }
 
+/* The holiday-week starts, by course length. Two-day courses: 21, 26, 27, 28,
+   29 and 30 December -- the whole of their December. Three-day courses (RTE,
+   APM): 26, 28 and 29 December, asked for on 18 Nov 2026 -- 26-28 is Saturday
+   to Monday, 28-30 and 29-31 are weekdays, none touches Christmas or New
+   Year's Day. A three-day course keeps its cadence up to the 23rd. Other
+   lengths keep their cadence untouched. */
+function aa_reg_december_starts( $days ) {
+	$map = apply_filters( 'aa_reg_december_starts', array(
+		2 => array( '-12-21', '-12-26', '-12-27', '-12-28', '-12-29', '-12-30' ),
+		3 => array( '-12-26', '-12-28', '-12-29' ),
+	) );
+	$days = (int) $days;
+	return isset( $map[ $days ] ) ? (array) $map[ $days ] : array();
+}
+
 function aa_reg_december_two_day( $slug, $course, $out ) {
-	if ( (int) $course['days'] !== 2 ) { return $out; }
+	$days   = (int) $course['days'];
+	if ( ! aa_reg_december_starts( $days ) ) { return $out; }
 
 	$year   = (int) ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y' );
-	$starts = array( '-12-21', '-12-26', '-12-27', '-12-28', '-12-29', '-12-30' );
-	$keeps  = in_array( $slug, (array) aa_reg_december_keeps_cadence(), true );
+	$starts = aa_reg_december_starts( $days );
+	$keeps  = $days !== 2 || in_array( $slug, (array) aa_reg_december_keeps_cadence(), true );
+	$cut    = $days === 2 ? 21 : 24;
 	$until  = ! empty( $course['until'] ) ? (string) $course['until'] : '';
 
 	/* Only the years the generated window actually reaches, so a 52-week
@@ -1093,7 +1110,7 @@ function aa_reg_december_two_day( $slug, $course, $out ) {
 
 	$kept = array();
 	foreach ( $out as $c ) {
-		if ( substr( $c['start'], 5, 2 ) !== '12' || ( $keeps && (int) substr( $c['start'], 8, 2 ) < 21 ) ) { $kept[] = $c; }
+		if ( substr( $c['start'], 5, 2 ) !== '12' || ( $keeps && (int) substr( $c['start'], 8, 2 ) < $cut ) ) { $kept[] = $c; }
 	}
 
 	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
@@ -1102,7 +1119,7 @@ function aa_reg_december_two_day( $slug, $course, $out ) {
 			$d = $y . $tail;
 			if ( $d < $today ) { continue; }
 			if ( $until !== '' && $d > $until ) { continue; }   // past the last date the course is offered
-			if ( ! aa_reg_span_ok( $d, 2 ) ) { continue; }   // never across the blackout
+			if ( ! aa_reg_span_ok( $d, $days ) ) { continue; }   // never across the blackout
 			$kept[] = aa_reg_make( $slug, $course, $d, 'morning' );
 		}
 	}
@@ -1455,7 +1472,7 @@ function aa_reg_generate( $slug, $course ) {
 		   replacement: aa_reg_december_two_day() puts a class on every day
 		   from the 26th to the 30th. Without this, a Thursday 31 Dec start
 		   reappeared as odd Sunday and Tuesday classes in January. */
-		if ( $days === 2 && substr( $p['start'], 5, 2 ) === '12' && (int) substr( $p['start'], 8, 2 ) >= 21 ) { continue; }
+		if ( aa_reg_december_starts( $days ) && substr( $p['start'], 5, 2 ) === '12' && (int) substr( $p['start'], 8, 2 ) >= 21 ) { continue; }
 		$added = 0;
 		$probe = new DateTime( $p['start'], $tz );
 		for ( $i = 1; $i <= 7 && $added < aa_reg_backfill(); $i++ ) {
