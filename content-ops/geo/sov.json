@@ -2,7 +2,7 @@
  "slug": "sovereign-ai-index-2026",
  "path": "/indexes/geography-of-ai/sovereign-ai-index-2026/",
  "parent_path": "/indexes/geography-of-ai/",
- "csv": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
+ "csv": "report-ai-data-sovereign-ai-index-2026-rev20261118.csv",
  "trail": [
   [
    "Indexes",
@@ -373,7 +373,7 @@
        "Jais 3 family (HF 29 Sep 2026): Jais-3-375B-A23B,…",
        "30k",
        "1.69M",
-       "None users",
+       "",
        "HIGH"
       ],
       [
@@ -397,7 +397,7 @@
        "ALLaM 34B (served via HUMAIN Chat)",
        "93k",
        "392k",
-       "None users",
+       "",
        "HIGH"
       ],
       [
@@ -421,7 +421,7 @@
        "Sarvam 105B and Sarvam 30B",
        "64k",
        "2.59M",
-       "None users",
+       "",
        "HIGH"
       ],
       [
@@ -673,7 +673,7 @@
        "",
        "126k",
        "1.56M",
-       "None users",
+       "",
        "HIGH"
       ],
       [
@@ -733,7 +733,7 @@
        "GigaChat 3.5 432B-A28B (HF, 3 Sep 2026)",
        "378k",
        "5.99M",
-       "None monthly users",
+       "",
        "HIGH"
       ],
       [
@@ -1559,15 +1559,6 @@
        "2026-01",
        "Sensor Tower via secondary",
        "MEDIUM"
-      ],
-      [
-       "India",
-       "Sarvam Indus",
-       "None",
-       "users",
-       "2026-02-20",
-       "Outlook Business",
-       null
       ],
       [
        "India",

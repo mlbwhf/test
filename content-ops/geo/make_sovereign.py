@@ -67,14 +67,14 @@ for m in M:
                 short(m.get('latest_version'), 60),
                 fmt_dl(d30['value']) if d30 and num(d30.get('value')) else '',
                 (fmt_dl(dall['value']) if dall and num(dall.get('value')) else short(dall.get('value'), 14) if dall else ''),
-                short(f"{users['value']} {users.get('unit', '')}", 50) if users else '',
+                short(f"{users['value']} {users.get('unit', '')}", 50) if users and users.get('value') not in (None, '', 'None') else '',
                 conf])
 
 page = {
  "slug": "sovereign-ai-index-2026",
  "path": "/indexes/geography-of-ai/sovereign-ai-index-2026/",
  "parent_path": "/indexes/geography-of-ai/",
- "csv": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
+ "csv": "report-ai-data-sovereign-ai-index-2026-rev20261118.csv",
  "trail": [["Indexes", "/indexes/"], ["The Geography of AI", "/indexes/geography-of-ai/"], ["Sovereign AI Index 2026", "/indexes/geography-of-ai/sovereign-ai-index-2026/"]],
  "eyebrow": "Report AI &middot; The Geography of AI &middot; Index &middot; Updated quarterly",
  "title": "Sovereign AI Index 2026: National Models, Compute and Who Uses Them",
@@ -175,6 +175,8 @@ hrows = []
 for p in home:
     place = p['comparison'].split(':', 1)[1].strip()
     for r in p['rows']:
+        if r.get('value') in (None, '', 'None'):
+            continue  # no reliable figure: omit the row rather than print 'None'
         hrows.append([short(place, 40), r.get('app') or r.get('model') or '', str(r.get('value')), short(r.get('unit'), 60), r.get('date', ''), short(r.get('source'), 50), r.get('confidence', '')])
 ch.append({
  "id": "home", "kicker": "5. Popularity: home markets",

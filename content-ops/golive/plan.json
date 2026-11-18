@@ -253,21 +253,22 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 3756,
@@ -280,21 +281,22 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 3851,
@@ -307,21 +309,22 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 4007,
@@ -334,21 +337,22 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 4009,
@@ -361,21 +365,22 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 3821,
@@ -496,17 +501,17 @@
   "simple": [
    {
     "search": "\"2026-11-11\"",
-    "replace": "\"2026-11-16\"",
+    "replace": "\"2026-11-18\"",
     "count": 4
    },
    {
     "search": ">11 November 2026<",
-    "replace": ">16 November 2026<",
+    "replace": ">18 November 2026<",
     "count": 1
    },
    {
     "search": "published 11 November 2026.",
-    "replace": "published 16 November 2026.",
+    "replace": "published 18 November 2026.",
     "count": 1
    },
    {
@@ -526,11 +531,27 @@
    },
    {
     "search": "report-ai-data-sovereign-ai-index-2026.csv",
-    "replace": "report-ai-data-sovereign-ai-index-2026-rev20261116.csv",
+    "replace": "report-ai-data-sovereign-ai-index-2026-rev20261118.csv",
     "count": 2
+   },
+   {
+    "search": "<td>None users</td>",
+    "replace": "<td></td>",
+    "count": 4
+   },
+   {
+    "search": "<td>None monthly users</td>",
+    "replace": "<td></td>",
+    "count": 1
+   },
+   {
+    "search": "<tr><td><strong>India</strong></td><td>Sarvam Indus</td><td>None</td><td>users</td><td>2026-02-20</td><td>Outlook Business</td><td>None</td></tr>",
+    "replace": "",
+    "count": 1
    }
   ],
-  "simple_ok": true
+  "simple_ok": true,
+  "redated": "2026-11-18"
  },
  {
   "id": 4104,
