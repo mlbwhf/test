@@ -84,3 +84,22 @@ jobs:
           SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
           NOTIFY_TO: ${{ secrets.NOTIFY_TO }}
         run: python -m jobhunter notify
+
+  image:
+    # Builds the web app container and checks that it starts, serves the sign-in page and prints a PDF.
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - run: docker build -t jobhunter job-hunter
+      - name: Smoke test
+        run: |
+          docker run -d --name jh -p 8080:8080 -e JOBHUNTER_PASSWORD=ci-password -e JOBHUNTER_RUN_HOUR=23 jobhunter
+          for i in $(seq 1 30); do curl -fs http://127.0.0.1:8080/healthz && break; sleep 1; done
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8080/api/state)" = 401
+          curl -fs http://127.0.0.1:8080/login | grep -q "Sign in"
+          curl -fs -c jar -o /dev/null -d 'password=ci-password' http://127.0.0.1:8080/login || true
+          curl -fs -b jar http://127.0.0.1:8080/api/state | grep -q '"jobs"'
+          docker exec jh python -c "import os,tempfile; from jobhunter import render; d=tempfile.mkdtemp(); h=os.path.join(d,'a.html'); open(h,'w').write('<h1>ok</h1>'); assert render.html_to_pdf(render.find_chrome(), h, os.path.join(d,'a.pdf')), 'pdf failed'; print('pdf ok')"
+          docker logs jh

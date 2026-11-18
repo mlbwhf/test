@@ -1,0 +1,35 @@
+# Job Hunter on a VPS where Traefik already owns ports 80/443 and issues certificates
+# (the Hostinger "Docker and Traefik" template). This project publishes no host ports.
+# Settings come from .env next to this file; see .env.example.
+name: jobhunter
+services:
+  web:
+    build: ..
+    restart: unless-stopped
+    environment:
+      JOBHUNTER_PASSWORD: ${JOBHUNTER_PASSWORD:?set JOBHUNTER_PASSWORD in .env}
+      JOBHUNTER_TOKEN: ${JOBHUNTER_TOKEN:-}
+      JOBHUNTER_RUN_HOUR: ${JOBHUNTER_RUN_HOUR:-2}
+      JOOBLE_API_KEY: ${JOOBLE_API_KEY:-}
+      ADZUNA_APP_ID: ${ADZUNA_APP_ID:-}
+      ADZUNA_APP_KEY: ${ADZUNA_APP_KEY:-}
+    volumes:
+      - data:/data
+    networks: [traefik]
+    labels:
+      traefik.enable: "true"
+      traefik.docker.network: ${TRAEFIK_NETWORK:-traefik}
+      traefik.http.routers.jobhunter.rule: Host(`${JOBHUNTER_HOST:?set JOBHUNTER_HOST in .env}`)
+      traefik.http.routers.jobhunter.entrypoints: ${TRAEFIK_ENTRYPOINT:-websecure}
+      traefik.http.routers.jobhunter.tls: "true"
+      traefik.http.routers.jobhunter.tls.certresolver: ${TRAEFIK_CERT_RESOLVER:-letsencrypt}
+      traefik.http.routers.jobhunter.middlewares: jobhunter-headers
+      traefik.http.services.jobhunter.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.jobhunter-headers.headers.stsSeconds: "31536000"
+      traefik.http.middlewares.jobhunter-headers.headers.customResponseHeaders.X-Robots-Tag: noindex, nofollow
+volumes:
+  data:
+networks:
+  traefik:
+    external: true
+    name: ${TRAEFIK_NETWORK:-traefik}

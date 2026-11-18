@@ -170,3 +170,78 @@ class SourceParsingTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class WebTests(unittest.TestCase):
+    """Access control of the web app, over real HTTP on a local port."""
+
+    @classmethod
+    def setUpClass(cls):
+        import threading
+        import urllib.request
+        from http.server import ThreadingHTTPServer
+        from jobhunter import web
+        cls.tmp = tempfile.TemporaryDirectory()
+        os.environ.update(JOBHUNTER_PASSWORD="correct horse", JOBHUNTER_TOKEN="tok", JOBHUNTER_RUN_HOUR="23")
+        cls.app = web.App(cls.tmp.name)
+        cls.app.start_run = lambda kind="fetch": True  # no real runs in tests
+        web.Handler.app = cls.app
+        cls.server = ThreadingHTTPServer(("127.0.0.1", 0), web.Handler)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+        cls.base = f"http://127.0.0.1:{cls.server.server_address[1]}"
+
+        class NoRedirect(urllib.request.HTTPRedirectHandler):
+            def redirect_request(self, *args, **kwargs):
+                return None
+        cls.opener = urllib.request.build_opener(NoRedirect)
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.tmp.cleanup()
+
+    def call(self, path, data=None, headers=None):
+        import urllib.error
+        import urllib.request
+        req = urllib.request.Request(self.base + path, data=data, headers=headers or {})
+        try:
+            with self.opener.open(req, timeout=10) as resp:
+                return resp.status, resp.headers, resp.read().decode()
+        except urllib.error.HTTPError as exc:
+            with exc:
+                return exc.code, exc.headers, exc.read().decode()
+
+    def session(self):
+        status, headers, _ = self.call("/login", b"password=correct+horse")
+        self.assertEqual(status, 302)
+        return {"Cookie": headers["Set-Cookie"].split(";")[0]}
+
+    def test_everything_private_needs_sign_in(self):
+        self.assertEqual(self.call("/")[0], 302)
+        for path in ("/api/state", "/api/resume", "/api/config"):
+            self.assertEqual(self.call(path)[0], 401)
+        self.assertEqual(self.call("/api/status", b"{}")[0], 401)
+        self.assertEqual(self.call("/login", b"password=wrong")[1]["Location"], "/login?failed=1")
+        self.assertEqual(self.call("/api/state", headers={"Cookie": "jh=9999999999.forged"})[0], 401)
+
+    def test_signed_in_requests(self):
+        cookie = self.session()
+        status, _, body = self.call("/api/state", headers=cookie)
+        self.assertEqual((status, json.loads(body)["sample_resume"]), (200, True))
+        self.assertEqual(self.call("/files/../web.json", headers=cookie)[0], 404)
+        self.assertEqual(self.call("/files/packets/%2e%2e/%2e%2e/web.json", headers=cookie)[0], 404)
+        cross = {**cookie, "Origin": "https://evil.example"}
+        self.assertEqual(self.call("/api/run", b"{}", cross)[0], 403)
+        self.assertEqual(self.call("/api/resume", json.dumps({"text": "{}"}).encode(), cookie)[0], 400)
+        good = json.dumps({"text": json.dumps(RESUME)}).encode()
+        self.assertEqual(self.call("/api/resume", good, cookie)[0], 200)
+        self.assertFalse(json.loads(self.call("/api/state", headers=cookie)[2])["sample_resume"])
+
+    def test_push_needs_the_token_and_cleans_input(self):
+        jobs = json.dumps({"jobs": [{"title": "Agile Coach", "url": "https://x.example/1"},
+                                    {"title": "Bad", "url": "javascript:alert(1)"}]}).encode()
+        self.assertEqual(self.call("/api/ingest", jobs)[0], 401)
+        self.assertEqual(self.call("/api/ingest", jobs, {"Authorization": "Bearer nope"})[0], 401)
+        status, _, body = self.call("/api/ingest", jobs, {"Authorization": "Bearer tok"})
+        self.assertEqual((status, json.loads(body)["new"]), (200, 1))

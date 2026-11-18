@@ -1,0 +1,8 @@
+resume.json
+output
+state
+tests
+deploy
+**/__pycache__
+*.zip
+*.7z

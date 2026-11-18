@@ -50,8 +50,8 @@ and results are uploaded as a password-protected archive.
 
 `resume.json` holds one base resume plus a `versions` section. By default (`config.json` >
 `resume_versions`) jobs in Canada and the US get the `north_america` version, and jobs in the Middle East
-and everywhere else, including worldwide remote, get the `international` version. A version replaces whole
-sections of the base resume, so the international one can carry a different phone number, a personal
+and everywhere else, including worldwide remote, get the `international` version. A version only lists what differs
+from the base resume, so the international one can carry a different phone number, a personal
 details line (nationality, visa status), more bullets per role, or a different summary.
 
 On top of the version, every resume is adjusted to its posting by rules:
@@ -119,6 +119,55 @@ site changes its addresses.
 
 To run it daily, schedule `python -m jobhunter run` with Windows Task Scheduler or cron while you are
 logged in to your computer.
+
+## Web app on your own server
+
+The same app with a web interface: review jobs, mark them applied or skipped, edit your resume and
+settings, start a search, and see each run's results. It runs the search itself every day, so GitHub
+Actions is not needed in this setup. It is single-user and password protected.
+
+What you need: a VPS with Docker and Traefik (the Hostinger "Docker and Traefik" template used elsewhere
+in this repository), and a DNS A record such as `jobs.yourdomain.com` pointing at it.
+
+On the server:
+
+```bash
+git clone --branch claude/modest-babbage-2du7r2 https://github.com/mlbwhf/test.git /opt/jobhunter
+```
+
+```bash
+cd /opt/jobhunter/job-hunter/deploy && cp .env.example .env && nano .env
+```
+
+Fill in `JOBHUNTER_HOST`, a long `JOBHUNTER_PASSWORD`, a long random `JOBHUNTER_TOKEN`, and the API keys.
+If your Traefik network, entrypoint or certificate resolver have other names, run
+`bash /opt/jobhunter/gate-platform/infra/scripts/detect-traefik.sh` and copy its three lines into `.env`.
+
+```bash
+docker compose up -d --build
+```
+
+Open `https://jobs.yourdomain.com`, sign in, paste your resume under **Resume**, and press
+**Find new jobs**. Your resume, settings and results live in a Docker volume on the server, not in git.
+
+To update later: `cd /opt/jobhunter && git pull && cd job-hunter/deploy && docker compose up -d --build`.
+
+**LinkedIn, Indeed, Bayt, GulfTalent, Naukrigulf with the web app.** These must still be read on your
+own computer, where you are signed in; a server login from a data-centre address is the fastest way to
+get an account restricted. Your computer sends what it finds to the server:
+
+```bash
+python -m jobhunter push --url https://jobs.yourdomain.com --token YOUR_TOKEN
+```
+
+**Automation tools.** Anything that can send a web request (n8n, cron, Zapier) can start a search:
+`POST https://jobs.yourdomain.com/api/run` with the header `Authorization: Bearer YOUR_TOKEN`.
+
+To try the web app on your own computer instead:
+
+```bash
+JOBHUNTER_PASSWORD=choose-one python -m jobhunter serve
+```
 
 ## Run it on your own computer
 

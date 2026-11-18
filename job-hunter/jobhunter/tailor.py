@@ -19,8 +19,8 @@ def _bullet(entry, track=None):
 
 
 def for_region(resume, country, config):
-    """Pick the resume version for a job's country. A version replaces whole top-level sections
-    (contact, personal, summaries, experience and so on) of the base resume with its own."""
+    """Pick the resume version for a job's country. A version overrides sections of the base resume:
+    fields inside contact, headlines, summaries and cover_letter are merged, lists are replaced."""
     versions = config.get("resume_versions", {})
     chosen = None
     for name, spec in versions.items():
@@ -32,7 +32,11 @@ def for_region(resume, country, config):
             break
     if chosen is None:
         return resume, "", dict(config.get("resume", {}))
-    merged = {**resume, **(resume.get("versions") or {}).get(chosen, {})}
+    merged = dict(resume)
+    for key, value in ((resume.get("versions") or {}).get(chosen) or {}).items():
+        # Sections that are sets of fields (contact, summaries...) are merged; lists are replaced.
+        both = isinstance(value, dict) and isinstance(resume.get(key), dict)
+        merged[key] = {**resume[key], **value} if both else value
     limits = {**config.get("resume", {}), **versions[chosen].get("limits", {})}
     return merged, versions[chosen].get("label", chosen), limits
 

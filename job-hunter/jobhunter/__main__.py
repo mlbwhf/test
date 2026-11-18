@@ -117,7 +117,15 @@ def cmd_run(args):
     today = date.fromisoformat(args.date) if args.date else date.today()
     report = {"sources": {}, "errors": [], "skipped": []}
 
-    raw = load_json(args.input) if args.input else collect(config, report)
+    if getattr(args, "rebuild", False):
+        raw = []  # re-tailor the jobs already found, without fetching
+    else:
+        raw = load_json(args.input) if args.input else collect(config, report)
+    extra = getattr(args, "extra", None)
+    if extra and os.path.exists(extra) and not getattr(args, "rebuild", False):
+        pushed = load_json(extra)
+        report["sources"]["from your computer"] = len(pushed)
+        raw = raw + pushed
     fresh = select(raw, config, today)
 
     state_path = os.path.join(args.state, "jobs.json")
@@ -151,6 +159,8 @@ def cmd_run(args):
             "sample_resume": bool(resume.get("_sample")), "jobs": rows}
     with open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8") as fh:
         fh.write(dashboard.build(data))
+    with open(os.path.join(out_dir, "data.json"), "w", encoding="utf-8") as fh:
+        json.dump(data, fh, ensure_ascii=False)
     with open(os.path.join(out_dir, "jobs.json"), "w", encoding="utf-8") as fh:
         json.dump([{k: v for k, v in r.items() if k not in ("cover", "snippet", "tweaks")} for r in rows], fh, indent=1, ensure_ascii=False)
 
@@ -172,6 +182,24 @@ def cmd_run(args):
     if os.environ.get("GITHUB_STEP_SUMMARY"):
         with open(os.environ["GITHUB_STEP_SUMMARY"], "a", encoding="utf-8") as fh:
             fh.write(summary + "\n")
+
+
+def cmd_push(args):
+    """Collect postings from the signed-in sites on this computer and send them to the server."""
+    if not (args.url and args.token):
+        sys.exit("Give --url and --token (or set JOBHUNTER_URL and JOBHUNTER_TOKEN).")
+    config = load_json(args.config)
+    config = {**config, "sources": {"browser": config["sources"].get("browser", {})}}
+    report = {"sources": {}, "errors": [], "skipped": []}
+    jobs = collect(config, report)
+    for line in report["skipped"] + report["errors"]:
+        print("! " + line)
+    if not jobs:
+        sys.exit("Nothing collected, nothing sent.")
+    from .util import fetch
+    reply = fetch(args.url.rstrip("/") + "/api/ingest", data={"jobs": jobs},
+                  headers={"Authorization": "Bearer " + args.token}, timeout=120, retries=1)
+    print(f"Sent {len(jobs)} postings. Server said: {reply}")
 
 
 def cmd_notify(args):
@@ -219,7 +247,19 @@ def main(argv=None):
     run.add_argument("--input", help="read postings from a JSON file instead of the network")
     run.add_argument("--date", help="run date override, YYYY-MM-DD")
     run.add_argument("--no-pdf", action="store_true")
+    run.add_argument("--rebuild", action="store_true", help="rebuild packets from jobs already found, no fetching")
+    run.add_argument("--extra", help="JSON file of additional raw postings to merge in")
     run.set_defaults(func=cmd_run)
+    push = sub.add_parser("push", help="read your signed-in sites here and send the postings to your server")
+    push.add_argument("--config", default=os.path.join(HERE, "config.json"))
+    push.add_argument("--url", default=os.environ.get("JOBHUNTER_URL"), help="your server, e.g. https://jobs.example.com")
+    push.add_argument("--token", default=os.environ.get("JOBHUNTER_TOKEN"))
+    push.set_defaults(func=cmd_push)
+    serve = sub.add_parser("serve", help="run the web app")
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8080)
+    serve.add_argument("--data", default=os.environ.get("JOBHUNTER_DATA") or HERE)
+    serve.set_defaults(func=lambda a: __import__("jobhunter.web", fromlist=["serve"]).serve(a.host, a.port, a.data))
     login = sub.add_parser("login", help="sign in to LinkedIn, Indeed, Bayt and others in the local browser profile")
     login.add_argument("--config", default=os.path.join(HERE, "config.json"))
     login.set_defaults(func=lambda a: __import__("jobhunter.browser", fromlist=["login"]).login(

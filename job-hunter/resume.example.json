@@ -1,6 +1,6 @@
 {
   "_sample": true,
-  "_how_to": "Copy to resume.json and replace everything with your real details. headlines, summaries and cover_letter.tracks are keyed by track (agile, transformation, ai, default). Tag skills and bullets with the tracks they prove. Write aliases the way you want them printed: when a posting uses an alias instead of the skill name, the resume shows the posting's wording. A skill with only_if_asked is listed only when the posting asks for it. A bullet can carry your own alternative wording per track under by_track. Under versions, each regional version replaces whole sections of the base resume (for example contact, personal, summaries, experience); which countries get which version is set in config.json > resume_versions. The app only selects, reorders and relabels what you write here; it never invents experience.",
+  "_how_to": "Copy to resume.json and replace everything with your real details. headlines, summaries and cover_letter.tracks are keyed by track (agile, transformation, ai, default). Tag skills and bullets with the tracks they prove. Write aliases the way you want them printed: when a posting uses an alias instead of the skill name, the resume shows the posting's wording. A skill with only_if_asked is listed only when the posting asks for it. A bullet can carry your own alternative wording per track under by_track. Under versions, each regional version overrides the base resume: give only what differs (a different phone under contact, a personal details line, a different summary; lists such as experience are replaced whole); which countries get which version is set in config.json > resume_versions. The app only selects, reorders and relabels what you write here; it never invents experience.",
   "contact": {
     "name": "Sample Candidate",
     "location": "Toronto, Canada",
@@ -298,21 +298,11 @@
   },
   "versions": {
     "north_america": {
-      "contact": {
-        "name": "Sample Candidate",
-        "location": "Toronto, Canada",
-        "phone": "+1 555 010 0100",
-        "email": "sample.candidate@example.com",
-        "linkedin": "linkedin.com/in/sample-candidate"
-      }
+      "personal": []
     },
     "international": {
       "contact": {
-        "name": "Sample Candidate",
-        "location": "Toronto, Canada",
-        "phone": "+971 50 010 0100",
-        "email": "sample.candidate@example.com",
-        "linkedin": "linkedin.com/in/sample-candidate"
+        "phone": "+971 50 010 0100"
       },
       "personal": [
         "Nationality: Canadian",

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Job Hunter</title><link rel="stylesheet" href="/app.css"></head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><span class="mark" aria-hidden="true"></span>Job Hunter</div>
+    <nav id="nav" aria-label="Sections">
+      <button data-view="jobs" aria-current="page">Jobs</button>
+      <button data-view="resume">Resume</button>
+      <button data-view="settings">Settings</button>
+      <button data-view="activity">Activity</button>
+    </nav>
+    <div class="top-actions">
+      <button class="btn primary" id="run">Find new jobs</button>
+      <form method="post" action="/logout"><button class="btn quiet" type="submit">Sign out</button></form>
+    </div>
+  </div>
+</header>
+<div id="banner"></div>
+<main>
+  <section id="view-jobs">
+    <div class="tiles" id="tiles"></div>
+    <div class="filters">
+      <input type="search" id="q" placeholder="Search title, company or place" aria-label="Search jobs">
+      <div class="seg" id="seg" role="tablist" aria-label="Show"></div>
+    </div>
+    <div class="chips" id="chips"></div>
+    <div id="list"></div>
+  </section>
+
+  <section id="view-resume" hidden>
+    <h1>Resume</h1>
+    <p class="lead">One file holds your base resume and its regional versions. Every job gets its own copy, adjusted to the posting. Saving rebuilds all open jobs with the new content.</p>
+    <div id="resume-note"></div>
+    <div class="editor">
+      <div class="editor-bar">
+        <span id="resume-check" class="check"></span>
+        <span class="grow"></span>
+        <label class="btn" for="resume-file">Load from file</label><input type="file" id="resume-file" accept=".json,application/json" hidden>
+        <button class="btn primary" id="resume-save">Save and rebuild</button>
+      </div>
+      <textarea id="resume-text" spellcheck="false" aria-label="Resume JSON"></textarea>
+    </div>
+  </section>
+
+  <section id="view-settings" hidden>
+    <h1>Settings</h1>
+    <p class="lead">Which roles count, where, and which job sources are searched. Changes apply from the next search.</p>
+    <div class="editor">
+      <div class="editor-bar">
+        <span id="config-check" class="check"></span>
+        <span class="grow"></span>
+        <button class="btn primary" id="config-save">Save settings</button>
+      </div>
+      <textarea id="config-text" spellcheck="false" aria-label="Settings JSON"></textarea>
+    </div>
+    <h2>LinkedIn, Indeed, Bayt, GulfTalent, Naukrigulf</h2>
+    <div class="panel" id="push-help"></div>
+  </section>
+
+  <section id="view-activity" hidden>
+    <h1>Activity</h1>
+    <p class="lead" id="schedule"></p>
+    <div class="panel"><div id="run-meta" class="muted"></div><div id="run-summary"></div></div>
+  </section>
+</main>
+<div id="toast" role="status" aria-live="polite"></div>
+<script src="/app.js"></script>
+</body></html>
