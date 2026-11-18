@@ -40,6 +40,8 @@ export type Cert = {
   currency: string;
   heldUntilDelivery: boolean;
   promoted: "top" | "category" | null;
+  /** The organizer's sale running now; prices already include it. */
+  sale: { label: string; percentOff: number; until: string } | null;
   courses: CatalogItem[];
   cohorts: Cohort[];
 };
@@ -200,6 +202,7 @@ export function groupCertifications(items: CatalogItem[]): Cert[] {
       currency: lead.currency ?? "USD",
       heldUntilDelivery: lead.heldUntilDelivery !== false,
       promoted: courses.find((c) => c.promoted === "top")?.promoted ?? courses.find((c) => c.promoted)?.promoted ?? null,
+      sale: lead.sale && Date.parse(lead.sale.until) > Date.now() ? lead.sale : null,
       courses,
       cohorts,
     });

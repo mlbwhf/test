@@ -381,3 +381,5 @@
 .rx-lang { background: var(--rx-accent-tint); color: var(--rx-accent-text); font-size: 13px; font-weight: 600; padding: 2px 10px; border-radius: 999px; }
 .rx .brand, .rx .brand:hover { color: var(--rx-ink); text-decoration: none; }
 .rx-before { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; color: var(--rx-body); white-space: pre-line; }
+.rx-sale-line { display: block; font-size: 13px; font-weight: 600; color: var(--rx-accent-text); }
+.rx-sale-line s { color: var(--rx-muted); font-weight: 400; margin-left: 4px; }

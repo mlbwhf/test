@@ -116,6 +116,40 @@ describe("seats", () => {
   });
 });
 
+describe("organizer sales", () => {
+  it("takes 15% off until Black Friday, then 10% until the end, on every price shown and charged", async () => {
+    const { org, ticket } = await leadingSafe();
+    now = new Date("2026-11-18T12:00:00Z"); // after the early-bird price: regular 129,900 CAD
+    await expect(core.updateSale(org.id, { label: "Black Friday", startsAt: now, steps: [{ until: new Date("2026-11-28T05:00:00Z"), bps: 6000 }] })).rejects.toMatchObject({ code: "VALIDATION" });
+    await expect(core.updateSale(org.id, { label: "BF", startsAt: now, steps: [{ until: new Date("2026-12-01T05:00:00Z"), bps: 1000 }, { until: new Date("2026-11-28T05:00:00Z"), bps: 1500 }] })).rejects.toMatchObject({ code: "VALIDATION" });
+    await core.updateSale(org.id, { label: "Black Friday", startsAt: new Date("2026-11-18T00:00:00Z"), steps: [{ until: new Date("2026-11-28T05:00:00Z"), bps: 1500 }, { until: new Date("2026-12-01T05:00:00Z"), bps: 1000 }] });
+
+    // 15% off, rounded down to the dollar: 1,299 -> 1,104 (1,104.15).
+    const early = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "a@b.co" });
+    expect(early.order.pricing.unitPriceMinor).toBe(110_400);
+    const pub = await core.publicCourse(org.id, "leading-safe");
+    expect(pub.organization.sale).toMatchObject({ label: "Black Friday", bps: 1500, next: { bps: 1000 } });
+    expect(pub.cohorts[0]!.ticketTypes[0]).toMatchObject({ prices: { CAD: 110_400, USD: 84_900 }, regularPrices: { CAD: 129_900, USD: 99_900 } });
+    expect((await core.publicCatalog())[0]).toMatchObject({ priceMinor: 110_400, sale: { label: "Black Friday", bps: 1500 } });
+    expect((await core.activeSales()).map((x) => [x.organizationName, x.bps])).toEqual([["Agile Agilist", 1500]]);
+
+    now = new Date("2026-11-29T12:00:00Z");
+    const late = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "b@b.co" });
+    expect(late.order.pricing.unitPriceMinor).toBe(116_900);
+
+    now = new Date("2026-12-01T06:00:00Z");
+    const after = await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "c@b.co" });
+    expect(after.order.pricing.unitPriceMinor).toBe(129_900);
+    expect(await core.activeSales()).toEqual([]);
+    expect((await core.publicCourse(org.id, "leading-safe")).organization.sale).toBeNull();
+
+    // Ending it early removes it.
+    now = new Date("2026-11-20T12:00:00Z");
+    expect((await core.updateSale(org.id, null)).sale).toBeUndefined();
+    expect((await core.createOrder(org.id, { ticketTypeId: ticket.id, quantity: 1, buyerEmail: "d@b.co" })).order.pricing.unitPriceMinor).toBe(129_900);
+  });
+});
+
 describe("public catalogue and JSON-LD", () => {
   it("exposes live future cohorts with resolved prices per currency", async () => {
     const { org, course, cohort } = await leadingSafe();

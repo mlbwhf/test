@@ -44,6 +44,8 @@ export interface Organization {
   slug?: string;
   /** What the public profile shows about the organizer. */
   profile?: OrganizationProfile;
+  /** A timed sale on all the organizer's classes (e.g. Black Friday), applied to every price shown and charged. */
+  sale?: OrganizationSale;
   /** Default split rules applied to every event unless the event overrides. */
   splitRules: SplitRule[];
   /** Transfer / cancel / substitute rules; courses may override. */
@@ -105,6 +107,14 @@ export interface Course {
   /** What the public class page shows beyond the basics, and the extra content for it. */
   page?: CoursePage;
   createdAt: Date;
+}
+
+/** A sale in steps: from `startsAt`, each step's percentage (basis points) applies until its `until`. */
+export interface OrganizationSale {
+  /** Shown to learners, e.g. "Black Friday". */
+  label: string;
+  startsAt: Date;
+  steps: Array<{ until: Date; bps: number }>;
 }
 
 export interface OrganizationProfile {

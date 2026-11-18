@@ -350,6 +350,11 @@ export function ClassFinder({ items, categories, initial, appUrl }: { items: Cat
                       <span>{catLabel(c.category)}</span>
                       {m.some(isLow) && <span className="cf-hot">Filling fast</span>}
                       {c.promoted && <span className="cf-spons">Sponsored</span>}
+                      {c.sale && (
+                        <span className="cf-saletag">
+                          {c.sale.label} −{c.sale.percentOff}%
+                        </span>
+                      )}
                     </div>
                     <h2>
                       <button type="button" onClick={() => set({ sel: c.id })}>

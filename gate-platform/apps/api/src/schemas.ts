@@ -39,6 +39,8 @@ export const OrganizationSchema = z.object({
   paymentMode: z.enum(["protected", "direct"]),
   marketplaceListing: z.boolean(), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), checkoutInvoices: z.boolean(),
   slug: z.string().nullable(), profile: OrganizationProfileSchema.nullable(),
+  /** The organizer's sale (Black Friday…): label, start and percentage-off steps. */
+  sale: z.object({ label: z.string(), startsAt: z.string(), steps: z.array(z.object({ until: z.string(), percentOff: z.number() })) }).nullable(),
   directAccountRef: z.string().nullable(),
   directStatus: PaymentsStatusSchema,
   createdAt: z.string(),
@@ -133,8 +135,13 @@ export const SeatTransferSchema = z.object({ id: z.string(), fromSeatId: z.strin
 export const WaitlistEntrySchema = z.object({ id: z.string(), eventId: z.string(), ticketTypeId: z.string(), email: z.string(), name: z.string().nullable(), quantity: z.number().int(), status: z.enum(["waiting", "offered", "converted", "expired", "cancelled"]), createdAt: z.string(), offeredAt: z.string().nullable(), offerExpiresAt: z.string().nullable() });
 export const JoinWaitlistBody = z.object({ eventId: z.string(), ticketTypeId: z.string().optional(), email: z.string().email(), name: z.string().max(200).optional(), quantity: z.number().int().min(1).max(10).optional() });
 
+/** A sale running now: percent off, when this rate ends, the whole sale's end, and the next step if any. */
+export const PublicSale = z.object({ label: z.string(), percentOff: z.number(), until: z.string(), endsAt: z.string(), next: z.object({ percentOff: z.number(), until: z.string() }).nullable() }).nullable();
+export const toPublicSale = (s: { label: string; bps: number; until: Date; endsAt: Date; next: { bps: number; until: Date } | null } | null) =>
+  s ? { label: s.label, percentOff: s.bps / 100, until: s.until.toISOString(), endsAt: s.endsAt.toISOString(), next: s.next ? { percentOff: s.next.bps / 100, until: s.next.until.toISOString() } : null } : null;
+
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), profileHandle: z.string() }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), profileHandle: z.string(), sale: PublicSale }),
   course: CourseSchema,
   /** Which optional class page sections to show (the organizer's switches, else "has content"). */
   sections: z.object({ banner: z.boolean(), logo: z.boolean(), badge: z.boolean(), video: z.boolean(), agenda: z.boolean(), included: z.boolean(), instructor: z.boolean(), seats: z.boolean() }),
@@ -145,7 +152,7 @@ export const PublicCourseSchema = z.object({
     dateSlug: z.string(),
     instructors: z.array(z.object({ id: z.string(), name: z.string(), title: z.string().nullable(), bio: z.string().nullable(), photoUrl: z.string().nullable() })),
     invoiceAvailable: z.boolean(),
-    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
+    ticketTypes: z.array(z.object({ id: z.string(), name: z.string(), quantity: z.number().int(), remaining: z.number().int(), prices: PriceList, regularPrices: PriceList.optional(), converted: z.array(Currency), earlyBirdUntil: z.string().nullable() })),
   })),
 });
 
@@ -186,7 +193,7 @@ export const CreateRefundBody = z.object({ orderId: z.string(), amountMinor: z.n
 export const BalanceSchema = z.object({ code: z.string(), name: z.string(), type: z.string(), currency: Currency, balanceMinor: z.number().int() });
 
 export const toPricing = (p: Organization["pricing"]) => ({ currencies: p?.currencies ?? [], fxFallback: p?.fxFallback ?? false, rounding: p?.rounding ?? "whole", rates: p?.rates ?? {}, ratesUpdatedAt: p?.ratesUpdatedAt?.toISOString() ?? null, ratesSource: p?.ratesSource ?? null });
-export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, accentColor: o.accentColor ?? null, checkoutInvoices: o.checkoutInvoices !== false, slug: o.slug ?? null, profile: o.profile ?? null, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
+export const toOrganization = (o: Organization) => ({ ...o, instructorAccess: o.instructorAccess ?? DEFAULT_INSTRUCTOR_ACCESS, paymentsAccountRef: o.paymentsAccountRef ?? null, pricing: toPricing(o.pricing), paymentsStatus: o.paymentsStatus ? { ...o.paymentsStatus, checkedAt: o.paymentsStatus.checkedAt.toISOString() } : null, paymentMode: o.paymentMode ?? "protected", marketplaceListing: o.marketplaceListing !== false, flexibleTickets: o.flexibleTickets === true, logoUrl: o.logoUrl ?? null, accentColor: o.accentColor ?? null, checkoutInvoices: o.checkoutInvoices !== false, slug: o.slug ?? null, profile: o.profile ?? null, sale: o.sale ? { label: o.sale.label, startsAt: o.sale.startsAt.toISOString(), steps: o.sale.steps.map((x) => ({ until: x.until.toISOString(), percentOff: x.bps / 100 })) } : null, directAccountRef: o.directAccountRef ?? null, directStatus: o.directStatus ? { ...o.directStatus, checkedAt: o.directStatus.checkedAt.toISOString() } : null, createdAt: o.createdAt.toISOString() });
 export const toParty = (p: Party) => ({ ...p, paymentsAccountRef: p.paymentsAccountRef ?? null, title: p.title ?? null, bio: p.bio ?? null, photoUrl: p.photoUrl ?? null, createdAt: p.createdAt.toISOString() });
 export const toCourse = (c: Course) => ({ ...c, description: c.description ?? null, certificationBody: c.certificationBody ?? null, durationDays: c.durationDays ?? null, prework: c.prework ?? null, surveyUrl: c.surveyUrl ?? null, imageUrl: c.imageUrl ?? null, badge: c.badge ?? null, category: c.category ?? null, topic: c.category ?? inferCategory(c.name, c.certificationBody), language: c.language ?? null, page: c.page ?? null, createdAt: c.createdAt.toISOString() });
 export function toPublicEvent(e: Event) {

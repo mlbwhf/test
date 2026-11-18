@@ -6,7 +6,7 @@ import { COMMON_ZONES, detectedZone, zoneName } from "@/lib/class-time";
 import { loadTurnstile } from "@/components/turnstile-field";
 import { rxMoney } from "@/components/class-page/shared";
 
-type TicketOption = { id: string; name: string; priceMinor: number; remaining: number };
+type TicketOption = { id: string; name: string; priceMinor: number; remaining: number; regularMinor?: number };
 type Person = { name: string; email: string; jobTitle: string; timeZone: string };
 type Pricing = { subtotalMinor: number; attendeeFeeMinor: number; taxMinor: number; totalMinor: number; flexibleMinor?: number; unitPriceMinor: number; quantity: number };
 type ApiError = { message: string; hint?: string };
@@ -39,6 +39,8 @@ type Props = {
   viaKey: string;
   /** The marketing homepage (enrollclass.com), where the logo leads. */
   homeUrl: string;
+  /** The organizer's sale running now (ticket prices already include it). */
+  sale: { label: string; percentOff: number } | null;
 };
 
 type StripePaymentElement = { mount(el: HTMLElement): void; unmount(): void };
@@ -487,6 +489,11 @@ export function Checkout(p: Props) {
               <div>
                 <span>
                   {n} {n === 1 ? "seat" : "seats"} × {free ? "Free" : rxMoney(unit, p.currency)}
+                  {p.sale && ticket?.regularMinor && !free ? (
+                    <small className="rx-sale-line">
+                      {p.sale.label}: {p.sale.percentOff}% off <s>{rxMoney(ticket.regularMinor, p.currency)}</s>
+                    </small>
+                  ) : null}
                 </span>
                 <span>{free ? "Free" : rxMoney(pricing?.quantity === n ? pricing.subtotalMinor : unit * n, p.currency)}</span>
               </div>

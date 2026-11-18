@@ -8,7 +8,7 @@ import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { RegisterSheet } from "@/components/register-sheet";
 import { Agenda, ZoneProvider } from "@/components/class-page/times";
 import { videoEmbed } from "@/components/class-page/shared";
-import { BookingProvider, DatePicker, HeroFacts, MobileBar, RegisterLink, RegisterPanel, SelectedDateLine, SelectedLabel, type ClassDate } from "@/components/class-page/booking";
+import { BookingProvider, DatePicker, HeroFacts, MobileBar, RegisterLink, RegisterPanel, SaleNote, SelectedDateLine, SelectedLabel, type ClassDate } from "@/components/class-page/booking";
 import { dateRange } from "@/lib/class-time";
 import { badgeCode } from "@/lib/finder";
 import { COURSE_CATEGORIES } from "@/lib/api";
@@ -172,7 +172,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
       slug: c.dateSlug, eventId: c.event.id, startsAt: c.event.startsAt, endsAt: c.event.endsAt ?? ses[ses.length - 1]!.endsAt, timezone: c.event.timezone, format: c.event.format,
       days: classDays(ses, c.event.timezone), dayStartsAt: ses[0]!.startsAt, dayEndsAt: ses[0]!.endsAt,
       weekend: ses.some((x) => ["Sat", "Sun"].includes(fmt(x.startsAt, c.event.timezone, { weekday: "short" }))),
-      cap, left, priceMinor: price?.minor ?? null, currency: price?.currency ?? c.event.currency, invoice: c.invoiceAvailable,
+      cap, left, priceMinor: price?.minor ?? null, regularMinor: price?.tt.regularPrices?.[price.currency] ?? null, currency: price?.currency ?? c.event.currency, invoice: c.invoiceAvailable,
       instructors: c.instructors.map((i) => i.name), where: cityOf(c.event.timezone),
     };
   });
@@ -274,6 +274,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
             <div>
               <h1>{course.name}</h1>
               {sel && <SelectedDateLine />}
+              {sel && <SaleNote />}
               {lede && <p className="cp-lede">{lede}</p>}
             </div>
             {heroBadge}
@@ -512,7 +513,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
     <div className="cp" style={style}>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }} />
       {sel ? (
-        <BookingProvider dates={dates} initial={sel.dateSlug} basePath={basePath} nowIso={nowIso} showSeats={show.seats} paymentMode={paymentMode} orgName={data.organization.name}>
+        <BookingProvider dates={dates} initial={sel.dateSlug} basePath={basePath} nowIso={nowIso} showSeats={show.seats} paymentMode={paymentMode} orgName={data.organization.name} sale={data.organization.sale ?? null}>
           {header}
           {page}
           <MobileBar />

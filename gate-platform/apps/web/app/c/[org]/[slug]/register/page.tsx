@@ -74,7 +74,8 @@ export default async function RegisterPage({ params, searchParams }: { params: P
         sessionCount={sessions.length}
         classZone={ev.timezone}
         currency={ev.currency}
-        ticketTypes={tiers.map((t) => ({ id: t.id, name: t.name, priceMinor: t.prices[ev.currency]!, remaining: t.remaining }))}
+        ticketTypes={tiers.map((t) => ({ id: t.id, name: t.name, priceMinor: t.prices[ev.currency]!, remaining: t.remaining, ...(t.regularPrices?.[ev.currency] ? { regularMinor: t.regularPrices[ev.currency]! } : {}) }))}
+        sale={data.organization.sale ? { label: data.organization.sale.label, percentOff: data.organization.sale.percentOff } : null}
         invoiceAvailable={sel.invoiceAvailable}
         flexibleOffered={data.organization.flexibleTickets === true}
         paymentMode={data.organization.paymentMode === "direct" ? "direct" : "protected"}

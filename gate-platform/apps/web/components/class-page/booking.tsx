@@ -7,6 +7,8 @@
 
 import { createContext, useContext, useEffect, useMemo, useState, type MouseEvent, type ReactNode } from "react";
 import { COMMON_ZONES, detectedZone, zoneName } from "@/lib/class-time";
+import type { PublicSale } from "@/lib/public-api";
+import { lastDay } from "@/lib/sale-format";
 
 export type ClassDate = {
   slug: string;
@@ -24,6 +26,8 @@ export type ClassDate = {
   cap: number;
   left: number;
   priceMinor: number | null;
+  /** The regular price while a sale runs (priceMinor is the sale price). */
+  regularMinor: number | null;
   currency: string;
   invoice: boolean;
   instructors: string[];
@@ -42,6 +46,7 @@ type Ctx = {
   showSeats: boolean;
   paymentMode: "protected" | "direct";
   orgName: string;
+  sale: PublicSale | null;
 };
 
 const BookingContext = createContext<Ctx | null>(null);
@@ -127,7 +132,7 @@ function describe(c: ClassDate, zone: string, now: number) {
   };
 }
 
-export function BookingProvider(p: { dates: ClassDate[]; initial: string; basePath: string; nowIso: string; showSeats: boolean; paymentMode: "protected" | "direct"; orgName: string; children: ReactNode }) {
+export function BookingProvider(p: { dates: ClassDate[]; initial: string; basePath: string; nowIso: string; showSeats: boolean; paymentMode: "protected" | "direct"; orgName: string; sale: PublicSale | null; children: ReactNode }) {
   const [selSlug, setSelSlug] = useState(p.initial);
   const [zone, setZone] = useState(p.dates.find((d) => d.slug === p.initial)?.timezone ?? p.dates[0]?.timezone ?? "UTC");
   const [detected, setDetected] = useState<string | null>(null);
@@ -152,8 +157,10 @@ export function BookingProvider(p: { dates: ClassDate[]; initial: string; basePa
       },
       zone, setZone, detected, now,
       basePath: p.basePath, showSeats: p.showSeats, paymentMode: p.paymentMode, orgName: p.orgName,
+      // A sale whose current step has ended no longer counts (pages can be cached for a few minutes).
+      sale: p.sale && Date.parse(p.sale.until) > now ? p.sale : null,
     }),
-    [p.dates, sel, zone, detected, now, p.basePath, p.showSeats, p.paymentMode, p.orgName],
+    [p.dates, sel, zone, detected, now, p.basePath, p.showSeats, p.paymentMode, p.orgName, p.sale],
   );
   return <BookingContext.Provider value={value}>{p.children}</BookingContext.Provider>;
 }
@@ -179,6 +186,22 @@ export function RegisterLink({ className, children }: { className: string; child
     <a className={className} href={full ? waitlistHref(b, b.sel) : checkoutHref(b, b.sel)}>
       {children ?? (full ? "Join the waitlist" : `Register for ${describe(b.sel, b.zone, b.now).range}`)}
     </a>
+  );
+}
+
+/** "Black Friday: 15% off until Fri, Nov 27, then 10% through Mon, Nov 30". */
+export function SaleNote() {
+  const b = useBooking();
+  if (!b.sale || !b.sel.regularMinor) return null;
+  const s = b.sale;
+  return (
+    <p className="cp-sale">
+      <span className="cp-sale-tag">{s.label}</span>
+      <span>
+        <strong>{s.percentOff}% off</strong> until {lastDay(s.until)}
+        {s.next ? `, then ${s.next.percentOff}% off through ${lastDay(s.next.until)}` : ""}. Applied automatically.
+      </span>
+    </p>
   );
 }
 
@@ -320,8 +343,16 @@ export function RegisterPanel() {
       )}
       {c.priceMinor !== null && !full && (
         <div className="cp-total">
-          <span>Total</span>
+          <span>
+            Total
+            {b.sale && c.regularMinor ? (
+              <em className="cp-card-sale">
+                {b.sale.label} −{b.sale.percentOff}%
+              </em>
+            ) : null}
+          </span>
           <strong>
+            {b.sale && c.regularMinor ? <s className="cp-was">{money(c.regularMinor * n, c.currency)}</s> : null}
             {money(c.priceMinor * n, c.currency)} {c.priceMinor > 0 && <small>{c.currency}</small>}
           </strong>
         </div>
@@ -485,7 +516,10 @@ export function MobileBar() {
   return (
     <div className="cp-mbar">
       <div>
-        <strong>{c.priceMinor === null ? "—" : money(c.priceMinor, c.currency)}</strong>
+        <strong>
+          {b.sale && c.regularMinor ? <s className="cp-was">{money(c.regularMinor, c.currency)}</s> : null}
+          {c.priceMinor === null ? "—" : money(c.priceMinor, c.currency)}
+        </strong>
         <span>{describe(c, b.zone, b.now).range}</span>
       </div>
       <a className="cp-btn cp-btn-green" href={full ? waitlistHref(b, c) : checkoutHref(b, c)}>

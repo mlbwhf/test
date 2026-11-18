@@ -373,6 +373,29 @@ describe("API", () => {
     expect(photo.photoUrl).toMatch(/\/public\/v1\/media\//);
   });
 
+  it("an organizer's sale lowers every price and shows on the public pages", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "lpm", name: "LPM" } })).json();
+    const ev = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/cohorts`, headers: J, payload: { name: "LPM", startsAt: "2099-03-02T14:00:00Z" } })).json();
+    const tt = (await im.inject({ method: "POST", url: `/v1/events/${ev.id}/ticket-types`, headers: J, payload: { name: "Seat", priceMinor: 169_500, quantity: 20 } })).json();
+    await im.inject({ method: "POST", url: `/v1/events/${ev.id}/publish`, headers: J, payload: {} });
+    expect((await im.inject({ method: "PUT", url: "/v1/organizations/me/sale", headers: J, payload: { label: "Black Friday", steps: [{ until: "2099-01-01T00:00:00Z", percentOff: 70 }] } })).statusCode).toBe(400);
+    const set = (await im.inject({ method: "PUT", url: "/v1/organizations/me/sale", headers: J, payload: { label: "Black Friday", steps: [{ until: "2098-12-01T00:00:00Z", percentOff: 15 }, { until: "2099-01-01T00:00:00Z", percentOff: 10 }] } })).json();
+    expect(set.sale).toMatchObject({ label: "Black Friday", steps: [{ percentOff: 15 }, { percentOff: 10 }] });
+    const pub = (await im.inject(`/public/v1/organizations/${set.id}/courses/lpm`)).json();
+    expect(pub.organization.sale).toMatchObject({ label: "Black Friday", percentOff: 15, next: { percentOff: 10 } });
+    expect(pub.cohorts[0].ticketTypes[0]).toMatchObject({ prices: { USD: 144_000 }, regularPrices: { USD: 169_500 } });
+    expect((await im.inject("/public/v1/sales")).json().items).toEqual([expect.objectContaining({ organizationName: "AA", percentOff: 15 })]);
+    expect((await im.inject("/public/v1/catalog")).json().items[0]).toMatchObject({ priceMinor: 144_000, sale: { label: "Black Friday", percentOff: 15 } });
+    const order = (await im.inject({ method: "POST", url: `/public/v1/organizations/${set.id}/orders`, headers: { "content-type": "application/json" }, payload: { ticketTypeId: tt.id, quantity: 1, buyerEmail: "a@b.co", dryRun: true } })).json();
+    expect(order.order.pricing.unitPriceMinor).toBe(144_000);
+    expect((await im.inject({ method: "DELETE", url: "/v1/organizations/me/sale", headers: { "x-api-key": key } })).json().sale).toBeNull();
+    expect((await im.inject("/public/v1/sales")).json().items).toEqual([]);
+  });
+
   it("categories and paid promotions in the class finder", async () => {
     const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
     const im = await buildApp({ core, adminKey: "admin", env: "test" });

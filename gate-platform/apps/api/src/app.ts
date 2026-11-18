@@ -258,12 +258,17 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       reply.header("cache-control", "public, max-age=3600");
       return { currencies: Object.fromEntries(Object.entries(DEFAULT_SCHEDULES).map(([ccy, s]) => [ccy, { protected: fee(s.online.gate_account), direct: fee(s.direct), verifiedBadgeMinor: s.verifiedBadgeMinor, fxMarginBps: s.fxMarginBps, marketplaceBps: s.marketplaceBps, earlyRelease: s.earlyRelease, flexible: s.flexible, promotion: s.promotion }])) };
     });
+    // Sales running now (Black Friday…), for the homepage banner.
+    pub.get("/public/v1/sales", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), handle: z.string(), label: z.string(), percentOff: z.number(), until: z.string(), endsAt: z.string(), next: z.object({ percentOff: z.number(), until: z.string() }).nullable() })) }) } } }, async (_req, reply) => {
+      reply.header("cache-control", "public, max-age=300");
+      return { items: (await deps.core.activeSales()).map((x) => ({ organizationId: x.organizationId, organizationName: x.organizationName, handle: x.handle, ...S.toPublicSale(x)! })) };
+    });
     pub.get("/public/v1/catalog", { schema: { tags: ["public"], security: [], response: { 200: z.object({ items: z.array(z.object({ organizationId: z.string(), organizationName: z.string(), slug: z.string(), name: z.string(), nextStartsAt: z.string(), classes: z.number().int(), url: z.string().nullable(), listed: z.boolean(), category: z.string(), promoted: z.enum(["top", "category"]).nullable(), imageUrl: z.string().nullable(),
       courseId: z.string(), description: z.string().nullable(), certificationBody: z.string().nullable(), format: z.string(), hours: z.number().nullable(), priceMinor: z.number().int().nullable(), currency: z.string(), capacity: z.number().int(), seatsLeft: z.number().int(),
       badge: z.enum(["selling_fast", "early_bird", "accredited", "new"]).nullable(), verifiedBadge: z.boolean(),
       logoUrl: z.string().nullable(), digitalBadge: z.object({ name: z.string(), platform: z.string(), imageUrl: z.string().nullable() }).nullable(), dates: z.array(z.object({ slug: z.string(), startsAt: z.string(), endsAt: z.string(), timezone: z.string(), format: z.string(), capacity: z.number().int(), seatsLeft: z.number().int(), priceMinor: z.number().int().nullable(), dayStartsAt: z.string(), dayEndsAt: z.string(), days: z.number().int() })),
-      language: z.string().nullable(), tagline: z.string().nullable(), included: z.array(z.string()), heldUntilDelivery: z.boolean(), groupKey: z.string() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
-      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null, description: c.description ?? null, certificationBody: c.certificationBody ?? null, logoUrl: c.logoUrl ?? null, digitalBadge: c.digitalBadge ? { ...c.digitalBadge, imageUrl: c.digitalBadge.imageUrl ?? null } : null, dates: c.dates.map((d) => ({ ...d, startsAt: d.startsAt.toISOString(), endsAt: d.endsAt.toISOString(), dayStartsAt: d.dayStartsAt.toISOString(), dayEndsAt: d.dayEndsAt.toISOString() })), language: c.language ?? null, tagline: c.tagline ?? null, included: c.included ?? [] }));
+      language: z.string().nullable(), tagline: z.string().nullable(), included: z.array(z.string()), heldUntilDelivery: z.boolean(), groupKey: z.string(), sale: z.object({ label: z.string(), percentOff: z.number(), until: z.string() }).nullable() })), categories: z.array(z.object({ id: z.string(), label: z.string() })) }) } } }, async (_req, reply) => {
+      const items = (await deps.core.publicCatalog()).map((c) => ({ ...c, nextStartsAt: c.nextStartsAt.toISOString(), url: deps.publicPageUrl?.(c.organizationId, c.slug) ?? null, imageUrl: c.imageUrl ?? null, description: c.description ?? null, certificationBody: c.certificationBody ?? null, logoUrl: c.logoUrl ?? null, digitalBadge: c.digitalBadge ? { ...c.digitalBadge, imageUrl: c.digitalBadge.imageUrl ?? null } : null, dates: c.dates.map((d) => ({ ...d, startsAt: d.startsAt.toISOString(), endsAt: d.endsAt.toISOString(), dayStartsAt: d.dayStartsAt.toISOString(), dayEndsAt: d.dayEndsAt.toISOString() })), language: c.language ?? null, tagline: c.tagline ?? null, included: c.included ?? [], sale: c.sale ? { label: c.sale.label, percentOff: c.sale.bps / 100, until: c.sale.until.toISOString() } : null }));
       // Short cache: a paid placement should show soon after payment.
       reply.header("cache-control", "public, max-age=300");
       return { items, categories: COURSE_CATEGORIES.map((c) => ({ id: c.id, label: c.label })) };
@@ -271,7 +276,7 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
     pub.get("/public/v1/organizations/:orgId/courses/:slug", { schema: { tags: ["public"], security: [], params: OrgCourseParams, response: { 200: S.PublicCourseSchema, 404: S.ErrorSchema } } }, async (req) => {
       const res = await deps.core.publicCourse(req.params.orgId, req.params.slug);
       return {
-        organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null },
+        organization: { ...res.organization, ratesUpdatedAt: res.organization.ratesUpdatedAt?.toISOString() ?? null, sale: S.toPublicSale(res.organization.sale) },
         course: S.toCourse(res.course),
         sections: res.sections,
         related: res.related.map((r) => ({ ...r, dates: r.dates.map((d) => ({ ...d, startsAt: d.startsAt.toISOString(), endsAt: d.endsAt.toISOString() })) })),
@@ -696,6 +701,12 @@ ${v.cohort ? `<p style="font-size:16px;color:#64748b;margin:0">${esc(v.cohort.na
     });
 
     // ---------- money: release, instructor fees, payouts, reports, cohort cancellation ----------
+    // The organizer's sale: percentage-off steps over time, applied to every price. DELETE ends it.
+    const SaleBody = z.object({ label: z.string().min(1).max(40), startsAt: z.string().datetime().optional(), steps: z.array(z.object({ until: z.string().datetime(), percentOff: z.number().min(1).max(50) })).min(1).max(4) });
+    api.put("/v1/organizations/me/sale", { schema: { tags: ["organizations"], body: SaleBody, response: { 200: S.OrganizationSchema } } }, async (req) =>
+      S.toOrganization(await deps.core.updateSale(org(req).id, { label: req.body.label, startsAt: req.body.startsAt ? new Date(req.body.startsAt) : new Date(), steps: req.body.steps.map((x) => ({ until: new Date(x.until), bps: Math.round(x.percentOff * 100) })) })),
+    );
+    api.delete("/v1/organizations/me/sale", { schema: { tags: ["organizations"], response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateSale(org(req).id, null)));
     api.patch("/v1/organizations/me", { schema: { tags: ["organizations"], body: S.UpdateOrganizationBody, response: { 200: S.OrganizationSchema } } }, async (req) => S.toOrganization(await deps.core.updateOrganization(org(req).id, req.body)));
     api.put("/v1/events/:id/instructor-fees", { schema: { tags: ["money"], params: z.object({ id: z.string() }), body: z.object({ fees: z.array(S.InstructorFeeSchema).max(20) }), response: { 200: S.EventSchema } } }, async (req) => S.toEvent(await deps.core.setInstructorFees(org(req).id, req.params.id, req.body.fees)));
     api.get("/v1/events/:id/release-early", { schema: { tags: ["money"], description: "Quote for getting a class's held funds before it is delivered.", params: z.object({ id: z.string() }), response: { 200: z.object({ eligible: z.boolean(), reason: z.string().optional(), currency: z.string(), heldMinor: z.number().int(), feeMinor: z.number().int(), netMinor: z.number().int() }) } } }, async (req) => deps.core.earlyReleaseQuote(org(req).id, req.params.id));

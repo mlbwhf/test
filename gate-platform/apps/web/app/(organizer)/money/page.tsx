@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SaleCard } from "@/components/sale-card";
 import { redirect } from "next/navigation";
 import {
   api,
@@ -463,6 +464,7 @@ export default async function MoneyPage({ searchParams }: { searchParams: Promis
 
       {tab === "settings" && paymentsRes?.ok && <PaymentModeCard state={paymentsRes.data} fees={fees} currency={feeCurrency} canEdit={perms.includes("settings")} />}
       {tab === "settings" && org && <CompanyLogoCard org={org} canEdit={perms.includes("settings")} />}
+      {tab === "settings" && org && <SaleCard sale={org.sale ?? null} canEdit={perms.includes("settings")} />}
       {tab === "settings" && org && <FeesExtrasCard org={org} canEdit={perms.includes("settings")} rates={extraRates} />}
       {tab === "settings" && org && <SettingsRows org={org} canEdit={perms.includes("settings")} paymentsSetup={meRes.ok ? meRes.data.organization?.paymentsSetup ?? null : null} showPayments={!paymentsRes?.ok} />}
 

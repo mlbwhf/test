@@ -19,6 +19,8 @@ export interface PricingSettings {
   rates: Record<string, number>;
   ratesUpdatedAt?: Date;
   ratesSource?: "manual" | "ecb";
+  /** The organizer's sale, attached when prices are worked out (never stored with the pricing settings). */
+  sale?: import("./types.js").OrganizationSale | undefined;
 }
 
 export const DEFAULT_PRICING: PricingSettings = { currencies: [], fxFallback: false, rounding: "whole", rates: {} };

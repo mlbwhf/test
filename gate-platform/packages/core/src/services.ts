@@ -3,7 +3,7 @@ import { allocate, assertCurrency, type Ledger, type MinorUnits, type Posting } 
 import { computeSplits, earlyReleaseFee, priceOrder, promotionPrice, PROMOTION_WEEKS, type PaymentMode, type PayoutDestination, type SplitRule } from "@gate/pricing";
 import { COURSE_CATEGORIES, inferCategory, isCourseCategory, type CourseCategory } from "./categories.js";
 import { addDays, dateSlugs, planScheduleDates, type ScheduleRule } from "./schedule.js";
-import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, isProfileSlug, normalizeCoursePage, normalizeProfile, sameCertification } from "./class-page.js";
+import { cleanAttendee, cleanReadyChecks, coursePageSections, isAccentColor, isProfileSlug, normalizeCoursePage, normalizeProfile, normalizeSale, saleAt, salePrice, sameCertification } from "./class-page.js";
 import { ChartOfAccounts } from "./accounts.js";
 import { DomainError, notFound } from "./errors.js";
 import type { CoreHooks, HookFailure } from "./hooks.js";
@@ -87,6 +87,8 @@ export interface CatalogEntry {
   heldUntilDelivery: boolean;
   /** Courses of one organizer with the same groupKey are language versions of one certification. */
   groupKey: string;
+  /** The organizer's sale running now (prices above already include it). */
+  sale: { label: string; bps: number; until: Date } | null;
   /** The digital badge learners earn (Credly, uploaded or EnrollClass verified). */
   digitalBadge?: { name: string; imageUrl?: string; platform: string };
 }
@@ -639,6 +641,9 @@ export class Core {
       if (currency === event.currency) return prices?.[currency] ?? base;
       return prices?.[currency];
     };
+    // The organizer's running sale (Black Friday…) comes off every price, listed or converted.
+    const sale = saleAt(pricing?.sale, now);
+    const off = (minor: MinorUnits): MinorUnits => (sale ? salePrice(minor, sale.bps) : minor);
     let price: MinorUnits | undefined;
     if (ticketType.earlyBird && now < ticketType.earlyBird.until) price = pick(ticketType.earlyBird.priceMinor, ticketType.earlyBird.prices);
     if (price === undefined) price = pick(ticketType.priceMinor, ticketType.prices);
@@ -646,10 +651,10 @@ export class Core {
       // Organizer-enabled currency without an explicit price: convert the base price with the stored rate.
       const base = ticketType.earlyBird && now < ticketType.earlyBird.until ? ticketType.earlyBird.priceMinor : ticketType.priceMinor;
       const rate = pricing?.rates[currency];
-      if (pricing?.fxFallback && pricing.currencies.includes(currency) && rate) return convertMinor(base, event.currency, currency, rate, pricing.rounding);
+      if (pricing?.fxFallback && pricing.currencies.includes(currency) && rate) return off(convertMinor(base, event.currency, currency, rate, pricing.rounding));
       throw new DomainError("VALIDATION", `ticket ${ticketType.id} is not sold in ${currency}`, `available: ${[event.currency, ...Object.keys(ticketType.prices ?? {})].join(", ")}`);
     }
-    return price;
+    return off(price);
   }
 
   /** True when the price shown in `currency` is a conversion rather than a listed price. */
@@ -661,6 +666,32 @@ export class Core {
 
   pricingOf(org: Organization): PricingSettings {
     return org.pricing ?? DEFAULT_PRICING;
+  }
+
+  /** Pricing settings plus the organizer's sale: what every price shown or charged is worked out with. */
+  pricedWith(org: Organization): PricingSettings {
+    return org.sale ? { ...this.pricingOf(org), sale: org.sale } : this.pricingOf(org);
+  }
+
+  /** Start, change or end (null) the organizer's sale. */
+  async updateSale(organizationId: string, input: { label: string; startsAt: Date; steps: Array<{ until: Date; bps: number }> } | null): Promise<Organization> {
+    const org = await this.getOrganization(organizationId);
+    const next: Organization = { ...org };
+    if (input) next.sale = normalizeSale(input);
+    else delete next.sale;
+    await this.repos.organizations.update(next);
+    return next;
+  }
+
+  /** Sales running now, for the EnrollClass homepage banner. */
+  async activeSales(): Promise<Array<{ organizationId: string; organizationName: string; handle: string; label: string; bps: number; until: Date; endsAt: Date; next: { bps: number; until: Date } | null }>> {
+    const now = this.clock.now();
+    const out = [];
+    for (const org of await this.repos.organizations.list()) {
+      const s = saleAt(org.sale, now);
+      if (s && org.marketplaceListing !== false) out.push({ organizationId: org.id, organizationName: org.name, handle: org.slug ?? org.id, ...s });
+    }
+    return out;
   }
 
   /** Replace the organization's localized-pricing settings (currencies, fallback, rounding, manual rates). */
@@ -701,7 +732,7 @@ export class Core {
     const out: CatalogEntry[] = [];
     for (const org of await this.repos.organizations.list()) {
       const listed = org.marketplaceListing !== false;
-      const pricing = this.pricingOf(org);
+      const pricing = this.pricedWith(org);
       const orgCourses = await this.repos.courses.listByOrganization(org.id);
       // Language versions of one certification share a group (the first course that matches).
       const groupOf = (c: Course) => orgCourses.find((o) => o.id === c.id || sameCertification(o, c))!.id;
@@ -755,6 +786,7 @@ export class Core {
           ...(course.page?.tagline ? { tagline: course.page.tagline } : {}),
           ...(course.page?.included?.length ? { included: course.page.included.slice(0, 6).map((i) => i.title) } : {}),
           heldUntilDelivery: (org.paymentMode ?? "protected") !== "direct",
+          sale: (() => { const x = saleAt(org.sale, now); return x ? { label: x.label, bps: x.bps, until: x.until } : null; })(),
           groupKey: groupOf(course),
           ...(course.badge ? { digitalBadge: { name: course.badge.name, platform: course.badge.platform, ...(course.badge.imageUrl ? { imageUrl: course.badge.imageUrl } : {}) } } : {}),
         });
@@ -829,7 +861,7 @@ export class Core {
   /** Public catalogue view of a course: cohorts with resolved prices per currency. */
   async publicCourse(organizationId: string, slug: string) {
     const org = await this.getOrganization(organizationId);
-    const pricing = this.pricingOf(org);
+    const pricing = this.pricedWith(org);
     const course = await this.getCourseBySlug(organizationId, slug);
     const now = this.clock.now();
     const cohorts = (await this.repos.events.listByCourse(course.id)).filter((e) => e.status === "live" && (e.endsAt ?? e.startsAt) >= now);
@@ -866,7 +898,13 @@ export class Core {
           // Hidden seat counts: an open ticket reads as 20 of 20 (the most one checkout takes); ordering still checks real capacity.
           const left = t.quantity - t.sold;
           const counts = course.page?.modules?.seats === false ? (left > 0 ? { quantity: 20, remaining: 20 } : { quantity: 1, remaining: 0 }) : { quantity: t.quantity, remaining: left };
-          return { id: t.id, name: t.name, ...counts, prices, converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
+          // During a sale, the regular price too, so pages can show it struck through.
+          const regular: Record<string, MinorUnits> = {};
+          if (saleAt(pricing.sale, now)) {
+            const plain = { ...pricing, sale: undefined };
+            for (const c of Object.keys(prices)) { try { regular[c] = this.resolveUnitPrice(t, event, c, now, plain); } catch { /* not sold in c */ } }
+          }
+          return { id: t.id, name: t.name, ...counts, prices, ...(Object.keys(regular).length ? { regularPrices: regular } : {}), converted, earlyBirdUntil: t.earlyBird && now < t.earlyBird.until ? t.earlyBird.until : null };
         }),
       });
     }
@@ -887,7 +925,7 @@ export class Core {
       related.push({ slug: other.slug, name: other.name, language: other.language ?? null, dates });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id, sale: saleAt(org.sale, now) },
       course, cohorts: out, related,
       sections: coursePageSections(course, { logo: Boolean(org.logoUrl), instructors: out.some((c) => c.instructors.length > 0) }),
     };
@@ -942,7 +980,7 @@ export class Core {
     if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
 
     const currency = input.currency ?? event.currency;
-    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricedWith(org));
     const direct = org.paymentMode === "direct";
     const verifiedBadge = await this.issuesVerifiedBadge(event);
     if (input.flexible && org.flexibleTickets !== true) throw new DomainError("VALIDATION", "this organizer doesn't offer flexible tickets");
@@ -1552,7 +1590,7 @@ export class Core {
     if (event.status !== "live") throw new DomainError("INVALID_STATE", `event is ${event.status}`);
 
     const currency = input.currency ?? account.currency;
-    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricingOf(org));
+    const unitPriceMinor = this.resolveUnitPrice(ticketType, event, currency, this.clock.now(), this.pricedWith(org));
     const pricing = await this.priceWithTax({ org, currency, unitPriceMinor, quantity: input.quantity, billingAddress: account.address, businessCustomer: true, verifiedBadge: await this.issuesVerifiedBadge(event) });
     const splits = computeSplits(pricing.organizerNetMinor, org.id, event.splitRules ?? org.splitRules);
     const attendees: Attendee[] = Array.from({ length: input.quantity }, (_, i) => input.attendees?.[i] ?? { email: account.billingEmail, company: account.name });
@@ -1664,7 +1702,7 @@ export class Core {
     const org = (await this.repos.organizations.getBySlug(handle.toLowerCase())) ?? (handle.startsWith("org_") ? await this.repos.organizations.get(handle) : undefined);
     if (!org) throw notFound("organization", handle);
     const now = this.clock.now();
-    const pricing = this.pricingOf(org);
+    const pricing = this.pricedWith(org);
     const classes = [];
     let delivered = 0;
     let learners = 0;

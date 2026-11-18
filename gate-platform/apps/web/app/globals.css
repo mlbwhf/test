@@ -7899,3 +7899,19 @@ figure.preview {
 @media (max-width: 640px) {
   .profile-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+/* Money › Settings: Sale */
+.sale-card { display: flex; flex-direction: column; gap: 14px; }
+.sale-steps { display: flex; flex-direction: column; gap: 10px; }
+.sale-step { display: grid; grid-template-columns: minmax(0, 1fr) 140px auto; gap: 10px; align-items: end; }
+@media (max-width: 560px) { .sale-step { grid-template-columns: minmax(0, 1fr) 100px auto; } }
+
+/* Homepage sale banner (organizer sales such as Black Friday) */
+.sale-banner { background: var(--ink); color: var(--paper); border-radius: var(--radius); margin: 8px auto 0; max-width: 1180px; padding: 6px 8px; }
+.sale-banner-in { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding: 12px 16px; }
+.sale-banner-in + .sale-banner-in { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+.sale-banner-tag { background: var(--green); color: var(--ink); font-size: 12px; font-weight: 600; letter-spacing: 0.08em; padding: 4px 10px; border-radius: 999px; }
+.sale-banner p { margin: 0; flex: 1 1 360px; font-size: 16px; }
+.sale-banner p strong { font-family: var(--display); font-weight: 800; font-size: 18px; }
+.site .sale-banner a.pill:hover { color: var(--ink); }
+@media (max-width: 720px) { .sale-banner { margin: 8px 16px 0; } .sale-banner-in { padding: 10px 8px; gap: 10px; } }

@@ -296,3 +296,11 @@
   .cp-provider .cp-logo { height: 52px; min-width: 52px; max-width: 140px; }
   .cp-provider .cp-logo img { max-height: 36px; max-width: 116px; }
 }
+
+/* Organizer sale (Black Friday…) */
+.cp-sale { margin: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 16px; color: var(--cp-body); background: var(--cp-green-tint); border-radius: 14px; padding: 10px 14px; align-self: flex-start; }
+.cp-sale-tag { background: var(--cp-ink); color: #fff; font-family: var(--cp-mono-font); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 10px; border-radius: 999px; }
+.cp-sale strong { color: var(--cp-ink); }
+.cp-card-sale { display: block; font-style: normal; font-size: 12px; font-weight: 700; color: var(--cp-green); letter-spacing: 0.04em; }
+.cp-was { font-size: 16px; font-weight: 600; color: #b9c2d6; margin-right: 8px; text-decoration-thickness: 2px; }
+.cp-mbar .cp-was { color: var(--cp-muted); font-size: 14px; }

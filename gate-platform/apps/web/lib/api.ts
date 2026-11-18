@@ -48,7 +48,11 @@ export type Organization = {
   /** Public profile address: /o/<slug>. */
   slug?: string | null;
   profile?: OrganizationProfile | null;
+  /** A timed sale on all classes (Black Friday…): percent off per step until each step's end. */
+  sale?: OrganizationSale | null;
 };
+
+export type OrganizationSale = { label: string; startsAt: string; steps: { until: string; percentOff: number }[] };
 
 export type PaymentMode = "protected" | "direct";
 export type PaymentsSetup = "none" | "incomplete" | "ready";
@@ -766,6 +770,8 @@ export const api = {
   updateOrganization: (input: UpdateOrganizationInput) =>
     request<Organization>("PATCH", "/v1/organizations/me", input),
   updatePricing: (input: UpdatePricingInput) => request<Organization>("PATCH", "/v1/organizations/me/pricing", input),
+  setSale: (input: { label: string; startsAt?: string; steps: { until: string; percentOff: number }[] }) => request<Organization>("PUT", "/v1/organizations/me/sale", input),
+  endSale: () => request<Organization>("DELETE", "/v1/organizations/me/sale"),
   refreshFxRates: () => request<Organization>("POST", "/v1/organizations/me/pricing/refresh-rates"),
 
   listEvents: () => request<{ items: Event[] }>("GET", "/v1/events"),

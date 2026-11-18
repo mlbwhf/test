@@ -1,7 +1,7 @@
 // The public class page: optional sections, their content, and the learner details a checkout
 // collects. Validation lives here so the API, the importers and the dashboard agree on limits.
 
-import { COURSE_PAGE_MODULES, type Attendee, type Course, type CoursePage, type CoursePageModule, type OrganizationProfile, type ReadyChecks } from "./types.js";
+import { COURSE_PAGE_MODULES, type OrganizationSale, type Attendee, type Course, type CoursePage, type CoursePageModule, type OrganizationProfile, type ReadyChecks } from "./types.js";
 import { DomainError } from "./errors.js";
 
 const clip = (v: unknown, max: number) => (typeof v === "string" ? v.trim().slice(0, max) : "");
@@ -187,4 +187,35 @@ export function sameCertification(a: Pick<Course, "name" | "badge">, b: Pick<Cou
   if (a.badge?.name && b.badge?.name && a.badge.name.trim().toLowerCase() === b.badge.name.trim().toLowerCase()) return true;
   const ka = certificationBase(a.name);
   return ka.length > 0 && ka === certificationBase(b.name);
+}
+
+/** The sale step running at `now`: its label, percentage (basis points) and when this rate ends; null outside the sale. */
+export function saleAt(sale: OrganizationSale | undefined, now: Date): { label: string; bps: number; until: Date; endsAt: Date; next: { bps: number; until: Date } | null } | null {
+  if (!sale || now < sale.startsAt) return null;
+  const i = sale.steps.findIndex((x) => now < x.until);
+  if (i < 0) return null;
+  const step = sale.steps[i]!;
+  const nxt = sale.steps[i + 1];
+  return { label: sale.label, bps: step.bps, until: step.until, endsAt: sale.steps[sale.steps.length - 1]!.until, next: nxt ? { bps: nxt.bps, until: nxt.until } : null };
+}
+
+/** A sale price: whole currency units stay whole (rounded down to the unit), so $1,695 at 15% off is $1,440. */
+export function salePrice(minor: number, bps: number): number {
+  if (minor <= 0 || bps <= 0) return minor;
+  const off = Math.round((minor * (10_000 - bps)) / 10_000);
+  return minor % 100 === 0 ? Math.floor(off / 100) * 100 : off;
+}
+
+/** Checks a sale: a short label, 1 to 4 steps in time order, 1% to 50% each, starting before the first step ends. */
+export function normalizeSale(input: { label: string; startsAt: Date; steps: Array<{ until: Date; bps: number }> }): OrganizationSale {
+  const label = clip(input.label, 40);
+  if (!label) throw new DomainError("VALIDATION", "give the sale a name, e.g. Black Friday");
+  if (!Array.isArray(input.steps) || input.steps.length < 1 || input.steps.length > 4) throw new DomainError("VALIDATION", "a sale has 1 to 4 steps");
+  let prev = input.startsAt;
+  for (const st of input.steps) {
+    if (!Number.isInteger(st.bps) || st.bps < 100 || st.bps > 5000) throw new DomainError("VALIDATION", "each step is between 1% and 50% off");
+    if (!(st.until > prev)) throw new DomainError("VALIDATION", "steps must end after the sale starts, in order");
+    prev = st.until;
+  }
+  return { label, startsAt: input.startsAt, steps: input.steps.map((x) => ({ until: x.until, bps: x.bps })) };
 }

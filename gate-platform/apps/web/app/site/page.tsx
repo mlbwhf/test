@@ -2,6 +2,8 @@ import Link from "next/link";
 import { feeLabel } from "@/lib/fees";
 import { ORGANIZATION_LD, apiUrl, appUrl, jsonLd, siteUrl } from "@/lib/seo";
 import { LiveCohort } from "@/components/live-cohort";
+import { SaleBanner } from "@/components/sale-banner";
+import { activeSales } from "@/lib/sales";
 import { SampleBadge } from "@/components/sample-badge";
 import { APP, DashboardSection, FaqSection, HOME_FAQ, HowSection, PricingSection, StartSection, feeData } from "./sections";
 
@@ -15,7 +17,7 @@ const ON_THIS_PAGE = [
 ] as const;
 
 export default async function SiteHome() {
-  const data = await feeData();
+  const [data, sales] = await Promise.all([feeData(), activeSales()]);
   const { fees } = data;
   const ld = [
     ORGANIZATION_LD(),
@@ -37,6 +39,7 @@ export default async function SiteHome() {
   return (
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(ld) }} />
+      <SaleBanner sales={sales} />
       <section className="site-hero">
         <div>
           <p className="eyebrow">Cohort registration &amp; payments</p>
