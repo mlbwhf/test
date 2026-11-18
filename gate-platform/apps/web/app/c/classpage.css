@@ -280,3 +280,19 @@
   .cp-mbar span { font-size: 13px; color: var(--cp-muted); }
 }
 .cp .brand, .cp .brand:hover { color: var(--cp-ink); text-decoration: none; }
+
+/* The chosen class's dates, right under the course name */
+.cp-dateline { margin: -2px 0 0; display: flex; align-items: center; gap: 6px 12px; flex-wrap: wrap; font-size: 18px; color: var(--cp-body); }
+.cp-dateline svg { color: var(--cp-green-text); flex-shrink: 0; }
+.cp-dateline strong { font-family: var(--cp-head); font-weight: 800; font-size: 22px; color: var(--cp-ink); letter-spacing: -0.01em; }
+.cp-dateline a { font-size: 15px; font-weight: 700; color: var(--cp-green-text) !important; }
+
+/* Company logo as uploaded (wide or square), never cropped */
+.cp-provider .cp-logo { display: inline-flex; align-items: center; justify-content: center; height: 64px; min-width: 64px; max-width: 180px; padding: 8px 12px; box-sizing: border-box; border-radius: 16px; background: #fff; border: 1px solid var(--cp-border); flex-shrink: 0; }
+.cp-provider .cp-logo img { max-height: 46px; max-width: 156px; width: auto; height: auto; object-fit: contain; box-shadow: none; border-radius: 0; background: none; }
+@media (max-width: 720px) {
+  .cp-dateline { font-size: 16px; }
+  .cp-dateline strong { font-size: 19px; }
+  .cp-provider .cp-logo { height: 52px; min-width: 52px; max-width: 140px; }
+  .cp-provider .cp-logo img { max-height: 36px; max-width: 116px; }
+}

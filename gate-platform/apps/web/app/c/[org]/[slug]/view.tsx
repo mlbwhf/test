@@ -8,7 +8,7 @@ import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { RegisterSheet } from "@/components/register-sheet";
 import { Agenda, ZoneProvider } from "@/components/class-page/times";
 import { videoEmbed } from "@/components/class-page/shared";
-import { BookingProvider, DatePicker, HeroFacts, MobileBar, RegisterLink, RegisterPanel, SelectedLabel, type ClassDate } from "@/components/class-page/booking";
+import { BookingProvider, DatePicker, HeroFacts, MobileBar, RegisterLink, RegisterPanel, SelectedDateLine, SelectedLabel, type ClassDate } from "@/components/class-page/booking";
 import { dateRange } from "@/lib/class-time";
 import { badgeCode } from "@/lib/finder";
 import { COURSE_CATEGORIES } from "@/lib/api";
@@ -182,7 +182,15 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
 
   const providerRow = (
     <a className="cp-provider" href={profileHref}>
-      {show.logo && data.organization.logoUrl ? <img src={data.organization.logoUrl} alt="" /> : <span className="cp-initials" aria-hidden="true">{initials}</span>}
+      {show.logo && data.organization.logoUrl ? (
+        <span className="cp-logo">
+          <img src={data.organization.logoUrl} alt={`${data.organization.name} logo`} />
+        </span>
+      ) : (
+        <span className="cp-initials" aria-hidden="true">
+          {initials}
+        </span>
+      )}
       <span>
         <span className="cp-provider-name">
           <strong>{data.organization.name}</strong>
@@ -200,12 +208,27 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
     </a>
   );
 
+  // The certification's short code ("SPC", "RTE") shows until the organizer uploads badge artwork.
+  const certCode = badgeCode(/\([A-Z][A-Z0-9-]{1,5}\)/.test(course.name) || !badge ? course.name : badge.name);
   const badgeArt = (size: "md" | "lg") =>
     badge ? (
       <div className={`cp-ring cp-ring-${size}`} role="img" aria-label={`${badge.name} badge`}>
-        {badge.imageUrl ? <img src={badge.imageUrl} alt="" /> : <strong>{badgeCode(/\([A-Z][A-Z0-9-]{1,5}\)/.test(course.name) ? course.name : badge.name)}</strong>}
+        {badge.imageUrl ? <img src={badge.imageUrl} alt="" /> : <strong>{certCode}</strong>}
       </div>
     ) : null;
+  // The hero always keeps a place for the badge, uploaded or not, unless the organizer switched the section off.
+  const heroBadge = course.page?.modules?.badge !== false ? (
+    <figure className="cp-badge-fig">
+      {badge ? (
+        badgeArt("md")
+      ) : (
+        <div className="cp-ring cp-ring-md" role="img" aria-label={`${course.name} certification`}>
+          <strong>{certCode}</strong>
+        </div>
+      )}
+      <figcaption>{badge ? "You earn this badge" : course.certificationBody ? `${course.certificationBody} certification` : "Certificate on completion"}</figcaption>
+    </figure>
+  ) : null;
 
   const video = show.video && course.page?.videoUrl ? videoEmbed(course.page.videoUrl) : null;
   const agenda = show.agenda ? (course.page?.agenda ?? []) : [];
@@ -237,14 +260,10 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
           <div className="cp-title-row">
             <div>
               <h1>{course.name}</h1>
+              {sel && <SelectedDateLine />}
               {lede && <p className="cp-lede">{lede}</p>}
             </div>
-            {badge && (
-              <figure className="cp-badge-fig">
-                {badgeArt("md")}
-                <figcaption>You earn this badge</figcaption>
-              </figure>
-            )}
+            {heroBadge}
           </div>
           {sel ? (
             <>
