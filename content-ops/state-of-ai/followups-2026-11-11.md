@@ -191,3 +191,30 @@ Visitors got bare paths in code formatting (not clickable) and invented URLs (e.
   - Timezone: gmt_offset is a fixed -5 with no timezone_string, so the site clock is an hour off during US daylight time. Owner: set Settings → General → Timezone to "New York".
 - Owner security settings (Hostinger): Force HTTPS on; application passwords off only after checking Users → Profile → Application Passwords is empty; keep XML-RPC on while Jetpack (Social/Stats) is used.
 - XML sitemap index: /sitemap.xml (post/page/category sub-sitemaps); llms.txt enabled; human site map: /site-map/ (AIOSEO [aioseo_html_sitemap] shortcode).
+
+## P. Post-go-live (18 Nov 2026)
+
+- **All go-live pages published** (State of AI agent + history/geo/ML agent). Every page IDENTICAL to its target file.
+  - 18 Nov publish dates: 3756, 3757, 3851, 4007 (2024, replaced 322 → draft `state-of-ai-2024-archive`), 4009 (2025,
+    replaced 358 → draft `state-of-ai-2025-archive`), 3915 (Sovereign, replaced 934 → draft `sovereign-ai-index-2026-archive`).
+  - 362 landing replaced in place (modified 18 Nov 12:25 ET). Downtime: /state-of-ai-2025/ about 13:29–17:23 GMT 17 Nov
+    (restart between unpublishing 358 and publishing 4009); /state-of-ai-2024/ under a minute.
+  - Sovereign CSV rev20261118 = media 4232; old 3982 left in the library, unlinked (no deletes without asking).
+  - 3847 (State of AI in Numbers 2026) stays a draft until mid-December.
+- **Correction:** 362 FAQ + FAQ schema cited the Usage report as "published 11 November 2026" → 16 November (2 replacements).
+  Corrections-log row on 3229 (18 Nov; last-entry stamp and dateModified → 18 Nov). Backup backups/3229-20261118.html.
+- **Titles:** 4094 and 4104 post titles carried " — Report AI", so AIOSEO rendered "… — Report AI - Report AI". Suffix removed
+  from both post titles (verified on 4104: "… 19 Datasets - Report AI").
+- **Chatbot directory** regenerated: 148 → 166 entries, new "State of AI series" group, stub 1111 removed (was listed by
+  mistake). Backup backups/mwai_chatbots-20261118.json; text site-content/chatbot/default-bot-instructions-20261118.txt.
+- **Buffer:** 12 launch drafts created (IDs in content-ops/social/launch-2026-11-16.md). Old X draft 6a6f65861b4d436cc317a1ef
+  repeats the corrected SWE-bench 4.4% → 71.7% series; owner to delete or rewrite.
+- **Nav v6 live** after the owner's WPCode Update click (site-content/nav-v6/APPLIED.md).
+- **Open / owner:**
+  - 866 and 1111 have no Redirection 301s (still meta-refresh stubs, published, indexable).
+  - AIOSEO auto meta descriptions on the new pages start with the SVG stamp text ("SOURCED · DATED · CONFIDENCE-RATED ·
+    REPORT-AI.ORG ·REPORTAIBY THE NUMBERS Home / …"). Per-page descriptions needed.
+  - The theme prints the post title as an H1 above each page's own H1 (two H1s per page, site-wide).
+  - 362 WordPress/SEO title is still "State of AI" (H1 says "State of AI: The Report AI Series"); its excerpt still describes
+    the old 2022–2026 timeline page.
+  - WPCode demo snippet 425 ("Thank you for reading this post…") still active; home <title> still "The AI Index" (AIOSEO).
