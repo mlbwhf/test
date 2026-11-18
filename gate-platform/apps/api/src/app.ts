@@ -102,6 +102,9 @@ export interface AppDeps {
   mailer?: Notifier;
 }
 
+/** API keys never leave the server, not even masked: "rk_live_****…dHDDoV" -> "[key]". */
+export const redactKeys = (text: string) => text.replace(/\b(?:sk|rk|pk|whsec)_(?:live|test)?_?[A-Za-z0-9*]{4,}/g, "[key]");
+
 export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
   const env = deps.env ?? "development";
   const app = Fastify({ logger: deps.logger ? privacyLogger : false, genReqId: () => `req_${Math.random().toString(36).slice(2, 12)}` }).withTypeProvider<ZodTypeProvider>();
@@ -131,9 +134,16 @@ export async function buildApp(deps: AppDeps): Promise<FastifyInstance> {
       const status = err.code === "BUDGET_EXCEEDED" ? 429 : err.code === "FEATURE_DISABLED" ? 403 : 503;
       return reply.code(status).send({ error: { code: err.code, message: err.message, requestId: req.id } });
     }
+    // Stripe refusing the platform's own key (revoked, restricted without Connect access, or another
+    // account's key): an EnrollClass setup problem. Never echo Stripe's text, which quotes part of the key.
+    const stripeType = (err as { type?: unknown }).type;
+    if (stripeType === "StripePermissionError" || stripeType === "StripeAuthenticationError") {
+      req.log.error({ stripeType, stripeCode: (err as { code?: unknown }).code, message: redactKeys((err as Error).message) }, "stripe refused the platform key");
+      return reply.code(502).send({ error: { code: "PAYMENTS_UNAVAILABLE", message: "Stripe refused EnrollClass's connection to this payments account, so its status can't be checked right now. Nothing is lost; EnrollClass needs to update its Stripe key.", requestId: req.id } });
+    }
     const status = (err as { statusCode?: number }).statusCode ?? 500;
     if (status >= 500) req.log.error(err);
-    return reply.code(status).send({ error: { code: status >= 500 ? "INTERNAL" : "REQUEST", message: status >= 500 ? "internal error" : (err as Error).message, requestId: req.id } });
+    return reply.code(status).send({ error: { code: status >= 500 ? "INTERNAL" : "REQUEST", message: status >= 500 ? "internal error" : redactKeys((err as Error).message), requestId: req.id } });
   });
 
   const media = deps.media ?? new InMemoryMediaStore();

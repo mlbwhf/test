@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 import type { FastifyInstance } from "fastify";
 import { InMemoryLedgerStore, Ledger } from "@gate/ledger";
 import { Core, FakePaymentsAdapter, createInMemoryRepos } from "@gate/core";
-import { buildApp } from "./app.js";
+import { buildApp, redactKeys } from "./app.js";
 
 let app: FastifyInstance;
 let apiKey: string;
@@ -371,6 +371,22 @@ describe("API", () => {
     const teacher = (await im.inject({ method: "POST", url: "/v1/parties", headers: { "x-api-key": key, "content-type": "application/json" }, payload: { name: "Mark", kind: "instructor" } })).json();
     const photo = (await im.inject({ method: "PUT", url: `/v1/parties/${teacher.id}/photo`, headers: { "x-api-key": key, "content-type": "image/png" }, payload: png })).json();
     expect(photo.photoUrl).toMatch(/\/public\/v1\/media\//);
+  });
+
+  it("never shows Stripe key fragments when Stripe refuses the platform key", async () => {
+    const payments = new FakePaymentsAdapter();
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments });
+    const im = await buildApp({ core, adminKey: "admin", env: "test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "AA", country: "US", currency: "USD" } })).json().apiKey as string;
+    await im.inject({ method: "POST", url: "/v1/organizations/me/payments/connect", headers: { "x-api-key": key, "content-type": "application/json" }, payload: {} });
+    payments.getAccountStatus = async () => {
+      throw Object.assign(new Error("The provided key 'rk_live_*****************dHDDoV' does not have access to account 'acct_1' (or that account does not exist). Application access may have been revoked."), { type: "StripePermissionError", statusCode: 403 });
+    };
+    const res = await im.inject({ url: "/v1/organizations/me/payments", headers: { "x-api-key": key } });
+    expect(res.statusCode).toBe(502);
+    expect(res.json().error.code).toBe("PAYMENTS_UNAVAILABLE");
+    expect(res.body).not.toMatch(/rk_live|dHDDoV/);
+    expect(redactKeys("bad key sk_test_abc123XYZ and rk_live_****dHDDoV")).toBe("bad key [key] and [key]");
   });
 
   it("an organizer's sale lowers every price and shows on the public pages", async () => {
