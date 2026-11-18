@@ -7,7 +7,11 @@
  * under Tools → Newsletter) every address collected by the footer Subscribe
  * box gets one email, built at send time from what the site already knows:
  *
+ *   - a hero spotlight on one AI-Native ART article, rotating through the series
  *   - an optional note you type in Tools → Newsletter (used once, then cleared)
+ *   - a career snap: one role, its salary range and where it leads
+ *   - how AI is changing the Scrum Master, RTE and SPC roles (our view)
+ *   - what is new in SAFe and AI-Native, and the free assessment tools
  *   - the next dates of the main classes, read from the registration schedule
  *   - up to three blog posts published since the last issue
  *   - four salary benchmarks, rotating monthly, from the site's own salary data
@@ -232,90 +236,289 @@ function aa_sf_nl_salaries( $ym ) {
 	return array( 'rows' => $rows, 'sources' => isset( $d['sources'] ) ? (string) $d['sources'] : '' );
 }
 
+/* ============================================================================
+   ISSUE CONTENT, in the order of the Claude Design layout (16-18 Nov 2026):
+   hero spotlight, career snap, the role with AI, what's new, latest posts,
+   free tools, next classes, team training, footer.
+   ========================================================================== */
+
+/**
+ * The AI-Native ART spotlight: one article per issue, taken in order from this
+ * pool of published posts and never repeated until the whole pool has run.
+ * A post can carry an optional contrast pair (two short labelled statements
+ * from the article itself). Edit the pool with the aa_sf_nl_spotlight_pool
+ * filter, or set "spotlight" (a post ID) in the settings to choose the next one.
+ */
+function aa_sf_nl_spotlight_pool() {
+	return apply_filters( 'aa_sf_nl_spotlight_pool', array(
+		37678 => array( 'kicker' => 'From PI Objectives to', 'accent' => 'PI Outcomes',
+		                'pair' => array( array( 'PI Objective', 'Describes what the train will do.' ), array( 'PI Outcome', 'Describes what will change, and can fail honestly.' ) ),
+		                'also' => 34220 ),
+		34220 => array( 'kicker' => 'PI Planning is now', 'accent' => 'one day', 'also' => 37678 ),
+		37938 => array( 'kicker' => 'The AI Innovation', 'accent' => 'Pipeline', 'also' => 37811 ),
+		37811 => array( 'kicker' => 'Why the AI-Native ART', 'accent' => 'exists', 'also' => 37938 ),
+		37676 => array( 'kicker' => 'AI-Native SAFe:', 'accent' => 'what it is', 'also' => 37678 ),
+		38170 => array( 'kicker' => 'How AI reshapes', 'accent' => 'ART leadership', 'also' => 38173 ),
+		38173 => array( 'kicker' => 'RTEs in an AI-Native ART:', 'accent' => 'same job, faster pace', 'also' => 38170 ),
+		38171 => array( 'kicker' => 'Product Management:', 'accent' => 'from backlog to evidence', 'also' => 38170 ),
+		38172 => array( 'kicker' => 'System Architects:', 'accent' => 'guardrails, not documents', 'also' => 38170 ),
+		38174 => array( 'kicker' => 'Business Owners:', 'accent' => 'steering on live evidence', 'also' => 38170 ),
+	) );
+}
+function aa_sf_nl_spotlight( $ym ) {
+	$s    = aa_sf_nl_settings();
+	$pool = aa_sf_nl_spotlight_pool();
+	$done = isset( $s['spotlit'] ) && is_array( $s['spotlit'] ) ? $s['spotlit'] : array();
+	if ( isset( $done[ $ym ] ) ) { $id = (int) $done[ $ym ]; }                                   /* this issue already chose */
+	elseif ( ! empty( $s['spotlight'] ) && get_post_status( (int) $s['spotlight'] ) === 'publish' ) { $id = (int) $s['spotlight']; }
+	else {
+		$used = array_map( 'intval', array_values( $done ) ); $id = 0;
+		foreach ( array_keys( $pool ) as $pid ) { if ( ! in_array( (int) $pid, $used, true ) && get_post_status( (int) $pid ) === 'publish' ) { $id = (int) $pid; break; } }
+		if ( ! $id ) { foreach ( array_keys( $pool ) as $pid ) { if ( get_post_status( (int) $pid ) === 'publish' ) { $id = (int) $pid; break; } } }   /* pool ran out: start again */
+	}
+	if ( ! $id ) { return null; }
+	$p = get_post( $id ); if ( ! $p ) { return null; }
+	$x = isset( $pool[ $id ] ) ? $pool[ $id ] : array();
+	$also = ! empty( $x['also'] ) && get_post_status( (int) $x['also'] ) === 'publish' ? get_post( (int) $x['also'] ) : null;
+	return array(
+		'id' => $id, 'url' => get_permalink( $p ), 'title' => get_the_title( $p ),
+		'kicker' => isset( $x['kicker'] ) ? $x['kicker'] : '', 'accent' => isset( $x['accent'] ) ? $x['accent'] : '',
+		'dek' => wp_strip_all_tags( has_excerpt( $p ) ? get_the_excerpt( $p ) : wp_trim_words( wp_strip_all_tags( strip_shortcodes( $p->post_content ) ), 40, '…' ) ),
+		'pair' => isset( $x['pair'] ) ? $x['pair'] : array(),
+		'also' => $also ? array( 'title' => get_the_title( $also ), 'url' => get_permalink( $also ) ) : null,
+	);
+}
+
+/** One role per issue for the career snap, with where it leads. Figures from aa_salary_data() only. */
+function aa_sf_nl_career( $ym ) {
+	if ( ! function_exists( 'aa_salary_data' ) ) { return null; }
+	$d = aa_salary_data(); $bands = array();
+	foreach ( (array) ( isset( $d['bands'] ) ? $d['bands'] : array() ) as $b ) { if ( ! empty( $b['code'] ) && ! empty( $b['lo'] ) && ! empty( $b['hi'] ) ) { $bands[ $b['code'] ] = $b; } }
+	$about = apply_filters( 'aa_sf_nl_role_about', array(
+		'RTE'  => array( 'Release Train Engineer', 'Runs the Agile Release Train: PI Planning, flow across teams, and the cadence that keeps a train of teams delivering together.', '/training/adv-safe/rte/' ),
+		'SPC'  => array( 'SAFe Practice Consultant', 'Leads the transformation: trains leaders and teams, launches trains, and coaches the change through.', '/training/adv-safe/spc/' ),
+		'POPM' => array( 'Product Owner / Product Manager', 'Decides what gets built and why, and turns customer needs into a backlog a train can deliver.', '/training/safe/popm/' ),
+		'LPM'  => array( 'Lean Portfolio Manager', 'Connects strategy to funding: decides which work gets investment, and how the portfolio is governed.', '/training/adv-safe/lpm/' ),
+		'APM'  => array( 'Agile Product Manager', 'Owns product strategy: market, customers, roadmap and the value a product delivers.', '/training/adv-safe/apm/' ),
+		'SSM'  => array( 'Scrum Master', 'Coaches a team to deliver: flow, improvement, and clearing what gets in the way.', '/training/safe/scrum-master/' ),
+		'ASPC' => array( 'Advanced SAFe Practice Consultant', 'Guides enterprise-wide change: coaching executives and portfolio leaders, and scaling what works.', '/training/adv-safe/aspc/' ),
+		'ARCH' => array( 'SAFe Architect', 'Shapes the technical direction of a train so teams can build fast without breaking the system.', '/training/safe/arch/' ),
+	) );
+	$order = array_values( array_filter( array( 'RTE', 'SPC', 'POPM', 'LPM', 'APM', 'SSM', 'ASPC', 'ARCH' ), function ( $c ) use ( $bands, $about ) { return isset( $bands[ $c ], $about[ $c ] ); } ) );
+	if ( ! $order ) { return null; }
+	/* December 2026 is the first issue and opens with RTE; then one role a month in this order. */
+	$n    = count( $order );
+	$i    = ( ( ( (int) substr( $ym, 0, 4 ) * 12 + (int) substr( $ym, 5, 2 ) ) - ( 2026 * 12 + 12 ) ) % $n + $n ) % $n;
+	$code = $order[ $i ]; $b = $bands[ $code ];
+	$med  = array(); foreach ( $bands as $c => $x ) { $med[ $c ] = (int) $x['median']; }
+	foreach ( (array) ( isset( $d['extra'] ) ? $d['extra'] : array() ) as $c => $m ) { if ( ! isset( $med[ $c ] ) ) { $med[ $c ] = (int) $m; } }
+	$next = array();
+	foreach ( (array) ( isset( $d['paths'] ) ? $d['paths'] : array() ) as $p ) {
+		$steps = isset( $p['steps'] ) ? array_values( (array) $p['steps'] ) : array(); $k = array_search( $code, $steps, true );
+		if ( $k !== false && isset( $steps[ $k + 1 ] ) ) { $next = array_slice( $steps, $k + 1, 2 ); break; }
+	}
+	$path = array( array( $code, (int) $b['median'] ) );
+	foreach ( $next as $c ) { if ( isset( $med[ $c ] ) ) { $path[] = array( $c, $med[ $c ] ); } }
+	$pos = max( 0, min( 100, (int) round( ( $b['median'] - $b['lo'] ) / max( 1, $b['hi'] - $b['lo'] ) * 100 ) ) );
+	return array( 'code' => $code, 'name' => $about[ $code ][0], 'about' => $about[ $code ][1], 'url' => home_url( $about[ $code ][2] ),
+	              'median' => (int) $b['median'], 'lo' => (int) $b['lo'], 'hi' => (int) $b['hi'], 'pos' => $pos, 'path' => $path,
+	              'sources' => isset( $d['sources'] ) ? (string) $d['sources'] : '' );
+}
+
 /** array( subject, html ) for one recipient, or null when there is nothing to say. */
 function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	$s       = aa_sf_nl_settings();
 	$month   = ( new DateTime( $ym . '-01', wp_timezone() ) )->format( 'F Y' );
+	$spot    = aa_sf_nl_spotlight( $ym );
+	$career  = aa_sf_nl_career( $ym );
 	$classes = aa_sf_nl_classes();
 	$since   = $s['last_at'] !== '' ? $s['last_at'] : ( new DateTime( 'now', wp_timezone() ) )->modify( '-35 days' )->format( 'Y-m-d H:i:s' );
-	$posts   = aa_sf_nl_posts( $since );
+	$posts   = array_values( array_filter( aa_sf_nl_posts( $since ), function ( $p ) use ( $spot ) { return ! $spot || $p['url'] !== $spot['url']; } ) );
 	$note    = trim( (string) $s['note'] );
-	$pay     = aa_sf_nl_salaries( $ym );
-	if ( ! $classes && ! $posts && $note === '' ) { return null; }
+	if ( ! $spot && ! $classes && ! $posts && $note === '' ) { return null; }
 
 	$utm  = function ( $url ) use ( $ym ) { return add_query_arg( array( 'utm_source' => 'newsletter', 'utm_medium' => 'email', 'utm_campaign' => 'monthly-' . $ym ), $url ); };
-	$e    = 'esc_html';
-	$h2   = 'margin:0 0 12px;font:400 22px/1.2 Georgia,\'Times New Roman\',serif;color:#0B2E35;';
-	$eye  = 'margin:0 0 6px;font:700 11px/1.3 Arial,Helvetica,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#0E8074;';
-	$addr = function_exists( 'aa_ag_address_line' ) ? aa_ag_address_line() : '55 Village Centre Place, Mississauga, ON L4Z 1V9, Canada';
+	$e    = function ( $x ) { return esc_html( $x ); };
+	$F    = 'font-family:Arial,Helvetica,sans-serif;';
+	$SER  = 'font-family:Georgia,\'Times New Roman\',serif;';
+	$eye  = 'margin:0 0 10px;' . $F . 'font-size:11px;line-height:1.3;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#0E8074;';
+	$h2   = 'margin:0 0 10px;' . $SER . 'font-weight:400;font-size:24px;line-height:1.2;color:#0B2E35;';
+	$mute = $F . 'font-size:14px;line-height:1.5;color:#5C7479;';
+	$sec  = function ( $inner, $top = 26 ) { return '<tr><td style="padding:' . (int) $top . 'px 28px 4px;">' . $inner . '</td></tr>'; };
+	$btn  = function ( $url, $label, $bg, $fg, $border = '' ) use ( $F ) {
+		return '<a href="' . esc_url( $url ) . '" style="display:inline-block;' . $F . 'font-size:15px;font-weight:700;text-decoration:none;padding:13px 20px;border-radius:100px;background:' . $bg . ';color:' . $fg . ';' . ( $border ? 'border:1px solid ' . $border . ';' : '' ) . '">' . $label . '</a>';
+	};
+	$addr  = function_exists( 'aa_ag_address_line' ) ? aa_ag_address_line() : '55 Village Centre Place, Mississauga, ON L4Z 1V9, Canada';
 	$unsub = aa_sf_nl_unsub_link( $email );
-
 	$b = '';
+
 	if ( $preview ) {
-		$b .= '<tr><td style="padding:16px 24px;background:#FFF6E6;border-bottom:1px solid #F2B66D;font:14px/1.5 Arial,Helvetica,sans-serif;color:#0B2E35;">'
+		$b .= '<tr><td style="padding:16px 24px;background:#FFF6E6;border-bottom:1px solid #F2B66D;' . $F . 'font-size:14px;line-height:1.5;color:#0B2E35;">'
 		    . '<strong>Preview.</strong> This is the ' . $e( $month ) . ' newsletter as subscribers will get it. It goes to ' . count( aa_sf_nl_recipients() ) . ' subscriber(s) on '
 		    . $e( aa_sf_nl_send_time( $ym )->format( 'l, F j \a\t g:i a' ) ) . ' (site time).<br>'
 		    . ( $s['approved'] ? '' : '<strong>The first issue waits for your approval:</strong> <a href="' . esc_url( aa_sf_nl_link( 'approve', $ym ) ) . '" style="color:#0E8074;font-weight:700;">Approve and start sending</a> &nbsp;·&nbsp; ' )
 		    . '<a href="' . esc_url( aa_sf_nl_link( 'skip', $ym ) ) . '" style="color:#0E8074;">Skip this month</a> &nbsp;·&nbsp; '
 		    . '<a href="' . esc_url( admin_url( 'tools.php?page=aa-sf-newsletter' ) ) . '" style="color:#0E8074;">Add a note or change the schedule</a></td></tr>';
 	}
-	$b .= '<tr><td style="padding:24px 24px 18px;background:#0B2E35;"><span style="font:700 20px/1.2 Arial,Helvetica,sans-serif;color:#ffffff;">Agile Agilist</span>'
-	    . '<span style="display:block;margin-top:6px;font:700 11px/1.3 Arial,Helvetica,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#8FCFCF;">Monthly · ' . $e( $month ) . '</span></td></tr>';
 
-	$b .= '<tr><td style="padding:24px 24px 6px;font:16px/1.6 Arial,Helvetica,sans-serif;color:#0B2E35;">';
-	if ( $note !== '' ) { foreach ( preg_split( '/\R{2,}/', $note ) as $para ) { $b .= '<p style="margin:0 0 14px;">' . nl2br( $e( trim( $para ) ) ) . '</p>'; } }
-	else { $b .= '<p style="margin:0 0 14px;">Here are the next class dates, what the roles pay' . ( $posts ? ', and what we published this month' : '' ) . '.</p>'; }
+	/* Masthead */
+	$b .= '<tr><td style="padding:24px 28px 18px;background:#0B2E35;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr>'
+	    . '<td style="' . $SER . 'font-size:24px;color:#FFFFFF;">Agile Agilist<div style="' . $F . 'margin-top:6px;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8FCFCF;">Monthly · ' . $e( $month ) . '</div></td>'
+	    . '<td align="right" style="' . $F . 'font-size:12px;color:#B9DCDC;vertical-align:bottom;">SAFe® Platinum Partner</td></tr></table></td></tr>';
+
+	/* 0. Hero: AI-Native ART spotlight */
+	if ( $spot ) {
+		$head = $spot['kicker'] !== '' ? $e( $spot['kicker'] ) . ' <em style="font-style:italic;color:#8FCFCF;">' . $e( $spot['accent'] ) . '</em>' : $e( $spot['title'] );
+		$h = '<div style="' . $F . 'font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#F2B66D;margin:0 0 12px;">Spotlight · AI-Native ART</div>'
+		   . '<h1 style="margin:0 0 14px;' . $SER . 'font-weight:400;font-size:36px;line-height:1.08;color:#FFFFFF;">' . $head . '</h1>'
+		   . '<p style="margin:0 0 18px;' . $F . 'font-size:16px;line-height:1.6;color:#D6ECEB;">' . $e( $spot['dek'] ) . '</p>';
+		if ( count( $spot['pair'] ) === 2 ) {
+			$h .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 18px;"><tr>';
+			foreach ( $spot['pair'] as $i => $pr ) {
+				$h .= ( $i ? '<td width="12"></td>' : '' ) . '<td width="50%" style="vertical-align:top;padding:12px 14px;border-radius:10px;border:1px solid ' . ( $i ? '#8FCFCF;background:#1B4A4F' : '#3E5F64' ) . ';">'
+				    . '<div style="' . $F . 'font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:' . ( $i ? '#8FCFCF' : '#B9DCDC' ) . ';margin-bottom:4px;">' . $e( $pr[0] ) . '</div>'
+				    . '<div style="' . $F . 'font-size:15px;line-height:1.4;color:#FFFFFF;">' . $e( $pr[1] ) . '</div></td>';
+			}
+			$h .= '</tr></table>';
+		}
+		$h .= $btn( $utm( $spot['url'] ), 'Read the article ⟶', '#8FCFCF', '#0B2E35' ) . ' &nbsp; '
+		    . $btn( $utm( home_url( '/training/ai-native/launching-ai-native-arts/' ) ), 'Launching AI-Native ARTs class', '#0B2E35', '#FFFFFF', '#8FCFCF' );
+		if ( $spot['also'] ) { $h .= '<p style="margin:16px 0 0;' . $F . 'font-size:13px;line-height:1.5;color:#B9DCDC;">Also on this: <a href="' . esc_url( $utm( $spot['also']['url'] ) ) . '" style="color:#FFFFFF;">' . $e( $spot['also']['title'] ) . '</a></p>'; }
+		$b .= '<tr><td style="padding:28px 28px 28px;background:#0E3A44;border-top:1px solid #2A5258;">' . $h . '</td></tr>';
+	}
+
+	/* Greeting or your note */
+	$intro = $note !== '' ? $note : 'Here is this month in five minutes: what one role pays, how AI is changing three roles, what\'s new, and the next classes.';
+	$b .= '<tr><td style="padding:22px 28px 0;' . $F . 'font-size:15.5px;line-height:1.6;color:#35555B;">';
+	foreach ( preg_split( '/\R{2,}/', $intro ) as $para ) { $b .= '<p style="margin:0 0 12px;">' . nl2br( $e( trim( $para ) ) ) . '</p>'; }
 	$b .= '</td></tr>';
 
-	if ( $classes ) {
-		$b .= '<tr><td style="padding:10px 24px 8px;"><p style="' . $eye . '">Upcoming classes</p><h2 style="' . $h2 . '">Live online, instructor-led</h2>'
-		    . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #DCEAE8;">';
-		foreach ( $classes as $c ) {
-			$b .= '<tr><td style="padding:12px 0;border-bottom:1px solid #DCEAE8;font:15px/1.45 Arial,Helvetica,sans-serif;color:#0B2E35;">'
-			    . '<a href="' . esc_url( $utm( $c['url'] ) ) . '" style="color:#0B2E35;font-weight:700;text-decoration:none;">' . $e( $c['name'] ) . '</a>'
-			    . '<span style="display:block;margin-top:3px;color:#5C7479;font-size:14px;">' . $e( implode( '  ·  ', $c['dates'] ) ) . '</span>'
-			    . '<a href="' . esc_url( $utm( $c['url'] ) . '#enroll' ) . '" style="display:inline-block;margin-top:6px;color:#0E8074;font-weight:700;font-size:14px;text-decoration:none;">See dates and register ⟶</a></td></tr>';
+	/* 1. Career snap */
+	if ( $career ) {
+		$c = $career; $chips = '';
+		foreach ( $c['path'] as $i => $st ) {
+			/* Inline blocks, not table cells, so the chain wraps on a phone. */
+			$chips .= ( $i ? '<span style="display:inline-block;margin:0 4px 6px 0;color:#8FCFCF;' . $F . 'font-size:14px;">⟶</span>' : '' )
+			        . '<span style="display:inline-block;margin:0 4px 6px 0;padding:7px 12px;border-radius:100px;' . ( $i ? 'border:1px solid #8FCFCF;' : 'background:#0E8074;' ) . $F . 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap;">' . $e( $st[0] ) . ' · ' . (int) $st[1] . 'K</span>';
 		}
-		$b .= '</table><p style="margin:10px 0 0;font:13px/1.5 Arial,Helvetica,sans-serif;color:#5C7479;">The exam fee is included in every class. All classes: <a href="' . esc_url( $utm( home_url( '/training/' ) ) ) . '" style="color:#0E8074;">agile-agilist.com/training</a></p></td></tr>';
+		$bar = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 4px;"><tr>'
+		     . ( $c['pos'] > 0 ? '<td width="' . (int) $c['pos'] . '%" style="height:10px;background:#5FA9A6;border-radius:100px 0 0 100px;font-size:0;line-height:0;">&nbsp;</td>' : '' )
+		     . '<td width="4" style="height:10px;background:#F2B66D;font-size:0;line-height:0;">&nbsp;</td>'
+		     . '<td style="height:10px;background:#5FA9A6;border-radius:0 100px 100px 0;font-size:0;line-height:0;">&nbsp;</td></tr></table>'
+		     . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="' . $F . 'font-size:11.5px;color:#B9DCDC;">' . (int) $c['lo'] . 'K</td><td align="center" style="' . $F . 'font-size:11.5px;color:#B9DCDC;">median ' . (int) $c['median'] . 'K</td><td align="right" style="' . $F . 'font-size:11.5px;color:#B9DCDC;">' . (int) $c['hi'] . 'K</td></tr></table>';
+		$card = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#0B2E35;border-radius:12px;"><tr><td style="padding:22px;">'
+		      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="' . $F . 'font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#8FCFCF;">01 · Career snap</td><td align="right" style="' . $F . 'font-size:12px;color:#B9DCDC;">US base salary, USD</td></tr></table>'
+		      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:14px 0 10px;"><tr>'
+		      . '<td style="vertical-align:bottom;"><div style="' . $SER . 'font-size:28px;line-height:1.1;color:#FFFFFF;">' . $e( $c['name'] ) . '</div><div style="' . $F . 'margin-top:6px;font-size:14px;line-height:1.55;color:#B9DCDC;">' . $e( $c['about'] ) . '</div></td>'
+		      . '<td align="right" style="vertical-align:bottom;padding-left:16px;white-space:nowrap;"><div style="' . $SER . 'font-size:48px;line-height:1;color:#FFFFFF;">' . (int) $c['median'] . 'K</div><div style="' . $F . 'font-size:12px;color:#B9DCDC;">median</div></td></tr></table>'
+		      . $bar
+		      . ( count( $c['path'] ) > 1 ? '<div style="' . $F . 'margin:16px 0 8px;font-size:12px;font-weight:600;color:#FFFFFF;">Where it leads</div><div>' . $chips . '</div>' : '' )
+		      . '<div style="margin:18px 0 0;padding-top:14px;border-top:1px solid #2A5258;">' . $btn( $utm( $c['url'] ), 'See the ' . $e( $c['code'] ) . ' class ⟶', '#8FCFCF', '#0B2E35' )
+		      . '<div style="' . $F . 'margin-top:12px;font-size:11.5px;line-height:1.5;color:#8FB5B8;">' . $e( $c['sources'] ) . ' Pay varies with market, industry and employer.</div></div>'
+		      . '</td></tr></table>';
+		$b .= '<tr><td style="padding:20px 28px 6px;">' . $card . '</td></tr>';
 	}
 
-	if ( ! empty( $pay['rows'] ) ) {
-		$b .= '<tr><td style="padding:22px 24px 8px;"><p style="' . $eye . '">Salary benchmarks</p><h2 style="' . $h2 . '">What these roles pay</h2>'
-		    . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #DCEAE8;">';
-		foreach ( $pay['rows'] as $r ) {
-			$label = $r['url'] ? '<a href="' . esc_url( $utm( $r['url'] ) ) . '" style="color:#0B2E35;text-decoration:none;">' . $e( $r['name'] ) . '</a>' : $e( $r['name'] );
-			$b .= '<tr><td style="padding:10px 0;border-bottom:1px solid #DCEAE8;font:15px/1.4 Arial,Helvetica,sans-serif;color:#0B2E35;">' . $label
-			    . ( $r['range'] ? '<span style="display:block;margin-top:2px;color:#5C7479;font-size:13px;">Range USD ' . (int) $r['range'][0] . 'K–' . (int) $r['range'][1] . 'K</span>' : '' ) . '</td>'
-			    . '<td align="right" style="padding:10px 0;border-bottom:1px solid #DCEAE8;font:700 17px/1.2 Arial,Helvetica,sans-serif;color:#0E8074;white-space:nowrap;">USD ' . (int) $r['median'] . 'K<span style="display:block;font:400 11px/1.3 Arial,Helvetica,sans-serif;color:#5C7479;">median</span></td></tr>';
+	/* 2. The role, with AI in the room */
+	$roles = apply_filters( 'aa_sf_nl_roles', array(
+		array( 'SCRUM MASTER', 'Running the ceremonies and chasing status.', 'Bringing the context that makes an AI proposal fit the team, and coaching people to work alongside it.', 'Where did the Scrum Master go?', '/the-domain-expert-capability-in-an-ai-native-team-and-the-answer-to-the-question-everyone-asks-where-did-the-scrum-master-go/' ),
+		array( 'RTE', 'Compiling dependency boards and train reports by hand.', 'The same job, flow, obstacles, risk and dependencies, at a faster pace, with tools that keep up. Some RTEs are moving toward AI-Native Value Architect.', 'RTEs in an AI-Native ART', '/rtes-in-an-ai-native-art-the-job-doesnt-change-the-pace-does-and-the-rte-is-the-person-who-keeps-the-system-flowing-while-everything-inside-it-speeds-up/' ),
+		array( 'SPC', 'Launching trains to a fixed template.', 'Deciding where AI belongs in each value stream, and teaching leaders to govern and measure it.', 'AI-Native Value Architect', '/training/ai-native/ai-native-change-agent/' ),
+	) );
+	$r = '<div style="' . $eye . '">02 · The role, with AI in the room</div><h2 style="' . $h2 . '">How the Scrum Master, RTE and SPC roles are changing</h2>'
+	   . '<p style="margin:0 0 14px;' . $F . 'font-size:14.5px;line-height:1.6;color:#35555B;">AI takes on more of the tracking, drafting and analysis. What stays with people is judgment, context and the decisions a team owns.</p>';
+	foreach ( $roles as $ro ) {
+		$r .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;border:1px solid #DCEAE8;border-radius:10px;"><tr><td style="padding:14px 16px;">'
+		    . '<span style="display:inline-block;padding:3px 9px;border-radius:100px;background:#EAF5F3;' . $F . 'font-size:11px;font-weight:700;letter-spacing:.06em;color:#0B2E35;">' . $e( $ro[0] ) . '</span>'
+		    . '<p style="margin:10px 0 4px;' . $F . 'font-size:14px;line-height:1.5;color:#0B2E35;"><span style="color:#5C7479;">Less of:</span> ' . $e( $ro[1] ) . '</p>'
+		    . '<p style="margin:0 0 8px;' . $F . 'font-size:14px;line-height:1.5;color:#0B2E35;"><span style="color:#0E8074;font-weight:700;">More of:</span> ' . $e( $ro[2] ) . '</p>'
+		    . '<a href="' . esc_url( $utm( home_url( $ro[4] ) ) ) . '" style="' . $F . 'font-size:14px;font-weight:700;color:#0E8074;text-decoration:none;">' . $e( $ro[3] ) . ' ⟶</a></td></tr></table>';
+	}
+	$r .= '<p style="margin:2px 0 0;' . $F . 'font-size:12px;line-height:1.5;color:#5C7479;">Our view, not an official Scaled Agile position. One route, not the only one.</p>';
+	$b .= $sec( $r );
+
+	/* 3. What's new */
+	$new = apply_filters( 'aa_sf_nl_whats_new', array(
+		array( 'NEW', 'AI-Native SAFe Fundamentals', 'A one-day introduction to running SAFe with AI in the flow of work. Live online, exam included.', '/training/ai-native/ai-native-ready-certification/' ),
+		array( 'NEW', 'Launching AI-Native ARTs', 'Turn your Lean-Agile foundation into an engine for AI-driven execution. Two days, SAFe® ART Leader certification, exam included.', '/training/ai-native/launching-ai-native-arts/' ),
+		array( 'UPDATED', 'Large Solution SAFe®', 'Built on Scaled Agile\'s recently updated Large Solution Delivery discipline, for complex systems with external partners. Two days, SPCT-led.', '/training/adv-safe/large-solution/' ),
+	) );
+	if ( $new ) {
+		$w = '<div style="' . $eye . '">03 · What\'s new in SAFe &amp; AI-Native</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #DCEAE8;">';
+		foreach ( $new as $n ) {
+			$w .= '<tr><td style="padding:14px 0;border-bottom:1px solid #DCEAE8;"><span style="display:inline-block;padding:2px 8px;border-radius:100px;background:' . ( $n[0] === 'NEW' ? '#F2B66D' : '#B9DCDC' ) . ';' . $F . 'font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#0B2E35;">' . $e( $n[0] ) . '</span>'
+			    . '<div style="margin-top:6px;"><a href="' . esc_url( $utm( home_url( $n[3] ) ) ) . '" style="' . $F . 'font-size:16px;font-weight:700;color:#0B2E35;text-decoration:none;">' . $e( $n[1] ) . '</a></div>'
+			    . '<div style="' . $mute . 'margin-top:3px;">' . $e( $n[2] ) . '</div></td></tr>';
 		}
-		$b .= '</table><p style="margin:10px 0 0;font:12.5px/1.5 Arial,Helvetica,sans-serif;color:#5C7479;">US base salary. Pay varies with market, industry and employer more than with any certificate. '
-		    . $e( $pay['sources'] ) . '</p></td></tr>';
+		$b .= $sec( $w . '</table>' );
 	}
 
+	/* 4. Latest from the blog */
 	if ( $posts ) {
-		$b .= '<tr><td style="padding:22px 24px 4px;"><p style="' . $eye . '">From the blog</p><h2 style="' . $h2 . '">What we published</h2>';
-		foreach ( $posts as $p ) {
-			$b .= '<p style="margin:0 0 14px;font:15px/1.5 Arial,Helvetica,sans-serif;color:#0B2E35;"><a href="' . esc_url( $utm( $p['url'] ) ) . '" style="color:#0E8074;font-weight:700;text-decoration:none;">' . $e( $p['title'] ) . '</a>'
-			    . '<span style="display:block;margin-top:3px;color:#5C7479;font-size:14px;">' . $e( $p['excerpt'] ) . '</span></p>';
+		$l = '<div style="' . $eye . '">04 · Latest from the blog</div>';
+		foreach ( array_slice( $posts, 0, 3 ) as $p ) {
+			$l .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 10px;background:#F4F9F8;border-radius:10px;"><tr><td style="padding:16px;">'
+			    . '<a href="' . esc_url( $utm( $p['url'] ) ) . '" style="' . $SER . 'font-size:19px;line-height:1.25;color:#0B2E35;text-decoration:none;">' . $e( $p['title'] ) . '</a>'
+			    . '<div style="' . $mute . 'margin-top:6px;">' . $e( $p['excerpt'] ) . '</div></td></tr></table>';
 		}
-		$b .= '</td></tr>';
+		$b .= $sec( $l );
 	}
 
-	$b .= '<tr><td style="padding:14px 24px 22px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="background:#F4F9F8;border-radius:10px;padding:18px;font:15px/1.5 Arial,Helvetica,sans-serif;color:#0B2E35;">'
-	    . '<strong>Training a team?</strong> Private classes on your dates, or a block of seats in public classes. '
-	    . '<a href="' . esc_url( $utm( home_url( '/team-training/' ) ) ) . '" style="color:#0E8074;font-weight:700;text-decoration:none;">Request a team quote ⟶</a></td></tr></table>'
-	    . '<p style="margin:18px 0 0;font:15px/1.5 Arial,Helvetica,sans-serif;color:#0B2E35;">John Scott, Agile Agilist<br><span style="color:#5C7479;font-size:14px;">Reply to this email and it reaches us at info@agile-agilist.com.</span></p></td></tr>';
+	/* 5. Free tools */
+	$tools = apply_filters( 'aa_sf_nl_tools', array(
+		array( 'Career Compass', 'Map your next role and the step to get there.', '/career-compass/' ),
+		array( 'Agile Career Selector', 'Six questions to the certification that fits you.', '/assessments/cert-recommender/' ),
+		array( 'Agile Assessment', 'Six capability dimensions of organizational agility.', '/assessments/agile-assessment/' ),
+		array( 'AI Assessment', 'AI maturity and readiness across eight dimensions.', '/assessments/ai-assessment/' ),
+		array( 'Product Management', 'Product practice, or a feature factory with PM titles?', '/assessments/product-management-assessment/' ),
+		array( 'Innovation Framework', 'A 15-question check of your innovation operating system.', '/assessments/innovation-framework/' ),
+		array( 'Mutation Readiness', 'Ready to change the model, not only work inside it?', '/assessments/mutation-readiness/' ),
+		array( 'Agile Maturity', 'Where your teams sit today, and the next step up.', '/assessments/agile-maturity/' ),
+	) );
+	$t = '<div style="' . $eye . '">05 · Free tools we use with clients</div><table role="presentation" width="100%" cellpadding="0" cellspacing="0">';
+	foreach ( array_chunk( $tools, 2 ) as $row ) {
+		$t .= '<tr>';
+		foreach ( $row as $i => $tl ) {
+			$t .= ( $i ? '<td width="10"></td>' : '' ) . '<td width="50%" style="vertical-align:top;padding:12px 14px;border:1px solid #DCEAE8;border-radius:10px;">'
+			    . '<a href="' . esc_url( $utm( home_url( $tl[2] ) ) ) . '" style="' . $F . 'font-size:15px;font-weight:700;color:#0B2E35;text-decoration:none;">' . $e( $tl[0] ) . '</a>'
+			    . '<div style="' . $F . 'font-size:13px;line-height:1.45;color:#5C7479;margin-top:3px;">' . $e( $tl[1] ) . '</div></td>';
+		}
+		$t .= '</tr><tr><td colspan="3" height="10" style="font-size:0;line-height:0;">&nbsp;</td></tr>';
+	}
+	$b .= $sec( $t . '</table>' );
 
-	$b .= '<tr><td style="padding:16px 24px 22px;border-top:1px solid #DCEAE8;font:12px/1.6 Arial,Helvetica,sans-serif;color:#7C9296;">Agile Agilist · ' . $e( $addr ) . '<br>'
-	    . 'You are receiving this because you subscribed at agile-agilist.com. <a href="' . esc_url( $unsub ) . '" style="color:#7C9296;text-decoration:underline;">Unsubscribe</a>.</td></tr>';
+	/* 6. Next classes */
+	if ( $classes ) {
+		$n = '<div style="' . $eye . '">06 · Next classes</div>';
+		if ( substr( $ym, 5, 2 ) === '12' ) {
+			$n .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:0 0 12px;background:#FFF6E6;border:1px solid #F2B66D;border-radius:10px;"><tr><td style="padding:12px 14px;' . $F . 'font-size:14px;line-height:1.45;color:#0B2E35;"><strong>Holiday week:</strong> two-day classes start every day from Dec 26 to Dec 30, so you can certify without taking leave.</td></tr></table>';
+		}
+		$n .= '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #DCEAE8;">';
+		foreach ( array_slice( $classes, 0, 6 ) as $c ) {
+			$n .= '<tr><td style="padding:12px 0;border-bottom:1px solid #DCEAE8;"><a href="' . esc_url( $utm( $c['url'] ) . '#enroll' ) . '" style="' . $F . 'font-size:15px;font-weight:700;color:#0B2E35;text-decoration:none;">' . $e( $c['name'] ) . ' ⟶</a>'
+			    . '<div style="' . $F . 'font-size:13.5px;color:#5C7479;margin-top:2px;">' . $e( implode( '  ·  ', $c['dates'] ) ) . '</div></td></tr>';
+		}
+		$n .= '</table><p style="margin:10px 0 0;' . $F . 'font-size:12.5px;color:#5C7479;">Live online, instructor-led. Exam fee included in every class. <a href="' . esc_url( $utm( home_url( '/training/' ) ) ) . '" style="color:#0E8074;">All classes</a></p>';
+		$b .= $sec( $n );
+	}
 
-	$pre  = $classes ? 'Next dates: ' . $classes[0]['name'] . ' ' . $classes[0]['dates'][0] . ( isset( $classes[1] ) ? ', ' . $classes[1]['name'] . ' ' . $classes[1]['dates'][0] : '' ) . '.' : 'What we published this month.';
-	$subj = 'Agile Agilist · ' . $month . ': new class dates' . ( ! empty( $pay['rows'] ) ? ', salary benchmarks' : '' ) . ( $posts ? ' and what we published' : '' );
+	/* 7. Team training + sign-off */
+	$b .= '<tr><td style="padding:22px 28px 24px;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F4F9F8;border-radius:12px;"><tr><td style="padding:18px 20px;">'
+	    . '<div style="' . $SER . 'font-size:20px;color:#0B2E35;">Training a team?</div><div style="' . $mute . 'margin:4px 0 12px;">Private classes on your dates, or a block of seats in public classes.</div>'
+	    . $btn( $utm( home_url( '/team-training/' ) ), 'Request a quote ⟶', '#0E8074', '#FFFFFF' ) . '</td></tr></table>'
+	    . '<p style="margin:20px 0 0;' . $F . 'font-size:15px;line-height:1.5;color:#0B2E35;">John Scott, Agile Agilist<br><span style="font-size:13.5px;color:#5C7479;">Reply to this email and it reaches us at info@agile-agilist.com.</span></p></td></tr>';
+
+	/* Footer */
+	$b .= '<tr><td style="padding:16px 28px 22px;border-top:1px solid #DCEAE8;' . $F . 'font-size:12px;line-height:1.6;color:#6B8286;">Agile Agilist · ' . $e( $addr ) . '<br>'
+	    . 'You are receiving this because you subscribed at agile-agilist.com. <a href="' . esc_url( $unsub ) . '" style="color:#6B8286;text-decoration:underline;">Unsubscribe</a>.</td></tr>';
+
+	$subj = $spot ? 'Agile Agilist · ' . $month . ': ' . ( $spot['kicker'] !== '' ? $spot['kicker'] . ' ' . $spot['accent'] : $spot['title'] ) : 'Agile Agilist · ' . $month;
+	$pre  = ( $career ? 'Career snap: ' . $career['name'] . ', median USD ' . $career['median'] . 'K. ' : '' ) . 'How AI is changing the Scrum Master, RTE and SPC roles.';
 	$html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . $e( $subj ) . '</title></head>'
 	      . '<body style="margin:0;padding:0;background:#EEF4F3;"><div style="display:none;max-height:0;overflow:hidden;color:#EEF4F3;">' . $e( $pre ) . '</div>'
 	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF4F3;"><tr><td align="center" style="padding:20px 10px;">'
-	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border-radius:12px;overflow:hidden;">' . $b . '</table></td></tr></table></body></html>';
-	return array( 'subject' => ( $preview ? '[Preview] ' : '' ) . $subj, 'html' => $html, 'classes' => count( $classes ), 'posts' => count( $posts ) );
+	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#FFFFFF;border-radius:14px;overflow:hidden;">' . $b . '</table></td></tr></table></body></html>';
+	return array( 'subject' => ( $preview ? '[Preview] ' : '' ) . $subj, 'html' => $html, 'classes' => count( $classes ), 'posts' => count( $posts ), 'spotlight' => $spot ? $spot['id'] : 0 );
 }
 
 function aa_sf_nl_mail( $to, $mail, $unsub = '' ) {
@@ -365,6 +568,9 @@ function aa_sf_nl_tick() {
 	if ( $left ) { if ( ! wp_next_scheduled( 'aa_sf_nl_tick_more' ) ) { wp_schedule_single_event( time() + 180, 'aa_sf_nl_tick_more' ); } return; }
 	aa_sf_nl_set( 'last', $ym );
 	aa_sf_nl_set( 'last_at', current_time( 'mysql' ) );
+	$sp = aa_sf_nl_spotlight( $ym ); $done = isset( $s['spotlit'] ) && is_array( $s['spotlit'] ) ? $s['spotlit'] : array();
+	if ( $sp ) { $done[ $ym ] = $sp['id']; aa_sf_nl_set( 'spotlit', $done ); }
+	if ( ! empty( $s['spotlight'] ) ) { aa_sf_nl_set( 'spotlight', 0 ); }   /* a chosen spotlight is for one issue */
 	if ( $s['note'] !== '' ) { aa_sf_nl_set( 'note', '' ); }  /* a note is for one issue */
 }
 add_action( 'aa_sf_nl_tick', 'aa_sf_nl_tick' );
