@@ -1,0 +1,19 @@
+{
+ "id": 362,
+ "status": "publish",
+ "slug": "state-of-ai",
+ "parent": 39,
+ "link": "https://report-ai.org/indexes/state-of-ai/",
+ "date": "2026-06-06T21:48:17",
+ "date_gmt": "2026-06-06T21:48:17",
+ "modified": "2026-10-29T08:36:12",
+ "title": {
+  "raw": "State of AI",
+  "rendered": "State of AI"
+ },
+ "excerpt": {
+  "raw": "How AI evolved year by year from 2022 to 2026: organizational adoption, generative AI use, investment and milestones. Pick a year or see the full sourced timeline.",
+  "rendered": "<p>How AI evolved year by year from 2022 to 2026: organizational adoption, generative AI use, investment and milestones. Pick a year or see the full sourced timeline.</p>\n",
+  "protected": false
+ }
+}

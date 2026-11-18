@@ -13,13 +13,14 @@ backups: `backups/1497-20261116.php` (snippet) and `backups/menu34-20261118.json
     with children 3227 and 3233.
   - About became a dropdown: Editorial standards, Corrections log, FAQ, Contact and Site map
     (4242–4246; Site map page 4231).
-- **Snippet 1497 code: SAVED, NOT YET SERVED.**
-  - `post_content` holds v6 (post_modified 2026-11-17 19:49).
-  - WPCode serves snippets from its cache option `wpcode_snippets`. That cache is rebuilt only
-    when a snippet is saved in WPCode's own editor, not by `wp_update_post`, so the front end
-    still runs v5.
-  - **Owner action:** WP admin → Code Snippets → "Report AI — nav support v2" → **Update**.
-    No edits are needed. Afterwards `wp_get_option wpcode_snippets` should show `tai-nav-v6`.
+- **Snippet 1497 code: LIVE (18 Nov 2026).**
+  - The owner clicked Update in WPCode. The raw `wpcode_snippets` cache entry for 1497 now holds
+    the v6 code (`tai-nav-v6`, modified 2026-11-18 08:29).
+  - The home page renders HTTP 200. The header text lists the auto level-3 pages under State of AI
+    (AI Development Index, State of AI Finance 2026, …), which only v6's uncapped filter produces.
+  - Lesson: WPCode serves snippets from its cache option `wpcode_snippets`. That cache is rebuilt
+    only when a snippet is saved in WPCode's own editor; `wp_update_post` on the snippet post
+    changes nothing on the front end. Every future snippet edit needs the owner's Update click.
   - Do NOT write `wpcode_snippets` via MCP: one bad write would take out every snippet,
     including the news noindex and the external-links snippet.
 
@@ -49,7 +50,10 @@ backups: `backups/1497-20261116.php` (snippet) and `backups/menu34-20261118.json
 
 ## Verify after the owner clicks Update
 
-- [ ] `wpcode_snippets` raw contains `tai-nav-v6`
+- [x] `wpcode_snippets` raw contains `tai-nav-v6` (checked 18 Nov 2026)
+- [x] Home page HTTP 200; header HTML carries the uncapped auto lists
+- The interactive checks below need a real browser; report-ai.org is not reachable from the
+  cloud container, so they are the owner's to confirm on a phone and a desktop.
 - [ ] Phone: the drawer shows 11 index sections collapsed; + opens one; the drawer footer has search and Site map
 - [ ] Desktop: Enterprise AI pane lists all 13 pages and scrolls; About dropdown sits under About
 - [ ] Reports → Latest reports lists the new reports (ML benchmark, AI history, Perez)
@@ -60,3 +64,8 @@ backups: `backups/1497-20261116.php` (snippet) and `backups/menu34-20261118.json
   this post, don't forget to subscribe!" into every post *and page*, including indexes and the glossary.
   It is a WPCode demo snippet. It lands in the first paragraph that LLMs and search engines extract.
   Recommend deactivating it in WPCode, which is an owner decision.
+  - Confirmed 18 Nov 2026: the home page's extracted text reads "…reshaping every
+    industry.Thank you for reading this post, don't forget to subscribe!" The line sits inside
+    the home page's first paragraph.
+- The home page `<title>` and og:title still read "Home - The AI Index". That is an AIOSEO
+  setting, which the owner changes in the AIOSEO UI. The brand rule retires that name.
