@@ -25,6 +25,8 @@ export interface ClassGuest {
   name: string;
   email: string;
   tokenHash: string;
+  /** The link's token, kept so the class's instructors can show a student's link again (links made before this was kept have none). */
+  token?: string;
   createdAt: string;
   /** When the link was last emailed. */
   emailedAt?: string;
@@ -118,7 +120,7 @@ Trainyard`,
 
   app.get("/v1/boards/:id/students", { schema: { params: z.object({ id: z.string().max(200) }) } }, async (req) => {
     const b = classBoard(req, req.params.id);
-    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map(view), teams: classTeams(b), teamPolicy: teamPolicy(b), teamRounds: teamRounds(b), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
+    return { students: guests().filter((g) => g.boardId === b.id && g.workspaceId === here(req)).map((g) => ({ ...view(g), ...(g.token ? (opts.webUrl ? links(g.token) : { token: g.token }) : {}) })), teams: classTeams(b), teamPolicy: teamPolicy(b), teamRounds: teamRounds(b), canEmail: !!(opts.mailer?.live && opts.webUrl), ...(opts.webMirrorUrl ? { mirrorHost: new URL(opts.webMirrorUrl).host } : {}) };
   });
 
   // Adds students; the new links come back once. An email already on the class keeps the link it
@@ -136,7 +138,7 @@ Trainyard`,
       }
       if (onBoard().length >= MAX_STUDENTS) throw new ApiError(413, "TOO_MANY_STUDENTS", `A class holds up to ${MAX_STUDENTS} students.`);
       const token = newGuestToken();
-      g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), createdAt: new Date().toISOString() };
+      g = { id: `st-${randomBytes(6).toString("base64url")}`, workspaceId: here(req), boardId: b.id, name: s.name, email: s.email.toLowerCase(), tokenHash: hashKey(token), token, createdAt: new Date().toISOString() };
       guests().push(g);
       // With teams set up, a new student joins the smallest one.
       if (classTeams(b).length) saveTeams(b, makeTeams(classTeams(b).length, classTeams(b), onBoard().map((x) => x.id)), teamRounds(b), onBoard().map((x) => x.id), teamPolicy(b));
@@ -156,6 +158,7 @@ Trainyard`,
     if (!g) throw notFound("Student");
     const token = newGuestToken();
     g.tokenHash = hashKey(token);
+    g.token = token;
     const emailed = req.body?.send ? await email(g, b.name, token, trainerOf(req), teamOf(classTeams(b), g.id)).catch((e: Error) => (console.error(`[mail] class link for ${g.email} not sent: ${e.message}`), false)) : false;
     await platform.commit(req.principal, "class.students.link", { boardId: b.id, studentId: g.id });
     return { student: { ...view(g), token, ...links(token), emailed } };

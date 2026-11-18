@@ -12,8 +12,13 @@ interface Student {
   id: string;
   name: string;
   email: string;
+  createdAt: string;
   emailedAt?: string;
   seenAt?: string;
+  /** The student's link, for the class's instructors; absent for a link made before links were kept. */
+  link?: string;
+  mirrorLink?: string;
+  token?: string;
 }
 
 // The API builds links on the canonical web address (TRAINYARD_WEB_URL) so a copied link never
@@ -302,7 +307,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
       ) : null}
       {links.length ? (
         <div className="notice ok stack" style={{ gap: 6 }} role="status">
-          <b>Links, shown once: copy them now{links.some((l) => l.emailed) ? " (emailed ones are already on their way)" : ""}</b>
+          <b>New links: copy them now, or later with Copy link next to a name{links.some((l) => l.emailed) ? " (emailed ones are already on their way)" : ""}</b>
           {links.map((l) => (
             <div key={l.link} className="row" style={{ gap: 8, flexWrap: "wrap" }}>
               <span>
@@ -347,6 +352,7 @@ export function ClassStudents({ boardId }: { boardId: string }) {
               <th>Name</th>
               <th>Email</th>
               {teams.length ? <th>{rounds.length > 1 ? `Team (${policy === "day" ? "day" : "chapter"} ${round + 1})` : "Team"}</th> : null}
+              <th>Invited</th>
               <th>Joined</th>
               <th>
                 <span className="sr-only">Actions</span>
@@ -373,8 +379,14 @@ export function ClassStudents({ boardId }: { boardId: string }) {
                     </select>
                   </td>
                 ) : null}
+                <td className="faint">{s.emailedAt ? `Emailed ${s.emailedAt.slice(0, 10)}` : `Added ${s.createdAt.slice(0, 10)} · not emailed`}</td>
                 <td className="faint">{s.seenAt ? s.seenAt.slice(0, 16).replace("T", " ") : "Not yet"}</td>
                 <td className="row" style={{ gap: 6, justifyContent: "flex-end" }}>
+                  {s.link || s.token ? (
+                    <button className="btn small" onClick={() => void copy(linkFor(s.token ?? "", s.link), `link:${s.id}`)} title={`${s.name}'s personal link, to send again`}>
+                      {copied === `link:${s.id}` ? "Copied" : "Copy link"}
+                    </button>
+                  ) : null}
                   <button className="btn small" onClick={() => void relink(s)} title="A new link; the old one stops working">
                     New link
                   </button>

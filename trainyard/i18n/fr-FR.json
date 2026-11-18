@@ -951,7 +951,7 @@
   "fr": ". Utilisez",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:300",
+  "where": "apps/web/components/class-students.tsx:305",
   "note": "fragment"
  },
  ". Value-based, measurable, gradable: at least three per theme.": {
@@ -1026,7 +1026,7 @@
   "fr": "· envoyé par e-mail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:310"
+  "where": "apps/web/components/class-students.tsx:315"
  },
  "· ENABLER": {
   "fr": "· ENABLER",
@@ -1386,7 +1386,7 @@
   "fr": "(ceux envoyés par e-mail sont déjà en route)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:305"
+  "where": "apps/web/components/class-students.tsx:310"
  },
  "(future state)": {
   "fr": "(état futur)",
@@ -1766,28 +1766,28 @@
   "fr": "{0} est ajouté et a reçu le lien de la formation par e-mail.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:436",
+  "where": "apps/web/components/class-students.tsx:448",
   "note": "gender: masculine assumed"
  },
  "{0} is in; they can open the class from their Classes list.": {
   "fr": "{0} est ajouté ; il peut ouvrir la formation depuis sa liste Formations.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:436",
+  "where": "apps/web/components/class-students.tsx:448",
   "note": "gender: masculine assumed"
  },
  "{0} is in: an email with a code to choose a password is on its way.": {
   "fr": "{0} est ajouté : un e-mail avec un code pour choisir un mot de passe est en route.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:436",
+  "where": "apps/web/components/class-students.tsx:448",
   "note": "gender: masculine assumed"
  },
  "{0} is in. Mail is off here: ask them to sign up with {1} and use “Forgot password” to set one.": {
   "fr": "{0} est ajouté. L’envoi d’e-mails est désactivé ici : demandez-lui de s’inscrire avec {1} et d’utiliser « Mot de passe oublié » pour en définir un.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:436",
+  "where": "apps/web/components/class-students.tsx:448",
   "note": "« Forgot password » must match the sign-in screen label"
  },
  "{0} is loaded but no measure uses it.": {
@@ -1855,7 +1855,7 @@
   "fr": "{0} anime maintenant cette formation avec vous.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:419"
+  "where": "apps/web/components/class-students.tsx:431"
  },
  "{0} of {1} came back": {
   "fr": "",
@@ -1998,6 +1998,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/insights.ts:358"
+ },
+ "{0}'s personal link, to send again": {
+  "fr": "Le lien personnel de {0}, à renvoyer",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/class-students.tsx:386"
  },
  "{0}% of finished work in {1} was enablers; the floor is {2}%.": {
   "fr": "{0} % du travail terminé en {1} concernait des enablers ; le plancher est de {2} %.",
@@ -3209,7 +3215,7 @@
   "fr": "✓ enseigne ce cours",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/classroom/company/page.tsx:138 apps/web/components/class-students.tsx:483"
+  "where": "apps/web/app/(app)/classroom/company/page.tsx:138 apps/web/components/class-students.tsx:495"
  },
  "✓ Watched": {
   "fr": "✓ Visionné",
@@ -4520,7 +4526,7 @@
   "fr": "Un nouveau lien ; l’ancien cesse de fonctionner",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:378"
+  "where": "apps/web/components/class-students.tsx:390"
  },
  "A new person joins full-time on save.": {
   "fr": "",
@@ -5760,13 +5766,13 @@
   "fr": "Ajouter un co-formateur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:493"
+  "where": "apps/web/components/class-students.tsx:505"
  },
  "Add each student&apos;s name and email. Everyone gets a personal link that opens this class board, with no account and no password. A link works until you replace it or remove the student.": {
   "fr": "Ajoutez le nom et l’e-mail de chaque participant. Chacun reçoit un lien personnel qui ouvre ce tableau de formation, sans compte ni mot de passe. Un lien fonctionne jusqu’à ce que vous le remplaciez ou retiriez le participant.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:155"
+  "where": "apps/web/components/class-students.tsx:160"
  },
  "Add entity": {
   "fr": "",
@@ -5826,7 +5832,7 @@
   "fr": "Ajouter l’un de vos formateurs",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:478"
+  "where": "apps/web/components/class-students.tsx:490"
  },
  "Add one per group in the room, and name them.": {
   "fr": "Ajoutez-en une par groupe dans la salle, et nommez-les.",
@@ -5874,7 +5880,7 @@
   "fr": "Ajouter un participant",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:294"
+  "where": "apps/web/components/class-students.tsx:299"
  },
  "Add students to the class (Students, top right) and they appear here.": {
   "fr": "Ajoutez des participants à la formation (Participants, en haut à droite) et ils apparaîtront ici.",
@@ -5941,6 +5947,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:188"
+ },
+ "Added {0} · not emailed": {
+  "fr": "Ajouté le {0} · non envoyé par e-mail",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/class-students.tsx:382"
  },
  "Added {0} activities to \"{1}\". Open the lesson tab to see them.": {
   "fr": "{0} activités ajoutées à « {1} ». Ouvrez l’onglet de la leçon pour les voir.",
@@ -7000,7 +7012,7 @@
   "fr": "Déjà dans cette formation, leurs liens restent donc inchangés :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:300"
+  "where": "apps/web/components/class-students.tsx:305"
  },
  "Also bring the card library (cards defined in the room but not placed on this board)": {
   "fr": "",
@@ -7162,14 +7174,14 @@
   "fr": "Ana Lopez",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:271",
+  "where": "apps/web/components/class-students.tsx:276",
   "note": "sample name kept"
  },
  "Ana Lopez, ana@company.com": {
   "fr": "Ana Lopez, ana@company.com",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:281",
+  "where": "apps/web/components/class-students.tsx:286",
   "note": "sample name and email, copied unchanged"
  },
  "Ana Lopez, ana@company.com Ben Okafor, ben@company.com": {
@@ -7189,7 +7201,7 @@
   "fr": "ana@company.com",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:275",
+  "where": "apps/web/components/class-students.tsx:280",
   "note": "sample email kept; could be ana@entreprise.fr"
  },
  "Analysing": {
@@ -9376,7 +9388,7 @@
   "fr": "RÉPARTITION",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:182"
+  "where": "apps/web/components/class-students.tsx:187"
  },
  "Assign this and everything under it to a team": {
   "fr": "Attribuer cet élément et tout ce qu’il contient à une équipe",
@@ -9656,7 +9668,7 @@
   "fr": "Automatique",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:185"
+  "where": "apps/web/components/class-students.tsx:190"
  },
  "Automation Capabilities: We will add Agentic Capabilities for a key, high-volume workflow. The \"HR Navigator\" will be authorized to access the HRIS system to process multi-step vacation requests. An employee can simply say, \"Book me a vacation from Monday to Friday next week,\" and the agent will check their balance, submit the request, and route it to their manager for a one-click approval, all within the chat interface.": {
   "fr": "Capacités d’automatisation : Nous ajouterons des capacités agentiques pour un flux de travail clé à fort volume. « HR Navigator » sera autorisé à accéder au système SIRH pour traiter des demandes de vacances en plusieurs étapes. Un employé pourra simplement dire « Réservez-moi des vacances du lundi au vendredi de la semaine prochaine », et l’agent vérifiera son solde, soumettra la demande et l’acheminera à son gestionnaire pour une approbation en un clic, le tout dans l’interface de clavardage.",
@@ -10222,7 +10234,7 @@
   "fr": "Ben Okafor, ben@company.com",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:281",
+  "where": "apps/web/components/class-students.tsx:286",
   "note": "sample name and email, copied unchanged"
  },
  "Benefit hypothesis": {
@@ -10417,7 +10429,7 @@
   "fr": "réseaux bloqués :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:318",
+  "where": "apps/web/components/class-students.tsx:323",
   "note": "fragment"
  },
  "Blocker": {
@@ -12575,7 +12587,7 @@
   "fr": "Choisir…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:782 apps/web/components/class-board.tsx:761 apps/web/components/class-students.tsx:479"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:782 apps/web/components/class-board.tsx:761 apps/web/components/class-students.tsx:491"
  },
  "Choosing a type loads its example.": {
   "fr": "",
@@ -12859,7 +12871,7 @@
   "fr": "Effacer la sélection",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:400"
+  "where": "apps/web/components/class-students.tsx:412"
  },
  "Clear stickies": {
   "fr": "Effacer les post-it",
@@ -13153,13 +13165,13 @@
   "fr": "E-mail du co-formateur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:491"
+  "where": "apps/web/components/class-students.tsx:503"
  },
  "Co-instructor name": {
   "fr": "Nom du co-formateur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:490"
+  "where": "apps/web/components/class-students.tsx:502"
  },
  "Co-instructor only": {
   "fr": "Co-formateur seulement",
@@ -13335,13 +13347,13 @@
   "fr": "Nom du collègue",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:490"
+  "where": "apps/web/components/class-students.tsx:502"
  },
  "Colleagues who run this class with you: the board, the students, the teams and the class record. A co-instructor uses no trainer seat: they run only the classes you add them to. A new colleague gets an email to choose a password.": {
   "fr": "Collègues qui animent cette formation avec vous : le tableau, les participants, les équipes et le dossier de la formation. Un co-formateur n’utilise pas de siège de formateur : il anime uniquement les formations auxquelles vous l’ajoutez. Un nouveau collègue reçoit un e-mail pour choisir un mot de passe.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:460"
+  "where": "apps/web/components/class-students.tsx:472"
  },
  "COLLECTION": {
   "fr": "COLLECTION",
@@ -14338,7 +14350,7 @@
   "fr": "Copié",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:314 apps/web/components/class-students.tsx:321 apps/web/components/class-students.tsx:335"
+  "where": "apps/web/components/class-students.tsx:319 apps/web/components/class-students.tsx:326 apps/web/components/class-students.tsx:340"
  },
  "Copied ✓": {
   "fr": "Copié ✓",
@@ -14350,7 +14362,7 @@
   "fr": "Tout copié",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:329"
+  "where": "apps/web/components/class-students.tsx:334"
  },
  "Copies the current portfolio canvas with these strategies as planned changes, and drafts a portfolio vision from them.": {
   "fr": "",
@@ -14362,13 +14374,13 @@
   "fr": "Copier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:314 apps/web/components/class-students.tsx:321 apps/web/components/copy-key.tsx:24"
+  "where": "apps/web/components/class-students.tsx:319 apps/web/components/class-students.tsx:326 apps/web/components/copy-key.tsx:24"
  },
  "Copy all": {
   "fr": "Tout copier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:329"
+  "where": "apps/web/components/class-students.tsx:334"
  },
  "Copy as text": {
   "fr": "Copier en texte",
@@ -14400,11 +14412,17 @@
   "phase": "2",
   "where": "apps/web/app/(app)/users/page.tsx:80"
  },
+ "Copy link": {
+  "fr": "Copier le lien",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/class-students.tsx:387"
+ },
  "Copy note for IT": {
   "fr": "Copier le message pour l’informatique",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:335"
+  "where": "apps/web/components/class-students.tsx:340"
  },
  "Copy the project proposal and give it to your flow as the initial prompt: this is the system the three agents will assess.": {
   "fr": "Copiez la proposition de projet et donnez-la à votre flux comme requête initiale : c’est le système que les trois agents évalueront.",
@@ -18361,7 +18379,7 @@
   "fr": "Envoyer son lien par e-mail à chaque participant",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:288"
+  "where": "apps/web/components/class-students.tsx:293"
  },
  "Email me a code": {
   "fr": "",
@@ -18801,7 +18819,7 @@
   "fr": "Entrer ▸",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:229"
+  "where": "apps/web/components/class-students.tsx:234"
  },
  "Enter all info": {
   "fr": "Saisir toutes les infos",
@@ -19422,7 +19440,7 @@
   "fr": "Chaque chapitre",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:206"
+  "where": "apps/web/components/class-students.tsx:211"
  },
  "Every class board, unlimited participants in the room, Miro imports, Jira and Azure DevOps sync. 30-day free trial; yearly is $": {
   "fr": "",
@@ -19440,7 +19458,7 @@
   "fr": "Chaque jour",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:206"
+  "where": "apps/web/components/class-students.tsx:211"
  },
  "Every epic supports an objective": {
   "fr": "Chaque épopée soutient un objectif",
@@ -19452,7 +19470,7 @@
   "fr": "Chaque exercice garde une copie par équipe ; chaque participant travaille sur la copie de son équipe et le formateur passe de l’une à l’autre sur le tableau. Les nouveaux participants rejoignent la plus petite équipe.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:160"
+  "where": "apps/web/components/class-students.tsx:165"
  },
  "Every flagged household gets a trusted, personal diet-swap at the moment of choice; 60% complete it.": {
   "fr": "",
@@ -20700,7 +20718,7 @@
   "fr": "Moins d’équipes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:164 apps/web/components/studio-views-lsa.tsx:214"
+  "where": "apps/web/components/class-students.tsx:169 apps/web/components/studio-views-lsa.tsx:214"
  },
  "Field": {
   "fr": "Champ",
@@ -22007,7 +22025,7 @@
   "fr": "Parmi vos formateurs :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:477"
+  "where": "apps/web/components/class-students.tsx:489"
  },
  "FROM YOUR TOWS": {
   "fr": "À PARTIR DE VOTRE TOWS",
@@ -22600,7 +22618,7 @@
   "fr": "Les réseaux d’administrations et d’entreprises bloquent ou signalent souvent les sites et expéditeurs qu’ils ne connaissent pas encore (alerte de sécurité sur le lien, e-mail en spam). Envoyez ce message à leur service informatique avant la formation.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:333"
+  "where": "apps/web/components/class-students.tsx:338"
  },
  "Government, education, hospitals": {
   "fr": "Administrations, éducation, hôpitaux",
@@ -23668,7 +23686,7 @@
   "fr": "Combien en ajouter",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:259"
+  "where": "apps/web/components/class-students.tsx:264"
  },
  "How might the different roles approach and participate in the event?": {
   "fr": "Comment les différents rôles pourraient-ils aborder l’événement et y participer ?",
@@ -23932,7 +23950,7 @@
   "fr": "Je répartis moi-même",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:185"
+  "where": "apps/web/components/class-students.tsx:190"
  },
  "I'd like to book a": {
   "fr": "",
@@ -25583,14 +25601,14 @@
   "fr": "Invité",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/classroom/company/page.tsx:250 apps/web/app/(app)/users/page.tsx:207",
+  "where": "apps/web/app/(app)/classroom/company/page.tsx:250 apps/web/app/(app)/users/page.tsx:207 apps/web/components/class-students.tsx:355",
   "note": "status; check: may be a value"
  },
  "invited · not signed in yet": {
   "fr": "invité · pas encore connecté",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:465"
+  "where": "apps/web/components/class-students.tsx:477"
  },
  "Invitees": {
   "fr": "Invités",
@@ -26223,7 +26241,7 @@
   "fr": "Inscrit",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/classroom/company/page.tsx:179 apps/web/app/(app)/classroom/company/page.tsx:196 apps/web/components/class-students.tsx:350",
+  "where": "apps/web/app/(app)/classroom/company/page.tsx:179 apps/web/app/(app)/classroom/company/page.tsx:196 apps/web/components/class-students.tsx:356",
   "note": "Joined: column header; « A rejoint » also possible"
  },
  "joined ·": {
@@ -27873,7 +27891,7 @@
  },
  "Links, shown once: copy them now": {
   "fr": "Liens affichés une seule fois : copiez-les maintenant",
-  "status": "draft",
+  "status": "stale",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:305"
  },
@@ -28421,7 +28439,7 @@
   "fr": "L’envoi d’e-mails n’est pas configuré sur ce serveur : copiez les liens et envoyez-les vous-même.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:291"
+  "where": "apps/web/components/class-students.tsx:296"
  },
  "Maintained": {
   "fr": "Tenue à jour",
@@ -29649,7 +29667,7 @@
   "fr": "Plus d’équipes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:173 apps/web/components/studio-views-lsa.tsx:214"
+  "where": "apps/web/components/class-students.tsx:178 apps/web/components/studio-views-lsa.tsx:214"
  },
  "More than three obstacles": {
   "fr": "Plus de trois obstacles",
@@ -30237,7 +30255,7 @@
   "fr": "Jamais",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:206"
+  "where": "apps/web/components/class-students.tsx:211"
  },
  "Never recommend against a care plan": {
   "fr": "",
@@ -30423,20 +30441,26 @@
   "fr": "Nouveau lien",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:300 apps/web/components/class-students.tsx:379",
+  "where": "apps/web/components/class-students.tsx:305 apps/web/components/class-students.tsx:391",
   "note": "button name referenced in surrounding fragments"
  },
  "New links for selected": {
   "fr": "Nouveaux liens pour la sélection",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:394"
+  "where": "apps/web/components/class-students.tsx:406"
  },
  "New links; the old ones stop working": {
   "fr": "De nouveaux liens ; les anciens cessent de fonctionner",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:393"
+  "where": "apps/web/components/class-students.tsx:405"
+ },
+ "New links: copy them now, or later with Copy link next to a name": {
+  "fr": "Nouveaux liens : copiez-les maintenant, ou plus tard avec Copier le lien à côté d’un nom",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/class-students.tsx:310"
  },
  "New member": {
   "fr": "",
@@ -30594,13 +30618,13 @@
   "fr": "Nouvelles équipes au début de chaque jour : le tableau change la répartition avec les chapitres du jour, automatiquement.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:209"
+  "where": "apps/web/components/class-students.tsx:214"
  },
  "New teams at the start of every chapter, so everyone works with new people; the board switches by itself.": {
   "fr": "Nouvelles équipes au début de chaque chapitre, pour que chacun travaille avec de nouvelles personnes ; le tableau change automatiquement.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:209"
+  "where": "apps/web/components/class-students.tsx:214"
  },
  "New train": {
   "fr": "",
@@ -30690,7 +30714,7 @@
   "fr": "à côté d’un nom seulement si un lien a été perdu ; l’ancien cesse alors de fonctionner.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:300",
+  "where": "apps/web/components/class-students.tsx:305",
   "note": "fragment"
  },
  "Nexus": {
@@ -30873,7 +30897,7 @@
   "fr": "Pas d’e-mail pour :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:284"
+  "where": "apps/web/components/class-students.tsx:289"
  },
  "No email? Check spam, or": {
   "fr": "",
@@ -31270,7 +31294,7 @@
   "fr": "Aucune équipe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:1155 apps/web/components/class-students.tsx:367 packages/core/src/metrics.ts:110"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:1155 apps/web/components/class-students.tsx:373 packages/core/src/metrics.ts:110"
  },
  "No team objective feeds this yet. Link one on a team sheet ↓": {
   "fr": "Aucun objectif d’équipe n’alimente encore celui-ci. Liez-en un sur une fiche d’équipe ↓",
@@ -31294,7 +31318,7 @@
   "fr": "aucune équipe · un tableau partagé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:170"
+  "where": "apps/web/components/class-students.tsx:175"
  },
  "No techniques picked yet": {
   "fr": "Aucune technique choisie pour l’instant",
@@ -31384,13 +31408,13 @@
   "fr": "Personne pour l’instant.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:473"
+  "where": "apps/web/components/class-students.tsx:485"
  },
  "Nobody yet": {
   "fr": "Personne pour l’instant",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-board.tsx:476 apps/web/components/class-students.tsx:241"
+  "where": "apps/web/components/class-board.tsx:476 apps/web/components/class-students.tsx:246"
  },
  "Non-vehicle approach": {
   "fr": "Approche hors véhicule",
@@ -31559,7 +31583,7 @@
   "fr": "Hors équipe :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:248"
+  "where": "apps/web/components/class-students.tsx:253"
  },
  "Not in place": {
   "fr": "Pas en place",
@@ -31724,7 +31748,7 @@
   "fr": "Pas encore",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/classroom/company/page.tsx:199 apps/web/components/class-students.tsx:376 packages/core/src/coachsync.ts:25"
+  "where": "apps/web/app/(app)/classroom/company/page.tsx:199 apps/web/components/class-students.tsx:383 packages/core/src/coachsync.ts:25"
  },
  "Not yet ROAMed": {
   "fr": "Pas encore traité ROAM",
@@ -32954,7 +32978,7 @@
   "fr": "Un par ligne : nom, e-mail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:280"
+  "where": "apps/web/components/class-students.tsx:285"
  },
  "One person fewer": {
   "fr": "Une personne de moins",
@@ -33026,7 +33050,7 @@
   "fr": "Un participant",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:261"
+  "where": "apps/web/components/class-students.tsx:266"
  },
  "One swap per basket": {
   "fr": "",
@@ -33394,7 +33418,7 @@
   "fr": "Ouvrir le tableau tel que {0} le voit",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:228"
+  "where": "apps/web/components/class-students.tsx:233"
  },
  "Open the full waybill (Enter)": {
   "fr": "Ouvrir la lettre de voiture complète (Entrée)",
@@ -34251,7 +34275,7 @@
   "fr": "Notre formation utilise Trainyard. Merci d’autoriser pour nos participants : - Web : https://{0} et https://api.{1} (TLS, port 443 ; pas d’inspection ni de page de blocage sur ces hôtes) - E-mail : messages de support@{2} (SPF, DKIM et DMARC sont publiés pour {3} ; envoyés via Postmark) Les participants ouvrent un lien personnel de la forme https://{4}/join/… ; aucun compte, téléchargement ni plug-in n’est nécessaire.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:25",
+  "where": "apps/web/components/class-students.tsx:30",
   "note": "IT note; Postmark brand kept"
  },
  "Out of scope": {
@@ -35914,7 +35938,7 @@
   "fr": "Choisissez un participant, puis une équipe.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:221"
+  "where": "apps/web/components/class-students.tsx:226"
  },
  "Pick a team on a feature to hand it over with its stories; on a team&apos;s board, choose &quot;ART backlog&quot; to put one back.": {
   "fr": "Choisissez une équipe sur une fonctionnalité pour la lui confier avec ses récits ; sur le tableau d’une équipe, choisissez « Carnet de l’ART » pour en remettre une.",
@@ -39826,20 +39850,20 @@
   "fr": "Retirer {0} comme co-formateur ? Cette personne garde sa connexion, mais n’anime plus cette formation.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:447"
+  "where": "apps/web/components/class-students.tsx:459"
  },
  "Remove {0} student{1}? Their links stop working.": {
   "fr": "Retirer {0} participant{1} ? Leurs liens cessent de fonctionner.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:131",
+  "where": "apps/web/components/class-students.tsx:136",
   "note": "{1} is the English plural suffix 's'; works in French too"
  },
  "Remove {0}? Their link stops working.": {
   "fr": "Retirer {0} ? Son lien cesse de fonctionner.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:103"
+  "where": "apps/web/components/class-students.tsx:108"
  },
  "Remove a vote": {
   "fr": "Retirer un vote",
@@ -39935,7 +39959,7 @@
   "fr": "Retirer la sélection",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:397"
+  "where": "apps/web/components/class-students.tsx:409"
  },
  "Remove step": {
   "fr": "Supprimer l’étape",
@@ -39953,7 +39977,7 @@
   "fr": "Supprimer les équipes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:178"
+  "where": "apps/web/components/class-students.tsx:183"
  },
  "Remove the template \"{0}\"? Classes already started from it stay.": {
   "fr": "Supprimer le modèle « {0} » ? Les formations déjà démarrées à partir de celui-ci sont conservées.",
@@ -40274,7 +40298,7 @@
   "fr": "REMANIER LES ÉQUIPES",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:203"
+  "where": "apps/web/components/class-students.tsx:208"
  },
  "Resolved": {
   "fr": "Résolu",
@@ -41496,7 +41520,7 @@
   "fr": "Mêmes équipes pour toute la formation.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:209"
+  "where": "apps/web/components/class-students.tsx:214"
  },
  "Same wording, same practice": {
   "fr": "Même formulation, même pratique",
@@ -42027,7 +42051,7 @@
   "fr": "RÉPARTITION POUR",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:213",
+  "where": "apps/web/components/class-students.tsx:218",
   "note": "fragment, followed by day/chapter"
  },
  "Seats": {
@@ -42208,7 +42232,7 @@
   "fr": "Sélectionner tous les participants",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:345"
+  "where": "apps/web/components/class-students.tsx:350"
  },
  "Select policy": {
   "fr": "Choisir une police d’assurance",
@@ -42649,7 +42673,7 @@
   "fr": "Plusieurs à la fois",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:264"
+  "where": "apps/web/components/class-students.tsx:269"
  },
  "Several criteria are missing. Is “Complete the migration ahead of the deadline” a result or a task?": {
   "fr": "Plusieurs critères manquent. « Terminer la migration avant l’échéance » est-il un résultat ou une tâche ?",
@@ -43100,7 +43124,7 @@
   "fr": "Mélanger maintenant ⟳",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:190"
+  "where": "apps/web/components/class-students.tsx:195"
  },
  "Shuffle students": {
   "fr": "Mélanger les participants",
@@ -44174,7 +44198,7 @@
   "fr": "Répartir équitablement",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:194"
+  "where": "apps/web/components/class-students.tsx:199"
  },
  "Sprint": {
   "fr": "",
@@ -48014,7 +48038,7 @@
   "fr": "équipes · environ {0} par équipe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:170",
+  "where": "apps/web/components/class-students.tsx:175",
   "note": "fragment after a number"
  },
  "Teams × iterations": {
@@ -48087,7 +48111,7 @@
   "fr": "ÉQUIPES EN PARALLÈLE",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:159"
+  "where": "apps/web/components/class-students.tsx:164"
  },
  "Teams solve cross-team issues themselves": {
   "fr": "Les équipes règlent elles-mêmes les problèmes entre équipes",
@@ -48099,7 +48123,7 @@
   "fr": "Les équipes restent les mêmes pendant toute la formation, sauf si vous les changez.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:221"
+  "where": "apps/web/components/class-students.tsx:226"
  },
  "Teams unsure how their work fits the ART": {
   "fr": "Les équipes ne savent pas trop comment leur travail s’inscrit dans l’ART",
@@ -49634,7 +49658,7 @@
   "fr": "son@e-mail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/classroom/company/page.tsx:261 apps/web/components/class-students.tsx:491"
+  "where": "apps/web/app/(app)/classroom/company/page.tsx:261 apps/web/components/class-students.tsx:503"
  },
  "THEME": {
   "fr": "",
@@ -49712,7 +49736,7 @@
   "fr": "Cette personne",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:419",
+  "where": "apps/web/components/class-students.tsx:431",
   "note": "fallback subject for « {0} now runs this class with you »"
  },
  "They open the board in a browser from a link. On a free room anyone with the link can take part; once you turn authentication on, viewers read and planners move cards, each with a key you send. Nothing to install.": {
@@ -49755,7 +49779,7 @@
   "fr": "Cela ne modifie que le {0} affiché ci-dessus.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:221",
+  "where": "apps/web/components/class-students.tsx:226",
   "note": "{0} is likely « day »/« chapter » in English; article/gender may need adjusting"
  },
  "This class isn&apos;t on the board.": {
@@ -50831,7 +50855,7 @@
   "fr": "Trainyard répartit la formation équitablement et peut la mélanger pour vous.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:184"
+  "where": "apps/web/components/class-students.tsx:189"
  },
  "Trainyard vs": {
   "fr": "",
@@ -55583,7 +55607,7 @@
   "fr": "Vous placez chaque participant dans une équipe.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-students.tsx:184"
+  "where": "apps/web/components/class-students.tsx:189"
  },
  "you run.": {
   "fr": "",

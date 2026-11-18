@@ -2409,6 +2409,16 @@ describe("co-instructors and team copies", () => {
     expect((await call("GET", `/v1/boards/${id}/students`, undefined, key)).status).toBe(200);
     expect((await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Ana", email: "ana@example.io" }] }, key)).status).toBe(201);
     expect((await call("PUT", `/v1/boards/${id}/teams`, { count: 2 }, key)).status).toBe(200);
+    // Sam sees who is invited and each student's link, also for a student the owner added; a new link replaces it.
+    const bea = (await call("POST", `/v1/boards/${id}/students`, { students: [{ name: "Bea", email: "bea@example.io" }] }, root)).body.students[0] as { id: string; token: string };
+    const seen = (await call("GET", `/v1/boards/${id}/students`, undefined, key)).body.students as { id: string; email: string; createdAt: string; token?: string }[];
+    expect(seen.map((x) => x.email).sort()).toEqual(["ana@example.io", "bea@example.io"]);
+    expect(seen.find((x) => x.id === bea.id)!.token).toBe(bea.token);
+    expect((await call("GET", `/v1/boards/${id}`, undefined, bea.token)).status).toBe(200);
+    const fresh = (await call("POST", `/v1/boards/${id}/students/${bea.id}/link`, {}, key)).body.student.token as string;
+    expect(((await call("GET", `/v1/boards/${id}/students`, undefined, key)).body.students as { id: string; token?: string }[]).find((x) => x.id === bea.id)!.token).toBe(fresh);
+    // A student never sees the list or anyone's link.
+    expect((await call("GET", `/v1/boards/${id}/students`, undefined, fresh)).status).toBe(403);
     expect((await call("PATCH", `/v1/boards/${id}`, { name: "LPM · spring" }, key)).status).toBe(200);
     // Elsewhere Sam is a viewer: another class stays read-only, and no new classes.
     const other = (await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE" }, root)).body.board.id as string;
