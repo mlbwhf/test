@@ -57,6 +57,19 @@ function leadOf(t: string): string {
   return end > 80 ? cut.slice(0, end + 1) : `${cut.slice(0, cut.lastIndexOf(" ")).trimEnd()}…`;
 }
 
+/** Calendar days a class covers in its own zone: a single imported session from Saturday 9:00 to Sunday 17:00 is 2 days. */
+function classDays(sessions: { startsAt: string; endsAt: string }[], tz: string): number {
+  const days = new Set<string>();
+  const key = (t: number) => fmt(new Date(t).toISOString(), tz, { year: "numeric", month: "2-digit", day: "2-digit" });
+  for (const x of sessions) {
+    const end = Date.parse(x.endsAt);
+    // Step through the session a day at a time (the end itself counts unless it is midnight).
+    for (let t = Date.parse(x.startsAt), n = 0; t < end && n < 62; t += 86_400_000, n++) days.add(key(t));
+    days.add(key(Math.max(Date.parse(x.startsAt), end - 1)));
+  }
+  return Math.max(1, days.size);
+}
+
 export function range(c: Cohort): string {
   const e = c.event;
   const end = e.endsAt ?? e.startsAt;
@@ -157,7 +170,7 @@ export async function CourseView({ org, slug, data, sel: chosen, single }: { org
     const { cap, left } = seats(c);
     return {
       slug: c.dateSlug, eventId: c.event.id, startsAt: c.event.startsAt, endsAt: c.event.endsAt ?? ses[ses.length - 1]!.endsAt, timezone: c.event.timezone, format: c.event.format,
-      days: ses.length, dayStartsAt: ses[0]!.startsAt, dayEndsAt: ses[0]!.endsAt,
+      days: classDays(ses, c.event.timezone), dayStartsAt: ses[0]!.startsAt, dayEndsAt: ses[0]!.endsAt,
       weekend: ses.some((x) => ["Sat", "Sun"].includes(fmt(x.startsAt, c.event.timezone, { weekday: "short" }))),
       cap, left, priceMinor: price?.minor ?? null, currency: price?.currency ?? c.event.currency, invoice: c.invoiceAvailable,
       instructors: c.instructors.map((i) => i.name), where: cityOf(c.event.timezone),

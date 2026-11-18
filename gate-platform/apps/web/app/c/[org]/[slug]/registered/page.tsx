@@ -1,7 +1,7 @@
 import { Logo } from "@/components/brand";
 import { siteUrl } from "@/lib/seo";
 import type { Metadata } from "next";
-import { publicApi, type OrderSummary } from "@/lib/public-api";
+import { publicApi, seatPagePath, type OrderSummary } from "@/lib/public-api";
 import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { dateRange, dayLabel, timeRange, zoneAbbr } from "@/lib/class-time";
 import { RxFonts, rxMoney } from "@/components/class-page/shared";
@@ -83,9 +83,11 @@ export default async function RegisteredPage({ params, searchParams }: { params:
       <header className="rx-card" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}>
         <div className="rx-wrap rx-co-head-in">
           <Logo href={siteUrl()} size={11} />
-          <a href="/my" style={{ fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
-            My classes
-          </a>
+          {mine && (
+            <a href={seatPagePath(mine.id, mine.attendee.email)} style={{ fontWeight: 600, fontSize: 15, textDecoration: "none" }}>
+              Manage my booking
+            </a>
+          )}
         </div>
       </header>
 
