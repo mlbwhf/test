@@ -46,13 +46,13 @@ against its primary source in this workstream.
 | `/indexes/compare/` (10 comparison threads) | Every paired figure | Inherits the cadence of whichever series it compares | 2026-08 | ⏳ |
 | `/indexes/enterprise-ai/ai-search-statistics-2026/` | AI Overviews ~50% of queries, CTR −34.5%, referrals +527% | Fast-moving SEO/GEO data | 2026-08 | ✅ |
 | `/indexes/enterprise-ai/ai-video-generation-statistics-2026/` + market-size report | 124M users, Kling ~$500M ARR, $47.8B by 2034 | Vendor disclosures + forecasters | 2026-08 | ✅ |
-| `/indexes/state-of-ai/` (2022–2026 series) | Year snapshots | Historical, but the current year keeps moving | 2026-08 | ⏳ |
+| `/indexes/state-of-ai/` (362) — **series landing since 16 Nov 2026** (was the 2022–2026 year list) | Edition date, theme list, FAQ example citation (corrected to 16 Nov on 18 Nov) | Inherits the theme reports; rebuilt with them — next Feb 2027 | 2026-11-18 | ✅ |
 | `/indexes/ai-by-industry/` | Sector adoption rates | Sector surveys, annual | unknown | ⚠️ |
 | **NEW 2026-11-16** `/indexes/state-of-ai/state-of-ai-{usage,spending,finance,work,models-prices,tokens,infrastructure-energy,geography,industries,regulation,risk}/` (11 theme reports: 3521, 3524, 3526, 3626, 3628, 3633, 3695, 3704, 3705, 3757, 3756) | Every 2026 headline in tiles, exhibits and FAQ; CSV per page | Data in content-ops/state-of-ai/data/*.json; rebuild with tools/state-of-ai/build.py — next edition Q1 2027 (Feb) | 2026-11-16 | ✅ |
 | **NEW 2026-11-16** `/indexes/state-of-ai/state-of-ai-year-over-year/` (3851) + 2024/2025 editions (4007, 4009; replaced 322/358) | 2024→2025→2026 comparisons | Inherits the theme data; rebuilt together | 2026-11-16 | ✅ |
 | **NEW 2026-11-16** `/indexes/state-of-ai/ai-development-index/` (3789) + `/reports/how-ai-developed-1950-2026/` (3788) + `/reports/ai-technological-revolution-perez/` (3821) | Epoch compute series, milestones, Perez-phase indicators | Epoch AI database, OWID — content-ops/ai-history; next Feb 2027 | 2026-11-16 | ✅ |
 | **NEW 2026-11-16** `/indexes/geography-of-ai/ai-use-by-country-2026/` (3916) | 147-economy use shares (Microsoft AI Diffusion Q2 2026 = 18.8% world) | Microsoft AI Diffusion (quarterly), KPMG, Ipsos, Eurostat — content-ops/geo/make_use.py; next Feb 2027 | 2026-11-16 | ✅ |
-| **REBUILT 2026-11-16** `/indexes/geography-of-ai/sovereign-ai-index-2026/` (3915; replaced 934) | 58 model families, HF downloads, AA ranks; Jais 3 / Qwen3.8-Max corrected 16 Nov | HF, Artificial Analysis, OpenRouter — content-ops/geo/make_sovereign.py; next Feb 2027 | 2026-11-16 | ✅ |
+| **REBUILT 2026-11-16** `/indexes/geography-of-ai/sovereign-ai-index-2026/` (3915; replaced 934) | 58 model families, HF downloads, AA ranks; Jais 3 / Qwen3.8-Max corrected 16 Nov; CSV reissued 18 Nov as `…-rev20261118.csv` (media 4232; old 3982 unlinked) | HF, Artificial Analysis, OpenRouter — content-ops/geo/make_sovereign.py; next Feb 2027 | 2026-11-16 | ✅ |
 | **NEW 2026-11-16** `/indexes/technical-benchmarks/llm-taxonomy-2026/` (4094) | 93-model classification, category shares, Epoch ≥10²⁵ counts, HF model count, AA open–closed gap | Model cards, Epoch, AA, HF — content-ops/ml-models/make_taxonomy.py; next Feb 2027 | 2026-11-16 | ✅ |
 
 ## STABLE — semi-annual (1 Jan / 1 Jul)
@@ -1394,3 +1394,27 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
 - **Chinese characters removed** from 3227 and 2589 (unit explained as "yi", 100 million);
   all 153 pages and 36 posts scanned clean. Day 3 social card re-made (v2).
 - **Owner request:** restructure into a citable series → `content-ops/state-of-ai-series-proposal.md`.
+
+## 18 Nov 2026: go-live wrap-up
+
+- **Published 18 Nov** (the rest of the series kept their 16 Nov dates): State of AI Regulation (3757), Risk (3756),
+  Year over Year (3851), State of AI in Numbers 2024 (4007) and 2025 (4009), Sovereign AI Index (3915). 322, 358 and 934
+  are drafts with `-archive` slugs. State of AI in Numbers 2026 (3847) stays a draft until mid-December.
+- **Corrected 18 Nov:** the FAQ citation date on 362 changed from 11 to 16 Nov; the change is logged in 3229. Doubled
+  "— Report AI" titles removed from 4094 and 4104.
+- **Hub links (record `content-ops/golive/hub-links-20261118.md`):** new pages linked from 39, 40, 394 and 930.
+  Follow-ups made the same day:
+  - The 930 stamp now reads "Updated 18 Nov 2026 (links added; no figures changed)" and its FAQ `dateModified` is
+    2026-11-18, because `wp_alter_post` had moved post_modified to 18 Nov.
+  - 930's "Go deeper" link now points to the canonical regulation-tracker URL.
+  - 40's broken link (`…/ai-generated-content-statistics-2026/`, 404) now points to
+    `/indexes/enterprise-ai/ai-generated-content-statistics/`, in both the card and the JSON-LD.
+- **Nav v6 live** (snippet 1497, owner Update click). Chatbot directory regenerated: 166 entries.
+- **Open, for the owner:**
+  - 40's `hasPart` does not list the three new reports.
+  - 40's "IN PRODUCTION" card names two live indexes.
+  - The LLM Token Price Index appears twice on 40.
+  - 39's 2024/2025 link titles are stale.
+  - 394 is thin: no FAQ or methodology, and `hasPart` lists 4 of 9.
+  - 964 "Next review: October 2026" is overdue.
+
