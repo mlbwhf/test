@@ -8,7 +8,6 @@ import { rxMoney } from "@/components/class-page/shared";
 
 type TicketOption = { id: string; name: string; priceMinor: number; remaining: number };
 type Person = { name: string; email: string; jobTitle: string; timeZone: string };
-type Ready = { camera: boolean; connection: boolean; calendar: boolean; prework: boolean };
 type Pricing = { subtotalMinor: number; attendeeFeeMinor: number; taxMinor: number; totalMinor: number; flexibleMinor?: number; unitPriceMinor: number; quantity: number };
 type ApiError = { message: string; hint?: string };
 
@@ -95,7 +94,6 @@ function attemptId(): string {
 }
 
 export function Checkout(p: Props) {
-  const [step, setStep] = useState(1);
   // Bookings that start in EnrollClass's class finder carry the marketplace referral.
   const [fromFinder, setFromFinder] = useState(false);
   useEffect(() => {
@@ -110,8 +108,6 @@ export function Checkout(p: Props) {
   const maxSeats = Math.max(1, Math.min(p.seatsLeft, 20));
   const [people, setPeople] = useState<Person[]>(() => Array.from({ length: p.initialQty }, () => blank(p.classZone)));
   const [touched, setTouched] = useState(false);
-  const [ready, setReady] = useState<Ready>({ camera: false, connection: false, calendar: false, prework: false });
-  const [device, setDevice] = useState<string | null>(null);
   const canInvoice = p.invoiceAvailable && (p.ticketTypes[0]?.priceMinor ?? 0) > 0;
   const [method, setMethod] = useState<"card" | "invoice">(p.initialTier === "invoice" && canInvoice ? "invoice" : "card");
   const [ticketId, setTicketId] = useState(p.ticketTypes[0]?.id ?? "");
@@ -162,9 +158,9 @@ export function Checkout(p: Props) {
     return () => clearTimeout(t);
   }, [quote]);
 
-  // Turnstile on the payment step, when the site runs it.
+  // Turnstile beside the payment details, when the site runs it.
   useEffect(() => {
-    if (step !== 3 || !p.turnstileSiteKey || !challengeBox.current || challengeId.current) return;
+    if (!p.turnstileSiteKey || !challengeBox.current || challengeId.current) return;
     let gone = false;
     loadTurnstile()
       .then((t) => {
@@ -175,7 +171,7 @@ export function Checkout(p: Props) {
     return () => {
       gone = true;
     };
-  }, [step, p.turnstileSiteKey]);
+  }, [p.turnstileSiteKey]);
   const freshChallenge = () => {
     setChallenge("");
     if (challengeId.current) window.turnstile?.reset(challengeId.current);
@@ -184,44 +180,34 @@ export function Checkout(p: Props) {
   const setPerson = (i: number, patch: Partial<Person>) => setPeople((list) => list.map((x, j) => (j === i ? { ...x, ...patch } : x)));
   const peopleOk = people.every((x) => x.name.trim().length >= 2 && EMAIL_RE.test(x.email.trim()));
   const emailsUnique = new Set(people.map((x) => x.email.trim().toLowerCase())).size === people.length;
-  const doneCount = Object.values(ready).filter(Boolean).length;
   const registeredHref = (orderId: string, email: string) => `${p.registeredBase}?order=${encodeURIComponent(orderId)}&email=${encodeURIComponent(email)}`;
   const attendees = () =>
-    people.map((x, i) => ({
+    people.map((x) => ({
       email: x.email.trim(),
       name: x.name.trim(),
       ...(x.jobTitle.trim() ? { jobTitle: x.jobTitle.trim() } : {}),
       ...(x.timeZone ? { timeZone: x.timeZone } : {}),
-      ...(i === 0 ? { readyChecks: ready } : {}),
     }));
 
-  const next = () => {
-    setError(null);
-    if (step === 1) {
-      setTouched(true);
-      if (!peopleOk) return setError({ message: "Enter a full name and a work email for every attendee." });
-      if (!emailsUnique) return setError({ message: "Each attendee needs their own email address." });
-      if (!receipt) setReceipt(people[0]!.email.trim());
+  /** Attendee details are filled in on the same page as payment; check them before placing anything. */
+  const attendeesOk = () => {
+    setTouched(true);
+    if (!peopleOk) {
+      setError({ message: "Enter a full name and a work email for every attendee." });
+      document.getElementById("co-title")?.scrollIntoView({ behavior: "smooth", block: "start" });
+      return false;
     }
-    setStep((s) => Math.min(3, s + 1));
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const runDeviceTest = async () => {
-    setDevice("Checking…");
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true, video: true });
-      stream.getTracks().forEach((t) => t.stop());
-      setReady((r) => ({ ...r, camera: true }));
-      setDevice("Camera and microphone work.");
-    } catch {
-      setDevice("We couldn't use your camera or microphone. Check your browser's permissions, or try another device before class.");
+    if (!emailsUnique) {
+      setError({ message: "Each attendee needs their own email address." });
+      return false;
     }
+    return true;
   };
 
   // Card (or free): create the order, then show Stripe's secure form.
   const placeOrder = async () => {
     setError(null);
+    if (!attendeesOk()) return;
     const buyer = (receipt || people[0]!.email).trim();
     if (!EMAIL_RE.test(buyer)) return setError({ message: "Enter the email the receipt goes to." });
     if (p.turnstileSiteKey && !challenge) return setError({ message: "Please wait for the browser check to finish, then try again." });
@@ -279,6 +265,7 @@ export function Checkout(p: Props) {
 
   const requestInvoice = async () => {
     setError(null);
+    if (!attendeesOk()) return;
     if (inv.company.trim().length < 2) return setError({ message: "Enter the company's legal name." });
     if (!EMAIL_RE.test(inv.ap.trim())) return setError({ message: "Enter the accounts payable email the invoice goes to." });
     if (p.turnstileSiteKey && !challenge) return setError({ message: "Please wait for the browser check to finish, then try again." });
@@ -297,14 +284,6 @@ export function Checkout(p: Props) {
 
   const total = pricing && pricing.quantity === n ? pricing.totalMinor : unit * n;
   const totalText = free ? "Free" : `${rxMoney(total, p.currency)} ${p.currency}`;
-  const steps = ["Attendees", "Ready check", free ? "Confirm" : "Payment"];
-  const checks: { id: keyof Ready; name: string; note: string }[] = [
-    { id: "camera", name: "Camera and microphone work", note: "Classes are interactive, with breakouts" },
-    { id: "connection", name: `Stable connection for ${p.sessionCount > 1 ? "full days" : "the whole session"}`, note: "Wired or strong Wi-Fi recommended" },
-    { id: "calendar", name: p.sessionCount > 1 ? `All ${p.sessionCount} sessions blocked on my calendar` : "The session is blocked on my calendar", note: "Calendar invites arrive right after you register" },
-    { id: "prework", name: "I can do the pre-work", note: "Sent to you before the class starts" },
-  ];
-
   return (
     <>
       <header className="rx-card" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}>
@@ -328,22 +307,13 @@ export function Checkout(p: Props) {
 
       <main className="rx-wrap rx-co">
         <div className="rx-co-main">
-          <ol className="rx-steps" aria-label="Steps">
-            {steps.map((name, i) => (
-              <li key={name} className={i + 1 < step ? "is-done" : i + 1 === step ? "is-on" : undefined} aria-current={i + 1 === step ? "step" : undefined}>
-                {i + 1} · {name}
-              </li>
-            ))}
-          </ol>
-
-          {step === 1 && (
-            <section className="rx-card rx-panel" aria-labelledby="co-title">
+          <section className="rx-card rx-panel" aria-labelledby="co-title">
               <div>
                 <h1 id="co-title">Who&apos;s attending?</h1>
                 <p>The name you enter is exactly how it appears on the certificate and badge.</p>
               </div>
               {people.map((x, i) => (
-                <fieldset key={i} className="rx-person">
+                <fieldset key={i} className="rx-person" disabled={Boolean(placed)}>
                   <legend>{i === 0 ? "You" : `Teammate ${i}`}</legend>
                   <div className="rx-grid2">
                     <label className="rx-field">
@@ -371,6 +341,7 @@ export function Checkout(p: Props) {
                   </div>
                 </fieldset>
               ))}
+              {!placed && (
               <div className="rx-row">
                 {n < maxSeats && (
                   <button type="button" className="rx-dashed" onClick={() => setPeople((l) => [...l, blank(zone)])}>
@@ -383,48 +354,13 @@ export function Checkout(p: Props) {
                   </button>
                 )}
               </div>
+              )}
             </section>
-          )}
 
-          {step === 2 && (
-            <section className="rx-card rx-panel" aria-labelledby="co-title">
+            <section className="rx-card rx-panel" aria-labelledby="pay-title">
               <div>
-                <h1 id="co-title">{p.sessionCount > 1 ? `Ready for ${p.sessionCount} live sessions?` : "Ready for class?"}</h1>
-                <p>A quick check so day 1 starts on time. Nothing here blocks your booking; we&apos;ll remind you of anything left before class.</p>
-              </div>
-              <div className="rx-checks">
-                {checks.map((c) => (
-                  <label key={c.id} className={`rx-checkrow${ready[c.id] ? " is-on" : ""}`}>
-                    <input type="checkbox" checked={ready[c.id]} onChange={(e) => setReady((r) => ({ ...r, [c.id]: e.target.checked }))} />
-                    <span>
-                      <b>{c.name}</b>
-                      <em>{c.note}</em>
-                    </span>
-                  </label>
-                ))}
-              </div>
-              <div className="rx-device">
-                <div>
-                  <b>Device test</b>
-                  <div className="rx-muted" style={{ fontSize: 14 }} aria-live="polite">
-                    {device ?? "Checks your camera and microphone in this browser."}
-                  </div>
-                </div>
-                <button type="button" onClick={runDeviceTest}>
-                  Run test
-                </button>
-              </div>
-              <div style={{ fontSize: 14 }}>
-                {doneCount} of 4 ready{doneCount < 4 ? " — you can finish the rest later." : " — you're all set."}
-              </div>
-            </section>
-          )}
-
-          {step === 3 && (
-            <section className="rx-card rx-panel" aria-labelledby="co-title">
-              <div>
-                <h1 id="co-title">{free ? "Confirm your registration" : "How would you like to pay?"}</h1>
-                <p>{free ? "No payment needed. Your ticket and calendar invite arrive by email." : "Either way, your seat is held the moment you finish this step."}</p>
+                <h2 id="pay-title" className="rx-panel-h">{free ? "Confirm your registration" : "Payment"}</h2>
+                <p>{free ? "No payment needed. Your ticket and calendar invite arrive by email." : canInvoice ? "Card or invoice: either way, your seat is held the moment you finish." : "Your seat is held the moment you finish."}</p>
               </div>
               {!free && canInvoice && !placed && (
                 <div className="rx-tabs" role="tablist" aria-label="Payment method">
@@ -455,7 +391,7 @@ export function Checkout(p: Props) {
                     <div className="rx-grid2">
                       <label className="rx-field span2">
                         {free ? "Confirmation goes to" : "Receipt goes to"}
-                        <input type="email" autoComplete="email" placeholder="name@company.com" value={receipt} onChange={(e) => setReceipt(e.target.value)} />
+                        <input type="email" autoComplete="email" placeholder={people[0]!.email.trim() ? `${people[0]!.email.trim()} (your work email)` : "Your work email, unless you enter another"} value={receipt} onChange={(e) => setReceipt(e.target.value)} />
                       </label>
                       {!free && p.flexibleOffered && (
                         <label className="rx-flex-opt span2">
@@ -505,7 +441,6 @@ export function Checkout(p: Props) {
               )}
               {p.turnstileSiteKey && !placed && <div ref={challengeBox} />}
             </section>
-          )}
 
           {error && (
             <p className="rx-error" role="alert">
@@ -515,18 +450,8 @@ export function Checkout(p: Props) {
           )}
 
           <div className="rx-actions">
-            {step > 1 && !placed && (
-              <button type="button" className="rx-btn-ghost" onClick={() => setStep((s) => s - 1)}>
-                Back
-              </button>
-            )}
             <span className="grow" />
-            {step < 3 && (
-              <button type="button" className="rx-btn" onClick={next}>
-                {step === 1 ? "Continue to ready check" : free ? "Continue" : "Continue to payment"}
-              </button>
-            )}
-            {step === 3 && (method === "invoice" && !free ? (
+            {method === "invoice" && !free ? (
               <button type="button" className="rx-btn" onClick={requestInvoice} disabled={busy}>
                 {busy ? "Holding your seats…" : `Hold ${n === 1 ? "my seat" : `${n} seats`} and send invoice`}
               </button>
@@ -542,7 +467,7 @@ export function Checkout(p: Props) {
               <button type="button" className="rx-btn" onClick={simulate} disabled={busy}>
                 Simulate payment (test mode)
               </button>
-            ))}
+            )}
           </div>
         </div>
 

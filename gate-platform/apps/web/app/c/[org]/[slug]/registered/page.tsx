@@ -5,7 +5,7 @@ import { publicApi, type OrderSummary } from "@/lib/public-api";
 import { publicApiUrl, siteOrigin } from "@/lib/urls";
 import { dateRange, dayLabel, timeRange, zoneAbbr } from "@/lib/class-time";
 import { RxFonts, rxMoney } from "@/components/class-page/shared";
-import { ConfirmPoller, ReadyList } from "@/components/class-page/confirmation-client";
+import { ConfirmPoller } from "@/components/class-page/confirmation-client";
 import { CopyButton } from "@/components/copy-button";
 import "../../../registration.css";
 
@@ -172,9 +172,16 @@ export default async function RegisteredPage({ params, searchParams }: { params:
         {!failed && (
           <div className="rx-done-cols">
             <section className="rx-card rx-done-main" aria-label="Before day 1">
-              {mine ? (
-                <ReadyList api={publicApiUrl()} seatId={mine.id} email={mine.attendee.email} initial={mine.attendee.readyChecks ?? {}} prework={s.course?.prework ?? null} sessions={sessions.length} />
-              ) : null}
+              <h2 className="rx-h2" style={{ fontSize: 26 }}>
+                Before day 1
+              </h2>
+              <ul className="rx-before">
+                <li>
+                  {sessions.length > 1 ? `Calendar invites for all ${sessions.length} sessions are` : "Your calendar invite is"} in your email; you can also add {sessions.length > 1 ? "them" : "it"} with the buttons above.
+                </li>
+                {s.course?.prework ? <li>Pre-work: {s.course.prework}</li> : null}
+                <li>Reminders arrive by email a week before, the day before and on the day{s.event.format === "in_person" ? "" : ", with your joining link"}.</li>
+              </ul>
               {others.length > 0 && (
                 <div className="rx-others">
                   <h3 style={{ fontSize: 18 }}>Your teammates</h3>
