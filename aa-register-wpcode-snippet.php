@@ -2369,7 +2369,7 @@ function aa_reg_sale_config() {
 	return apply_filters( 'aa_reg_sale_config', array(
 		'name' => 'Black Friday',
 		'pct'  => 15,
-		'from' => '2026-11-23 00:00:00',
+		'from' => '2026-11-18 00:00:00',   /* moved up from 23 Nov on 18 Nov: sale starts now */
 		'to'   => '2026-11-30 23:59:59',
 		'tz'   => 'America/New_York',
 	) );

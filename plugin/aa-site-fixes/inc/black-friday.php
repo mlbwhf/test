@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) { exit; }
 if ( ! function_exists( 'aa_sf_bf_cfg' ) ) :
 
 function aa_sf_bf_cfg() {
-	$d = array( 'name' => 'Black Friday', 'pct' => 15, 'from' => '2026-11-23 00:00:00', 'to' => '2026-11-30 23:59:59', 'tz' => 'America/New_York' );
+	$d = array( 'name' => 'Black Friday', 'pct' => 15, 'from' => '2026-11-18 00:00:00', 'to' => '2026-11-30 23:59:59', 'tz' => 'America/New_York' );
 	return function_exists( 'aa_reg_sale_config' ) ? array_merge( $d, (array) aa_reg_sale_config() ) : $d;
 }
 function aa_sf_bf_ready() { return function_exists( 'aa_reg_sale_apply' ) && function_exists( 'aa_reg_sale_pct' ); }
@@ -89,7 +89,7 @@ add_action( 'wp_body_open', function () {
 	echo '<div class="aa-bf-bar" data-bf-from="' . esc_attr( $from ) . '" data-bf-to="' . esc_attr( $to ) . '" data-phase="' . esc_attr( $ph ) . '" role="region" aria-label="Black Friday offer">'
 	   . '<div class="aa-bf-bar__in">'
 	   . '<span class="aa-bf-bar__tag">' . esc_html( $c['name'] ) . '</span>'
-	   . '<span class="aa-bf-bar__msg aa-bf-t">' . esc_html( (int) $c['pct'] . '% off every class, ' . aa_sf_bf_window_label() . '. Starts Monday.' ) . '</span>'
+	   . '<span class="aa-bf-bar__msg aa-bf-t">' . esc_html( (int) $c['pct'] . '% off every class, ' . aa_sf_bf_window_label() . '. Starts soon.' ) . '</span>'
 	   . '<span class="aa-bf-bar__msg aa-bf-l">' . esc_html( (int) $c['pct'] . '% off every class, applied automatically' ) . ' <span class="aa-bf-bar__left">· ends in <b data-bf-count></b></span></span>'
 	   . '<a class="aa-bf-bar__cta" href="' . esc_url( $page ) . '"><span class="aa-bf-t">See the offer</span><span class="aa-bf-l">Shop the sale</span> <span aria-hidden="true">&#10230;</span></a>'
 	   . '<button type="button" class="aa-bf-bar__x" aria-label="Close">&times;</button></div></div>'
@@ -150,8 +150,8 @@ function aa_sf_bf_shortcode() {
 	$h  = $css . '<div class="aabf"><div class="aabf-hero"><span class="aabf-k">' . esc_html( $c['name'] . ' · ' . aa_sf_bf_window_label() ) . '</span>'
 	    . '<h1>' . $pct . '% off <em>every class.</em></h1>'
 	    . '<p>Every public class on the calendar, any upcoming date — including the holiday-week classes between Christmas and New Year. Live online, instructor-led, exam fee included.</p>'
-	    . '<p>' . esc_html( $ph === 'live' ? 'The discount is already in the prices below and is applied automatically at checkout. No code needed.' : 'Prices drop automatically on Monday 23 November at 12:00 am ET. No code needed.' ) . '</p>'
-	    . '<p class="aabf-when">' . esc_html( $ph === 'live' ? 'Ends Monday 30 November, 11:59 pm ET.' : 'Runs Monday 23 November to Monday 30 November, 11:59 pm ET.' ) . '</p></div>';
+	    . '<p>' . esc_html( $ph === 'live' ? 'The discount is already in the prices below and is applied automatically at checkout. No code needed.' : 'Prices drop automatically when the sale starts. No code needed.' ) . '</p>'
+	    . '<p class="aabf-when">' . esc_html( $ph === 'live' ? 'Ends Monday 30 November, 11:59 pm ET.' : 'Runs until Monday 30 November, 11:59 pm ET.' ) . '</p></div>';
 
 	$track = '';
 	foreach ( $rows as $r ) {
@@ -168,7 +168,7 @@ function aa_sf_bf_shortcode() {
 		    . '<a class="aabf-btn" href="' . esc_url( $r['url'] . '#enroll' ) . '">' . ( $ph === 'live' ? 'Book at ' . esc_html( aa_sf_bf_money( $r['sale'], $r['cur'] ) ) : 'See the dates' ) . ' &#10230;</a></article>';
 	}
 	if ( $track !== '' ) { $h .= '</div>'; }
-	$h .= '<p class="aabf-note">' . esc_html( $pct . '% off the listed price of public classes booked and paid online between 23 November 2026, 12:00 am and 30 November 2026, 11:59 pm Eastern Time, for any upcoming class date. Not combined with other discounts: if you already have an agreed price, you pay whichever is lower. Team and private training is quoted separately.' ) . ' <a href="' . esc_url( home_url( '/team-training/' ) ) . '">Ask for a team quote</a>.</p></div>';
+	$h .= '<p class="aabf-note">' . esc_html( $pct . '% off the listed price of public classes booked and paid online between 18 November 2026, 12:00 am and 30 November 2026, 11:59 pm Eastern Time, for any upcoming class date. Not combined with other discounts: if you already have an agreed price, you pay whichever is lower. Team and private training is quoted separately.' ) . ' <a href="' . esc_url( home_url( '/team-training/' ) ) . '">Ask for a team quote</a>.</p></div>';
 	return $h;
 }
 add_shortcode( 'aa_black_friday', 'aa_sf_bf_shortcode' );
@@ -209,7 +209,7 @@ function aa_sf_bf_email( $kind, $email, $preview = false ) {
 	$b = '';
 	if ( $preview ) {
 		$b .= '<tr><td bgcolor="#FFF6E6" style="padding:14px 24px;background-color:#FFF6E6;border-bottom:1px solid #F2B66D;' . $F . 'font-size:14px;line-height:1.5;color:#0B2E35;"><strong>Preview.</strong> '
-		    . esc_html( $last ? 'The last-chance email, as subscribers get it on Monday 30 November at 10:00 am ET.' : 'The launch email, as subscribers get it on Monday 23 November at 10:00 am ET.' )
+		    . esc_html( $last ? 'The last-chance email, as subscribers get it on Monday 30 November at 10:00 am ET.' : 'The launch email, as subscribers get it.' )
 		    . ' It goes to ' . count( function_exists( 'aa_sf_nl_recipients' ) ? aa_sf_nl_recipients() : array() ) . ' newsletter subscriber(s) only after you approve it in Tools → Black Friday. Prices below are the sale prices.</td></tr>';
 	}
 	$b .= '<tr><td bgcolor="#0B2E35" style="padding:22px 28px 0;background-color:#0B2E35;"><table role="presentation" width="100%" cellpadding="0" cellspacing="0"><tr><td style="' . $SER . 'font-size:22px;color:#FFFFFF;">Agile Agilist</td>'
@@ -244,7 +244,7 @@ function aa_sf_bf_email( $kind, $email, $preview = false ) {
 	    . '<p style="margin:16px 0 0;' . $F . 'font-size:15px;color:#0B2E35;">John Scott, Agile Agilist<br><span style="font-size:13.5px;color:#5C7479;">Reply to this email and it reaches us at info@agile-agilist.com.</span></p></td></tr>';
 	$unsub = function_exists( 'aa_sf_nl_unsub_link' ) ? aa_sf_nl_unsub_link( $email ) : home_url( '/' );
 	$addr  = function_exists( 'aa_ag_address_line' ) ? aa_ag_address_line() : '55 Village Centre Place, Mississauga, ON L4Z 1V9, Canada';
-	$b .= '<tr><td style="padding:16px 28px 22px;border-top:1px solid #DCEAE8;' . $F . 'font-size:12px;line-height:1.6;color:#6B8286;">' . esc_html( $pct . '% off the listed price of public classes booked and paid online 23–30 November 2026 (ET). Not combined with other discounts.' ) . '<br>'
+	$b .= '<tr><td style="padding:16px 28px 22px;border-top:1px solid #DCEAE8;' . $F . 'font-size:12px;line-height:1.6;color:#6B8286;">' . esc_html( $pct . '% off the listed price of public classes booked and paid online 18–30 November 2026 (ET). Not combined with other discounts.' ) . '<br>'
 	    . 'Agile Agilist · ' . esc_html( $addr ) . '<br>You are receiving this because you subscribed at agile-agilist.com. <a href="' . esc_url( $unsub ) . '" style="color:#6B8286;text-decoration:underline;">Unsubscribe</a>.</td></tr>';
 
 	$html = '<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>' . esc_html( $subj ) . '</title></head>'
