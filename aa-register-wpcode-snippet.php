@@ -2355,6 +2355,44 @@ function aa_reg_price( $slug, $course ) {
 	return $course;
 }
 
+/* ============================================================================
+   SALE PRICING -- Black Friday 2026: 15% off every class, 23-30 Nov (ET).
+   ----------------------------------------------------------------------------
+   One switch, applied where every price is resolved (aa_reg_finish() and the
+   two table lookups in aa_reg_find()), so the hero, the cards, the calendar,
+   the JSON-LD and the Stripe amount all agree without touching the checkout.
+   Outside the window it does nothing. price_was keeps the list price for the
+   crossed-out figure. An individually agreed price still wins when it is the
+   lower one -- see aa_reg_agreed_price().
+   ========================================================================== */
+function aa_reg_sale_config() {
+	return apply_filters( 'aa_reg_sale_config', array(
+		'name' => 'Black Friday',
+		'pct'  => 15,
+		'from' => '2026-11-23 00:00:00',
+		'to'   => '2026-11-30 23:59:59',
+		'tz'   => 'America/New_York',
+	) );
+}
+function aa_reg_sale_pct( $now = '' ) {
+	$s = aa_reg_sale_config();
+	if ( empty( $s['pct'] ) ) { return 0; }
+	$tz = new DateTimeZone( $s['tz'] );
+	$n  = new DateTime( $now !== '' ? $now : 'now', $tz );
+	return ( $n >= new DateTime( $s['from'], $tz ) && $n <= new DateTime( $s['to'], $tz ) ) ? (int) $s['pct'] : 0;
+}
+function aa_reg_sale_amount( $price, $pct ) {
+	return (int) floor( (float) $price * ( 100 - (int) $pct ) / 100 );
+}
+function aa_reg_sale_apply( $slug, $course ) {
+	if ( ! is_array( $course ) || isset( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
+	$pct = aa_reg_sale_pct();
+	if ( $pct <= 0 ) { return $course; }
+	$course['price_was'] = (int) $course['price'];
+	$course['price']     = aa_reg_sale_amount( $course['price'], $pct );
+	return $course;
+}
+
 function aa_reg_course( $slug ) {
 	/* ON A MIRROR, THE PAGE WINS. aa_reg_courses() is the hand-written English
 	   table and it is keyed on the bare slug -- "rte" is in it, and /fr/rte/ is
@@ -2385,6 +2423,7 @@ function aa_reg_finish( $slug, $course ) {
 	if ( ! is_array( $course ) ) { return $course; }
 	$course = aa_reg_apply_alias( $slug, $course );
 	$course = aa_reg_price( $slug, $course );
+	$course = aa_reg_sale_apply( $slug, $course );
 	/* Last, so it overrides the cadence the alias copied in. */
 	return aa_reg_apply_cadence( $slug, $course );
 }
@@ -2394,7 +2433,7 @@ function aa_reg_find( $cohort_id ) {
 	foreach ( aa_reg_courses() as $slug => $course ) {
 		foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 			if ( $c['id'] === $cohort_id ) {
-				return array( 'slug' => $slug, 'course' => $course, 'cohort' => $c );
+				return array( 'slug' => $slug, 'course' => aa_reg_sale_apply( $slug, $course ), 'cohort' => $c );
 			}
 		}
 	}
@@ -2408,7 +2447,7 @@ function aa_reg_find( $cohort_id ) {
 		if ( $course ) {
 			foreach ( aa_reg_generate( $m[1], $course ) as $c ) {
 				if ( $c['id'] === $cohort_id ) {
-					return array( 'slug' => $m[1], 'course' => $course, 'cohort' => $c );
+					return array( 'slug' => $m[1], 'course' => aa_reg_sale_apply( $m[1], $course ), 'cohort' => $c );
 				}
 			}
 		}
@@ -2872,7 +2911,7 @@ function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
 	     . '<span class="' . $prefix . '-status' . ( $hot ? ' is-hot' : '' ) . '">'
 	     . esc_html( $hot ? sprintf( aa_reg_t( 'seats_left', '%d seats left' ), $left ) : aa_reg_t( 'seats_open', 'Seats open' ) ) . '</span></span>'
 	     . '</span>'
-	     . '<span class="' . $prefix . '-price">' . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</span>'
+	     . '<span class="' . $prefix . '-price">' . ( ! empty( $course['price_was'] ) ? '<s class="aa-was">' . esc_html( aa_reg_money( $course['price_was'], $cur ) ) . '</s> ' : '' ) . esc_html( aa_reg_money( $course['price'], $cur ) ) . '</span>'
 	     . '<span class="' . $prefix . '-check" aria-hidden="true">&#10003;</span>'
 	     . '</button></article>';
 }
@@ -3136,6 +3175,7 @@ function aa_reg_hero( $atts ) {
 	    . '<p class="aahero-fact" data-hero-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p></div>'
 	    . '<span class="aahero-rule" aria-hidden="true"></span>'
 	    . '<div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</p><p class="aahero-fact">'
+	    . ( ! empty( $course['price_was'] ) ? '<s class="aa-was">' . esc_html( aa_reg_money( $course['price_was'], $course['currency'] ) ) . '</s> ' : '' )
 	    . esc_html( aa_reg_money( $course['price'], $course['currency'] ) )
 	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_incl( $course ) ) . '</span></p></div></div>';
 	$h .= aa_reg_hero_more( $a['course'], aa_reg_hero_room( $months ) );
@@ -4792,7 +4832,13 @@ function aa_reg_agreed_prices() {
 function aa_reg_agreed_price( $email, $slug ) {
 	$email = strtolower( trim( (string) $email ) );
 	$map   = aa_reg_agreed_prices();
-	return isset( $map[ $email ][ (string) $slug ] ) ? (int) $map[ $email ][ (string) $slug ] : 0;
+	$p     = isset( $map[ $email ][ (string) $slug ] ) ? (int) $map[ $email ][ (string) $slug ] : 0;
+	/* During a sale an agreed price applies only while it is the lower one. */
+	if ( $p > 0 && aa_reg_sale_pct() > 0 ) {
+		$c = aa_reg_course( (string) $slug );
+		if ( $c && ! empty( $c['price'] ) && (int) $c['price'] <= $p ) { return 0; }
+	}
+	return $p;
 }
 
 function aa_reg_checkout( WP_REST_Request $req ) {
