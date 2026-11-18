@@ -312,16 +312,46 @@ function aa_sf_nl_career( $ym ) {
 	$code = $order[ $i ]; $b = $bands[ $code ];
 	$med  = array(); foreach ( $bands as $c => $x ) { $med[ $c ] = (int) $x['median']; }
 	foreach ( (array) ( isset( $d['extra'] ) ? $d['extra'] : array() ) as $c => $m ) { if ( ! isset( $med[ $c ] ) ) { $med[ $c ] = (int) $m; } }
-	$next = array();
+	/* Where the role leads, across every ladder it sits on, in ladder order, up
+	   to two steps. A role that ends a ladder continues to that ladder's
+	   destination course: RTE ends the delivery track, whose destination is
+	   Large Solution SAFe (LSSP), so RTE now leads to LSSP before SPC.
+
+	   A destination with no published median is still shown, as "new class",
+	   never with a number -- the salary data says outright that no source
+	   publishes one for LSSP yet, and we do not make one up. */
+	$next = array(); $dest = array();
 	foreach ( (array) ( isset( $d['paths'] ) ? $d['paths'] : array() ) as $p ) {
 		$steps = isset( $p['steps'] ) ? array_values( (array) $p['steps'] ) : array(); $k = array_search( $code, $steps, true );
-		if ( $k !== false && isset( $steps[ $k + 1 ] ) ) { $next = array_slice( $steps, $k + 1, 2 ); break; }
+		if ( $k === false ) { continue; }
+		$after = array_slice( $steps, $k + 1 );
+		if ( ! $after && ! empty( $p['dest']['code'] ) ) {
+			$after = array( $p['dest']['code'] );
+			$dest[ $p['dest']['code'] ] = isset( $p['dest']['label'] ) ? (string) $p['dest']['label'] : $p['dest']['code'];
+		}
+		foreach ( $after as $c ) { if ( ! in_array( $c, $next, true ) ) { $next[] = $c; } }
 	}
 	$path = array( array( $code, (int) $b['median'] ) );
-	foreach ( $next as $c ) { if ( isset( $med[ $c ] ) ) { $path[] = array( $c, $med[ $c ] ); } }
+	foreach ( $next as $c ) {
+		if ( count( $path ) >= 3 ) { break; }
+		if ( isset( $med[ $c ] ) ) { $path[] = array( $c, $med[ $c ] ); }
+		elseif ( isset( $dest[ $c ] ) ) { $path[] = array( $c, 0 ); }
+	}
+	/* A destination course on the path gets its own line and link under the chips. */
+	$courses = apply_filters( 'aa_sf_nl_path_courses', array(
+		'LSSP' => array( 'Large Solution SAFe®', '/training/adv-safe/large-solution/',
+		                 'For RTEs whose job grows from one train to several: coordinating trains, suppliers and compliance across a large system. Foundational level, no prerequisites.' ),
+	) );
+	$new = null;
+	foreach ( $path as $st ) {
+		if ( $st[1] === 0 && isset( $courses[ $st[0] ] ) ) {
+			$new = array( 'code' => $st[0], 'name' => $courses[ $st[0] ][0], 'url' => home_url( $courses[ $st[0] ][1] ), 'about' => $courses[ $st[0] ][2] );
+			break;
+		}
+	}
 	$pos = max( 0, min( 100, (int) round( ( $b['median'] - $b['lo'] ) / max( 1, $b['hi'] - $b['lo'] ) * 100 ) ) );
 	return array( 'code' => $code, 'name' => $about[ $code ][0], 'about' => $about[ $code ][1], 'url' => home_url( $about[ $code ][2] ),
-	              'median' => (int) $b['median'], 'lo' => (int) $b['lo'], 'hi' => (int) $b['hi'], 'pos' => $pos, 'path' => $path,
+	              'median' => (int) $b['median'], 'lo' => (int) $b['lo'], 'hi' => (int) $b['hi'], 'pos' => $pos, 'path' => $path, 'new' => $new,
 	              'sources' => isset( $d['sources'] ) ? (string) $d['sources'] : '' );
 }
 
@@ -405,7 +435,15 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 		foreach ( $c['path'] as $i => $st ) {
 			/* Inline blocks, not table cells, so the chain wraps on a phone. */
 			$chips .= ( $i ? '<span style="display:inline-block;margin:0 4px 6px 0;color:#8FCFCF;' . $F . 'font-size:14px;">⟶</span>' : '' )
-			        . '<span style="display:inline-block;margin:0 4px 6px 0;padding:7px 12px;border-radius:100px;' . ( $i ? 'border:1px solid #8FCFCF;' : 'background:#0E8074;border:1px solid #0E8074;' ) . $F . 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap;">' . $e( $st[0] ) . ' · ' . (int) $st[1] . 'K</span>';
+			        . '<span style="display:inline-block;margin:0 4px 6px 0;padding:7px 12px;border-radius:100px;' . ( $i ? 'border:1px solid #8FCFCF;' : 'background:#0E8074;border:1px solid #0E8074;' ) . $F . 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap;">' . $e( $st[0] ) . ' · ' . ( (int) $st[1] > 0 ? (int) $st[1] . 'K' : '<span style="color:#F2B66D;">new class</span>' ) . '</span>';
+		}
+		$newline = '';
+		if ( ! empty( $c['new'] ) ) {
+			$nw = $c['new'];
+			$newline = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:10px 0 0;border:1px solid #2A5258;border-radius:10px;"><tr><td style="padding:12px 14px;">'
+			         . '<span style="display:inline-block;padding:2px 8px;border-radius:100px;background:#F2B66D;border:1px solid #F2B66D;' . $F . 'font-size:10.5px;font-weight:700;letter-spacing:.08em;color:#0B2E35;">NEW</span> '
+			         . '<a href="' . esc_url( $utm( $nw['url'] ) ) . '" style="' . $F . 'font-size:15px;font-weight:700;color:#FFFFFF;text-decoration:none;">' . $e( $nw['name'] ) . ' (' . $e( $nw['code'] ) . ') ⟶</a>'
+			         . '<div style="' . $F . 'font-size:13.5px;line-height:1.5;color:#B9DCDC;margin-top:4px;">' . $e( $nw['about'] ) . '</div></td></tr></table>';
 		}
 		$bar = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 4px;"><tr>'
 		     . ( $c['pos'] > 0 ? '<td width="' . (int) $c['pos'] . '%" style="height:10px;background:#5FA9A6;border-radius:100px 0 0 100px;font-size:0;line-height:0;">&nbsp;</td>' : '' )
@@ -418,7 +456,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 		      . '<td style="vertical-align:bottom;"><div style="' . $SER . 'font-size:28px;line-height:1.1;color:#FFFFFF;">' . $e( $c['name'] ) . '</div><div style="' . $F . 'margin-top:6px;font-size:14px;line-height:1.55;color:#B9DCDC;">' . $e( $c['about'] ) . '</div></td>'
 		      . '<td align="right" style="vertical-align:bottom;padding-left:16px;white-space:nowrap;"><div style="' . $SER . 'font-size:48px;line-height:1;color:#FFFFFF;">' . (int) $c['median'] . 'K</div><div style="' . $F . 'font-size:12px;color:#B9DCDC;">median</div></td></tr></table>'
 		      . $bar
-		      . ( count( $c['path'] ) > 1 ? '<div style="' . $F . 'margin:16px 0 8px;font-size:12px;font-weight:600;color:#FFFFFF;">Where it leads</div><div>' . $chips . '</div>' : '' )
+		      . ( count( $c['path'] ) > 1 ? '<div style="' . $F . 'margin:16px 0 8px;font-size:12px;font-weight:600;color:#FFFFFF;">Where it leads</div><div>' . $chips . '</div>' . $newline : '' )
 		      . '<div style="margin:18px 0 0;padding-top:14px;border-top:1px solid #2A5258;">' . $btn( $utm( $c['url'] ), 'See the ' . $e( $c['code'] ) . ' class ⟶', '#8FCFCF', '#0B2E35' )
 		      . '<div style="' . $F . 'margin-top:12px;font-size:11.5px;line-height:1.5;color:#8FB5B8;">' . $e( $c['sources'] ) . ' Pay varies with market, industry and employer.</div></div>'
 		      . '</td></tr></table>';
