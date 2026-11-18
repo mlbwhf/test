@@ -88,6 +88,23 @@ add_filter( 'the_content', function ( $content ) {
 		$content, 1
 	);
 	$content = preg_replace( '~(<a href=")#enroll(" class="btn-wghost"[^>]*>\s*Talk to an advisor)~', '$1#aa-book$2', $content, 1 );
+
+	/* 3. THE BAR'S PRICE IS THE PRICE WE CHARGE. The sticky bar's figure is
+	   typed into each page ("$2,300 $2,150" on RTE while checkout charged
+	   2,200), so it drifted from the schedule and could not follow a sale.
+	   It now comes from the same course record the checkout reads: during a
+	   sale the list price crossed out beside the sale price, otherwise the
+	   price alone. A page whose slug is not a priced course keeps its text. */
+	if ( function_exists( 'aa_reg_course' ) && function_exists( 'aa_reg_money' ) ) {
+		$c = $slug !== '' ? aa_reg_course( $slug ) : null;
+		if ( is_array( $c ) && ! empty( $c['price'] ) ) {
+			$cur  = isset( $c['currency'] ) ? $c['currency'] : 'usd';
+			$html = ( ! empty( $c['price_was'] ) ? '<s>' . esc_html( aa_reg_money( $c['price_was'], $cur ) ) . '</s> ' : '' )
+			      . esc_html( aa_reg_money( $c['price'], $cur ) )
+			      . ' <span class="mono" style="font-size:10px;color:#88A0A4">' . esc_html( strtoupper( $cur ) ) . '</span>';
+			$content = preg_replace_callback( '~(<div class="aa-price">).*?(</div>)~s', function ( $m ) use ( $html ) { return $m[1] . $html . $m[2]; }, $content, 1 );
+		}
+	}
 	return $content;
 }, 20 );
 
