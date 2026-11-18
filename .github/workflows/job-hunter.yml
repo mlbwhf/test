@@ -92,7 +92,7 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      - run: docker build -t jobhunter job-hunter
+      - run: docker build -t jobhunter .
       - name: Smoke test
         run: |
           docker run -d --name jh -p 8080:8080 -e JOBHUNTER_PASSWORD=ci-password -e JOBHUNTER_RUN_HOUR=23 jobhunter
