@@ -345,8 +345,14 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	$h2   = 'margin:0 0 10px;' . $SER . 'font-weight:400;font-size:24px;line-height:1.2;color:#0B2E35;';
 	$mute = $F . 'font-size:14px;line-height:1.5;color:#5C7479;';
 	$sec  = function ( $inner, $top = 26 ) { return '<tr><td style="padding:' . (int) $top . 'px 28px 4px;">' . $inner . '</td></tr>'; };
+	/* A button is a table cell with bgcolor, the link inside it. A fill set only
+	   in CSS on the <a> is the first thing mail filters drop (the Nov 18 preview
+	   lost every one), and the label then sits white on white. */
 	$btn  = function ( $url, $label, $bg, $fg, $border = '' ) use ( $F ) {
-		return '<a href="' . esc_url( $url ) . '" style="display:inline-block;' . $F . 'font-size:15px;font-weight:700;text-decoration:none;padding:13px 20px;border-radius:100px;background:' . $bg . ';color:' . $fg . ';' . ( $border ? 'border:1px solid ' . $border . ';' : '' ) . '">' . $label . '</a>';
+		return '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="display:inline-block;vertical-align:middle;margin:0 8px 8px 0;"><tr>'
+		     . '<td bgcolor="' . $bg . '" style="background-color:' . $bg . ';border-radius:100px;' . ( $border ? 'border:1px solid ' . $border . ';' : '' ) . '">'
+		     . '<a href="' . esc_url( $url ) . '" style="display:inline-block;' . $F . 'font-size:15px;font-weight:700;text-decoration:none;padding:13px 20px;border-radius:100px;background-color:' . $bg . ';color:' . $fg . ';">' . $label . '</a>'
+		     . '</td></tr></table>';
 	};
 	$addr  = function_exists( 'aa_ag_address_line' ) ? aa_ag_address_line() : '55 Village Centre Place, Mississauga, ON L4Z 1V9, Canada';
 	$unsub = aa_sf_nl_unsub_link( $email );
@@ -381,7 +387,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 			}
 			$h .= '</tr></table>';
 		}
-		$h .= $btn( $utm( $spot['url'] ), 'Read the article ⟶', '#8FCFCF', '#0B2E35' ) . ' &nbsp; '
+		$h .= $btn( $utm( $spot['url'] ), 'Read the article ⟶', '#8FCFCF', '#0B2E35' )
 		    . $btn( $utm( home_url( '/training/ai-native/launching-ai-native-arts/' ) ), 'Launching AI-Native ARTs class', '#0B2E35', '#FFFFFF', '#8FCFCF' );
 		if ( $spot['also'] ) { $h .= '<p style="margin:16px 0 0;' . $F . 'font-size:13px;line-height:1.5;color:#B9DCDC;">Also on this: <a href="' . esc_url( $utm( $spot['also']['url'] ) ) . '" style="color:#FFFFFF;">' . $e( $spot['also']['title'] ) . '</a></p>'; }
 		$b .= '<tr><td style="padding:28px 28px 28px;background:#0E3A44;border-top:1px solid #2A5258;">' . $h . '</td></tr>';
@@ -399,7 +405,7 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 		foreach ( $c['path'] as $i => $st ) {
 			/* Inline blocks, not table cells, so the chain wraps on a phone. */
 			$chips .= ( $i ? '<span style="display:inline-block;margin:0 4px 6px 0;color:#8FCFCF;' . $F . 'font-size:14px;">⟶</span>' : '' )
-			        . '<span style="display:inline-block;margin:0 4px 6px 0;padding:7px 12px;border-radius:100px;' . ( $i ? 'border:1px solid #8FCFCF;' : 'background:#0E8074;' ) . $F . 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap;">' . $e( $st[0] ) . ' · ' . (int) $st[1] . 'K</span>';
+			        . '<span style="display:inline-block;margin:0 4px 6px 0;padding:7px 12px;border-radius:100px;' . ( $i ? 'border:1px solid #8FCFCF;' : 'background:#0E8074;border:1px solid #0E8074;' ) . $F . 'font-size:13px;font-weight:600;color:#FFFFFF;white-space:nowrap;">' . $e( $st[0] ) . ' · ' . (int) $st[1] . 'K</span>';
 		}
 		$bar = '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin:6px 0 4px;"><tr>'
 		     . ( $c['pos'] > 0 ? '<td width="' . (int) $c['pos'] . '%" style="height:10px;background:#5FA9A6;border-radius:100px 0 0 100px;font-size:0;line-height:0;">&nbsp;</td>' : '' )
@@ -518,7 +524,23 @@ function aa_sf_nl_build( $ym, $email, $preview = false ) {
 	      . '<body style="margin:0;padding:0;background:#EEF4F3;"><div style="display:none;max-height:0;overflow:hidden;color:#EEF4F3;">' . $e( $pre ) . '</div>'
 	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#EEF4F3;"><tr><td align="center" style="padding:20px 10px;">'
 	      . '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:640px;background:#FFFFFF;border-radius:14px;overflow:hidden;">' . $b . '</table></td></tr></table></body></html>';
+	$html = aa_sf_nl_harden( $html );
 	return array( 'subject' => ( $preview ? '[Preview] ' : '' ) . $subj, 'html' => $html, 'classes' => count( $classes ), 'posts' => count( $posts ), 'spotlight' => $spot ? $spot['id'] : 0 );
+}
+
+/**
+ * Make every fill survive mail filters. The shorthand "background:" is dropped
+ * by Gmail's sanitiser and several others, so each one becomes the longhand
+ * background-color, and every <table>, <td> and <body> that has a fill also
+ * gets the old bgcolor attribute, which nearly every client keeps.
+ */
+function aa_sf_nl_harden( $html ) {
+	$html = preg_replace( '/(?<![-\w])background:\s*(#[0-9A-Fa-f]{3,8})/', 'background-color:$1', $html );
+	return preg_replace_callback( '/<(table|td|body)\b([^>]*)>/i', function ( $m ) {
+		if ( stripos( $m[2], 'bgcolor=' ) !== false ) { return $m[0]; }
+		if ( ! preg_match( '/background-color:\s*(#[0-9A-Fa-f]{3,8})/i', $m[2], $c ) ) { return $m[0]; }
+		return '<' . $m[1] . ' bgcolor="' . $c[1] . '"' . $m[2] . '>';
+	}, $html );
 }
 
 function aa_sf_nl_mail( $to, $mail, $unsub = '' ) {
