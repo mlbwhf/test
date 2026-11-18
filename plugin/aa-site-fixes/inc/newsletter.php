@@ -313,9 +313,9 @@ function aa_sf_nl_career( $ym ) {
 	$med  = array(); foreach ( $bands as $c => $x ) { $med[ $c ] = (int) $x['median']; }
 	foreach ( (array) ( isset( $d['extra'] ) ? $d['extra'] : array() ) as $c => $m ) { if ( ! isset( $med[ $c ] ) ) { $med[ $c ] = (int) $m; } }
 	/* Where the role leads, across every ladder it sits on, in ladder order, up
-	   to two steps. A role that ends a ladder continues to that ladder's
-	   destination course: RTE ends the delivery track, whose destination is
-	   Large Solution SAFe (LSSP), so RTE now leads to LSSP before SPC.
+	   to two steps. A ladder continues to its destination course: the
+	   delivery track (SSM -> SASM -> RTE) ends at Large Solution SAFe (LSSP),
+	   so RTE leads to LSSP before SPC, and Scrum Master's chain ends on LSSP.
 
 	   A destination with no published median is still shown, as "new class",
 	   never with a number -- the salary data says outright that no source
@@ -325,15 +325,18 @@ function aa_sf_nl_career( $ym ) {
 		$steps = isset( $p['steps'] ) ? array_values( (array) $p['steps'] ) : array(); $k = array_search( $code, $steps, true );
 		if ( $k === false ) { continue; }
 		$after = array_slice( $steps, $k + 1 );
-		if ( ! $after && ! empty( $p['dest']['code'] ) ) {
-			$after = array( $p['dest']['code'] );
+		/* The ladder's destination course follows its last step, so Scrum
+		   Master reads SSM -> SASM -> RTE -> LSSP and RTE reads RTE -> LSSP. */
+		if ( ! empty( $p['dest']['code'] ) ) {
+			$after[] = $p['dest']['code'];
 			$dest[ $p['dest']['code'] ] = isset( $p['dest']['label'] ) ? (string) $p['dest']['label'] : $p['dest']['code'];
 		}
 		foreach ( $after as $c ) { if ( ! in_array( $c, $next, true ) ) { $next[] = $c; } }
 	}
 	$path = array( array( $code, (int) $b['median'] ) );
 	foreach ( $next as $c ) {
-		if ( count( $path ) >= 3 ) { break; }
+		/* Three chips, plus a fourth only when it is a destination course. */
+		if ( count( $path ) >= 4 || ( count( $path ) >= 3 && ! isset( $dest[ $c ] ) ) ) { break; }
 		if ( isset( $med[ $c ] ) ) { $path[] = array( $c, $med[ $c ] ); }
 		elseif ( isset( $dest[ $c ] ) ) { $path[] = array( $c, 0 ); }
 	}
