@@ -80,7 +80,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
     const m = new Map<string, Frame[]>();
     // A numbered lesson lists its frames; the Welcome strip is itself the first exercise (the start-here
     // canvas), followed by any course activities placed inside it (a course's own Welcome chapter).
-    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [...board.frames.filter((f) => f.parentId === l.id && f.activity).sort((a, b) => a.y - b.y || a.x - b.x), l]);
+    for (const l of lessons) m.set(l.id, isLesson(l) ? board.frames.filter((f) => f.parentId === l.id).sort((a, b) => a.y - b.y || a.x - b.x) : [...board.frames.filter((f) => f.parentId === l.id && f.activity).sort((a, b) => a.y - b.y || a.x - b.x), ...(board.fields?.event ? [] : [l])]);
     return m;
   }, [board.frames, lessons]);
   const flat = useMemo(() => lessons.flatMap((l) => (exercisesOf.get(l.id) ?? []).map((e) => ({ lesson: l, ex: e }))), [lessons, exercisesOf]);
@@ -185,6 +185,9 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   const start = (f: Frame, label: string, minutes: number) => void runTimer({ action: "start", label, seconds: minutes * 60, frameId: f.id });
 
   const classId = board.fields?.class;
+  // An event board (a template package: prepare, plan or close a PI) is a class board with its own words.
+  const isEvent = !!board.fields?.event;
+  const LESSON = isEvent ? "Part" : "Lesson";
   const short = classShort(classId, board.name);
   const timerChip = timer ? (
     <span className={`class-timer${left === 0 ? " done" : ""}${timer.t.endsAt ? "" : " paused"}`} role="timer" aria-live={left === 0 ? "assertive" : "off"}>
@@ -212,7 +215,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
 
   const crumbs = (
     <nav className="train-crumbs" aria-label="Breadcrumb">
-      <Link href="/classroom">Classes</Link>
+      <Link href={isEvent ? "/boards" : "/classroom"}>{isEvent ? "Your boards" : "Classes"}</Link>
       <span aria-hidden>›</span>
       {view.at === "overview" ? (
         <b>{board.name}</b>
@@ -224,11 +227,11 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
               <span aria-hidden>›</span>
               {view.at === "lesson" ? (
                 <b>
-                  Lesson {lessonName(lessonHere).n} · {lessonName(lessonHere).title}
+                  {LESSON} {lessonName(lessonHere).n} · {lessonName(lessonHere).title}
                 </b>
               ) : (
                 <button onClick={() => go({ at: "lesson", id: lessonHere.id })}>
-                  Lesson {lessonName(lessonHere).n} · {lessonName(lessonHere).title}
+                  {LESSON} {lessonName(lessonHere).n} · {lessonName(lessonHere).title}
                 </button>
               )}
             </>
@@ -292,7 +295,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
             <BadgeRing classId={classId} name={board.name} done={done} total={flat.length} size={150} />
             <div style={{ flex: 1 }}>
               <span className="train-eyebrow">
-                CLASS · {lessons.filter(isLesson).length} LESSONS · {flat.length} EXERCISES
+                {isEvent ? "EVENT" : "CLASS"} · {lessons.filter(isLesson).length} {isEvent ? "PARTS" : "LESSONS"} · {flat.length} {isEvent ? "BOARDS" : "EXERCISES"}
               </span>
               <h2>{board.name}</h2>
               <div className="train-progress">
@@ -304,7 +307,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
             </div>
             {next ? (
               <button className="train-btn primary big" onClick={() => go({ at: "exercise", id: next.ex.id })}>
-                {done ? `Continue: ${titleOf(next.ex)}` : "Start the class"} ▸
+                {done ? `Continue: ${titleOf(next.ex)}` : isEvent ? "Start" : "Start the class"} ▸
               </button>
             ) : null}
           </div>
@@ -374,17 +377,17 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
   };
   const tyOf = (f: Frame) => TYC[f.activity?.kind ?? ""] ?? TYC.Activity!;
   const exTy = here ? tyOf(here.ex) : TYC.Overview!;
-  const lessonLabel = (l: Frame) => (isLesson(l) ? `Lesson ${lessonName(l).n} · ${lessonName(l).title}` : l.title);
+  const lessonLabel = (l: Frame) => (isLesson(l) ? `${LESSON} ${lessonName(l).n} · ${lessonName(l).title}` : l.title);
   const questions = act?.kind === "Discussion" && steps.length > 1 ? steps : [];
   return (
     <div ref={wrap} className={`studio${focusOn ? " focus" : ""}`} {...pressing} style={{ ["--tint" as string]: tint }}>
       {!focusOn ? (
         <nav className="studio-chapters" aria-label="Class">
-          <Link className="studio-logo" href="/classroom" aria-label="Classes">
+          <Link className="studio-logo" href={isEvent ? "/boards" : "/classroom"} aria-label={isEvent ? "Your boards" : "Classes"}>
             <ClassIcon classId={classId} name={board.name} size={30} />
           </Link>
           <button className="studio-class" onClick={() => go({ at: "overview" })}>
-            ‹ CLASS {short}
+            ‹ {isEvent ? "EVENT" : "CLASS"} {short}
           </button>
           <span className="grow" />
           {timerChip}
@@ -442,7 +445,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
                         {isLesson(l) ? (
                           <button className={`studio-chip${view.at === "lesson" && cur ? " on" : ""}`} onClick={() => go({ at: "lesson", id: l.id })}>
                             <span className="studio-chip-ic" style={{ background: "#0d1815" }}>≡</span>
-                            <span className="studio-chip-title">Whole lesson</span>
+                            <span className="studio-chip-title">{isEvent ? "Whole part" : isEvent ? "Whole part" : "Whole lesson"}</span>
                             <span className="studio-chip-mark" />
                           </button>
                         ) : null}
@@ -464,7 +467,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
               </span>
               <div className="studio-band-text">
                 <span className="ex-mono" style={{ color: exTy[0] }}>
-                  {here ? (act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")).toUpperCase() : "LESSON"} · {lesson ? lessonLabel(lesson) : ""}
+                  {here ? (act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")).toUpperCase() : LESSON.toUpperCase()} · {lesson ? lessonLabel(lesson) : ""}
                 </span>
                 <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
               </div>
@@ -498,7 +501,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
             {focusOn ? (
               <div className="studio-title">
                 <h2>{here ? titleOf(here.ex) : lesson ? lessonName(lesson).title : ""}</h2>
-                <span className="ex-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}` : "Whole lesson"}</span>
+                <span className="ex-mono">{here ? `${act?.kind ?? (isLesson(here.lesson) ? "Exercise" : "Welcome")}${act && activityTiming(act) ? ` · ${activityTiming(act)}` : ""}` : isEvent ? "Whole part" : "Whole lesson"}</span>
               </div>
             ) : null}
             <span className="grow" />
@@ -581,7 +584,7 @@ export function ClassBoard({ board, refs, cardTypes, readOnly, onChanged, onErro
             else go({ at: "overview" });
           }}
         >
-          {here ? (next1 ? `${trainer ? "Complete · " : ""}${titleOf(next1.ex)} ›` : "Finish class ▸") : "Start the first exercise ›"}
+          {here ? (next1 ? `${trainer ? "Complete · " : ""}${titleOf(next1.ex)} ›` : (isEvent ? "Finish ▸" : "Finish class ▸")) : "Start the first exercise ›"}
         </button>
       </footer>
       {stepsOn ? (

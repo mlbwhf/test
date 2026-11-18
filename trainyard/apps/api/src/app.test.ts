@@ -1720,18 +1720,26 @@ describe("blank whiteboard with templates added", () => {
 });
 
 describe("template packages", () => {
-  it("creates a package as one board with its templates side by side, or as a board each", async () => {
+  it("creates a package as one event board in the class design, or as a board per part", async () => {
     const { call } = await setup();
     const list = await call("GET", "/v1/templates/boards");
     expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["prepare-pi-planning", "pi-planning", "closing-pi"]);
+    // The packages hold the classes' designed boards, not canvas templates.
+    expect(list.body.packages[0].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["How much preparation is enough?", "PI Planning readiness preparation"], ["Build your own ART kanban board"]]);
     const one = await call("POST", "/v1/templates/packages/closing-pi/create", { name: "PI 26.4 close", mode: "one-board" });
     expect(one.status).toBe(201);
     expect(one.body.boards).toHaveLength(1);
     const board = (await call("GET", `/v1/boards/${one.body.boards[0].id}`)).body.board;
-    expect(board.frames.some((f: { title: string }) => f.title === "Week 2 · Tuesday")).toBe(true);
-    expect(board.nodes.some((n: { text: string }) => n.text === "Inspect & Adapt event")).toBe(true);
+    expect(board.fields).toMatchObject({ class: "event-closing-pi", event: "closing-pi" });
+    expect(board.frames.filter((f: { parentId?: string; title: string }) => !f.parentId).map((f: { title: string }) => f.title)).toEqual(["Welcome", "Lesson 1: The IP iteration and the PI System Demo", "Lesson 2: Problem-solving workshop"]);
+    expect(board.frames.filter((f: { activity?: { board?: string } }) => f.activity?.board === "rca")).toHaveLength(6);
+    // PI planning runs in the planning room of Leading SAFe, with the RTE's ROAM board.
+    const pi = await call("POST", "/v1/templates/packages/pi-planning/create", { name: "PI 26.5", mode: "one-board" });
+    const piBoard = (await call("GET", `/v1/boards/${pi.body.boards[0].id}`)).body.board;
+    expect(piBoard.frames.filter((f: { activity?: { board?: string } }) => f.activity?.board).map((f: { activity: { board: string } }) => f.activity.board)).toEqual(expect.arrayContaining(["agenda", "cap", "pib", "pcs", "ppr", "pbv", "prm", "art", "roam"]));
     const each = await call("POST", "/v1/templates/packages/pi-planning/create", { name: "PI 26.5 planning", mode: "boards" });
-    expect(each.body.boards.map((b: { name: string }) => b.name)).toEqual(["PI 26.5 planning · PI planning agenda", "PI 26.5 planning · PI Planning board", "PI 26.5 planning · Team breakout", "PI 26.5 planning · ROAM risk board", "PI 26.5 planning · Confidence vote"]);
+    expect(each.body.boards.map((b: { name: string }) => b.name)).toEqual(["PI 26.5 planning · Team breakouts", "PI 26.5 planning · Plan review and business value", "PI 26.5 planning · Risks and confidence"]);
+    expect(new Set(each.body.boards.map((b: { id: string }) => b.id)).size).toBe(3);
     expect((await call("POST", "/v1/templates/packages/nope/create", { name: "x" })).status).toBe(404);
   });
 });

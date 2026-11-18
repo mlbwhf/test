@@ -122,12 +122,12 @@ export default function TemplatesPage() {
               Packages
             </h2>
             <p className="faint" style={{ margin: 0, fontSize: "0.88rem" }}>
-              The boards an event needs, created together: on one board side by side, or a board each.
+              The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. The PI outcomes template is on the <Link href="/roadmap?tab=outcomes">Roadmap, under Outcomes</Link>.
             </p>
           </div>
           <div className="pkg-grid">
             {data.data.packages.map((p) => (
-              <PackageCard key={p.id} pkg={p} builtin={data.data!.builtin} rooms={(rooms.data?.rooms ?? []).filter((r) => canEdit(r.access))} onPreview={(id) => (setMethod("all"), setSelectedId(id), requestAnimationFrame(() => document.querySelector(".tpl-detail")?.scrollIntoView({ behavior: "smooth", block: "start" })))} />
+              <PackageCard key={p.id} pkg={p} rooms={(rooms.data?.rooms ?? []).filter((r) => canEdit(r.access))} />
             ))}
           </div>
         </section>
@@ -230,7 +230,7 @@ export default function TemplatesPage() {
 const isClass = (t: Summary | undefined) => !!t?.info?.tags.includes("class");
 
 /** One template package: what it is for, the boards it holds, and how to create them. */
-function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage; builtin: Summary[]; rooms: RoomOption[]; onPreview: (templateId: string) => void }) {
+function PackageCard({ pkg, rooms }: { pkg: TemplatePackage; rooms: RoomOption[] }) {
   const router = useRouter();
   const [name, setName] = useState("");
   const [mode, setMode] = useState<"one-board" | "boards">("one-board");
@@ -238,7 +238,7 @@ function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage;
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<ApiFailure | null>(null);
   const fallback = `${pkg.name} ${new Date().toISOString().slice(0, 10)}`;
-  const templates = pkg.templates.map((id) => ({ id: `tpl-builtin-${id}`, name: builtin.find((b) => b.id === `tpl-builtin-${id}`)?.name ?? id }));
+  const count = pkg.parts.reduce((n, p) => n + p.boards.length, 0);
   const base = `pkg-${pkg.id}`;
 
   const create = async () => {
@@ -262,14 +262,17 @@ function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage;
       </div>
       <div className="stack" style={{ gap: 4 }}>
         <span className="eyebrow" id={`${base}-holds`}>
-          {templates.length} board{templates.length === 1 ? "" : "s"}
+          {pkg.parts.length} parts · {count} boards
         </span>
         <ol className="pkg-templates" aria-labelledby={`${base}-holds`}>
-          {templates.map((t) => (
-            <li key={t.id}>
-              <button type="button" className="pkg-tpl" onClick={() => onPreview(t.id)} title={`Preview ${t.name}`}>
-                {t.name}
-              </button>
+          {pkg.parts.map((part) => (
+            <li key={part.title}>
+              <b>{part.title}</b>
+              <ul className="pkg-boards">
+                {part.boards.map((t) => (
+                  <li key={t}>{t}</li>
+                ))}
+              </ul>
             </li>
           ))}
         </ol>
@@ -289,11 +292,11 @@ function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage;
           <legend>Create as</legend>
           <label>
             <input type="radio" name={`${base}-mode`} value="one-board" checked={mode === "one-board"} onChange={() => setMode("one-board")} />
-            One board, templates side by side
+            One board, every part
           </label>
           <label>
             <input type="radio" name={`${base}-mode`} value="boards" checked={mode === "boards"} onChange={() => setMode("boards")} />
-            A board for each
+            A board for each part
           </label>
         </fieldset>
         {rooms.length ? (
@@ -321,7 +324,7 @@ function PackageCard({ pkg, builtin, rooms, onPreview }: { pkg: TemplatePackage;
           </div>
         ) : null}
         <button type="submit" className="btn primary" disabled={busy}>
-          {busy ? "Creating…" : mode === "one-board" ? "Create the board" : `Create ${templates.length} boards`}
+          {busy ? "Creating…" : mode === "one-board" ? "Create the board" : `Create ${pkg.parts.length} boards`}
         </button>
       </form>
     </article>

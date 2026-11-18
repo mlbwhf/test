@@ -7,7 +7,9 @@ const BADGES: Record<string, string> = { rte: "/courses/rte/badge.png", "leading
 const TINTS: Record<string, string> = { "leading-safe": "#cfe8d4", spc: "#cde0f2", aspc: "#f6b9ae", popm: "#ffd37a", rte: "#ffd37a", aiva: "#d9cdf0" };
 
 export const classSpec = (classId: unknown) => CLASS_META.find((c) => c.id === classId);
-export const classShort = (classId: unknown, name: string) => classSpec(classId)?.short ?? name.replace(/[^A-Z0-9]/g, "").slice(0, 4) ?? "CL";
+// Event boards (template packages) carry the event's short name (core courses/events.ts).
+const EVENT_SHORT: Record<string, string> = { "event-prepare-pi-planning": "PREP", "event-pi-planning": "PI", "event-closing-pi": "I&A" };
+export const classShort = (classId: unknown, name: string) => classSpec(classId)?.short ?? (typeof classId === "string" ? EVENT_SHORT[classId] : undefined) ?? name.replace(/[^A-Z0-9]/g, "").slice(0, 4) ?? "CL";
 
 export function ClassIcon({ classId, name, size = 64, locked = false }: { classId: unknown; name: string; size?: number; locked?: boolean }) {
   const badge = typeof classId === "string" ? BADGES[classId] : undefined;

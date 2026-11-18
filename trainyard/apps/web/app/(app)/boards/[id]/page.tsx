@@ -107,7 +107,7 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
           ) : isClass ? (
             <>
               <button className="btn primary" onClick={() => setShowStudents((v) => !v)} aria-expanded={showStudents}>
-                Students
+                {board.fields?.event ? "Participants" : "Students"}
               </button>
               <button
                 className="btn"

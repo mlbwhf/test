@@ -70,6 +70,8 @@ export type OutcomeRoadmapProps = {
   updMark: (id: string, patch: Partial<Mark>) => void;
   delMark: (id: string) => void;
   addOutcome: () => void;
+  /** Fills an empty outcome roadmap with the template's example (three ART outcomes and their commitments). */
+  loadTemplate?: () => void;
   updOutcome: (id: string, patch: Partial<Outcome>) => void;
   delOutcome: (id: string) => void;
 };
@@ -119,6 +121,17 @@ export function OutcomeRoadmap(p: OutcomeRoadmapProps) {
         </div>
         <button onClick={p.addOutcome} style={{ ...btn(true, "#ffe14d"), color: INK, marginLeft: "auto", borderRadius: 99 }}>+ Add an ART outcome</button>
       </div>
+
+      {/* Nothing placed on the outcome roadmap yet: offer the template. */}
+      {!p.marks.some((m) => m.out !== undefined) && p.loadTemplate ? (
+        <div style={{ ...card, padding: "18px 22px", display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap", background: "#fff8d6" }}>
+          <div style={{ flex: "1 1 360px" }}>
+            <b style={{ display: "block", fontSize: 18 }}>Start from the outcome-driven roadmap template</b>
+            <span style={{ fontSize: 15, lineHeight: 1.4, color: "#2b2a4a" }}>Nothing is on the outcome roadmap yet. The template adds three example outcomes (roofshot and moonshot) with their milestones, releases and outcome commitments across three PIs; nothing on the Roadmap and PI plan tabs changes. Or build your own with + Add an ART outcome.</span>
+          </div>
+          <button onClick={p.loadTemplate} style={{ ...btn(true, "#ffe14d"), color: INK, borderRadius: 99 }}>Use the template</button>
+        </div>
+      ) : null}
 
       <div style={{ display: "flex", gap: 22, alignItems: "flex-start", flexWrap: "wrap" }}>
         <div style={{ flex: "1 1 640px", minWidth: 0, display: "flex", flexDirection: "column", gap: 22 }}>

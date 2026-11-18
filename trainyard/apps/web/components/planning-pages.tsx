@@ -93,7 +93,7 @@ export function RoadmapPage() {
   const sRef = useRef<RoadState | null>(null);
   sRef.current = s;
   useEffect(() => {
-    if (loaded && !s) setS({ ...structuredClone(doc ?? ROADMAP_SAMPLE), tab: "timeline", arm: "milestone", from: 1, count: 12, curPI: 1, sel: null, checked: {}, newText: "", ghost: null, flash: null });
+    if (loaded && !s) setS({ ...structuredClone(doc ?? ROADMAP_SAMPLE), ...(typeof window !== "undefined" && new URLSearchParams(window.location.search).get("tab") === "outcomes" ? { tab: "outcomes" as const, count: 3 } : { tab: "timeline" as const, count: 12 }), arm: "milestone", from: 1, curPI: 1, sel: null, checked: {}, newText: "", ghost: null, flash: null });
   }, [loaded, doc, s]);
   useEffect(() => {
     if (s) save({ lanes: s.lanes, items: s.items, miles: s.miles, outcomes: s.outcomes ?? [] });
@@ -196,6 +196,7 @@ export function RoadmapPage() {
       addOutcome={() => { const id = nid("oc"); set((t) => ({ outcomes: [...(t.outcomes ?? []), { id, title: "New ART outcome", kind: "roofshot", desc: "" }], sel: { k: "o", id } })); }}
       updOutcome={(id, patch) => set((t) => ({ outcomes: (t.outcomes ?? []).map((o) => (o.id === id ? { ...o, ...patch } : o)) }))}
       delOutcome={(id) => set((t) => ({ outcomes: (t.outcomes ?? []).filter((o) => o.id !== id), miles: t.miles.map((m) => (m.out === id ? { ...m, out: "" } : m)), sel: null }))}
+      loadTemplate={() => set((t) => ({ outcomes: [...(t.outcomes ?? []).filter((o) => !(BLANK_ROADMAP.outcomes ?? []).some((b) => b.title === o.title && !o.desc) && !(ROADMAP_SAMPLE.outcomes ?? []).some((x) => x.id === o.id)), ...structuredClone(ROADMAP_SAMPLE.outcomes ?? [])], miles: [...t.miles, ...structuredClone(ROADMAP_SAMPLE.miles).filter((m) => m.out !== undefined && !t.miles.some((x) => x.id === m.id))], from: 1, count: 3, sel: null }))}
     />
   );
   const v = {

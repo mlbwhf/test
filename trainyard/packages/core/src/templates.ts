@@ -9,6 +9,7 @@
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import { classTemplates } from "./classes.js";
+import { EVENT_BOARDS } from "./courses/events.js";
 import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
 import { PI_PLANNING_READINESS } from "./canvases.js";
 
@@ -585,7 +586,8 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
 /**
  * Template packages: the boards an event needs, created together. Preparing for PI planning
  * happens through the PI and its IP iteration; PI planning is the two days; closing the PI is
- * the IP iteration and then Inspect & Adapt.
+ * the IP iteration and then Inspect & Adapt. Each is an event board (courses/events.ts): the designed
+ * exercise boards of the RTE and Leading SAFe classes, in parts.
  */
 export interface TemplatePackage {
   id: string;
@@ -593,30 +595,8 @@ export interface TemplatePackage {
   blurb: string;
   /** When in the PI the package is used. */
   when: string;
-  /** Template ids, in the order the boards are used. */
-  templates: string[];
+  /** The parts of the event, each with the boards it holds, in the order they are used. */
+  parts: { title: string; boards: string[] }[];
 }
 
-export const TEMPLATE_PACKAGES: TemplatePackage[] = [
-  {
-    id: "prepare-pi-planning",
-    name: "Prepare for PI planning",
-    blurb: "Get the content, the teams and the room ready: readiness by the RTE and LACE, the ART backlog through the Kanban, and pre-PI planning across trains.",
-    when: "Through the PI, finishing in the IP iteration",
-    templates: ["pi-planning-readiness", "art-kanban", "portfolio-art-board"],
-  },
-  {
-    id: "pi-planning",
-    name: "PI planning",
-    blurb: "The two days: the agenda, the PI planning board with dependencies, a breakout board per team, program risks to ROAM and the confidence vote.",
-    when: "PI planning, days 1 and 2",
-    templates: ["pi-planning-agenda", "pi-planning", "team-breakout", "roam", "confidence-vote"],
-  },
-  {
-    id: "closing-pi",
-    name: "Close the PI",
-    blurb: "The IP iteration (buffer, final verification and validation, innovation, readiness, continuing education) and then Inspect & Adapt: PI system demo, measurement and the problem-solving workshop.",
-    when: "The IP iteration, then Inspect & Adapt",
-    templates: ["ip-iteration", "inspect-adapt"],
-  },
-];
+export const TEMPLATE_PACKAGES: TemplatePackage[] = EVENT_BOARDS.map((e) => ({ id: e.id, name: e.name, blurb: e.blurb, when: e.when, parts: e.parts.map((p) => ({ title: p.title, boards: p.activities.map((x) => x.title) })) }));
