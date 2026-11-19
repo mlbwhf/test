@@ -8,9 +8,10 @@
 |---|---|---|
 | Daily pull + tripwires (06:15 ET) | VPS, systemd timer | **Built + tested offline.** Install with `deploy/install.sh` |
 | Weekly analysis email (Mon 08:00 ET) | VPS, systemd timer | **Built + tested offline** (Groq by default) |
-| Ground truth: **website (Stripe)** payments | `src/stripe_pull.py` | Built; needs a read-only Stripe key |
-| Ground truth: Eventbrite orders | `src/eventbrite_pull.py` | Built; bugs fixed (see below) |
-| Google Ads spend → Sheet | `scripts/google_ads_daily_spend.gs` | **Re-paste the updated script** (now also logs status + bid strategy) |
+| Ground truth: **website (Stripe)** payments | `src/stripe_pull.py` | Built. Classifies each Stripe payment: **website** (counts for ads) vs Corsizio / other / unknown (internal only). Needs a read-only Stripe key |
+| Ground truth: Eventbrite orders | `src/eventbrite_pull.py` | Built; internal data only (never an ad conversion) |
+| Google Ads spend → Sheet | `scripts/google_ads_daily_spend.gs` | **Re-paste the updated script.** It now also logs status, bid strategy and the website-vs-other conversion breakdown |
+| Claude Code on the VPS | `deploy/CLAUDE-CODE-ON-VPS.md` | Runbook ready: runs as `claudeops`, can't read the keys, driven from your app via Remote Control |
 | Agent store | Airtable "Ads Agent" (`appCXSWnIISm0c6iF`) | Live; 75 of 220 baseline rows loaded |
 | Microsoft Ads data | n/a | Not wired: needs the one-time OAuth (`scripts/get_ms_refresh_token.py`) |
 | n8n workflows (`n8n/`) | n/a | **Superseded by the VPS timers.** Kept for reference; don't run both |
@@ -71,10 +72,10 @@ network: **ALL PASS**. The installer runs it on the VPS before the timers can be
 | # | Item | File |
 |---|---|---|
 | 1 | Approve keywords (29, in stages; AI-Native first) | `proposals/2026-11_keyword-proposal.md` |
-| 2 | Apply the Black Friday kit (24 validated strings, 19-30 Nov) + decide the promo budget | `proposals/2026-11_black-friday-kit.md` |
-| 3 | Website conversion tracking: send section 2 to your web team; add the Google/MS goal as **secondary** now, **primary from 1 Dec** | `proposals/2026-11_website-conversion-tracking.md` |
+| 2 | **Approved:** apply the Black Friday kit (25 validated strings, 19-30 Nov; checklist inside; Microsoft by hand to protect the tracking suffixes) + decide the promo budget | `proposals/2026-11_black-friday-kit.md` |
+| 3 | **Website-only tracking:** web team ships section 2 (mark website payments with `origin=agile-agilist.com`, verified purchase event, remove Eventbrite/Corsizio tags); you then switch goals in one go (section 4) | `proposals/2026-11_website-conversion-tracking.md` |
 | 4 | Upload the 2 career-progression photos + logo (Google only) | `proposals/2026-11_image-assets.md` |
-| 5 | Confirm your partner tier: **Gold or Platinum?** (site and rules disagree) | `config/rules.yaml` whitelist |
-| 6 | Install on the VPS (above) | `deploy/install.sh` |
+| 5 | ~~Partner tier~~ **Done:** "SAFe Platinum Partner" confirmed; the validator rejects "Gold" | `config/rules.yaml` |
+| 6 | Install on the VPS (above), then set up Claude Code there | `deploy/install.sh`, `deploy/CLAUDE-CODE-ON-VPS.md` |
 | 7 | Finish the Airtable baseline: re-upload the sales CSV, or run the importer with `--replace` | `scripts/airtable_import_baseline.py` |
 | 8 | Fix the account settings the Google export showed: **Search Partners on**, **"Display Select"** on Certifications - English, **smart bidding without verified registrations** | Google Ads UI |

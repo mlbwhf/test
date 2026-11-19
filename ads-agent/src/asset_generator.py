@@ -53,6 +53,9 @@ def validate_asset(text: str, kind: str, rules: dict, audience: str | None = Non
         if phrase in low:
             alt = copy_rules.get("approved_support_phrase", "")
             return False, f"blocked wording {phrase!r} (owner rule){f' - use {alt!r}' if alt else ''}"
+    for stale, current in (copy_rules.get("superseded_claims") or {}).items():
+        if stale in low:
+            return False, f"outdated claim {stale!r} - use {current!r} (owner-confirmed)"
 
     for pat in SCARCITY_PATTERNS:
         if re.search(pat, low):
@@ -113,6 +116,8 @@ def _selftest(rules: dict) -> int:
         (validate_asset("3,000+ Professionals Trained", "headline", rules), False),
         (validate_asset("Pass Guarantee Included", "headline", rules), False),
         (validate_asset("Exam Prep and Support", "headline", rules), True),
+        (validate_asset("SAFe Gold Partner", "headline", rules), False),
+        (validate_asset("SAFe Platinum Partner", "headline", rules), True),
         (validate_asset("Black Friday: 15% Off", "headline", rules, on_date=bf), True),
         (validate_asset("Black Friday: 15% Off", "headline", rules, on_date=after), False),
         (validate_asset("Black Friday: 20% Off", "headline", rules, on_date=bf), False),

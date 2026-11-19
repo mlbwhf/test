@@ -25,6 +25,11 @@ def _num(v) -> float:
         return 0.0
 
 
+def _opt_num(v) -> float | None:
+    """Blank -> None (column missing / conversion query failed), else a number."""
+    return None if v is None or str(v).strip() == "" else _num(v)
+
+
 def _is_brand(campaign: str) -> bool:
     pats = os.environ.get("BRAND_CAMPAIGN_PATTERNS", "defense,brand").lower().split(",")
     return any(p.strip() and p.strip() in campaign.lower() for p in pats)
@@ -53,6 +58,9 @@ def parse_csv(text: str) -> list:
             "status": (r.get("status") or "").strip().upper(),
             "bid_strategy": BID_MAP.get(raw_bid, "Other" if raw_bid else ""),
             "is_brand": camp != TOTAL_ROW and _is_brand(camp),
+            "primary_conversions": _opt_num(r.get("primaryConversions")),
+            "website_purchases": _opt_num(r.get("websitePurchases")),
+            "non_website_primary": _opt_num(r.get("nonWebsitePrimaryConversions")),
         })
     return rows
 

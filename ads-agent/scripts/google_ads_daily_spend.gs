@@ -23,12 +23,16 @@ var SHEET_ID   = '1kPbLU_wHGosHz4Oh02_e-LKHkDJ03NlCNJMAjfv_gu8';
 var TAB_NAME   = 'GoogleAdsSpend';
 var ALERT_CAD  = 50;                 // week-1 insurance threshold (account/day)
 var ALERT_EMAIL = 'mark@agile-agilist.com';  // <-- set to the inbox you actually watch
+// The ONLY conversion the ads should count (owner rule): Stripe payments made through
+// the website checkout. Must match the conversion action's name in Google Ads exactly.
+var WEBSITE_CONVERSION_ACTION = 'Website Purchase - Paid Registration';
 
 function main() {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var sheet = ss.getSheetByName(TAB_NAME) || ss.insertSheet(TAB_NAME);
   var HEADER = ['date', 'campaign', 'cost', 'clicks', 'impressions', 'ctr', 'avgCpc', 'currency', 'loggedAt',
-                'status', 'biddingStrategy'];
+                'status', 'biddingStrategy',
+                'primaryConversions', 'websitePurchases', 'nonWebsitePrimaryConversions'];
   if (sheet.getLastRow() === 0) {
     sheet.appendRow(HEADER);
   } else if (sheet.getLastColumn() < HEADER.length) {
@@ -43,8 +47,9 @@ function main() {
   var nowStamp = Utilities.formatDate(new Date(), tz, 'yyyy-MM-dd HH:mm');
 
   // --- Per-campaign spend for YESTERDAY (complete day) ---
+  var conv = conversionsByCampaign(yday);
   var rows = [];
-  var accCost = 0, accClicks = 0, accImpr = 0;
+  var accCost = 0, accClicks = 0, accImpr = 0, accPrim = 0, accWeb = 0, accOther = 0;
   var it = AdsApp.campaigns()
     .forDateRange(yday.replace(/-/g, ''), yday.replace(/-/g, ''))
     .withCondition('metrics.impressions >= 0')
@@ -54,14 +59,18 @@ function main() {
     var s = c.getStatsFor(yday.replace(/-/g, ''), yday.replace(/-/g, ''));
     var cost = s.getCost(), clicks = s.getClicks(), impr = s.getImpressions();
     accCost += cost; accClicks += clicks; accImpr += impr;
+    var cv = conv ? (conv[c.getName()] || {primary: 0, website: 0, other: 0}) : null;
+    if (cv) { accPrim += cv.primary; accWeb += cv.website; accOther += cv.other; }
     rows.push([yday, c.getName(), round2(cost), clicks, impr,
                impr ? round2(clicks / impr * 100) : 0,
                clicks ? round2(cost / clicks) : 0, currency, nowStamp,
-               campaignStatus(c), biddingStrategy(c)]);
+               campaignStatus(c), biddingStrategy(c),
+               cv ? round2(cv.primary) : '', cv ? round2(cv.website) : '', cv ? round2(cv.other) : '']);
   }
   rows.push([yday, '__ACCOUNT_TOTAL__', round2(accCost), accClicks, accImpr,
              accImpr ? round2(accClicks / accImpr * 100) : 0,
-             accClicks ? round2(accCost / accClicks) : 0, currency, nowStamp, '', '']);
+             accClicks ? round2(accCost / accClicks) : 0, currency, nowStamp, '', '',
+             conv ? round2(accPrim) : '', conv ? round2(accWeb) : '', conv ? round2(accOther) : '']);
   if (rows.length) {
     sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
   }
@@ -79,6 +88,35 @@ function main() {
 }
 
 function round2(n) { return Math.round(n * 100) / 100; }
+
+// Per campaign: primary conversions (what bidding optimizes for), website purchases
+// (by conversion date, so they line up with Stripe payment dates), and primary
+// conversions from ANY other action - which should be zero under the owner rule.
+// Returns null if the query fails, so spend logging never breaks.
+function conversionsByCampaign(yday) {
+  try {
+    var out = {};
+    var rows = AdsApp.search(
+      "SELECT campaign.name, segments.conversion_action_name, metrics.conversions, " +
+      "metrics.all_conversions_by_conversion_date FROM campaign WHERE segments.date = '" + yday + "'");
+    while (rows.hasNext()) {
+      var r = rows.next();
+      var name = r.campaign.name;
+      var o = out[name] || (out[name] = {primary: 0, website: 0, other: 0});
+      var prim = Number(r.metrics.conversions || 0);
+      o.primary += prim;
+      if (r.segments.conversionActionName === WEBSITE_CONVERSION_ACTION) {
+        o.website += Number(r.metrics.allConversionsByConversionDate || 0);
+      } else {
+        o.other += prim;
+      }
+    }
+    return out;
+  } catch (e) {
+    Logger.log('Conversion breakdown unavailable: ' + e);
+    return null;
+  }
+}
 
 function campaignStatus(c) {
   if (c.isEnabled()) return 'ENABLED';

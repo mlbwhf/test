@@ -26,7 +26,12 @@ import config  # noqa: E402
 import notify  # noqa: E402
 import spend_sheet  # noqa: E402
 from eventbrite_pull import _parse_order, pull_orders  # noqa: E402
-from rules_engine import check_tripwires  # noqa: E402
+from rules_engine import check_conversion_integrity, check_tripwires  # noqa: E402
+
+AD_SOURCE = "website_stripe"  # the ONLY source the ads may count (owner rule 2026-11-19)
+SOURCE_LABELS = {"website_stripe": "Website checkout (counts for ads)", "eventbrite_api": "Eventbrite",
+                 "corsizio": "Corsizio", "stripe_other": "Stripe, not website",
+                 "stripe_unverified": "Stripe, origin unknown"}
 from stripe_pull import parse_charge, pull_charges  # noqa: E402
 
 LOOKBACK_DAYS = 3
@@ -67,9 +72,10 @@ def run(dry_run: bool = False, fixtures: Path | None = None) -> dict:
         snaps = spend_sheet.parse_csv((fixtures / "spend.csv").read_text())
     else:
         for label, fn in (("Eventbrite", lambda: pull_orders(LOOKBACK_DAYS)),
-                          ("Stripe (website)", lambda: pull_charges(LOOKBACK_DAYS))):
-            if label.startswith("Stripe") and not os.environ.get("STRIPE_API_KEY"):
-                errors.append("Stripe (website) not configured: set STRIPE_API_KEY (read-only restricted key)")
+                          ("Stripe", lambda: pull_charges(LOOKBACK_DAYS, rules))):
+            if label == "Stripe" and not os.environ.get("STRIPE_API_KEY"):
+                errors.append("Stripe not configured: set STRIPE_API_KEY (read-only restricted key) - "
+                              "without it the agent cannot see website checkout payments")
                 continue
             try:
                 rows = fn()
@@ -100,6 +106,18 @@ def run(dry_run: bool = False, fixtures: Path | None = None) -> dict:
 
     alerts = check_tripwires(rules, snaps, as_of=yday) if snaps else \
         [f"NO SPEND DATA - set GOOGLE_ADS_SPEND_CSV_URL and confirm the Google Ads Script ran for {yday}"]
+    if snaps:
+        web_orders = {}
+        for r in regs:
+            if r["source"] == AD_SOURCE:
+                web_orders[r["date"]] = web_orders.get(r["date"], 0) + 1
+        alerts += check_conversion_integrity(rules, snaps, web_orders, as_of=yday, window_days=LOOKBACK_DAYS)
+    unverified = [r for r in regs if r["source"] == "stripe_unverified"]
+    if unverified:
+        alerts.append(f"{len(unverified)} STRIPE PAYMENT(S) WITH UNKNOWN ORIGIN "
+                      f"({', '.join(sorted({r['date'] for r in unverified}))}) - not counted as website "
+                      "registrations. Ask the web team to set metadata origin=agile-agilist.com on every "
+                      "website checkout payment (tracking proposal, section 2.2).")
     alerts += promo_reminders(rules, today)
 
     by_src = {}
@@ -117,7 +135,8 @@ def run(dry_run: bool = False, fixtures: Path | None = None) -> dict:
     if alerts or errors:
         lines = [f"Ads agent - daily check for {yday} (Phase 1: alerts only, nothing was changed)", ""]
         lines += [f"ALERT: {a}" for a in alerts] + [f"PIPELINE: {e}" for e in errors]
-        regs_line = ", ".join(f"{k}: {v}" for k, v in by_src.items()) or "none recorded"
+        regs_line = ", ".join(f"{SOURCE_LABELS.get(k, k)}: {v}" for k, v in sorted(by_src.items())) \
+            or "none recorded"
         lines += ["", f"Paid registrations yesterday - {regs_line}"]
         notify.send(f"[Ads Agent] {len(alerts) + len(errors)} item(s) to check - {yday}",
                     "\n".join(lines), dry_run=bool(dry_run or fixtures))

@@ -94,6 +94,45 @@ def check_tripwires(rules: dict, snapshots: list, as_of: datetime.date | None = 
     return alerts
 
 
+def check_conversion_integrity(rules: dict, snapshots: list, website_orders_by_date: dict,
+                               as_of: datetime.date | None = None, window_days: int = 3) -> list:
+    """Owner rule: the ads count ONLY Stripe payments made through the website checkout.
+
+    1. Any OTHER conversion action counted as primary (e.g. Eventbrite clicks, Corsizio) -> alert.
+    2. Google reporting MORE website purchases than Stripe recorded website payments over the
+       window -> the tag is double-counting or firing on non-website payments.
+    website_orders_by_date: {date_str: number of website_stripe ORDERS} (orders, not seats -
+    the conversion action counts one per transaction).
+    """
+    as_of = as_of or (datetime.date.today() - datetime.timedelta(days=1))
+    ct = rules.get("owner_directives", {}).get("conversion_tracking", {})
+    action = ct.get("website_conversion_action", "the website purchase action")
+    retire = " / ".join(ct.get("retire_conversion_actions", [])) or "non-website actions"
+    days = _by_day(snapshots)
+    today = days.get(as_of.isoformat(), [])
+    alerts = []
+
+    leaking = [(s["campaign"], s["non_website_primary"]) for s in today
+               if s.get("non_website_primary") not in (None, 0, 0.0)]
+    if leaking:
+        alerts.append("NON-WEBSITE CONVERSIONS COUNTED AS PRIMARY (owner rule: website Stripe payments "
+                      f"only): {', '.join(f'{c} ({v:g})' for c, v in leaking)}. Set {retire} to "
+                      "secondary or remove them in Google Ads.")
+    if today and all(s.get("non_website_primary") is None for s in today):
+        alerts.append("CONVERSION BREAKDOWN MISSING from the spend sheet - re-paste the latest "
+                      "google_ads_daily_spend.gs so the agent can verify what the ads count.")
+
+    window = [(as_of - datetime.timedelta(days=i)).isoformat() for i in range(window_days)]
+    reported = sum(s.get("website_purchases") or 0 for d in window for s in days.get(d, []))
+    actual = sum(int(website_orders_by_date.get(d, 0)) for d in window)
+    if reported > actual + 0.5:  # tolerate fractional data-driven attribution
+        alerts.append(f"WEBSITE PURCHASES OVER-COUNTED: Google reports {reported:g} '{action}' "
+                      f"conversions for {window[-1]}..{window[0]}, but Stripe recorded only {actual} "
+                      "website checkout payment(s). The tag is double-firing or counting payments "
+                      "that did not come from the website checkout.")
+    return alerts
+
+
 if __name__ == "__main__":
     rules = load_rules(sys.argv[1] if len(sys.argv) > 1 else "config/rules.yaml")
     snaps = json.load(open(sys.argv[2])) if len(sys.argv) > 2 else []

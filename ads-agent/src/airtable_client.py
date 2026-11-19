@@ -55,12 +55,16 @@ class Airtable:
         return len(rows)
 
 
+CHANNELS = {"website_stripe": "Website", "eventbrite_api": "Eventbrite", "corsizio": "Corsizio",
+            "stripe_other": "Stripe (not website)", "stripe_unverified": "Stripe (origin unknown)"}
+
+
 def registration_fields(row: dict) -> dict:
     src = row.get("source", "eventbrite_api")
     f = {"Course Name": row.get("course_name") or "(unknown course)", "Date": row["date"],
          "Course Family": row["course_family"], "Seats": row.get("seats", 1),
          "Currency": row.get("currency") or "", "Event ID": row["order_id"], "Source": src,
-         "Channel": "Website" if src == "website_stripe" else "Eventbrite"}
+         "Channel": CHANNELS.get(src, "Other")}
     if row.get("gross") not in (None, ""):
         f["Revenue"] = float(row["gross"])
     return f
@@ -75,6 +79,10 @@ def spend_fields(s: dict) -> dict:
         f["Status"] = s["status"]
     if s.get("bid_strategy"):
         f["Bid Strategy"] = s["bid_strategy"]
+    if s.get("website_purchases") is not None:
+        f["Website Purchases"] = s["website_purchases"]
+    if s.get("non_website_primary") is not None:
+        f["Non-Website Primary Conversions"] = s["non_website_primary"]
     return f
 
 

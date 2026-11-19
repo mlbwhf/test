@@ -77,8 +77,8 @@ asset_generation:
     callout: 25
     sitelink_desc: 35
   claims_whitelist:
-  - SAFe Gold Partner
-  - Gold SPCT
+  - SAFe Platinum Partner             # owner-confirmed 2026-11-19 (was Gold)
+  - SPCT-Led
   - Trusted Since 2022
   - Earn PDUs & SEUs
   - Face-to-Face Training
@@ -123,6 +123,27 @@ owner_directives:
     - pass support
     approved_support_phrase: exam prep and support
     no_cad_pricing_for_us: true       # no CAD / CA$ in copy served to US audiences
+    superseded_claims:                # stale wording -> current claim (owner 2026-11-19)
+      gold partner: SAFe Platinum Partner
+      gold spct: SPCT-Led
+  # Ad-platform conversion tracking (owner 2026-11-19): Google/Microsoft Ads count ONLY
+  # Stripe payments made through the website's own checkout. Eventbrite, Corsizio and
+  # any other Stripe payment (invoices, payment links, platforms) are internal data only.
+  conversion_tracking:
+    ad_conversion_sources:
+    - website_stripe
+    internal_only_sources:
+    - eventbrite_api
+    - corsizio
+    - stripe_other
+    website_conversion_action: Website Purchase - Paid Registration
+    website_stripe_marker:            # the website checkout sets this on every payment
+      metadata_key: origin
+      metadata_value: agile-agilist.com
+    website_success_url_prefix: https://agile-agilist.com/
+    retire_conversion_actions:        # must not count as conversions in any ad account
+    - Eventbrite Click - Register
+    - Corsizio Registration - AI-Native
   approved_final_urls:
     assessments:
       hub: https://agile-agilist.com/assessments/

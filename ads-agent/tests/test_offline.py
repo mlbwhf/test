@@ -16,6 +16,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "src"))
 os.environ.pop("SMTP_HOST", None)  # never email from a test
+os.environ["CORSIZIO_STRIPE_APPLICATION"] = "ca_corsizio"
 
 import config  # noqa: E402
 import daily_run  # noqa: E402
@@ -31,20 +32,30 @@ def build_fixtures(d: Path) -> None:
     (d / "eventbrite_orders.json").write_text(json.dumps([
         {"id": "eb1", "status": "placed", "created": f"{y}T15:00:00Z", "event_id": "e1",
          "name": "Buyer Person", "costs": {"gross": {"major_value": "2795.00", "currency": "USD"}}}]))
+    base = {"status": "succeeded", "paid": True, "amount_refunded": 0, "currency": "usd", "created": ts}
     (d / "stripe_charges.json").write_text(json.dumps([
-        {"id": "ch_1", "status": "succeeded", "paid": True, "amount": 144415, "amount_refunded": 0,
-         "currency": "usd", "created": ts, "metadata": {"course": "AI-Native Foundations"}}]))
-    hdr = "date,campaign,cost,clicks,impressions,ctr,avgCpc,currency,loggedAt,status,biddingStrategy\n"
+        # website checkout payment (carries the website marker) -> the only ad-countable one
+        {**base, "id": "ch_web", "amount": 144415,
+         "metadata": {"origin": "agile-agilist.com", "course": "AI-Native Foundations"}},
+        # Corsizio payment landing in the same Stripe account -> internal data only
+        {**base, "id": "ch_cors", "amount": 169900, "application": "ca_corsizio",
+         "metadata": {"course": "AI-Native Foundations"}},
+        # no marker, no checkout session -> origin unknown, alerted, never counted as website
+        {**base, "id": "ch_unk", "amount": 99700, "description": "SAFe Business Owner"},
+    ]))
+    hdr = ("date,campaign,cost,clicks,impressions,ctr,avgCpc,currency,loggedAt,status,biddingStrategy,"
+           "primaryConversions,websitePurchases,nonWebsitePrimaryConversions\n")
     rows = [
         # day before: one campaign paused, Certifications on Maximize Clicks
-        f"{yy},Certifications - English,20,10,300,3.33,2.00,CAD,{yy} 05:30,ENABLED,TARGET_SPEND",
-        f"{yy},Performance Max-2,0,0,0,0,0,CAD,{yy} 05:30,PAUSED,MAXIMIZE_CONVERSIONS",
-        f"{yy},AgileAgilist Defense - English,3,4,40,10,0.75,CAD,{yy} 05:30,ENABLED,TARGET_SPEND",
-        # yesterday: paused campaign re-enabled, bid strategy switched, brand CPC leak, overspend
-        f"{y},Certifications - English,45,15,400,3.75,3.00,CAD,{y} 05:30,ENABLED,MAXIMIZE_CONVERSIONS",
-        f"{y},Performance Max-2,18,6,900,0.67,3.00,CAD,{y} 05:30,ENABLED,MAXIMIZE_CONVERSIONS",
-        f"{y},AgileAgilist Defense - English,9,3,30,10,3.00,CAD,{y} 05:30,ENABLED,TARGET_SPEND",
-        f"{y},__ACCOUNT_TOTAL__,72,24,1330,1.8,3.00,CAD,{y} 05:30,,",
+        f"{yy},Certifications - English,20,10,300,3.33,2.00,CAD,{yy} 05:30,ENABLED,TARGET_SPEND,0,0,0",
+        f"{yy},Performance Max-2,0,0,0,0,0,CAD,{yy} 05:30,PAUSED,MAXIMIZE_CONVERSIONS,0,0,0",
+        f"{yy},AgileAgilist Defense - English,3,4,40,10,0.75,CAD,{yy} 05:30,ENABLED,TARGET_SPEND,0,0,0",
+        # yesterday: re-enabled, bid strategy switched, brand CPC leak, overspend, Eventbrite
+        # clicks still primary (2), and Google claims 3 website purchases vs 1 real one
+        f"{y},Certifications - English,45,15,400,3.75,3.00,CAD,{y} 05:30,ENABLED,MAXIMIZE_CONVERSIONS,4,2,2",
+        f"{y},Performance Max-2,18,6,900,0.67,3.00,CAD,{y} 05:30,ENABLED,MAXIMIZE_CONVERSIONS,1,1,0",
+        f"{y},AgileAgilist Defense - English,9,3,30,10,3.00,CAD,{y} 05:30,ENABLED,TARGET_SPEND,0,0,0",
+        f"{y},__ACCOUNT_TOTAL__,72,24,1330,1.8,3.00,CAD,{y} 05:30,,,5,3,2",
     ]
     (d / "spend.csv").write_text(hdr + "\n".join(rows) + "\n")
 
@@ -62,16 +73,18 @@ def main() -> int:
         out = daily_run.run(fixtures=d)
         text = " | ".join(out["alerts"])
         for needle in ("ACCOUNT SPEND", "PAUSED CAMPAIGN RE-ENABLED", "BID STRATEGY CHANGED",
-                       "BRAND LEAKAGE", "SMART BIDDING"):
+                       "BRAND LEAKAGE", "SMART BIDDING", "NON-WEBSITE CONVERSIONS COUNTED AS PRIMARY",
+                       "WEBSITE PURCHASES OVER-COUNTED", "UNKNOWN ORIGIN"):
             if needle not in text:
                 failures.append(f"daily: expected alert {needle!r}; got {out['alerts']}")
-        if out["registrations_yesterday"] != {"eventbrite_api": 1, "website_stripe": 1}:
+        want = {"eventbrite_api": 1, "website_stripe": 1, "corsizio": 1, "stripe_unverified": 1}
+        if out["registrations_yesterday"] != want:
             failures.append(f"daily: registrations by source wrong: {out['registrations_yesterday']}")
         if "Buyer Person" in json.dumps(out):
             failures.append("daily: buyer name leaked into output")
         w = weekly_run.run(fixtures=d)
-        if w["regs"]["last_14d"]["by_family"] != {"ASPC": 1, "AI_NATIVE": 1}:
-            failures.append(f"weekly: families wrong: {w['regs']['last_14d']['by_family']}")
+        if w["regs"]["last_14d"]["by_source"].get("website_stripe") != 1:
+            failures.append(f"weekly: website count wrong: {w['regs']['last_14d']['by_source']}")
 
     rules = config.load_rules()
     # promo reminders fire on the end date and just after, not before
