@@ -76,7 +76,47 @@ export const AI_NATIVE_SUCCESS_FACTORS: Record<
       ],
     ],
   },
+  // Lesson 3 (slides 3-18, 3-29 and 3-48).
+  sf4: {
+    title: "SF4: AI-Native ART",
+    statements: [
+      ["Our AI-Native ART is staffed appropriately to develop its products.", "ART staffing"],
+      ["Business Owners, Product Management, the RTE, and System Architect are fully aligned on the vision and prepared to lead an AI-Native ART.", "ART leadership aligned"],
+      ["The ART has established clear AI safety and governance guardrails that teams must follow when building products.", "AI safety and governance guardrails"],
+      ["Everyone on the ART has the AI fluency needed to build and collaborate with AI agents responsibly.", "AI fluency"],
+    ],
+  },
+  sf5: {
+    title: "SF5: AI-Native Teams",
+    statements: [
+      ["Each AI-Native team has a clear mission and the Product, Builder, and Domain Expert capabilities to fulfill it.", "Team mission and capabilities"],
+      ["Teams effectively incorporate AI into their daily workflows.", "AI in daily workflows"],
+      ["Teams operate on an Align, Sense, and Respond cadence.", "Align, Sense, and Respond cadence"],
+      ["Teams quickly test low-cost prototypes and kill experiments that fail to deliver value.", "Low-cost prototypes"],
+    ],
+  },
+  sf6: {
+    title: "SF6: AI Value Architect",
+    statements: [
+      ["AI Value Architects bridge business goals and technical execution.", "Bridge goals and execution"],
+      ["AI Value Architects help teams unlock value from AI workflows and tools.", "Value from AI workflows"],
+      ["AI Value Architects provide coaching to support individuals in integrating AI into their roles responsibly.", "AI coaching"],
+      ["AI Value Architects ensure AI usage is focused on optimizing outcomes.", "AI usage on outcomes"],
+    ],
+  },
 };
+
+const assess = (title: string, sf: string): ActivitySpec => ({
+  title,
+  kind: "Assess",
+  prepare: 5,
+  steps: "Individually, evaluate each statement for your ART and determine whether it is fully in place, partially in place or not in place.",
+  board: "aart",
+  config: { step: "sf", tm: [["Prepare", 5]], shared: "assessment", sf, mode: "assess" },
+  ...BOARD,
+});
+/** The assessments of success factors 4 to 6 (lesson 3), used by the launch readiness package. */
+export const AI_NATIVE_ASSESS_456: ActivitySpec[] = [assess("AI-Native ART", "sf4"), assess("AI-Native Teams", "sf5"), assess("AI Value Architect", "sf6")];
 
 const lesson1: ActivitySpec[] = [
   {

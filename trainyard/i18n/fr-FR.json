@@ -834,7 +834,7 @@
   "fr": ". Nommez une action qui comble l’écart.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:112",
+  "where": "apps/web/components/studio-model-aart.ts:116",
   "note": "Fragment appended after other text; check the assembled sentence."
  },
  ". Nothing has been charged. Cancel before then under “Card, invoices, cancel” and nothing will be.": {
@@ -1668,7 +1668,7 @@
   "fr": "{0} cartes envoyées · ouvrir la feuille de route",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:121",
+  "where": "apps/web/components/studio-model-aart.ts:125",
   "note": "No plural handling for {0}=1."
  },
  "{0} class board": {
@@ -1880,7 +1880,7 @@
   "fr": "{0} étapes sur 5 décrites. C’est souvent dans les étapes vides que se cache l’écart.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:76"
+  "where": "apps/web/components/studio-model-aart.ts:80"
  },
  "{0} open risk{1}": {
   "fr": "{0} risque{1} en cours",
@@ -6039,6 +6039,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:50"
  },
+ "Address gaps in existing portfolio AI Governance and Ethics framework": {
+  "fr": "Combler les lacunes du cadre actuel de gouvernance et d’éthique de l’IA du portefeuille",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:37"
+ },
  "Address the weaknesses before expanding.": {
   "fr": "Traitez les faiblesses avant de vous développer.",
   "status": "draft",
@@ -6093,13 +6099,13 @@
   "fr": "Ajustez votre évaluation au besoin",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:185"
+  "where": "packages/core/src/courses/ai-native-arts.ts:225"
  },
  "Adjust your rating if needed": {
   "fr": "Ajustez votre note au besoin",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:271 packages/core/src/courses/ai-native-arts.ts:357"
+  "where": "packages/core/src/courses/ai-native-arts.ts:311 packages/core/src/courses/ai-native-arts.ts:397"
  },
  "Adjusted": {
   "fr": "",
@@ -6191,6 +6197,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:101"
+ },
+ "After": {
+  "fr": "Après",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:37"
  },
  "After all plans have been presented, the remaining ART PI risks and impediments are discussed and categorized.": {
   "fr": "Une fois tous les plans présentés, les risques et obstacles restants du PI de l’ART sont discutés et classés.",
@@ -6481,13 +6493,31 @@
   "fr": "S’entendre sur le problème",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:360"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:360"
  },
  "Agree on the problem to solve": {
   "fr": "S’accorder sur le problème à résoudre",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/inspectadapt.ts:11"
+ },
+ "Ahead of First PI Outcome Planning": {
+  "fr": "Avant la première planification des résultats du PI (PI Outcome Planning)",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
+ "Ahead of First Sense and Respond": {
+  "fr": "Avant le premier événement Sense and Respond",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
+ },
+ "Ahead of the first PI Outcome Planning": {
+  "fr": "Avant la première planification des résultats du PI",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:62"
  },
  "AI": {
   "fr": "IA",
@@ -6531,6 +6561,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:45"
+ },
+ "AI coaching": {
+  "fr": "Coaching en IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:103"
  },
  "AI cost guardrails": {
   "fr": "Garde-fous des coûts de l’IA",
@@ -6580,6 +6616,12 @@
   "phase": "2",
   "where": "packages/core/src/ainative.ts:671 packages/core/src/outcomes.ts:313"
  },
+ "AI fluency": {
+  "fr": "Maîtrise de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:86"
+ },
  "AI governance and ethics": {
   "fr": "",
   "status": "new",
@@ -6591,6 +6633,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/frameworks.ts:236"
+ },
+ "AI in daily workflows": {
+  "fr": "L’IA dans les flux de travail quotidiens",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:93"
  },
  "AI in our transformation": {
   "fr": "L’IA dans notre transformation",
@@ -6670,6 +6718,12 @@
   "phase": "1",
   "where": "packages/core/src/classes.ts:641"
  },
+ "AI safety and governance guardrails": {
+  "fr": "Garde-fous de sécurité et de gouvernance de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:85"
+ },
  "AI should not be used here": {
   "fr": "L’IA ne doit pas être utilisée ici",
   "status": "draft",
@@ -6688,9 +6742,15 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:252"
  },
+ "AI usage on outcomes": {
+  "fr": "Usage de l’IA axé sur les résultats",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:104"
+ },
  "AI Value Architect": {
-  "fr": "",
-  "status": "new",
+  "fr": "AI Value Architect",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:762 packages/core/src/ainative.ts:432 packages/core/src/ainative.ts:706"
  },
@@ -6705,6 +6765,30 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/users/page.tsx:42"
+ },
+ "AI Value Architects bridge business goals and technical execution.": {
+  "fr": "Les AI Value Architects font le pont entre les objectifs d’affaires et l’exécution technique.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:101"
+ },
+ "AI Value Architects ensure AI usage is focused on optimizing outcomes.": {
+  "fr": "Les AI Value Architects veillent à ce que l’usage de l’IA soit axé sur l’optimisation des résultats.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:104"
+ },
+ "AI Value Architects help teams unlock value from AI workflows and tools.": {
+  "fr": "Les AI Value Architects aident les équipes à tirer de la valeur des flux de travail et des outils d’IA.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:102"
+ },
+ "AI Value Architects provide coaching to support individuals in integrating AI into their roles responsibly.": {
+  "fr": "Les AI Value Architects offrent du coaching pour aider chacun à intégrer l’IA dans son rôle de façon responsable.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:103"
  },
  "AI-assisted customer service": {
   "fr": "",
@@ -6729,6 +6813,24 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:678"
+ },
+ "AI-Native ART": {
+  "fr": "ART natif de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:119"
+ },
+ "AI-Native ART launch readiness": {
+  "fr": "État de préparation au lancement d’un ART natif de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:59"
+ },
+ "AI-Native ART, teams and AI Value Architect: success factors 4 to 6": {
+  "fr": "ART natif de l’IA, équipes et AI Value Architect : facteurs de succès 4 à 6",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:67"
  },
  "AI-Native ARTs": {
   "fr": "",
@@ -6760,6 +6862,12 @@
   "phase": "2",
   "where": "packages/core/src/frameworks.ts:212 packages/core/src/frameworks.ts:213"
  },
+ "AI-Native SAFe for Teams training": {
+  "fr": "Formation AI-Native SAFe for Teams",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "AI-Native SAFe outcome-driven product development": {
   "fr": "Développement de produit orienté résultats avec SAFe natif IA",
   "status": "draft",
@@ -6780,10 +6888,10 @@
   "where": "apps/web/app/(app)/agents/page.tsx:44"
  },
  "AI-Native Teams": {
-  "fr": "",
-  "status": "new",
+  "fr": "Équipes natives de l’IA",
+  "status": "draft",
   "phase": "2",
-  "where": "packages/core/src/ainative.ts:432"
+  "where": "packages/core/src/ainative.ts:432 packages/core/src/courses/ai-native-arts.ts:119"
  },
  "AI-Native teams organise around four capabilities, not roles: 3–7 people augmented with AI, humans reviewing AI output for quality and bias. The AI Value Architect is a capability assignment, held by one person or several. A team with an uncovered capability is flagged.": {
   "fr": "",
@@ -6810,11 +6918,23 @@
   "where": "apps/web/components/planning-pages.tsx:340 apps/web/components/studio-model-lsa.ts:49",
   "note": "name of the sample vehicle, kept"
  },
+ "Align on ART cadence": {
+  "fr": "S’aligner sur la cadence de l’ART",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
+ "Align, Sense, and Respond cadence": {
+  "fr": "Cadence Align, Sense, and Respond",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:94"
+ },
  "Aligned": {
   "fr": "Alignés",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:94"
+  "where": "apps/web/components/studio-model-aart.ts:98"
  },
  "Aligned to a single value stream or product; releases value on its own. The default.": {
   "fr": "",
@@ -6904,7 +7024,7 @@
   "fr": "Les cinq étapes sont décrites. Comparez maintenant : où votre ART saute-t-il une étape, ou mesure-t-il des livrables plutôt que des résultats ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:76"
+  "where": "apps/web/components/studio-model-aart.ts:80"
  },
  "All guides": {
   "fr": "",
@@ -7983,6 +8103,12 @@
   "where": "apps/web/components/site-nav.tsx:39 packages/core/src/class-meta.ts:10 packages/core/src/classes.ts:696",
   "note": "Kept in English as a likely course/mode name; check."
  },
+ "ART leadership aligned": {
+  "fr": "Direction de l’ART alignée",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:84"
+ },
  "ART LEVEL": {
   "fr": "",
   "status": "new",
@@ -8109,6 +8235,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/rooms.ts:15"
+ },
+ "ART staffing": {
+  "fr": "Dotation de l’ART",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:83"
  },
  "ART sync": {
   "fr": "ART Sync",
@@ -8655,13 +8787,13 @@
   "fr": "En plénière, passez en revue les résultats de l’évaluation pour chaque facteur de succès. Pour chacun, l’animateur indique comment il a été évalué, laisse ceux qui l’ont évalué différemment expliquer leur raisonnement et anime une discussion pour arriver à un consensus sur l’évaluation finale avant l’élaboration du plan de lancement.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:378"
+  "where": "packages/core/src/courses/ai-native-arts.ts:418"
  },
  "As a class, review the example OKR and mark what it meets.": {
   "fr": "En plénière, examinez l’exemple d’OKR et cochez les critères qu’il respecte.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:145"
+  "where": "packages/core/src/courses/ai-native-arts.ts:185"
  },
  "As a class, review the scenario.": {
   "fr": "Tous ensemble, passez en revue le scénario.",
@@ -8741,7 +8873,7 @@
   "fr": "En groupe, choisissez un autre type de données sur lequel votre ART s’appuie et suivez les quatre étapes. Soyez prêts à partager.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:309"
+  "where": "packages/core/src/courses/ai-native-arts.ts:349"
  },
  "As a group, plan the one-day Getting Started with LPM workshop.": {
   "fr": "En groupe, planifiez l’atelier d’une journée « Getting Started with LPM ».",
@@ -9339,7 +9471,7 @@
   "fr": "Évaluer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:20 packages/core/src/courses/ai-native-arts.ts:153 packages/core/src/courses/ai-native-arts.ts:186"
+  "where": "apps/web/components/studio-model-aart.ts:20 packages/core/src/courses/ai-native-arts.ts:111 packages/core/src/courses/ai-native-arts.ts:193"
  },
  "Assess and improve the ability to deliver innovative business Solutions quickly": {
   "fr": "Évaluer et améliorer la capacité à livrer rapidement des solutions d’affaires innovantes",
@@ -9644,6 +9776,18 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:30"
+ },
+ "Automate data collection for Key Results": {
+  "fr": "Automatiser la collecte de données pour les résultats clés",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
+ },
+ "Automate policies in AI Innovation Pipeline": {
+  "fr": "Automatiser les politiques dans le pipeline d’innovation en IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
  },
  "Automate returns in stores to limit exposure to peak-season carrier capacity": {
   "fr": "Automatiser les retours en magasin pour limiter l’exposition à la capacité des transporteurs en haute saison",
@@ -10003,7 +10147,7 @@
   "fr": "Équilibrer l’itération IP",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:63 packages/core/src/courses/rte.ts:313"
+  "where": "packages/core/src/courses/events.ts:104 packages/core/src/courses/rte.ts:313"
  },
  "Bandwidth assessment": {
   "fr": "Évaluation de la bande passante",
@@ -10058,6 +10202,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:438"
+ },
+ "Based on gaps, we will build our AI-Native ART Launch Plan.": {
+  "fr": "À partir des écarts, nous bâtirons notre plan de lancement de l’ART natif de l’IA.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:33"
  },
  "Based on the initial architectural review, the following design path has been chosen:": {
   "fr": "À la suite de la revue d’architecture initiale, l’approche de conception suivante a été retenue :",
@@ -10180,13 +10330,25 @@
   "fr": "Avant d’évaluer quoi que ce soit de réel, exerçons-nous avec quelque chose sur quoi tout le monde a une opinion.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:88"
+  "where": "packages/core/src/courses/ai-native-arts.ts:128"
  },
  "Before we assess anything real, let’s practice with something everyone has an opinion on. Individually, score the statement below on the scale. Then review your answers together. Notice: where did the room agree and disagree? Did you reach consensus? How?": {
   "fr": "",
   "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-arts.ts:88"
+ },
+ "Begin Curated Data strategy implementation": {
+  "fr": "Commencer la mise en œuvre de la stratégie de données curées",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:37"
+ },
+ "Begin Customer Demos for feedback": {
+  "fr": "Commencer les démonstrations aux clients pour obtenir de la rétroaction",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
  },
  "Behaviour: the closest evidence to better care. Self-reported; validate with a sample.": {
   "fr": "",
@@ -10672,7 +10834,7 @@
   "fr": "Proposer des solutions en remue-méninges",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:397 packages/core/src/inspectadapt.ts:15"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:397 packages/core/src/inspectadapt.ts:15"
  },
  "Brand": {
   "fr": "",
@@ -10745,6 +10907,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:118"
+ },
+ "Bridge goals and execution": {
+  "fr": "Pont entre objectifs et exécution",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:101"
  },
  "Bring a board →": {
   "fr": "",
@@ -11004,6 +11172,12 @@
   "where": "apps/web/components/studio-model-lsa.ts:33",
   "note": "Agile Manifesto principle (official French wording)."
  },
+ "Build the AI-Native ART Launch Plan": {
+  "fr": "Bâtir le plan de lancement de l’ART natif de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:23"
+ },
  "Build the launch plan.": {
   "fr": "Construisez le plan de lancement.",
   "status": "draft",
@@ -11027,7 +11201,7 @@
   "fr": "Construisez votre propre tableau Kanban de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:39 packages/core/src/courses/rte.ts:232"
+  "where": "packages/core/src/courses/events.ts:80 packages/core/src/courses/rte.ts:232"
  },
  "Builder": {
   "fr": "",
@@ -11349,6 +11523,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:238"
  },
+ "Business Owners, Product Management, the RTE, and System Architect are fully aligned on the vision and prepared to lead an AI-Native ART.": {
+  "fr": "Les Business Owners, la gestion de produit, le RTE et l’architecte système sont pleinement alignés sur la vision et prêts à diriger un ART natif de l’IA.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:84"
+ },
  "Business payments modernisation": {
   "fr": "",
   "status": "new",
@@ -11529,7 +11709,7 @@
   "fr": "Calculer votre capacité initiale",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:50 packages/core/src/courses/leading-safe.ts:446"
+  "where": "packages/core/src/courses/events.ts:91 packages/core/src/courses/leading-safe.ts:446"
  },
  "Calculated": {
   "fr": "",
@@ -11548,6 +11728,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:94 packages/core/src/templates.ts:290"
+ },
+ "Calibrate": {
+  "fr": "Calibrer",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:65"
  },
  "CALL": {
   "fr": "",
@@ -13159,7 +13345,7 @@
   "fr": "Clore le PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:57"
+  "where": "packages/core/src/courses/events.ts:98"
  },
  "Closed · answered": {
   "fr": "Clos · répondu",
@@ -13490,6 +13676,12 @@
   "where": "apps/web/components/studio-model-lsa.ts:329",
   "note": "check: may be a value (button to mark objective committed)."
  },
+ "Commit to Curated Data strategy": {
+  "fr": "S’engager dans la stratégie de données curées",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Commitment point to delivery point, WIP limits per column, explicit policies under each column, classes of service and blockers.": {
   "fr": "",
   "status": "new",
@@ -13575,6 +13767,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/outcomes.ts:161"
+ },
+ "Communicate Product Intent and Context": {
+  "fr": "Communiquer l’intention et le contexte du produit",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
  },
  "Communicate purpose ↓": {
   "fr": "",
@@ -13665,13 +13863,13 @@
   "fr": "Comparez avec un partenaire. Vos réponses citent-elles le même OKR ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:101"
+  "where": "apps/web/components/studio-model-aart.ts:105"
  },
  "Compare workflows": {
   "fr": "Comparer les flux de travail",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:121"
+  "where": "packages/core/src/courses/ai-native-arts.ts:161"
  },
  "Competency": {
   "fr": "",
@@ -13825,7 +14023,7 @@
   "fr": "Confiance peu élevée ? Révision du plan.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:52 packages/core/src/courses/rte.ts:177"
+  "where": "packages/core/src/courses/events.ts:93 packages/core/src/courses/rte.ts:177"
  },
  "Confidence vote": {
   "fr": "",
@@ -14067,7 +14265,7 @@
   "fr": "Pensez à vos expériences passées avec des outils d’IA, comme les LLM ou les assistants intégrés. En plénière, choisissez l’une de ces questions et discutez :",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:292"
+  "where": "packages/core/src/courses/ai-native-arts.ts:332"
  },
  "Consider past experiences with AI tools, such as LLMs or built-in assistants. As a class, choose one of these prompts and discuss: What stories do you have where an AI tool impressed you with its output? Why? What stories do you have where an AI tool disappointed you with its output? Why?": {
   "fr": "",
@@ -14810,6 +15008,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:197"
  },
+ "Create dashboard for outcome progress": {
+  "fr": "Créer un tableau de bord de la progression des résultats",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
+ },
  "Create initiative": {
   "fr": "",
   "status": "new",
@@ -14827,6 +15031,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:476"
+ },
+ "Create Outcome-Driven Roadmap": {
+  "fr": "Créer la feuille de route axée sur les résultats",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:36"
  },
  "Create prefilled canvas": {
   "fr": "",
@@ -15978,6 +16188,12 @@
   "phase": "1",
   "where": "packages/core/src/classes.ts:523"
  },
+ "Define Portfolio and ART OKRs": {
+  "fr": "Définir les OKR du portefeuille et de l’ART",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Define shipping preferences": {
   "fr": "Définir les préférences de livraison",
   "status": "draft",
@@ -16517,7 +16733,7 @@
   "fr": "Décrivez",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:132",
+  "where": "packages/core/src/courses/ai-native-arts.ts:172",
   "note": "single-word label; could be « Décrire » depending on the control"
  },
  "Describe the structure. Each row is an ART outcome, with an additional row for commitments that do not belong to any outcome.": {
@@ -17416,7 +17632,7 @@
   "fr": "La stratégie se rend-elle jusqu’à votre ART ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:218"
+  "where": "packages/core/src/courses/ai-native-arts.ts:258"
  },
  "Doing": {
   "fr": "En cours",
@@ -17565,6 +17781,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcome-planning/page.tsx:284 apps/web/app/(app)/outcome-planning/page.tsx:799"
  },
+ "Draft ART level AI Governance and Ethics policies": {
+  "fr": "Rédiger les politiques de gouvernance et d’éthique de l’IA au niveau de l’ART",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Draft ART objectives": {
   "fr": "",
   "status": "new",
@@ -17617,7 +17839,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:51 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:176"
+  "where": "packages/core/src/courses/events.ts:92 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:176"
  },
  "Draft plans, 4 min": {
   "fr": "",
@@ -17902,7 +18124,7 @@
   "fr": "Durée",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-board.tsx:490 packages/core/src/classes.ts:484 packages/core/src/courses/ai-native-arts.ts:381"
+  "where": "apps/web/components/class-board.tsx:490 packages/core/src/classes.ts:484 packages/core/src/courses/ai-native-arts.ts:421"
  },
  "Duration 10 min. Last working activity: immediate next steps before the kickoff (two to four weeks after the workshop).": {
   "fr": "Durée 10 min. Dernière activité de travail : prochaines étapes immédiates avant le lancement (de deux à quatre semaines après l’atelier).",
@@ -18065,6 +18287,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/outcomes/page.tsx:401"
+ },
+ "Each AI-Native team has a clear mission and the Product, Builder, and Domain Expert capabilities to fulfill it.": {
+  "fr": "Chaque équipe native de l’IA a une mission claire et les capacités Produit, Bâtisseur et Expert du domaine pour l’accomplir.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:92"
  },
  "Each class is a board: a start-here strip, one frame per lesson holding its exercises, and a PI planning simulation. Open one per cohort, hand out the link, and participants work in the room.": {
   "fr": "",
@@ -19374,7 +19602,7 @@
   "fr": "Évaluer un OKR",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:141"
+  "where": "packages/core/src/courses/ai-native-arts.ts:181"
  },
  "Evaluate dead reckoning": {
   "fr": "Évaluer la navigation à l’estime",
@@ -19709,6 +19937,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:158"
+ },
+ "Everyone on the ART has the AI fluency needed to build and collaborate with AI agents responsibly.": {
+  "fr": "Tous les membres de l’ART ont la maîtrise de l’IA nécessaire pour bâtir et collaborer avec des agents d’IA de façon responsable.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:86"
  },
  "Everyone rates in writing before the group talks. A wide spread is a split: check interpretations first, then reasons, and keep both positions if they do not resolve. Gaps become the launch plan, each sequenced before the first PI Outcome Planning, before the first Sense and Respond, or later.": {
   "fr": "",
@@ -21015,7 +21249,7 @@
   "fr": "Première vérification : avons-nous compris chaque énoncé de la même façon ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:172 packages/core/src/courses/ai-native-arts.ts:258 packages/core/src/courses/ai-native-arts.ts:344"
+  "where": "packages/core/src/courses/ai-native-arts.ts:212 packages/core/src/courses/ai-native-arts.ts:298 packages/core/src/courses/ai-native-arts.ts:384"
  },
  "First event: the discard felt like a win.": {
   "fr": "",
@@ -21777,6 +22011,12 @@
   "phase": "2",
   "where": "packages/core/src/insights.ts:476"
  },
+ "Foundational AI training for teams": {
+  "fr": "Formation de base en IA pour les équipes",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Four curation standards": {
   "fr": "Quatre normes de curation",
   "status": "draft",
@@ -22103,7 +22343,7 @@
   "fr": "Accord total. Demandez comment vous y êtes arrivés si vite.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:71"
+  "where": "apps/web/components/studio-model-aart.ts:75"
  },
  "Full breakdown": {
   "fr": "",
@@ -22333,19 +22573,25 @@
   "fr": "Analyse des écarts",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:395"
+  "where": "packages/core/src/courses/ai-native-arts.ts:435"
  },
  "Gap analysis review": {
   "fr": "Revue de l’analyse des écarts",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:374"
+  "where": "packages/core/src/courses/ai-native-arts.ts:414 packages/core/src/courses/events.ts:68"
  },
  "Gap and next step": {
   "fr": "Écart et prochaine étape",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:815"
+ },
+ "Gaps and launch plan": {
+  "fr": "Écarts et plan de lancement",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:68"
  },
  "Gaps:": {
   "fr": "",
@@ -22459,7 +22705,7 @@
   "fr": "Préparez le contenu, les équipes et la salle : quel niveau de préparation suffit, la liste de vérification de l’ART triée en « doit être en place », « pas nécessaire » et « dépend », et le carnet de l’ART à travers le Kanban.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:34"
+  "where": "packages/core/src/courses/events.ts:75"
  },
  "Get the content, the teams and the room ready: readiness by the RTE and LACE, the ART backlog through the Kanban, and pre-PI planning across trains.": {
   "fr": "",
@@ -22497,7 +22743,7 @@
   "fr": "Vous y êtes presque. Vérifiez quel résultat clé personne ne pourrait noter sans débat.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:86"
+  "where": "apps/web/components/studio-model-aart.ts:90"
  },
  "Gift cards and vouchers": {
   "fr": "Cartes-cadeaux et bons d’achat",
@@ -23644,7 +23890,7 @@
   "fr": "Comment les résultats du portefeuille et la stratégie d’investissement touchent-ils votre ART ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:206"
+  "where": "packages/core/src/courses/ai-native-arts.ts:246"
  },
  "How do the LACE and the VMO help your enterprise achieve its business goals?": {
   "fr": "Comment le LACE et le VMO aident-ils votre entreprise à atteindre ses objectifs d’affaires ?",
@@ -23740,7 +23986,7 @@
   "fr": "Quel niveau de préparation est suffisant ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:38 packages/core/src/courses/rte.ts:120 packages/core/src/courses/rte.ts:124"
+  "where": "packages/core/src/courses/events.ts:79 packages/core/src/courses/rte.ts:120 packages/core/src/courses/rte.ts:124"
  },
  "How much value, for which segments, how soon?": {
   "fr": "Quelle valeur, pour quels segments, dans quels délais ?",
@@ -23842,7 +24088,7 @@
   "fr": "En quoi le fait d’optimiser le flux axé sur les résultats changerait-il la façon de travailler de votre ART ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:109"
+  "where": "packages/core/src/courses/ai-native-arts.ts:149"
  },
  "How would you adapt it for your context?": {
   "fr": "Comment l’adapteriez-vous à votre contexte ?",
@@ -24097,6 +24343,12 @@
   "phase": "1",
   "where": "packages/core/src/inspectadapt.ts:16"
  },
+ "Identify missing Team Capabilities post-iteration": {
+  "fr": "Cerner les capacités d’équipe manquantes après l’itération",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:37"
+ },
  "Identify one to three empathy interviews to conduct: who to interview, the interview questions, and the facilitators (interviewer, note taker, observer).": {
   "fr": "Déterminez d’une à trois entrevues d’empathie à mener : les personnes à rencontrer, les questions d’entrevue et les animateurs (intervieweur, preneur de notes, observateur).",
   "status": "draft",
@@ -24186,7 +24438,7 @@
   "fr": "Si quelque chose vous a fait changer d’avis, mettez à jour votre évaluation en conséquence.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:189"
+  "where": "packages/core/src/courses/ai-native-arts.ts:229"
  },
  "If guest checkout and saved carts remove two steps, conversion rises from 2.1% to 5% within two PIs.": {
   "fr": "",
@@ -24265,7 +24517,7 @@
   "fr": "Si vous ne pouvez pas nommer le produit, l’énoncé 1 de SF2 n’est probablement pas entièrement en place.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:101",
+  "where": "apps/web/components/studio-model-aart.ts:105",
   "note": "SF2 kept as an assessment code."
  },
  "If you email us, we keep the conversation so we can help you and refer back to it.": {
@@ -24879,7 +25131,7 @@
   "fr": "Dans vos groupes, comparez les résultats pour chaque énoncé.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:172 packages/core/src/courses/ai-native-arts.ts:258 packages/core/src/courses/ai-native-arts.ts:344"
+  "where": "packages/core/src/courses/ai-native-arts.ts:212 packages/core/src/courses/ai-native-arts.ts:298 packages/core/src/courses/ai-native-arts.ts:384"
  },
  "In your groups, compare the results for each statement. First check: did we understand each statement the same way? Then discuss: where did we have differences and why?": {
   "fr": "",
@@ -25072,13 +25324,19 @@
   "fr": "Individuellement, écrivez vos réponses à ces questions. Ensuite, comparez vos notes avec un partenaire.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:223"
+  "where": "packages/core/src/courses/ai-native-arts.ts:263"
+ },
+ "Individually, evaluate each statement for your ART and determine whether it is fully in place, partially in place or not in place.": {
+  "fr": "Individuellement, évaluez chaque énoncé pour votre ART et déterminez s’il est entièrement en place, partiellement en place ou pas en place.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:113"
  },
  "Individually, roughly describe your ART’s current product development process. Type what happens at each stage under the model.": {
   "fr": "Individuellement, décrivez sommairement le processus actuel de développement de produits de votre ART. Inscrivez ce qui se passe à chaque étape sous le modèle.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:126"
+  "where": "packages/core/src/courses/ai-native-arts.ts:166"
  },
  "Individually, roughly describe your ART’s current product development process. Type what happens at each stage under the model. Then, in your groups, compare your descriptions to outcome-driven product development. Be prepared to share.": {
   "fr": "",
@@ -25090,7 +25348,7 @@
   "fr": "Individuellement, notez l’énoncé ci-dessous sur l’échelle. Ensuite, passez en revue vos réponses ensemble.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:88"
+  "where": "packages/core/src/courses/ai-native-arts.ts:128"
  },
  "Individuals and roles: How might AI change skills, decision-making, or day-to-day work?": {
   "fr": "Personnes et rôles : Comment l’IA pourrait-elle changer les compétences, la prise de décision ou le travail quotidien ?",
@@ -25590,6 +25848,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:116"
+ },
+ "Invest in AI Innovation Pipeline, workflows, and platforms": {
+  "fr": "Investir dans le pipeline d’innovation en IA, les flux de travail et les plateformes",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
  },
  "Investing": {
   "fr": "Investissement",
@@ -27955,6 +28219,12 @@
   "phase": "1",
   "where": "apps/web/components/lane-board.tsx:372"
  },
+ "List approved AI tools": {
+  "fr": "Dresser la liste des outils d’IA approuvés",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "List these notes in your workbook.": {
   "fr": "Consignez ces notes dans votre cahier du participant.",
   "status": "draft",
@@ -28321,6 +28591,12 @@
   "phase": "2",
   "where": "packages/core/src/insights.ts:382 packages/core/src/insights.ts:397 packages/core/src/insights.ts:405"
  },
+ "Low-cost prototypes": {
+  "fr": "Prototypes à faible coût",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:95"
+ },
  "Lower": {
   "fr": "",
   "status": "new",
@@ -28655,7 +28931,7 @@
   "fr": "Gérer les risques du PI de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:52 packages/core/src/courses/leading-safe.ts:530"
+  "where": "packages/core/src/courses/events.ts:93 packages/core/src/courses/leading-safe.ts:530"
  },
  "Manage inventory": {
   "fr": "",
@@ -29104,7 +29380,7 @@
   "fr": "Remplit les quatre critères. Qu’est-ce qui permettra de le maintenir ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:112"
+  "where": "apps/web/components/studio-model-aart.ts:116"
  },
  "Mei Chen": {
   "fr": "Mei Chen",
@@ -30125,19 +30401,19 @@
   "fr": "Accédez au facteur de succès 1 dans l’application d’évaluation. Individuellement, évaluez chaque énoncé pour votre ART et déterminez s’il est entièrement, partiellement ou pas du tout en place.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:156"
+  "where": "packages/core/src/courses/ai-native-arts.ts:196"
  },
  "Navigate to Success Factor 2. Individually, evaluate each statement for your ART.": {
   "fr": "Accédez au facteur de succès 2. Individuellement, évaluez chaque énoncé pour votre ART.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:241"
+  "where": "packages/core/src/courses/ai-native-arts.ts:281"
  },
  "Navigate to Success Factor 3. Individually, evaluate each statement for your ART.": {
   "fr": "Accédez au facteur de succès 3. Individuellement, évaluez chaque énoncé pour votre ART.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:327"
+  "where": "packages/core/src/courses/ai-native-arts.ts:367"
  },
  "Navigation": {
   "fr": "Navigation",
@@ -31673,7 +31949,7 @@
   "fr": "non évalué",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:56"
+  "where": "apps/web/components/studio-model-aart.ts:60"
  },
  "Not ready": {
   "fr": "",
@@ -32013,7 +32289,7 @@
   "fr": "Rien de coché pour l’instant.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:86"
+  "where": "apps/web/components/studio-model-aart.ts:90"
  },
  "Nothing matches.": {
   "fr": "",
@@ -32045,7 +32321,7 @@
   "fr": "Rien de nouveau à envoyer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:121"
+  "where": "apps/web/components/studio-model-aart.ts:125"
  },
  "Nothing pasted yet.": {
   "fr": "Rien n’a encore été collé.",
@@ -32099,7 +32375,7 @@
   "fr": "Remarquez : où la salle était-elle d’accord et en désaccord ? Êtes-vous arrivés à un consensus ? Comment ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:88"
+  "where": "packages/core/src/courses/ai-native-arts.ts:128"
  },
  "Notify Delivery Arrival": {
   "fr": "Notifier l’arrivée de la livraison",
@@ -32153,7 +32429,7 @@
   "fr": "Maintenant que vous avez discuté avec votre groupe, jetez un nouveau coup d’œil aux résultats individuels.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:189"
+  "where": "packages/core/src/courses/ai-native-arts.ts:229"
  },
  "Now that you have discussed with your group, take another look at individual results. If anything has changed your mind, update your evaluation to reflect it.": {
   "fr": "",
@@ -32165,7 +32441,7 @@
   "fr": "Maintenant, la plus difficile : suivez un OKR de portefeuille jusque dans votre PI.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:101"
+  "where": "apps/web/components/studio-model-aart.ts:105"
  },
  "nowhere, it is finished": {
   "fr": "nulle part, c’est terminé",
@@ -32351,7 +32627,7 @@
   "fr": "Les objectifs sont inspirants, clairs et mémorables, et classés comme « roofshot » ou « moonshot ». Les résultats clés sont fondés sur la valeur, mesurables et évaluables.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:145",
+  "where": "packages/core/src/courses/ai-native-arts.ts:185",
   "note": "« roofshot » / « moonshot » kept in English (no established French term)"
  },
  "Objectives are inspirational, clear and memorable, and classified as a roofshot or a moonshot. Key Results are value-based, measurable and gradable. As a class, review the example OKR and mark what it meets.": {
@@ -34089,6 +34365,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:216"
  },
+ "Our AI-Native ART is staffed appropriately to develop its products.": {
+  "fr": "Notre ART natif de l’IA dispose du personnel approprié pour développer ses produits.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:83"
+ },
  "Our ask": {
   "fr": "Notre demande",
   "status": "draft",
@@ -34422,11 +34704,17 @@
   "phase": "2",
   "where": "packages/core/src/ainative.ts:431"
  },
+ "Outcome-driven flow: success factors 1 to 3": {
+  "fr": "Flux axé sur les résultats : facteurs de succès 1 à 3",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:66"
+ },
  "Outcome-driven product development": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/ainative.ts:431 packages/core/src/ainative.ts:704 packages/core/src/courses/ai-native-arts.ts:152"
+  "where": "packages/core/src/ainative.ts:431 packages/core/src/ainative.ts:704 packages/core/src/courses/ai-native-arts.ts:192"
  },
  "Outcome: the change sought": {
   "fr": "",
@@ -35774,13 +36062,13 @@
   "fr": "Préparation du PI Planning",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/canvases.ts:155 packages/core/src/courses/events.ts:38 packages/core/src/templates.ts:85"
+  "where": "packages/core/src/canvases.ts:155 packages/core/src/courses/events.ts:79 packages/core/src/templates.ts:85"
  },
  "PI Planning readiness preparation": {
   "fr": "Préparatifs en vue du PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:38 packages/core/src/courses/rte.ts:129"
+  "where": "packages/core/src/courses/events.ts:79 packages/core/src/courses/rte.ts:129"
  },
  "PI planning readiness: must it be in place to launch? Y · N · D(epends)": {
   "fr": "Préparation au PI Planning : doit-il être en place pour le lancement ? O · N · D(épend)",
@@ -35859,7 +36147,7 @@
   "fr": "PI Planning, jours 1 et 2",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:47"
+  "where": "packages/core/src/courses/events.ts:88"
  },
  "PI planning: day 1 (Wednesday) and day 2 (Thursday)": {
   "fr": "",
@@ -36041,7 +36329,7 @@
   "fr": "Choisissez un type et nommez une source réelle.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:112"
+  "where": "apps/web/components/studio-model-aart.ts:116"
  },
  "Pick a type, then click on the picture.": {
   "fr": "Choisissez un type, puis cliquez sur l’image.",
@@ -36410,7 +36698,7 @@
   "fr": "Revue des plans et valeur métier",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:51"
+  "where": "packages/core/src/courses/events.ts:92"
  },
  "Plan rework if necessary": {
   "fr": "",
@@ -36853,7 +37141,7 @@
   "fr": "Portefeuille et stratégie d’investissement",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:237"
+  "where": "packages/core/src/courses/ai-native-arts.ts:277 packages/core/src/courses/events.ts:66"
  },
  "Portfolio and more": {
   "fr": "",
@@ -37313,7 +37601,7 @@
   "fr": "PRÉP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:33"
+  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:74"
  },
  "Prepare": {
   "fr": "Préparation",
@@ -37464,7 +37752,7 @@
   "fr": "Préparer le PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:32"
+  "where": "packages/core/src/courses/events.ts:73"
  },
  "Prepare for the LPM kickoff event": {
   "fr": "Préparez l’événement de lancement du LPM",
@@ -37500,7 +37788,7 @@
   "fr": "Préparer la démonstration du système du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:63 packages/core/src/courses/rte.ts:330"
+  "where": "packages/core/src/courses/events.ts:104 packages/core/src/courses/rte.ts:330"
  },
  "Present, feedback, adjust": {
   "fr": "Présenter, recueillir les retours, ajuster",
@@ -37796,13 +38084,13 @@
   "fr": "Atelier de résolution de problèmes",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:64"
+  "where": "packages/core/src/courses/events.ts:105"
  },
  "Problem-solving workshop readout": {
   "fr": "Compte rendu de l’atelier de résolution de problèmes",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:407"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:407"
  },
  "Problem-solving workshop: fishbone": {
   "fr": "Atelier de résolution de problèmes : arête de poisson",
@@ -37814,7 +38102,7 @@
   "fr": "Atelier de résolution de problèmes : tableau complet",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:349"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:349"
  },
  "Problem: \"": {
   "fr": "Problème : « ",
@@ -39236,7 +39524,7 @@
   "fr": "Lire le tableau de planification de l’ART pendant le PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:51 packages/core/src/courses/rte.ts:140"
+  "where": "packages/core/src/courses/events.ts:92 packages/core/src/courses/rte.ts:140"
  },
  "Reading…": {
   "fr": "Lecture…",
@@ -39262,6 +39550,12 @@
   "phase": "1",
   "where": "apps/web/app/(app)/board/page.tsx:256 apps/web/app/(app)/readiness/page.tsx:126 apps/web/components/planning-pages.tsx:731",
   "note": "check: may be a value"
+ },
+ "READY": {
+  "fr": "PRÊT",
+  "status": "draft",
+  "phase": "1",
+  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:60"
  },
  "Ready · WIP 4": {
   "fr": "",
@@ -40486,7 +40780,7 @@
   "fr": "Reformuler le nouveau problème",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:381 packages/core/src/inspectadapt.ts:14"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:381 packages/core/src/inspectadapt.ts:14"
  },
  "Restrict vehicle areas": {
   "fr": "Restreindre les zones des véhicules",
@@ -40718,6 +41012,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/lpm.ts:95"
  },
+ "Revitalize Product Vision": {
+  "fr": "Revitaliser la vision du produit",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Rework needed if the vote falls below three": {
   "fr": "Retravail nécessaire si le vote est inférieur à trois",
   "status": "draft",
@@ -40820,7 +41120,7 @@
   "fr": "Risques et confiance",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:52"
+  "where": "packages/core/src/courses/events.ts:93"
  },
  "Risks and impediments posted": {
   "fr": "Risques et obstacles affichés",
@@ -40910,7 +41210,7 @@
   "fr": "Appliquer ROAM aux risques du PI de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:52 packages/core/src/courses/rte.ts:162",
+  "where": "packages/core/src/courses/events.ts:93 packages/core/src/courses/rte.ts:162",
   "note": "\"ROAM\" used as a verb in English; rendered \"appliquer ROAM\" / \"classement ROAM\"."
  },
  "ROAM board": {
@@ -41093,7 +41393,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:64 packages/core/src/courses/rte.ts:370 packages/core/src/templates.ts:114"
+  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/rte.ts:370 packages/core/src/templates.ts:114"
  },
  "Root cause it addresses": {
   "fr": "Cause profonde traitée",
@@ -42479,7 +42779,7 @@
   "fr": "Envoyer les écarts à la feuille de route",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:121"
+  "where": "apps/web/components/studio-model-aart.ts:125"
  },
  "Send location": {
   "fr": "Envoyer la position",
@@ -42533,7 +42833,7 @@
   "fr": "Envoi…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:121"
+  "where": "apps/web/components/studio-model-aart.ts:125"
  },
  "Sense & Respond": {
   "fr": "",
@@ -42728,6 +43028,12 @@
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:79 packages/core/src/valuestreams.ts:87 packages/core/src/valuestreams.ts:546"
  },
+ "Set up repository for Intent, Specification and Context": {
+  "fr": "Mettre en place un dépôt pour l’intention, les spécifications et le contexte",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Set-Based Design in context": {
   "fr": "La conception basée sur des ensembles (Set-Based Design) en contexte",
   "status": "draft",
@@ -42745,7 +43051,7 @@
   "fr": "Attribuer la valeur métier",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:51 packages/core/src/courses/leading-safe.ts:513"
+  "where": "packages/core/src/courses/events.ts:92 packages/core/src/courses/leading-safe.ts:513"
  },
  "Settlement report v2": {
   "fr": "",
@@ -42775,7 +43081,7 @@
   "fr": "Plusieurs critères manquent. « Terminer la migration avant l’échéance » est-il un résultat ou une tâche ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:86"
+  "where": "apps/web/components/studio-model-aart.ts:90"
  },
  "Several key members of the Value Stream do not support Epics approved by the LPM process. What could be causing this situation, and what can you do to address it?": {
   "fr": "Plusieurs membres clés du flux de valeur ne soutiennent pas les épopées approuvées par le processus LPM. Qu’est-ce qui pourrait causer cette situation, et que pouvez-vous faire pour y remédier ?",
@@ -42799,7 +43105,7 @@
   "fr": "SF1 : Développement de produits axé sur les résultats",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:392"
+  "where": "packages/core/src/courses/ai-native-arts.ts:432"
  },
  "SF1: Outcome-Driven Product Development": {
   "fr": "SF1 : Développement de produits axé sur les résultats",
@@ -42812,7 +43118,7 @@
   "fr": "SF2 : Portefeuille et stratégie d’investissement",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:393"
+  "where": "packages/core/src/courses/ai-native-arts.ts:433"
  },
  "SF2: Portfolio and Investment Strategy": {
   "fr": "SF2 : Portefeuille et stratégie d’investissement",
@@ -42824,7 +43130,7 @@
   "fr": "SF3 : Données curées",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:394"
+  "where": "packages/core/src/courses/ai-native-arts.ts:434"
  },
  "SF3: Curated Data": {
   "fr": "SF3 : Données curées",
@@ -42832,6 +43138,24 @@
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-arts.ts:59",
   "note": "« curated data » rendered « données curées » (curation de données); alternative: « données organisées ». Not in the glossary; review"
+ },
+ "SF4: AI-Native ART": {
+  "fr": "SF4 : ART natif de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:81"
+ },
+ "SF5: AI-Native Teams": {
+  "fr": "SF5 : Équipes natives de l’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:90"
+ },
+ "SF6: AI Value Architect": {
+  "fr": "SF6 : AI Value Architect",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:99"
  },
  "Shape": {
   "fr": "",
@@ -43547,7 +43871,7 @@
   "fr": "Diapositive",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:403 packages/core/src/courses/ai-native-arts.ts:89 packages/core/src/courses/ai-native-arts.ts:110",
+  "where": "packages/core/src/classes.ts:403 packages/core/src/courses/ai-native-arts.ts:129 packages/core/src/courses/ai-native-arts.ts:150",
   "note": "check: may be a value (cardTypes list)"
  },
  "SLIDE": {
@@ -43560,103 +43884,103 @@
   "fr": "Diapositive 1-18",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:89"
+  "where": "packages/core/src/courses/ai-native-arts.ts:129"
  },
  "Slide 2-10": {
   "fr": "Diapositive 2-10",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:146"
+  "where": "packages/core/src/courses/ai-native-arts.ts:186"
  },
  "Slide 2-12": {
   "fr": "Diapositive 2-12",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:173"
+  "where": "packages/core/src/courses/ai-native-arts.ts:213"
  },
  "Slide 2-13": {
   "fr": "Diapositive 2-13",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:190"
+  "where": "packages/core/src/courses/ai-native-arts.ts:230"
  },
  "Slide 2-16": {
   "fr": "Diapositive 2-16",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:207"
+  "where": "packages/core/src/courses/ai-native-arts.ts:247"
  },
  "Slide 2-20": {
   "fr": "Diapositive 2-20",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:224"
+  "where": "packages/core/src/courses/ai-native-arts.ts:264"
  },
  "Slide 2-23": {
   "fr": "Diapositive 2-23",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:242"
+  "where": "packages/core/src/courses/ai-native-arts.ts:282"
  },
  "Slide 2-24": {
   "fr": "Diapositive 2-24",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:259"
+  "where": "packages/core/src/courses/ai-native-arts.ts:299"
  },
  "Slide 2-25": {
   "fr": "Diapositive 2-25",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:276"
+  "where": "packages/core/src/courses/ai-native-arts.ts:316"
  },
  "Slide 2-27": {
   "fr": "Diapositive 2-27",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:293"
+  "where": "packages/core/src/courses/ai-native-arts.ts:333"
  },
  "Slide 2-3": {
   "fr": "Diapositive 2-3",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:110"
+  "where": "packages/core/src/courses/ai-native-arts.ts:150"
  },
  "Slide 2-32": {
   "fr": "Diapositive 2-32",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:310"
+  "where": "packages/core/src/courses/ai-native-arts.ts:350"
  },
  "Slide 2-35": {
   "fr": "Diapositive 2-35",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:328"
+  "where": "packages/core/src/courses/ai-native-arts.ts:368"
  },
  "Slide 2-36": {
   "fr": "Diapositive 2-36",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:345"
+  "where": "packages/core/src/courses/ai-native-arts.ts:385"
  },
  "Slide 2-37": {
   "fr": "Diapositive 2-37",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:362"
+  "where": "packages/core/src/courses/ai-native-arts.ts:402"
  },
  "Slide 2-39": {
   "fr": "Diapositive 2-39",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:379"
+  "where": "packages/core/src/courses/ai-native-arts.ts:419"
  },
  "Slide 2-6": {
   "fr": "Diapositive 2-6",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:127"
+  "where": "packages/core/src/courses/ai-native-arts.ts:167"
  },
  "Slides group into lessons by their titles (&ldquo;Lesson 3 Activity: …&rdquo;, &ldquo;L3: …&rdquo;); the rest open the board under Welcome. Pictures and charts are left out. Up to 200 slides and 35 MB.": {
   "fr": "Les diapositives sont regroupées en leçons d’après leur titre (« Lesson 3 Activity: … », « L3: … ») ; les autres s’ouvrent dans le tableau sous Bienvenue. Les images et les graphiques sont ignorés. Jusqu’à 200 diapositives et 35 Mo.",
@@ -44282,7 +44606,7 @@
   "fr": "Salle partagée. Discutez-en.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:94"
+  "where": "apps/web/components/studio-model-aart.ts:98"
  },
  "Sponsors": {
   "fr": "Sponsors",
@@ -44556,7 +44880,7 @@
   "fr": "Démarrer et calibrer",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:390"
+  "where": "packages/core/src/courses/ai-native-arts.ts:430"
  },
  "Start another from a type:": {
   "fr": "",
@@ -45575,6 +45899,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:107"
  },
+ "Step 1: Review the gaps from your launch readiness assessment.": {
+  "fr": "Étape 1 : Passez en revue les écarts de votre évaluation de l’état de préparation au lancement.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:28"
+ },
  "Step 1: Review the ten SAFe principles.": {
   "fr": "Étape 1 : Passez en revue les dix principes SAFe.",
   "status": "draft",
@@ -45868,6 +46198,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:374"
  },
+ "Step 2: For each gap, add an action to the plan: ahead of the first PI Outcome Planning, ahead of the first Sense and Respond, or after.": {
+  "fr": "Étape 2 : Pour chaque écart, ajoutez une action au plan : avant la première planification des résultats du PI, avant le premier Sense and Respond, ou après.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:28"
+ },
  "Step 2: Give each a title, a benefit hypothesis and acceptance criteria.": {
   "fr": "Étape 2 : Donnez à chacune un titre, une hypothèse de bénéfice et des critères d’acceptation.",
   "status": "draft",
@@ -46145,6 +46481,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/leading-safe.ts:635"
+ },
+ "Step 3: Be prepared to share your launch plan.": {
+  "fr": "Étape 3 : Préparez-vous à partager votre plan de lancement.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:28"
  },
  "Step 3: Be prepared to share your results with the class": {
   "fr": "Étape 3 : Préparez-vous à partager vos résultats en plénière",
@@ -47519,7 +47861,7 @@
   "fr": "Jetez un nouveau coup d’œil aux résultats individuels. Si quelque chose vous a fait changer d’avis, mettez à jour votre évaluation.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:275 packages/core/src/courses/ai-native-arts.ts:361"
+  "where": "packages/core/src/courses/ai-native-arts.ts:315 packages/core/src/courses/ai-native-arts.ts:401"
  },
  "Take out": {
   "fr": "",
@@ -47561,7 +47903,7 @@
   "fr": "Faites le décompte de la salle pour voir où vous êtes d’accord.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:71"
+  "where": "apps/web/components/studio-model-aart.ts:75"
  },
  "TAP A CELL TO CYCLE YES · PARTLY · NO FOR EACH TEAM": {
   "fr": "TOUCHEZ UNE CELLULE POUR ALTERNER OUI · EN PARTIE · NON POUR CHAQUE ÉQUIPE",
@@ -47941,7 +48283,7 @@
   "fr": "Séances d’équipe",
   "status": "draft",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:50 packages/core/src/templates.ts:176 packages/core/src/templates.ts:177"
+  "where": "packages/core/src/courses/events.ts:91 packages/core/src/templates.ts:176 packages/core/src/templates.ts:177"
  },
  "Team C · delays": {
   "fr": "Équipe C · délais",
@@ -48045,6 +48387,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:43 apps/web/components/studio-model.ts:53"
+ },
+ "Team mission and capabilities": {
+  "fr": "Mission et capacités de l’équipe",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:92"
  },
  "Team node": {
   "fr": "",
@@ -48191,6 +48539,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:29"
  },
+ "Teams effectively incorporate AI into their daily workflows.": {
+  "fr": "Les équipes intègrent efficacement l’IA à leurs flux de travail quotidiens.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:93"
+ },
  "Teams help each other with impediments": {
   "fr": "Les équipes s’entraident pour lever les obstacles",
   "status": "draft",
@@ -48203,11 +48557,23 @@
   "phase": "2",
   "where": "apps/web/app/(app)/sync/page.tsx:57"
  },
+ "Teams operate on an Align, Sense, and Respond cadence.": {
+  "fr": "Les équipes fonctionnent selon une cadence Align, Sense, and Respond (s’aligner, détecter, réagir).",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:94"
+ },
  "Teams pull work at the daily stand-up instead of waiting for assignment.": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:597"
+ },
+ "Teams quickly test low-cost prototypes and kill experiments that fail to deliver value.": {
+  "fr": "Les équipes testent rapidement des prototypes à faible coût et arrêtent les expériences qui ne livrent pas de valeur.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:95"
  },
  "TEAMS RUNNING IN PARALLEL": {
   "fr": "ÉQUIPES EN PARALLÈLE",
@@ -48634,6 +49000,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:28"
  },
+ "The AI-Native SAFe Launch Readiness Assessment: calibrate on the scale, evaluate the twenty-four statements of the six success factors as fully, partially or not in place, review the gaps and build the AI-Native ART Launch Plan.": {
+  "fr": "L’évaluation de l’état de préparation au lancement AI-Native SAFe : calibrez-vous sur l’échelle, évaluez les vingt-quatre énoncés des six facteurs de succès (entièrement, partiellement ou pas en place), passez en revue les écarts et bâtissez le plan de lancement de l’ART natif de l’IA.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:61"
+ },
  "The AI-Native Value Architect": {
   "fr": "The AI-Native Value Architect",
   "status": "draft",
@@ -48657,7 +49029,7 @@
   "fr": "Le carnet de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:39"
+  "where": "packages/core/src/courses/events.ts:80"
  },
  "The ART backlog is ranked by WSJF.": {
   "fr": "",
@@ -48682,6 +49054,12 @@
   "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/rte.ts:549"
+ },
+ "The ART has established clear AI safety and governance guardrails that teams must follow when building products.": {
+  "fr": "L’ART a établi des garde-fous clairs de sécurité et de gouvernance de l’IA que les équipes doivent respecter lorsqu’elles bâtissent des produits.",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:85"
  },
  "The ART includes the necessary people to develop and deliver the Solution": {
   "fr": "L’ART comprend les personnes nécessaires pour développer et livrer la solution",
@@ -48965,7 +49343,7 @@
   "fr": "Le premier virage Lean-Agile essentiel nous invite à optimiser le flux « axé sur les résultats ». En plénière, discutez :",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:109",
+  "where": "packages/core/src/courses/ai-native-arts.ts:149",
   "note": "« critical Lean-Agile shift » is not in the glossary; rendered « virage Lean-Agile essentiel »"
  },
  "The first critical Lean-Agile shift tells us to optimize for “outcome-driven” flow. As a class, discuss: What is the significance of the term “outcome-driven” in this shift? How would shifting to optimizing for outcome-driven flow change the way your ART works?": {
@@ -49057,19 +49435,19 @@
   "fr": "L’itération IP et la démonstration du système du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:63"
+  "where": "packages/core/src/courses/events.ts:104"
  },
  "The IP iteration and then Inspect & Adapt: balancing the IP iteration, preparing the PI System Demo, and the problem-solving workshop from the agreed problem through root cause analysis to the improvement backlog.": {
   "fr": "L’itération IP, puis Inspecter et adapter : équilibrer l’itération IP, préparer la démonstration du système du PI, et l’atelier de résolution de problèmes, du problème convenu à l’analyse des causes racines jusqu’au carnet d’améliorations.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:59"
+  "where": "packages/core/src/courses/events.ts:100"
  },
  "The IP iteration, then Inspect & Adapt": {
   "fr": "L’itération IP, puis Inspecter et adapter",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:60"
+  "where": "packages/core/src/courses/events.ts:101"
  },
  "The Kanban cadence that inspects the service against its fitness criteria: lead time, throughput, flow efficiency, blockers.": {
   "fr": "",
@@ -49331,7 +49709,7 @@
   "fr": "Le portefeuille qui régit les produits, les solutions et les investissements peut sembler bien loin d’un ART. Pourtant, les décisions prises par le portefeuille ont une incidence sur le travail quotidien. En plénière, discutez :",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:206"
+  "where": "packages/core/src/courses/ai-native-arts.ts:246"
  },
  "The portfolio that governs products, solutions and investments can feel far away from an ART. But decisions made by the portfolio impact daily work. As a class, discuss: How do portfolio outcomes and investment strategy impact your ART?": {
   "fr": "",
@@ -49427,7 +49805,7 @@
   "fr": "La salle est partagée. Demandez à chacun ce qu’il imaginait en notant.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:71"
+  "where": "apps/web/components/studio-model-aart.ts:75"
  },
  "The room's boards, the app views pinned to it, its people and its connected rooms.": {
   "fr": "",
@@ -49688,7 +50066,7 @@
   "fr": "Les deux jours dans la salle de planification : la capacité, un train par équipe avec ses itérations, le tableau de planification de l’ART avec les dépendances, la Synchro des coachs, la revue des plans préliminaires, la valeur métier, les risques du PI de l’ART à traiter en ROAM et quoi faire quand la confiance n’est pas élevée.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:46"
+  "where": "packages/core/src/courses/events.ts:87"
  },
  "The two days of PI planning in SAFe's order: business context and visions, team breakouts and draft plans, management review, adjustments, final plans, program risks and the confidence vote.": {
   "fr": "",
@@ -49814,13 +50192,13 @@
   "fr": "Discutez ensuite : où avions-nous des différences, et pourquoi ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:172 packages/core/src/courses/ai-native-arts.ts:258 packages/core/src/courses/ai-native-arts.ts:344"
+  "where": "packages/core/src/courses/ai-native-arts.ts:212 packages/core/src/courses/ai-native-arts.ts:298 packages/core/src/courses/ai-native-arts.ts:384"
  },
  "Then, in your groups, compare your descriptions to outcome-driven product development. Be prepared to share.": {
   "fr": "Ensuite, dans vos groupes, comparez vos descriptions au développement de produits axé sur les résultats. Soyez prêts à partager.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:126"
+  "where": "packages/core/src/courses/ai-native-arts.ts:166"
  },
  "There are no analytics or advertising trackers on trainyard.app and no tracking cookies.": {
   "fr": "",
@@ -49991,7 +50369,7 @@
   "fr": "Cet OKR atteint votre niveau d’exigence. La salle serait-elle d’accord ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:86"
+  "where": "apps/web/components/studio-model-aart.ts:90"
  },
  "This page expects to be opened from the payment confirmation. If you already have a key,": {
   "fr": "",
@@ -50147,7 +50525,7 @@
   "fr": "Tout au long du PI, en terminant dans l’itération IP",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:35"
+  "where": "packages/core/src/courses/events.ts:76"
  },
  "Through the solutions they build": {
   "fr": "",
@@ -50814,6 +51192,12 @@
   "where": "apps/web/app/not-found.tsx:18 apps/web/components/book-session.tsx:42 apps/web/components/site-nav.tsx:70",
   "note": "404 page; may be decorative word, check"
  },
+ "Train additional AI Value Architects": {
+  "fr": "Former d’autres AI Value Architects",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/events.ts:35"
+ },
  "Train new hire": {
   "fr": "",
   "status": "new",
@@ -51150,7 +51534,7 @@
   "fr": "Essayez l’échelle d’évaluation",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:83"
+  "where": "packages/core/src/courses/ai-native-arts.ts:123 packages/core/src/courses/events.ts:65"
  },
  "try to get into other workspaces or accounts, probe or overload the service, or get around plan limits or security;": {
   "fr": "",
@@ -52279,6 +52663,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:53"
+ },
+ "Value from AI workflows": {
+  "fr": "Valeur des flux de travail d’IA",
+  "status": "draft",
+  "phase": "course",
+  "where": "packages/core/src/courses/ai-native-arts.ts:102"
  },
  "Value is roughly constant: release any time.": {
   "fr": "La valeur est à peu près constante : mettez en production à tout moment.",
@@ -53845,7 +54235,7 @@
   "fr": "Quelle est l’importance de l’expression « axé sur les résultats » dans ce virage ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:109"
+  "where": "packages/core/src/courses/ai-native-arts.ts:149"
  },
  "What issues and opportunities might you bring up?": {
   "fr": "Quels problèmes et quelles opportunités pourriez-vous soulever ?",
@@ -53929,7 +54319,7 @@
   "fr": "Qu’est-ce qui rend les données importantes ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:288"
+  "where": "packages/core/src/courses/ai-native-arts.ts:328"
  },
  "what makes it different": {
   "fr": "ce qui la différencie",
@@ -54067,13 +54457,13 @@
   "fr": "Quelles anecdotes avez-vous où un outil d’IA vous a déçu par son résultat ? Pourquoi ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:292"
+  "where": "packages/core/src/courses/ai-native-arts.ts:332"
  },
  "What stories do you have where an AI tool impressed you with its output? Why?": {
   "fr": "Quelles anecdotes avez-vous où un outil d’IA vous a impressionné par son résultat ? Pourquoi ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:292"
+  "where": "packages/core/src/courses/ai-native-arts.ts:332"
  },
  "What success looks like, with measurable targets.": {
   "fr": "À quoi ressemble le succès, avec des cibles mesurables.",
@@ -54661,7 +55051,7 @@
   "fr": "Qui est responsable d’avoir d’excellentes données ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:304"
+  "where": "packages/core/src/courses/ai-native-arts.ts:344"
  },
  "Who is the person we want to understand? What is the situation they are in? What is their role in the situation?": {
   "fr": "Quelle est la personne que nous voulons comprendre ? Dans quelle situation se trouve-t-elle ? Quel est son rôle dans cette situation ?",
@@ -54775,19 +55165,19 @@
   "fr": "Pourquoi un flux « axé sur les résultats » ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:105"
+  "where": "packages/core/src/courses/ai-native-arts.ts:145"
  },
  "Why did we evaluate differently?": {
   "fr": "Pourquoi avons-nous évalué différemment ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:168"
+  "where": "packages/core/src/courses/ai-native-arts.ts:208"
  },
  "Why did we rate differently?": {
   "fr": "Pourquoi avons-nous noté différemment ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:254 packages/core/src/courses/ai-native-arts.ts:340"
+  "where": "packages/core/src/courses/ai-native-arts.ts:294 packages/core/src/courses/ai-native-arts.ts:380"
  },
  "Why does that happen? Type, then click away": {
   "fr": "Pourquoi cela arrive-t-il ? Saisissez, puis cliquez ailleurs",
@@ -54859,7 +55249,7 @@
   "fr": "Pourquoi le portefeuille est important pour l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:202"
+  "where": "packages/core/src/courses/ai-native-arts.ts:242"
  },
  "Why this is evidence (and what it does not prove)": {
   "fr": "",

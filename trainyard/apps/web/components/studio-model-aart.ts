@@ -35,7 +35,11 @@ export function aartModel(c: StudioCtx): Record<string, any> {
   const set = (k: string, v: unknown) => op({ key: k, op: "set", value: v ?? null });
   const me = voter();
   const SFS = AI_NATIVE_SUCCESS_FACTORS;
-  const keys = Object.keys(SFS).flatMap((sf) => SFS[sf]!.statements.map((_: [string, string], i: number) => `${sf}:${i}`));
+  // The success factors this board assesses: the ones it has an assessment step for (the class
+  // covers the first three; the launch readiness package all six).
+  const onBoard = new Set(c.board.frames.map((f) => (f.activity?.config?.step === "sf" ? String(f.activity.config.sf ?? "sf1") : "")));
+  const sfs = Object.keys(SFS).filter((sf) => onBoard.has(sf));
+  const keys = sfs.flatMap((sf) => SFS[sf]!.statements.map((_: [string, string], i: number) => `${sf}:${i}`));
   // One person's rating of a statement, and the rating they gave first (for "changed · was").
   const mineOf = (key: string) => list<Item>(`r:${key}`).find((x) => x.voter === me)?.v ?? "";
   const firstOf = (key: string) => list<Item>(`f:${key}`).find((x) => x.voter === me)?.v ?? "";
@@ -60,7 +64,7 @@ export function aartModel(c: StudioCtx): Record<string, any> {
   const lines = (c.frame.activity?.steps ?? "").split("\n").filter(Boolean);
   const v: Record<string, any> = {
     cur: { color: type[1], typeName: type[0], title: (c.frame.title ?? "").replace(/^[^:]+:\s*/, ""), lines: lines.map((t, i) => ({ t, dot: i === 0 && lines.length > 1 && !/^(Individually|In your|As a|Then|Now|Navigate|Take|Choose|Consider|Pick|Score|Notice|What|How|First|If)/.test(t) ? "none" : "block" })) },
-    rated: keys.filter((k) => mineOf(k)).length,
+    rated: keys.filter((k) => mineOf(k)).length, ratedOf: keys.length,
     isScale: kind === "scale", isFlow: kind === "flow", isOkr: kind === "okr", isSf: kind === "sf", isStrategy: kind === "strategy", isData: kind === "data", isGap: kind === "gap",
     hasNotes: !!cfg.notes, notes: str(`notes:${c.frame.id}`), setNotes: (e: Blur) => set(`notes:${c.frame.id}`, e.target.value || null),
   };
@@ -115,7 +119,7 @@ export function aartModel(c: StudioCtx): Record<string, any> {
   if (kind === "gap") {
     const tot3: Record<string, number> = { F: 0, P: 0, N: 0 };
     const consOf = (key: string) => str(`c:${key}`) || mineOf(key);
-    v.gapSf = Object.keys(SFS).map((sf) => ({ title: SFS[sf]!.title, rows: SFS[sf]!.statements.map(([t]: [string, string], i: number) => { const key = `${sf}:${i}`, val = consOf(key); if (val) tot3[val] = (tot3[val] ?? 0) + 1; return { t, mine: short(mineOf(key)), pills: RATE.map(([k, , col]) => ({ k, bg: val === k ? col : "#fff", go: () => set(`c:${key}`, k) })) }; }) }));
+    v.gapSf = sfs.map((sf) => ({ title: SFS[sf]!.title, rows: SFS[sf]!.statements.map(([t]: [string, string], i: number) => { const key = `${sf}:${i}`, val = consOf(key); if (val) tot3[val] = (tot3[val] ?? 0) + 1; return { t, mine: short(mineOf(key)), pills: RATE.map(([k, , col]) => ({ k, bg: val === k ? col : "#fff", go: () => set(`c:${key}`, k) })) }; }) }));
     v.gapTotals = RATE.map(([k, n, col]) => ({ n, count: tot3[k] ?? 0, bg: col }));
     const sent = typeof S.sent === "number" ? (S.sent as number) : -1;
     v.sendLabel = ui.sending ? "Sending…" : sent < 0 ? "Send gaps to Roadmap" : sent === 0 ? "Nothing new to send" : `${sent} cards sent · open Roadmap`;
@@ -126,7 +130,7 @@ export function aartModel(c: StudioCtx): Record<string, any> {
         const r = (await api<{ doc: RoadmapDoc | null }>("GET", "/v1/docs/roadmap")).doc ?? structuredClone(BLANK_ROADMAP);
         const have = new Set(r.items.map((i) => i.title));
         let n = 0;
-        for (const sf of Object.keys(SFS)) SFS[sf]!.statements.forEach((st: [string, string], i: number) => { const val = consOf(`${sf}:${i}`), title = `Launch: ${st[1]}`; if ((val === "N" || val === "P") && !have.has(title)) { r.items.push({ id: `aa${sf}${i}`, title, type: val === "N" ? "epic" : "enabler", lane: r.lanes[0]?.id ?? "a1", start: 1, len: val === "N" ? 2 : 1, committed: false, placed: false }); n++; } });
+        for (const sf of sfs) SFS[sf]!.statements.forEach((st: [string, string], i: number) => { const val = consOf(`${sf}:${i}`), title = `Launch: ${st[1]}`; if ((val === "N" || val === "P") && !have.has(title)) { r.items.push({ id: `aa${sf}${i}`, title, type: val === "N" ? "epic" : "enabler", lane: r.lanes[0]?.id ?? "a1", start: 1, len: val === "N" ? 2 : 1, committed: false, placed: false }); n++; } });
         await api("PUT", "/v1/docs/roadmap", { doc: r });
         set("sent", n);
       } finally {

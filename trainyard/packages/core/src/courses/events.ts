@@ -5,6 +5,7 @@
 import type { ActivitySpec } from "../activities.js";
 import type { Board } from "../boards.js";
 import { classBoard, type ClassSpec, type Exercise } from "../classes.js";
+import { AI_NATIVE_ARTS_COURSE, AI_NATIVE_ASSESS_456 } from "./ai-native-arts.js";
 import { LEADING_SAFE_COURSE } from "./leading-safe.js";
 import { RTE_COURSE } from "./rte.js";
 
@@ -13,6 +14,32 @@ const pick = (course: Course, titles: string[]): ActivitySpec[] =>
   titles.map((t) => course.flatMap((l) => l.activities).find((a) => a.title === t) ?? (() => { throw new Error(`No activity "${t}"`); })());
 const rte = (...titles: string[]) => pick(RTE_COURSE, titles);
 const lsa = (...titles: string[]) => pick(LEADING_SAFE_COURSE, titles);
+const aart = (...titles: string[]) => pick(AI_NATIVE_ARTS_COURSE, titles);
+
+// The AI-Native ART Launch Plan (Launching AI-Native ARTs, slide 1-20): what to do ahead of the
+// first PI Outcome Planning, ahead of the first Sense and Respond, and after, with the slide's own
+// items as examples beside each column.
+const LAUNCH_PLAN: ActivitySpec = {
+  title: "Build the AI-Native ART Launch Plan",
+  kind: "Activity",
+  prepare: 20,
+  share: 10,
+  steps:
+    "Step 1: Review the gaps from your launch readiness assessment.\nStep 2: For each gap, add an action to the plan: ahead of the first PI Outcome Planning, ahead of the first Sense and Respond, or after.\nStep 3: Be prepared to share your launch plan.",
+  board: "lanes",
+  config: {
+    layout: "grid",
+    cols: 3,
+    intro: "Based on gaps, we will build our AI-Native ART Launch Plan.",
+    lanes: [
+      { title: "Ahead of First PI Outcome Planning", examples: ["Align on ART cadence", "Foundational AI training for teams", "AI-Native SAFe for Teams training", "List approved AI tools", "Define Portfolio and ART OKRs", "Commit to Curated Data strategy", "Train additional AI Value Architects", "Draft ART level AI Governance and Ethics policies", "Revitalize Product Vision", "Communicate Product Intent and Context", "Set up repository for Intent, Specification and Context", "Invest in AI Innovation Pipeline, workflows, and platforms"] },
+      { title: "Ahead of First Sense and Respond", examples: ["Automate data collection for Key Results", "Create dashboard for outcome progress", "Begin Customer Demos for feedback", "Create Outcome-Driven Roadmap", "Automate policies in AI Innovation Pipeline"] },
+      { title: "After", examples: ["Begin Curated Data strategy implementation", "Identify missing Team Capabilities post-iteration", "Address gaps in existing portfolio AI Governance and Ethics framework"] },
+    ],
+  },
+  width: 1200,
+  height: 600,
+};
 
 export interface EventSpec {
   /** The package id in the template gallery. */
@@ -27,6 +54,20 @@ export interface EventSpec {
 }
 
 export const EVENT_BOARDS: EventSpec[] = [
+  {
+    id: "ai-native-launch-readiness",
+    name: "AI-Native ART launch readiness",
+    short: "READY",
+    blurb: "The AI-Native SAFe Launch Readiness Assessment: calibrate on the scale, evaluate the twenty-four statements of the six success factors as fully, partially or not in place, review the gaps and build the AI-Native ART Launch Plan.",
+    when: "Ahead of the first PI Outcome Planning",
+    days: 1,
+    parts: [
+      { title: "Calibrate", activities: aart("Try the assessment scale") },
+      { title: "Outcome-driven flow: success factors 1 to 3", activities: aart("Outcome-driven product development", "Portfolio and investment strategy", "Curated data") },
+      { title: "AI-Native ART, teams and AI Value Architect: success factors 4 to 6", activities: AI_NATIVE_ASSESS_456 },
+      { title: "Gaps and launch plan", activities: [...aart("Gap analysis review"), LAUNCH_PLAN] },
+    ],
+  },
   {
     id: "prepare-pi-planning",
     name: "Prepare for PI planning",

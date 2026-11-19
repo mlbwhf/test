@@ -1723,9 +1723,10 @@ describe("template packages", () => {
   it("creates a package as one event board in the class design, or as a board per part", async () => {
     const { call } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["prepare-pi-planning", "pi-planning", "closing-pi"]);
+    expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["ai-native-launch-readiness", "prepare-pi-planning", "pi-planning", "closing-pi"]);
     // The packages hold the classes' designed boards, not canvas templates.
-    expect(list.body.packages[0].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["How much preparation is enough?", "PI Planning readiness preparation"], ["Build your own ART kanban board"]]);
+    expect(list.body.packages[0].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["Try the assessment scale"], ["Outcome-driven product development", "Portfolio and investment strategy", "Curated data"], ["AI-Native ART", "AI-Native Teams", "AI Value Architect"], ["Gap analysis review", "Build the AI-Native ART Launch Plan"]]);
+    expect(list.body.packages[1].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["How much preparation is enough?", "PI Planning readiness preparation"], ["Build your own ART kanban board"]]);
     const one = await call("POST", "/v1/templates/packages/closing-pi/create", { name: "PI 26.4 close", mode: "one-board" });
     expect(one.status).toBe(201);
     expect(one.body.boards).toHaveLength(1);
