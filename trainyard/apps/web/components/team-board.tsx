@@ -19,21 +19,34 @@ const POINTS = [1, 2, 3, 5, 8, 13, 20];
 
 export function TeamBoard(props: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
   const [tab, setTab] = useState<(typeof TABS)[number][0]>("plan");
+  // The switch sits in each view's header, as in the design; a pill slides under the chosen view
+  // and the view itself slides in from the side it came from.
+  const [dir, setDir] = useState(1);
+  const [from, setFrom] = useState(0);
+  const at = TABS.findIndex(([k]) => k === tab);
+  const go = (k: (typeof TABS)[number][0]) => {
+    setDir(TABS.findIndex(([x]) => x === k) >= at ? 1 : -1);
+    setFrom(at);
+    setTab(k);
+  };
+  const switcher = (
+    <div className="tb-switch" role="tablist" aria-label="Team board view" style={{ ["--at" as string]: at, ["--from" as string]: from }}>
+      <i aria-hidden className="tb-switch-pill" />
+      {TABS.map(([k, n]) => (
+        <button key={k} role="tab" aria-selected={tab === k} onClick={() => go(k)}>
+          {n}
+        </button>
+      ))}
+    </div>
+  );
   return (
-    <div className="stack" style={{ gap: 12 }}>
-      <div className="kb-tabs" role="tablist" aria-label="Team board">
-        {TABS.map(([k, n]) => (
-          <button key={k} role="tab" aria-selected={tab === k} onClick={() => setTab(k)}>
-            {n}
-          </button>
-        ))}
-      </div>
-      {tab === "kanban" ? <KanbanBoard {...props} level="team" /> : tab === "plan" ? <Planning {...props} /> : <Objectives {...props} />}
+    <div key={tab} className="tb-view" style={{ ["--dir" as string]: dir }}>
+      {tab === "kanban" ? <KanbanBoard {...props} level="team" headerExtra={switcher} /> : tab === "plan" ? <Planning {...props} switcher={switcher} /> : <Objectives {...props} switcher={switcher} />}
     </div>
   );
 }
 
-function Planning({ board, readOnly, onChanged, onError }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+function Planning({ board, readOnly, onChanged, onError, switcher }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; switcher: React.ReactNode }) {
   const [st, op] = useFrameState(board, board.frames[0]!, onChanged, onError);
   const types = KANBAN_LEVELS.team.types;
   const stories: Story[] = Array.isArray(st.items) ? (st.items as Story[]) : [];
@@ -76,12 +89,15 @@ function Planning({ board, readOnly, onChanged, onError }: { board: Board; readO
           <h2 className="kb-title">{board.name}: stories against capacity</h2>
           <p>{!stories.length ? "Add the team's stories, size them, set each iteration's capacity and place the stories in an iteration." : bad.length ? `${bad.join(" and ")} ${bad.length > 1 ? "are" : "is"} over capacity. Select a story and move it to rebalance: ${total} points planned against ${totalCap} of capacity.` : `${total} points planned against ${totalCap} of capacity${totalCap ? ", every iteration within its limit" : ""}.`}</p>
         </div>
-        {cur && !readOnly ? (
-          <div className="kb-actions">
-            <button className="kb-btn" disabled={(cur.iter ?? 0) <= 0} onClick={() => update(cur.id, { iter: (cur.iter ?? 0) - 1 })}>{(cur.iter ?? 0) === 1 ? "Back to backlog" : "Earlier iteration"}</button>
-            <button className="kb-btn dark" disabled={(cur.iter ?? 0) >= 4} onClick={() => update(cur.id, { iter: (cur.iter ?? 0) + 1 })}>{(cur.iter ?? 0) === 0 ? "Plan in Iteration 1" : "Later iteration"}</button>
-          </div>
-        ) : null}
+        <div className="tb-headright">
+          {!readOnly ? (
+            <div className="kb-actions">
+              <button className="kb-btn" disabled={!cur || (cur.iter ?? 0) <= 0} title={cur ? undefined : "Select a story first"} onClick={() => cur && update(cur.id, { iter: (cur.iter ?? 0) - 1 })}>{cur && (cur.iter ?? 0) === 1 ? "Back to backlog" : "Earlier iteration"}</button>
+              <button className="kb-btn dark" disabled={!cur || (cur.iter ?? 0) >= 4} title={cur ? undefined : "Select a story first"} onClick={() => cur && update(cur.id, { iter: (cur.iter ?? 0) + 1 })}>{cur && (cur.iter ?? 0) === 0 ? "Plan in Iteration 1" : "Later iteration"}</button>
+            </div>
+          ) : null}
+          {switcher}
+        </div>
       </header>
 
       {!readOnly ? (
@@ -191,7 +207,7 @@ function NoteZone({ title, k, tint, items, op, readOnly, placeholder }: { title:
   );
 }
 
-function Objectives({ board, readOnly, onChanged, onError }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+function Objectives({ board, readOnly, onChanged, onError, switcher }: { board: Board; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; switcher: React.ReactNode }) {
   const [st, op] = useFrameState(board, board.frames[0]!, onChanged, onError);
   const all: Objective[] = Array.isArray(st.objectives) ? (st.objectives as Objective[]) : [];
   const [draft, setDraft] = useState("");
@@ -229,6 +245,7 @@ function Objectives({ board, readOnly, onChanged, onError }: { board: Board; rea
           <h2 className="kb-title">{board.name}: PI objectives</h2>
           <p>Business Owners set planned value at PI planning and score actual value at the system demo. Achievement is actual over planned: uncommitted objectives add to the actual, never to the plan.</p>
         </div>
+        <div className="tb-headright">{switcher}</div>
       </header>
       {!readOnly ? (
         <form className="kb-glass kb-add" onSubmit={(e) => (e.preventDefault(), add())}>

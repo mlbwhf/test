@@ -564,7 +564,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:77"
+  "where": "apps/web/components/team-board.tsx:90"
  },
  ", in": {
   "fr": "",
@@ -590,7 +590,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:216"
+  "where": "apps/web/components/team-board.tsx:232"
  },
  ", now in band": {
   "fr": ", désormais dans la bande",
@@ -614,7 +614,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:116"
+  "where": "apps/web/components/team-board.tsx:132"
  },
  ", registered in": {
   "fr": "",
@@ -750,7 +750,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:229"
+  "where": "apps/web/components/team-board.tsx:245"
  },
  ": portfolio vision": {
   "fr": " : vision du portefeuille",
@@ -775,7 +775,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:76"
+  "where": "apps/web/components/team-board.tsx:89"
  },
  ": the class board": {
   "fr": "",
@@ -1134,7 +1134,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:158"
+  "where": "apps/web/components/team-board.tsx:174"
  },
  "· portfolio asks": {
   "fr": "· demandes du portefeuille",
@@ -1728,7 +1728,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:77"
+  "where": "apps/web/components/team-board.tsx:90"
  },
  "{0} / {1} pts loaded": {
   "fr": "{0} / {1} pts chargés",
@@ -2007,7 +2007,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:77"
+  "where": "apps/web/components/team-board.tsx:90"
  },
  "{0} record{1} waiting for review after an intent change.": {
   "fr": "",
@@ -2111,7 +2111,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:269"
+  "where": "apps/web/components/team-board.tsx:286"
  },
  "{0}% of finished work in {1} was enablers; the floor is {2}%.": {
   "fr": "{0} % du travail terminé en {1} concernait des enablers ; le plancher est de {2} %.",
@@ -2252,7 +2252,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:267"
+  "where": "apps/web/components/team-board.tsx:284"
  },
  "% allocated: aim for 100%": {
   "fr": " % alloués : visez 100 %",
@@ -5078,7 +5078,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:279"
+  "where": "apps/web/components/team-board.tsx:296"
  },
  "above 125: split": {
   "fr": "",
@@ -5766,7 +5766,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:135"
+  "where": "apps/web/components/team-board.tsx:151"
  },
  "Add a lane": {
   "fr": "",
@@ -5820,7 +5820,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:236"
+  "where": "apps/web/components/team-board.tsx:253"
  },
  "Add a PI outcome": {
   "fr": "",
@@ -5844,7 +5844,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:136"
+  "where": "apps/web/components/team-board.tsx:152"
  },
  "Add a source": {
   "fr": "",
@@ -5898,7 +5898,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:90"
+  "where": "apps/web/components/team-board.tsx:106"
  },
  "Add a team on the Outcomes view first.": {
   "fr": "",
@@ -6216,7 +6216,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:77"
+  "where": "apps/web/components/team-board.tsx:90"
  },
  "Add to board": {
   "fr": "Ajouter au tableau",
@@ -10408,13 +10408,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:174"
+  "where": "apps/web/components/kanban-board.tsx:177"
  },
  "Back to backlog": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:81"
+  "where": "apps/web/components/team-board.tsx:95"
  },
  "Back to collection": {
   "fr": "Retour à la collection",
@@ -10786,7 +10786,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:279"
+  "where": "apps/web/components/team-board.tsx:296"
  },
  "Below target: needs to rise to {0}": {
   "fr": "",
@@ -11935,7 +11935,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:230"
+  "where": "apps/web/components/team-board.tsx:246"
  },
  "BUSINESS OWNERS SET VALUE 1–10 · DRAG AN OBJECTIVE BETWEEN COMMITTED AND UNCOMMITTED": {
   "fr": "LES BUSINESS OWNERS FIXENT LA VALEUR 1–10 · FAITES GLISSER UN OBJECTIF ENTRE ENGAGÉS ET NON ENGAGÉS",
@@ -11978,7 +11978,7 @@
   "fr": "Valeur métier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/kanban-board.tsx:143 apps/web/components/studio-views-lsa.tsx:214 apps/web/components/studio-views-lsa.tsx:214"
+  "where": "apps/web/components/kanban-board.tsx:146 apps/web/components/studio-views-lsa.tsx:214 apps/web/components/studio-views-lsa.tsx:214"
  },
  "Business value column": {
   "fr": "Colonne de la valeur métier",
@@ -12008,7 +12008,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:254"
+  "where": "apps/web/components/team-board.tsx:271"
  },
  "BV committed": {
   "fr": "BV engagée",
@@ -12020,7 +12020,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:253"
+  "where": "apps/web/components/team-board.tsx:270"
  },
  "By course": {
   "fr": "Par cours",
@@ -12866,7 +12866,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:82"
+  "where": "apps/web/components/kanban-board.tsx:85"
  },
  "Changed": {
   "fr": "",
@@ -14209,7 +14209,7 @@
   "fr": "Engagé ou non engagé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-views.tsx:421 apps/web/components/team-board.tsx:242"
+  "where": "apps/web/components/planning-views.tsx:421 apps/web/components/team-board.tsx:259"
  },
  "Committed:": {
   "fr": "Engagés :",
@@ -18228,7 +18228,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:82"
+  "where": "apps/web/components/kanban-board.tsx:85"
  },
  "Donut": {
   "fr": "",
@@ -18966,7 +18966,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:81"
+  "where": "apps/web/components/team-board.tsx:95"
  },
  "Earlier PIs": {
   "fr": "PI précédents",
@@ -20475,7 +20475,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:133"
+  "where": "apps/web/components/team-board.tsx:149"
  },
  "Every story is on a wagon": {
   "fr": "Chaque récit est sur un wagon",
@@ -21485,7 +21485,7 @@
   "fr": "Fonctionnalités",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/team-board.tsx:135 packages/core/src/classes.ts:214 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/team-board.tsx:151 packages/core/src/classes.ts:214 packages/core/src/templates.ts:82"
  },
  "FEATURES": {
   "fr": "FONCTIONNALITÉS",
@@ -26196,7 +26196,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:122"
+  "where": "apps/web/components/team-board.tsx:138"
  },
  "Innovation continues": {
   "fr": "",
@@ -27291,7 +27291,7 @@
   "fr": "Taille du travail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:41 apps/web/components/kanban-board.tsx:143 packages/core/src/canvases.ts:205"
+  "where": "apps/web/app/(app)/readiness/page.tsx:41 apps/web/components/kanban-board.tsx:146 packages/core/src/canvases.ts:205"
  },
  "Job size (for duration)": {
   "fr": "",
@@ -28065,7 +28065,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:82"
+  "where": "apps/web/components/team-board.tsx:96"
  },
  "Later PIs": {
   "fr": "PI suivants",
@@ -29447,7 +29447,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:218"
+  "where": "apps/web/components/team-board.tsx:234"
  },
  "Lower-middle income": {
   "fr": "",
@@ -30981,7 +30981,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/ai/[id]/page.tsx:128 apps/web/components/kanban-board.tsx:173"
+  "where": "apps/web/app/(app)/ai/[id]/page.tsx:128 apps/web/components/kanban-board.tsx:176"
  },
  "Move to autonomous Level 5": {
   "fr": "Passer à l’autonomie de niveau 5",
@@ -31467,7 +31467,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/canvas-cards.tsx:53 apps/web/components/kanban-board.tsx:74"
+  "where": "apps/web/components/canvas-cards.tsx:53 apps/web/components/kanban-board.tsx:77"
  },
  "NEW": {
   "fr": "NOUVEAU",
@@ -31696,7 +31696,7 @@
   "fr": "Nouvel objectif",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026 apps/web/components/team-board.tsx:235"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026 apps/web/components/team-board.tsx:252"
  },
  "New outcome": {
   "fr": "",
@@ -31811,7 +31811,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:89"
+  "where": "apps/web/components/team-board.tsx:105"
  },
  "New team": {
   "fr": "",
@@ -32060,7 +32060,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:257"
+  "where": "apps/web/components/team-board.tsx:274"
  },
  "No confidence": {
   "fr": "",
@@ -32916,13 +32916,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:276"
+  "where": "apps/web/components/team-board.tsx:293"
  },
  "Not scored yet": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:269"
+  "where": "apps/web/components/team-board.tsx:286"
  },
  "Not seated yet": {
   "fr": "Pas encore placés",
@@ -32940,7 +32940,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:112 apps/web/components/team-board.tsx:66 apps/web/components/team-board.tsx:150"
+  "where": "apps/web/components/kanban-board.tsx:115 apps/web/components/team-board.tsx:79 apps/web/components/team-board.tsx:166"
  },
  "Not started": {
   "fr": "Non commencé",
@@ -33245,7 +33245,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:182"
+  "where": "apps/web/components/kanban-board.tsx:185"
  },
  "Nothing pasted yet.": {
   "fr": "Rien n’a encore été collé.",
@@ -36687,7 +36687,7 @@
   "fr": "Persévérer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/kanban-board.tsx:169 apps/web/components/studio-model-lpm.ts:429",
+  "where": "apps/web/components/kanban-board.tsx:172 apps/web/components/studio-model-lpm.ts:429",
   "note": "check: may be a value."
  },
  "Persistent shopping cart": {
@@ -37027,7 +37027,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:75"
+  "where": "apps/web/components/team-board.tsx:88"
  },
  "PI planning agenda": {
   "fr": "",
@@ -37586,7 +37586,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:170"
+  "where": "apps/web/components/kanban-board.tsx:173"
  },
  "Pivot or persevere decision made": {
   "fr": "Décision de pivoter ou persévérer prise",
@@ -37736,7 +37736,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:82"
+  "where": "apps/web/components/team-board.tsx:96"
  },
  "Plan review and business value": {
   "fr": "Revue des plans et valeur métier",
@@ -37797,7 +37797,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:237"
+  "where": "apps/web/components/team-board.tsx:254"
  },
  "Planned BV": {
   "fr": "",
@@ -37870,7 +37870,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:216"
+  "where": "apps/web/components/team-board.tsx:232"
  },
  "Planned vs budget": {
   "fr": "",
@@ -38627,7 +38627,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:279"
+  "where": "apps/web/components/team-board.tsx:296"
  },
  "Prefer a longer but faster road when congestion crosses a threshold.": {
   "fr": "Préférer une route plus longue mais plus rapide lorsque la congestion dépasse un seuil.",
@@ -40381,7 +40381,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:220"
+  "where": "apps/web/components/team-board.tsx:236"
  },
  "Raise agent-change first-pass acceptance from 40% to": {
   "fr": "",
@@ -42234,7 +42234,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:143"
+  "where": "apps/web/components/kanban-board.tsx:146"
  },
  "risk reduction / opportunity enablement": {
   "fr": "",
@@ -42350,7 +42350,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:136 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/team-board.tsx:152 packages/core/src/templates.ts:82"
  },
  "Risks with ROAM state": {
   "fr": "",
@@ -43834,7 +43834,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:182"
+  "where": "apps/web/components/kanban-board.tsx:185"
  },
  "Select a capability to read its benefit hypothesis and move it on. A state at its limit turns amber and refuses more work until something leaves it.": {
   "fr": "",
@@ -43854,6 +43854,12 @@
   "phase": "2",
   "where": "packages/core/src/kanban.ts:71"
  },
+ "Select a story first": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:95 apps/web/components/team-board.tsx:96"
+ },
  "Select a story to read it and move it on. A state at its limit turns amber and refuses more work until something leaves it.": {
   "fr": "",
   "status": "new",
@@ -43864,7 +43870,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:161"
+  "where": "apps/web/components/team-board.tsx:177"
  },
  "Select all": {
   "fr": "",
@@ -43949,7 +43955,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:138"
+  "where": "apps/web/components/team-board.tsx:154"
  },
  "Selection of mapping software": {
   "fr": "Choix du logiciel de cartographie",
@@ -45167,7 +45173,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:142 packages/core/src/templates.ts:349"
+  "where": "apps/web/components/kanban-board.tsx:145 packages/core/src/templates.ts:349"
  },
  "SIZE": {
   "fr": "TAILLE",
@@ -48449,7 +48455,7 @@
   "fr": "Récit",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 apps/web/components/team-board.tsx:141"
+  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 apps/web/components/team-board.tsx:157"
  },
  "STORY": {
   "fr": "RÉCIT",
@@ -48473,7 +48479,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:143 apps/web/components/team-board.tsx:149"
+  "where": "apps/web/components/kanban-board.tsx:146 apps/web/components/team-board.tsx:165"
  },
  "STORY POINTS · PICK ONE": {
   "fr": "POINTS DE RÉCIT · CHOISISSEZ-EN UN",
@@ -49813,13 +49819,13 @@
   "fr": "Carnet de l’équipe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lsa.ts:325 apps/web/components/team-board.tsx:158 packages/core/src/kanban.ts:81"
+  "where": "apps/web/components/studio-model-lsa.ts:325 apps/web/components/team-board.tsx:174 packages/core/src/kanban.ts:81"
  },
  "Team backlog · not planned yet": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:132"
+  "where": "apps/web/components/team-board.tsx:148"
  },
  "Team backlog refinement": {
   "fr": "Affinement du carnet de l’équipe",
@@ -49829,7 +49835,7 @@
  },
  "Team board": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/components/team-board.tsx:24"
  },
@@ -49838,6 +49844,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:732"
+ },
+ "Team board view": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:33"
  },
  "Team boards": {
   "fr": "",
@@ -51078,7 +51090,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:280"
+  "where": "apps/web/components/team-board.tsx:297"
  },
  "the group the row is in": {
   "fr": "le groupe qui contient la ligne",
@@ -51938,7 +51950,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:85"
+  "where": "apps/web/components/kanban-board.tsx:88"
  },
  "these people": {
   "fr": "",
@@ -52307,7 +52319,7 @@
   "fr": "Urgence temporelle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/kanban-board.tsx:143 apps/web/components/studio-model-lpm.ts:446",
+  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/kanban-board.tsx:146 apps/web/components/studio-model-lpm.ts:446",
   "note": "Time criticality: WSJF; official fr-ca may differ"
  },
  "Time Criticality": {
@@ -52814,7 +52826,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:261"
+  "where": "apps/web/components/team-board.tsx:278"
  },
  "Toward Lean Portfolio Management": {
   "fr": "Vers la gestion de portefeuille Lean",
@@ -55588,7 +55600,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:142"
+  "where": "apps/web/components/kanban-board.tsx:145"
  },
  "Welcome": {
   "fr": "",
@@ -57188,7 +57200,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:99"
+  "where": "apps/web/components/kanban-board.tsx:102"
  },
  "WIP limited": {
   "fr": "WIP limité",

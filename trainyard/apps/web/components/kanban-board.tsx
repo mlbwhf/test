@@ -11,7 +11,7 @@ import { useFrameState } from "@/components/exercise-boards";
 
 const SCALE = [1, 2, 3, 5, 8, 13, 20];
 
-export function KanbanBoard({ board, level, readOnly, onChanged, onError }: { board: Board; level: KanbanLevel; readOnly: boolean; onChanged: () => void; onError: (m: string) => void }) {
+export function KanbanBoard({ board, level, readOnly, onChanged, onError, headerExtra }: { board: Board; level: KanbanLevel; readOnly: boolean; onChanged: () => void; onError: (m: string) => void; headerExtra?: React.ReactNode }) {
   const spec = KANBAN_LEVELS[level];
   const frame = board.frames[0]!;
   const [st, op] = useFrameState(board, frame, onChanged, onError);
@@ -59,13 +59,16 @@ export function KanbanBoard({ board, level, readOnly, onChanged, onError }: { bo
           <h2 className="kb-title">{spec.title}</h2>
           <p>{spec.lede}</p>
         </div>
-        <div className="kb-legend">
-          {Object.values(spec.types).map((t) => (
-            <span key={t.name}>
-              <i style={{ background: t.bg }} />
-              {t.name}
-            </span>
-          ))}
+        <div className="tb-headright">
+          {headerExtra}
+          <div className="kb-legend">
+            {Object.values(spec.types).map((t) => (
+              <span key={t.name}>
+                <i style={{ background: t.bg }} />
+                {t.name}
+              </span>
+            ))}
+          </div>
         </div>
       </header>
 
