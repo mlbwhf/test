@@ -122,7 +122,7 @@ export default function TemplatesPage() {
               Packages
             </h2>
             <p className="faint" style={{ margin: 0, fontSize: "0.88rem" }}>
-              The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. The PI outcomes template is on the <Link href="/roadmap?tab=outcomes">Roadmap, under Outcomes</Link>.
+              The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. PI Outcome Planning for an AI-Native ART (outcomes, the planning board, team boards, management review, intent, Sense and Respond) is its own page: <Link href="/outcome-planning">PI Outcome Planning</Link>. The outcome-driven roadmap is on the <Link href="/roadmap?tab=outcomes">Roadmap, under Outcomes</Link>.
             </p>
           </div>
           <div className="pkg-grid">

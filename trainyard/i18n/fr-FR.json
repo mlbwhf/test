@@ -899,6 +899,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:276"
  },
+ ". The outcome-driven roadmap is on the": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/templates/page.tsx:125"
+ },
  ". The subscription ends and the workspace moves to Practice with everything kept.": {
   "fr": "",
   "status": "new",
@@ -1384,7 +1390,7 @@
  },
  "(Draft the PI Outcome Planning Board / Surface Decisions Needed and Risks)": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:123"
  },
@@ -1396,7 +1402,7 @@
  },
  "(Finalize the PI Outcome Planning Board)": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:129"
  },
@@ -2229,13 +2235,13 @@
  },
  "• 40% of diabetic-flagged households complete a guided diet-swap journey.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:149"
  },
  "• 55% of enrolled households complete ≥1 challenge weekly": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:151"
  },
@@ -2277,13 +2283,13 @@
  },
  "• Cut spec-to-validated-change-cycle time from 5 days to 1.5": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:171"
  },
  "• Enroll 100,000 multi-user households into shared health challenges": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:151"
  },
@@ -2361,19 +2367,19 @@
  },
  "• Grow weekly challenge-linked baskets among enrolled households from 10% to 40%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:170"
  },
  "• Increase blended gross margin on promoted baskets by 5%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:150"
  },
  "• Increase quarterly revenue from specialized-diet product lines by 12%.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:149"
  },
@@ -2385,31 +2391,31 @@
  },
  "• Raise agent-change first-pass acceptance from 40% to 70%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:171"
  },
  "• Raise diabetic-household diet-swap completion from 15% to 30%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:169"
  },
  "• Raise diet-swap recommendation acceptance from 0% to 10%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:169"
  },
  "• Raise in-cart challenge-progress nudges acted on from 5% to 25%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:170"
  },
  "• Reduce cost-to-serve per basket by 8%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:150"
  },
@@ -3653,19 +3659,19 @@
  },
  "1 hour · Draft PI Outcome Planning Board Presentation": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:124"
  },
  "1 hour · Final Plan Review": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:130"
  },
  "1 hour · Team Breakout": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:122 packages/core/src/courses/events.ts:128"
  },
@@ -3720,7 +3726,7 @@
  },
  "10 mins": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:196 packages/core/src/courses/events.ts:200"
  },
@@ -3819,7 +3825,7 @@
  },
  "15 mins": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:198 packages/core/src/courses/events.ts:199"
  },
@@ -3992,7 +3998,7 @@
  },
  "20 mins": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:197 packages/core/src/courses/events.ts:202"
  },
@@ -4132,25 +4138,25 @@
  },
  "30 min · Business Context": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:120"
  },
  "30 min · Communicate Planning Adjustments": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:126"
  },
  "30 min · Outcome Breakout": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:121 packages/core/src/courses/events.ts:123 packages/core/src/courses/events.ts:127"
  },
  "30 mins": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:201"
  },
@@ -6655,7 +6661,7 @@
   "fr": "S’entendre sur le problème",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:360"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:360"
  },
  "Agree on the problem to solve": {
   "fr": "S’accorder sur le problème à résoudre",
@@ -6679,7 +6685,7 @@
   "fr": "Avant la première planification des résultats du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:226"
+  "where": "packages/core/src/courses/events.ts:109"
  },
  "AI": {
   "fr": "IA",
@@ -7016,7 +7022,7 @@
   "fr": "État de préparation au lancement d’un ART natif de l’IA",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:223"
+  "where": "packages/core/src/courses/events.ts:106"
  },
  "AI-Native ART, teams and AI Value Architect: success factors 4 to 6": {
   "fr": "ART natif de l’IA, équipes et AI Value Architect : facteurs de succès 4 à 6",
@@ -8335,7 +8341,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:811 apps/web/app/(app)/outcome-planning/page.tsx:987 packages/core/src/courses/events.ts:148"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:811 apps/web/app/(app)/outcome-planning/page.tsx:987"
  },
  "ART objective": {
   "fr": "",
@@ -10369,7 +10375,7 @@
   "fr": "Équilibrer l’itération IP",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:283 packages/core/src/courses/rte.ts:313"
+  "where": "packages/core/src/courses/events.ts:153 packages/core/src/courses/rte.ts:313"
  },
  "Bandwidth assessment": {
   "fr": "Évaluation de la bande passante",
@@ -10531,7 +10537,7 @@
  },
  "Before the event": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:245"
  },
@@ -11062,7 +11068,7 @@
   "fr": "Proposer des solutions en remue-méninges",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:397 packages/core/src/inspectadapt.ts:15"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:397 packages/core/src/inspectadapt.ts:15"
  },
  "Brand": {
   "fr": "",
@@ -11429,7 +11435,7 @@
   "fr": "Construisez votre propre tableau Kanban de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:259 packages/core/src/courses/rte.ts:232"
+  "where": "packages/core/src/courses/events.ts:129 packages/core/src/courses/rte.ts:232"
  },
  "Builder": {
   "fr": "",
@@ -11905,7 +11911,7 @@
  },
  "Cadence: at least once per iteration, plus immediate events for significant signals. Attendees: RTE (as facilitator), AI-Native Teams, Product Management, System Architects, Business Owners, AI Value Architects.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:190"
  },
@@ -11943,7 +11949,7 @@
   "fr": "Calculer votre capacité initiale",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:270 packages/core/src/courses/leading-safe.ts:446"
+  "where": "packages/core/src/courses/events.ts:140 packages/core/src/courses/leading-safe.ts:446"
  },
  "Calculated": {
   "fr": "",
@@ -11967,7 +11973,7 @@
   "fr": "Calibrer",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:229"
+  "where": "packages/core/src/courses/events.ts:112"
  },
  "CALL": {
   "fr": "",
@@ -13579,7 +13585,7 @@
   "fr": "Clore le PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:277"
+  "where": "packages/core/src/courses/events.ts:147"
  },
  "Closed · answered": {
   "fr": "Clos · répondu",
@@ -14257,7 +14263,7 @@
   "fr": "Confiance peu élevée ? Révision du plan.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:272 packages/core/src/courses/rte.ts:177"
+  "where": "packages/core/src/courses/events.ts:142 packages/core/src/courses/rte.ts:177"
  },
  "Confidence vote": {
   "fr": "",
@@ -16327,7 +16333,7 @@
  },
  "Decisions Confirmed": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:182"
  },
@@ -16339,7 +16345,7 @@
  },
  "Decisions Needed": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:182"
  },
@@ -18083,13 +18089,13 @@
  },
  "Draft PI Outcomes": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:94"
  },
  "Draft PI Outcomes are drafted by ART Leadership and Business Owners, informed by recent Sense and Respond insights, shared with teams about a week before PI Outcome Planning, and meant to be tested and refined.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:98"
  },
@@ -18109,7 +18115,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:271 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:176"
+  "where": "packages/core/src/courses/events.ts:141 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:176"
  },
  "Draft plans, 4 min": {
   "fr": "",
@@ -20349,7 +20355,7 @@
  },
  "Example Sense and Respond Event Agenda (2 Hours)": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:194"
  },
@@ -21771,7 +21777,7 @@
  },
  "Fixed-Date Milestone": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:135"
  },
@@ -22897,7 +22903,7 @@
   "fr": "Revue de l’analyse des écarts",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:472 packages/core/src/courses/events.ts:234"
+  "where": "packages/core/src/courses/ai-native-arts.ts:472 packages/core/src/courses/events.ts:117"
  },
  "Gap and next step": {
   "fr": "Écart et prochaine étape",
@@ -22915,7 +22921,7 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:234"
+  "where": "packages/core/src/courses/events.ts:117"
  },
  "Gaps:": {
   "fr": "",
@@ -23029,7 +23035,7 @@
   "fr": "Préparez le contenu, les équipes et la salle : quel niveau de préparation suffit, la liste de vérification de l’ART triée en « doit être en place », « pas nécessaire » et « dépend », et le carnet de l’ART à travers le Kanban.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:254"
+  "where": "packages/core/src/courses/events.ts:124"
  },
  "Get the content, the teams and the room ready: readiness by the RTE and LACE, the ART backlog through the Kanban, and pre-PI planning across trains.": {
   "fr": "",
@@ -23990,13 +23996,13 @@
  },
  "Hour 1, Sensing: Define a shared understanding of insights, feedback, and data.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:190"
  },
  "Hour 2, Responding: Align on the actions that follow.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:190"
  },
@@ -24034,7 +24040,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:107 packages/core/src/courses/events.ts:151 packages/core/src/outcomes.ts:327"
+  "where": "packages/core/src/outcomes.ts:327"
  },
  "Household health profile": {
   "fr": "",
@@ -24322,7 +24328,7 @@
   "fr": "Quel niveau de préparation est suffisant ?",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:258 packages/core/src/courses/rte.ts:120 packages/core/src/courses/rte.ts:124"
+  "where": "packages/core/src/courses/events.ts:128 packages/core/src/courses/rte.ts:120 packages/core/src/courses/rte.ts:124"
  },
  "How much value, for which segments, how soon?": {
   "fr": "Quelle valeur, pour quels segments, dans quels délais ?",
@@ -26606,7 +26612,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 packages/core/src/courses/events.ts:136 packages/core/src/templates.ts:138"
+  "where": "apps/web/components/landing.tsx:323 packages/core/src/templates.ts:138 packages/core/src/templates.ts:140"
  },
  "Iteration 1.": {
   "fr": "Itération 1.",
@@ -26648,25 +26654,25 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 packages/core/src/courses/events.ts:136 packages/core/src/templates.ts:138"
+  "where": "apps/web/components/landing.tsx:323 packages/core/src/templates.ts:138"
  },
  "Iteration 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:136 packages/core/src/templates.ts:138"
+  "where": "packages/core/src/templates.ts:138"
  },
  "Iteration 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:136 packages/core/src/templates.ts:138"
+  "where": "packages/core/src/templates.ts:138"
  },
  "Iteration 5": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:136 packages/core/src/templates.ts:138"
+  "where": "packages/core/src/templates.ts:138"
  },
  "Iteration breakdown per team: stories, capacity, dependencies, risks": {
   "fr": "Découpage par itération pour chaque équipe : récits, capacité, dépendances, risques",
@@ -27451,37 +27457,37 @@
  },
  "KR1: enroll 100,000 multi-user households into shared health challenges": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:107"
  },
  "KR1: Increase quarterly revenue from specialized diet product lines by 12%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:105"
  },
  "KR1: Reduce cost-to-serve per basket by 8%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:106"
  },
  "KR2: 40% of diabetic-flagged households complete a guided diet-swap journey": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:105"
  },
  "KR2: 55% of enrolled households complete >= 1 challenge weekly": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:107"
  },
  "KR2: Increase blended gross margin on promoted baskets by 5%": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:106"
  },
@@ -28129,7 +28135,7 @@
  },
  "Learning Milestone": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:135"
  },
@@ -29104,7 +29110,7 @@
  },
  "Lunch during Management Review and Problem-Solving": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:125"
  },
@@ -29213,7 +29219,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:171 packages/core/src/outcomes.ts:333"
+  "where": "packages/core/src/outcomes.ts:333"
  },
  "Make AI assistance the capability customers choose the platform for.": {
   "fr": "Faire de l’assistance par IA la capacité pour laquelle les clients choisissent la plateforme.",
@@ -29303,7 +29309,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:170 packages/core/src/outcomes.ts:332"
+  "where": "packages/core/src/outcomes.ts:332"
  },
  "Make the healthy choice the easy choice for every household we serve": {
   "fr": "",
@@ -29351,7 +29357,7 @@
   "fr": "Gérer les risques du PI de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:272 packages/core/src/courses/leading-safe.ts:530"
+  "where": "packages/core/src/courses/events.ts:142 packages/core/src/courses/leading-safe.ts:530"
  },
  "Manage inventory": {
   "fr": "",
@@ -29382,7 +29388,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:178 packages/core/src/templates.ts:176"
+  "where": "packages/core/src/templates.ts:176"
  },
  "Management Review and Problem-Solving": {
   "fr": "",
@@ -30439,7 +30445,7 @@
  },
  "Morning 3.5 hours: draft the plan. Afternoon 3.5 hours: finalize the plan. Use the notes beside each slot for who presents and what is needed.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:115"
  },
@@ -32999,19 +33005,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:105 packages/core/src/templates.ts:273"
+  "where": "packages/core/src/templates.ts:273"
  },
  "Objective 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:106 packages/core/src/templates.ts:274"
+  "where": "packages/core/src/templates.ts:274"
  },
  "Objective 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:107 packages/core/src/templates.ts:275"
+  "where": "packages/core/src/templates.ts:275"
  },
  "objective evaluation": {
   "fr": "une évaluation objective",
@@ -33876,7 +33882,7 @@
  },
  "One-day PI Outcome Planning agenda": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:113"
  },
@@ -34506,7 +34512,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:106 packages/core/src/courses/events.ts:150 packages/core/src/outcomes.ts:326"
+  "where": "packages/core/src/outcomes.ts:326"
  },
  "Optimize operational processes": {
   "fr": "Optimiser les processus opérationnels",
@@ -36406,19 +36412,19 @@
  },
  "PI Outcome 1": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:149"
  },
  "PI Outcome 2": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:150"
  },
  "PI Outcome 3": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:151"
  },
@@ -36426,7 +36432,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/lib/help.ts:194 apps/web/lib/spaces.ts:89"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:125 apps/web/lib/help.ts:194"
  },
  "PI Outcome Planning (AI-Native SAFe)": {
   "fr": "PI Outcome Planning (AI-Native SAFe)",
@@ -36443,7 +36449,7 @@
  },
  "PI Outcome Planning board": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:138"
  },
@@ -36455,7 +36461,7 @@
  },
  "PI Outcome Planning, one day, then Sense and Respond each iteration": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:242"
  },
@@ -36479,7 +36485,7 @@
  },
  "PI Outcomes": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:144"
  },
@@ -36560,13 +36566,13 @@
   "fr": "Préparation du PI Planning",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/canvases.ts:155 packages/core/src/courses/events.ts:258 packages/core/src/templates.ts:85"
+  "where": "packages/core/src/canvases.ts:155 packages/core/src/courses/events.ts:128 packages/core/src/templates.ts:85"
  },
  "PI Planning readiness preparation": {
   "fr": "Préparatifs en vue du PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:258 packages/core/src/courses/rte.ts:129"
+  "where": "packages/core/src/courses/events.ts:128 packages/core/src/courses/rte.ts:129"
  },
  "PI planning readiness: must it be in place to launch? Y · N · D(epends)": {
   "fr": "Préparation au PI Planning : doit-il être en place pour le lancement ? O · N · D(épend)",
@@ -36645,7 +36651,7 @@
   "fr": "PI Planning, jours 1 et 2",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:267"
+  "where": "packages/core/src/courses/events.ts:137"
  },
  "PI planning: day 1 (Wednesday) and day 2 (Thursday)": {
   "fr": "",
@@ -37038,7 +37044,7 @@
  },
  "PIO": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "1",
   "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:240"
  },
@@ -37214,7 +37220,7 @@
   "fr": "Revue des plans et valeur métier",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:271"
+  "where": "packages/core/src/courses/events.ts:141"
  },
  "Plan rework if necessary": {
   "fr": "",
@@ -37657,7 +37663,7 @@
   "fr": "Portefeuille et stratégie d’investissement",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:335 packages/core/src/courses/events.ts:230"
+  "where": "packages/core/src/courses/ai-native-arts.ts:335 packages/core/src/courses/events.ts:113"
  },
  "Portfolio and more": {
   "fr": "",
@@ -38117,7 +38123,7 @@
   "fr": "PRÉP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:253"
+  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:123"
  },
  "Prepare": {
   "fr": "Préparation",
@@ -38268,7 +38274,7 @@
   "fr": "Préparer le PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:252"
+  "where": "packages/core/src/courses/events.ts:122"
  },
  "Prepare for the LPM kickoff event": {
   "fr": "Préparez l’événement de lancement du LPM",
@@ -38304,7 +38310,7 @@
   "fr": "Préparer la démonstration du système du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:283 packages/core/src/courses/rte.ts:330"
+  "where": "packages/core/src/courses/events.ts:153 packages/core/src/courses/rte.ts:330"
  },
  "Present, feedback, adjust": {
   "fr": "Présenter, recueillir les retours, ajuster",
@@ -38600,13 +38606,13 @@
   "fr": "Atelier de résolution de problèmes",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:284"
+  "where": "packages/core/src/courses/events.ts:154"
  },
  "Problem-solving workshop readout": {
   "fr": "Compte rendu de l’atelier de résolution de problèmes",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:407"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:407"
  },
  "Problem-solving workshop: fishbone": {
   "fr": "Atelier de résolution de problèmes : arête de poisson",
@@ -38618,7 +38624,7 @@
   "fr": "Atelier de résolution de problèmes : tableau complet",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:349"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:349"
  },
  "Problem: \"": {
   "fr": "Problème : « ",
@@ -39835,7 +39841,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:169 packages/core/src/outcomes.ts:331"
+  "where": "packages/core/src/outcomes.ts:331"
  },
  "Raise diabetic-household diet-swap completion from 15% to": {
   "fr": "",
@@ -40076,7 +40082,7 @@
   "fr": "Lire le tableau de planification de l’ART pendant le PI Planning",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:271 packages/core/src/courses/rte.ts:140"
+  "where": "packages/core/src/courses/events.ts:141 packages/core/src/courses/rte.ts:140"
  },
  "Reading…": {
   "fr": "Lecture…",
@@ -40107,7 +40113,7 @@
   "fr": "PRÊT",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:224"
+  "where": "apps/web/components/class-icon.tsx:11 packages/core/src/courses/events.ts:107"
  },
  "Ready · WIP 4": {
   "fr": "",
@@ -41293,19 +41299,19 @@
  },
  "Responding · Agree on decisions and actions": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:202"
  },
  "Responding · Explore options": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:201"
  },
  "Responding · Identify response areas": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:200"
  },
@@ -41362,7 +41368,7 @@
   "fr": "Reformuler le nouveau problème",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:381 packages/core/src/inspectadapt.ts:14"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:381 packages/core/src/inspectadapt.ts:14"
  },
  "Restrict vehicle areas": {
   "fr": "Restreindre les zones des véhicules",
@@ -41392,7 +41398,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:103 packages/core/src/outcomes.ts:381"
+  "where": "packages/core/src/outcomes.ts:381"
  },
  "Retail Pharmacy ART leadership": {
   "fr": "",
@@ -41702,7 +41708,7 @@
   "fr": "Risques et confiance",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:272"
+  "where": "packages/core/src/courses/events.ts:142"
  },
  "Risks and impediments posted": {
   "fr": "Risques et obstacles affichés",
@@ -41798,7 +41804,7 @@
   "fr": "Appliquer ROAM aux risques du PI de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:272 packages/core/src/courses/rte.ts:162",
+  "where": "packages/core/src/courses/events.ts:142 packages/core/src/courses/rte.ts:162",
   "note": "\"ROAM\" used as a verb in English; rendered \"appliquer ROAM\" / \"classement ROAM\"."
  },
  "ROAM board": {
@@ -41981,7 +41987,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:284 packages/core/src/courses/rte.ts:370 packages/core/src/templates.ts:114"
+  "where": "packages/core/src/courses/events.ts:154 packages/core/src/courses/rte.ts:370 packages/core/src/templates.ts:114"
  },
  "Root cause it addresses": {
   "fr": "Cause profonde traitée",
@@ -42734,7 +42740,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:105 packages/core/src/courses/events.ts:149 packages/core/src/outcomes.ts:325"
+  "where": "packages/core/src/outcomes.ts:325"
  },
  "scaled agile": {
   "fr": "",
@@ -43439,29 +43445,29 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:176 packages/core/src/courses/events.ts:186"
+  "where": "packages/core/src/courses/ai-native-arts.ts:176"
  },
  "Sensing · Customer feedback and metric review": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:199"
  },
  "Sensing · Product demos and insights": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:197"
  },
  "Sensing · Progress against outcomes": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:196"
  },
  "Sensing · Workflow improvements and challenges": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:198"
  },
@@ -43669,7 +43675,7 @@
   "fr": "Attribuer la valeur métier",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:271 packages/core/src/courses/leading-safe.ts:513"
+  "where": "packages/core/src/courses/events.ts:141 packages/core/src/courses/leading-safe.ts:513"
  },
  "Settlement report v2": {
   "fr": "",
@@ -43998,7 +44004,7 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:230"
+  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:113"
  },
  "Shift 2": {
   "fr": "",
@@ -44010,7 +44016,7 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:231"
+  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:114"
  },
  "Shift 3": {
   "fr": "",
@@ -44022,13 +44028,13 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:232"
+  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:115"
  },
  "Shift 4: Development and Innovation at Scale": {
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:233"
+  "where": "packages/core/src/courses/events.ts:36 packages/core/src/courses/events.ts:116"
  },
  "Shift handover · weekly review": {
   "fr": "",
@@ -45983,7 +45989,7 @@
  },
  "Step 1: Add decisions needed and risks as they surface.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:180"
  },
@@ -46743,19 +46749,19 @@
  },
  "Step 1: Write each objective.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:98"
  },
  "Step 1: Write each PI outcome with its key results in the first column.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:141"
  },
  "Step 1: Write each team outcome with its key results.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:161"
  },
@@ -46785,7 +46791,7 @@
  },
  "Step 2: Add its key results as stickies.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:98"
  },
@@ -46920,7 +46926,7 @@
  },
  "Step 2: During the management review and problem-solving, move each decision to confirmed and capture the actions.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:180"
  },
@@ -46980,7 +46986,7 @@
  },
  "Step 2: In the outcome breakouts, add the team outcomes that contribute to each PI outcome.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:141"
  },
@@ -47071,7 +47077,7 @@
  },
  "Step 2: Place the work and the milestones in the iteration where they land.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:161"
  },
@@ -47318,7 +47324,7 @@
  },
  "Step 3: Look for an iteration that carries too much, and raise decisions needed and risks on the management review board.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:161"
  },
@@ -47336,7 +47342,7 @@
  },
  "Step 3: Place the ART milestones, then each outcome’s fixed-date milestones, learning milestones, synchronization milestones and releases in the iteration where they land.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:141"
  },
@@ -47447,7 +47453,7 @@
  },
  "Step 4: In the final plan review, confirm the ART’s commitments.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:141"
  },
@@ -48418,7 +48424,7 @@
  },
  "Synchronization Milestone": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:135"
  },
@@ -49093,11 +49099,11 @@
   "fr": "Séances d’équipe",
   "status": "draft",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:270 packages/core/src/templates.ts:176 packages/core/src/templates.ts:177"
+  "where": "packages/core/src/courses/events.ts:140 packages/core/src/templates.ts:176 packages/core/src/templates.ts:177"
  },
  "Team breakouts test milestones, balance commitments, and refine outcomes.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:161"
  },
@@ -49242,19 +49248,19 @@
  },
  "Team Outcome 1": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:169"
  },
  "Team Outcome 2": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:170"
  },
  "Team Outcome 3": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:171"
  },
@@ -49268,11 +49274,11 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:808 apps/web/app/(app)/outcome-planning/page.tsx:984 packages/core/src/courses/events.ts:145"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:808 apps/web/app/(app)/outcome-planning/page.tsx:984"
  },
  "Team planning board": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:158"
  },
@@ -49351,7 +49357,7 @@
  },
  "Teams add items to the management review board throughout the PI Outcome Planning event.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:180"
  },
@@ -49880,7 +49886,7 @@
   "fr": "",
   "status": "course",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:225"
+  "where": "packages/core/src/courses/events.ts:108"
  },
  "The AI-Native SAFe Launch Readiness Assessment: calibrate on the scale, evaluate the twenty-four statements of the six success factors as fully, partially or not in place, review the gaps and build the AI-Native ART Launch Plan.": {
   "fr": "L’évaluation de l’état de préparation au lancement AI-Native SAFe : calibrez-vous sur l’échelle, évaluez les vingt-quatre énoncés des six facteurs de succès (entièrement, partiellement ou pas en place), passez en revue les écarts et bâtissez le plan de lancement de l’ART natif de l’IA.",
@@ -49917,7 +49923,7 @@
   "fr": "Le carnet de l’ART",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:259"
+  "where": "packages/core/src/courses/events.ts:129"
  },
  "The ART backlog is ranked by WSJF.": {
   "fr": "",
@@ -50052,9 +50058,15 @@
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:125"
  },
- "The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. The PI outcomes template is on the": {
+ "The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. PI Outcome Planning for an AI-Native ART (outcomes, the planning board, team boards, management review, intent, Sense and Respond) is its own page:": {
   "fr": "",
   "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/templates/page.tsx:125"
+ },
+ "The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. The PI outcomes template is on the": {
+  "fr": "",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:125"
  },
@@ -50341,19 +50353,19 @@
   "fr": "L’itération IP et la démonstration du système du PI",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:283"
+  "where": "packages/core/src/courses/events.ts:153"
  },
  "The IP iteration and then Inspect & Adapt: balancing the IP iteration, preparing the PI System Demo, and the problem-solving workshop from the agreed problem through root cause analysis to the improvement backlog.": {
   "fr": "L’itération IP, puis Inspecter et adapter : équilibrer l’itération IP, préparer la démonstration du système du PI, et l’atelier de résolution de problèmes, du problème convenu à l’analyse des causes racines jusqu’au carnet d’améliorations.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:279"
+  "where": "packages/core/src/courses/events.ts:149"
  },
  "The IP iteration, then Inspect & Adapt": {
   "fr": "L’itération IP, puis Inspecter et adapter",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:280"
+  "where": "packages/core/src/courses/events.ts:150"
  },
  "The Kanban cadence that inspects the service against its fitness criteria: lead time, throughput, flow efficiency, blockers.": {
   "fr": "",
@@ -50485,7 +50497,7 @@
  },
  "The one-day PI Outcome Planning event of an AI-Native ART: the draft PI outcomes, the agenda, the PI Outcome Planning board with ART milestones, team outcomes, learning and synchronization milestones and releases, a team planning board, the management review board, and the Sense and Respond event that follows each iteration.": {
   "fr": "",
-  "status": "course",
+  "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:241"
  },
@@ -50978,7 +50990,7 @@
   "fr": "Les deux jours dans la salle de planification : la capacité, un train par équipe avec ses itérations, le tableau de planification de l’ART avec les dépendances, la Synchro des coachs, la revue des plans préliminaires, la valeur métier, les risques du PI de l’ART à traiter en ROAM et quoi faire quand la confiance n’est pas élevée.",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:266"
+  "where": "packages/core/src/courses/events.ts:136"
  },
  "The two days of PI planning in SAFe's order: business context and visions, team breakouts and draft plans, management review, adjustments, final plans, program risks and the confidence vote.": {
   "fr": "",
@@ -51437,7 +51449,7 @@
   "fr": "Tout au long du PI, en terminant dans l’itération IP",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/events.ts:255"
+  "where": "packages/core/src/courses/events.ts:125"
  },
  "Through the solutions they build": {
   "fr": "",
@@ -52452,7 +52464,7 @@
   "fr": "Essayez l’échelle d’évaluation",
   "status": "draft",
   "phase": "course",
-  "where": "packages/core/src/courses/ai-native-arts.ts:181 packages/core/src/courses/events.ts:229"
+  "where": "packages/core/src/courses/ai-native-arts.ts:181 packages/core/src/courses/events.ts:112"
  },
  "try to get into other workspaces or accounts, probe or overload the service, or get around plan limits or security;": {
   "fr": "",
