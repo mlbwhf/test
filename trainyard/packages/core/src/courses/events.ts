@@ -5,7 +5,6 @@
 import type { ActivitySpec } from "../activities.js";
 import type { Board } from "../boards.js";
 import { classBoard, type ClassSpec, type Exercise } from "../classes.js";
-import { AI_NATIVE_ARTS_COURSE, AI_NATIVE_ASSESS_101112, AI_NATIVE_ASSESS_456, AI_NATIVE_ASSESS_789 } from "./ai-native-arts.js";
 import { LEADING_SAFE_COURSE } from "./leading-safe.js";
 import { RTE_COURSE } from "./rte.js";
 
@@ -14,79 +13,6 @@ const pick = (course: Course, titles: string[]): ActivitySpec[] =>
   titles.map((t) => course.flatMap((l) => l.activities).find((a) => a.title === t) ?? (() => { throw new Error(`No activity "${t}"`); })());
 const rte = (...titles: string[]) => pick(RTE_COURSE, titles);
 const lsa = (...titles: string[]) => pick(LEADING_SAFE_COURSE, titles);
-const aart = (...titles: string[]) => pick(AI_NATIVE_ARTS_COURSE, titles);
-
-const SIZE = { width: 1200, height: 600 };
-
-// The AI-Native ART Launch Plan (Launching AI-Native ARTs, slides 1-20 and 6-5): what to do ahead of
-// the first PI Outcome Planning, ahead of the first Sense and Respond, and after, per shift, with
-// the example plan's own items in each cell until the group writes theirs.
-const LAUNCH_PLAN: ActivitySpec = {
-  title: "Build the AI-Native ART Launch Plan",
-  kind: "Activity",
-  prepare: 20,
-  share: 10,
-  steps:
-    "Step 1: Review the gaps from your launch readiness assessment.\nStep 2: For each gap, add an action to the plan: ahead of the first PI Outcome Planning, ahead of the first Sense and Respond, or after.\nStep 3: Be prepared to share your launch plan.",
-  board: "matrix",
-  config: {
-    intro: "Based on gaps, we will build our AI-Native ART Launch Plan.",
-    corner: "",
-    cols: ["Ahead of First PI Outcome Planning", "Ahead of First Sense and Respond", "After"],
-    rows: [{ title: "Foundational Activities" }, { title: "Shift 1: Focus on Outcome-Driven Flow" }, { title: "Shift 2: Cross-Functional, AI-Augmented Teams" }, { title: "Shift 3: Iterative Learning and Rapid Experimentation Cycles" }, { title: "Shift 4: Development and Innovation at Scale" }],
-    examples: {
-      "0.0": ["Align on ART cadence", "Foundational AI training for teams", "AI-Native SAFe for Teams training", "List approved AI tools"],
-      "1.0": ["Define Portfolio and ART OKRs", "Commit to Curated Data strategy"],
-      "1.1": ["Automate data collection for Key Results", "Create dashboard for outcome progress"],
-      "1.2": ["Begin Curated Data strategy implementation"],
-      "2.0": ["Train additional AI Value Architects", "Draft ART level AI Governance and Ethics policies"],
-      "2.2": ["Identify missing Team Capabilities post-iteration"],
-      "3.0": ["Revitalize Product Vision"],
-      "3.1": ["Begin Customer Demos for feedback", "Create Outcome-Driven Roadmap"],
-      "4.0": ["Communicate Product Intent and Context", "Set up repository for Intent, Specification and Context", "Invest in AI Innovation Pipeline, workflows, and platforms"],
-      "4.1": ["Automate policies in AI Innovation Pipeline"],
-      "4.2": ["Address gaps in existing portfolio AI Governance and Ethics framework"],
-    },
-  },
-  ...SIZE,
-};
-
-const SHARE_PLAN: ActivitySpec = {
-  title: "Share your plan",
-  kind: "Discussion",
-  prepare: 10,
-  steps: "As a class, consider who needs to see this plan and how you will share it with them. The AI-Native Launch Plan is a living document.",
-  board: "lanes",
-  config: { layout: "grid", cols: 2, lanes: [{ title: "Name the people, the format, and what you need from them when they see it" }, { title: "What is your ongoing plan for communication?" }] },
-  ...SIZE,
-};
-
-// The intent document (slides 5-5 and 5-6): the product vision and ART outcomes made specific as
-// strategy intent and execution intent, with the specifications and context that trace to it.
-const INTENT: ActivitySpec = {
-  title: "Intent document",
-  kind: "Activity",
-  prepare: 30,
-  share: 10,
-  steps:
-    "Product vision and ART outcomes define the ART’s ultimate purpose; intent causes that purpose to become specific.\nStep 1: Write the product vision and the ART outcomes the intent traces back to.\nStep 2: Set the strategy intent: where to play and how to win.\nStep 3: Set the execution intent: what to build and what to learn.\nStep 4: Note the specifications and the context that depend on this intent.",
-  board: "lanes",
-  config: {
-    layout: "rows",
-    intro: "Intent provides people with a shared reason behind daily decisions, and provides AI with a stable reference to reason from when priorities compete. Everything traces back up to the vision.",
-    lanes: [
-      { title: "Product Vision", examples: ["Defend and extend our lead in mid-market work management as AI-Native rivals emerge."] },
-      { title: "ART Outcomes", examples: ["Make AI assistance the capability customers choose the platform for."] },
-      { title: "Strategy Intent: Where to play", examples: ["Renewal-at-risk customers being courted by AI-Native rivals."] },
-      { title: "Strategy Intent: How to win", examples: ["AI assistance as the capability that earns their trust."] },
-      { title: "Execution Intent: To build", examples: ["AI Planning Assistant, on the hypothesis that smarter planning drives renewal."] },
-      { title: "Execution Intent: To learn", examples: ["An experiment: does AI-driven planning actually lift renewal?"] },
-      { title: "Specifications", examples: ["The “what and how,” or detail people and AI agents can build from"] },
-      { title: "Context", examples: ["The “where,” or the environment the product must succeed in"] },
-    ],
-  },
-  ...SIZE,
-};
 
 export interface EventSpec {
   /** The package id in the template gallery. */
@@ -101,22 +27,6 @@ export interface EventSpec {
 }
 
 export const EVENT_BOARDS: EventSpec[] = [
-  {
-    id: "ai-native-launch-readiness",
-    name: "AI-Native ART launch readiness",
-    short: "READY",
-    blurb: "The AI-Native SAFe Launch Readiness Assessment: calibrate on the scale, evaluate the four statements of each of the twelve success factors as fully, partially or not in place, review the gaps, build the AI-Native ART Launch Plan and write the intent document.",
-    when: "Ahead of the first PI Outcome Planning",
-    days: 2,
-    parts: [
-      { title: "Calibrate", activities: aart("Try the assessment scale") },
-      { title: "Shift 1: Focus on Outcome-Driven Flow", activities: aart("Outcome-driven product development", "Portfolio and investment strategy", "Curated data") },
-      { title: "Shift 2: Cross-Functional, AI-Augmented Teams", activities: AI_NATIVE_ASSESS_456 },
-      { title: "Shift 3: Iterative Learning and Rapid Experimentation Cycles", activities: AI_NATIVE_ASSESS_789 },
-      { title: "Shift 4: Development and Innovation at Scale", activities: AI_NATIVE_ASSESS_101112 },
-      { title: "Gaps, launch plan and intent", activities: [...aart("Gap analysis review"), LAUNCH_PLAN, SHARE_PLAN, INTENT] },
-    ],
-  },
   {
     id: "prepare-pi-planning",
     name: "Prepare for PI planning",

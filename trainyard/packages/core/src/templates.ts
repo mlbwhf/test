@@ -77,6 +77,7 @@ function template(info: TemplateInfo, build: (b: Board) => void): Board & { info
 }
 
 export const TEMPLATE_CATALOG: TemplateInfo[] = [
+  { id: "launch-readiness", name: "AI-Native ART launch readiness", blurb: "Is this ART ready to launch? Rate the 48 statements of the twelve success factors on a readiness map, turn every gap into an action, and read the results, the launch plan and the trainings that close the most gaps.", event: "Ahead of the first PI Outcome Planning", method: "safe", tags: ["safe", "portfolio"], zones: ["Results and advice", "Readiness map: 4 shifts × 3 success factors", "Launch plan: three phases", "Report and CSV"], cardTypes: ["Statement rating", "Action"], mapsTo: "Nothing (assessment and launch plan)" },
   { id: "pi-planning-room", name: "PI planning room", blurb: "The multi-team planning room from the Leading SAFe design: a train per team with iterations as wagons, capacity gauges, planning poker, ROAM, PI objectives with business value, the yard view across teams and the program view of shared epics. Seed it with a simulation (ALICE, GeekBooks), your own backlog or Jira/Azure DevOps.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Setup: teams, PI calendar, backlog", "Yard · all teams", "One train per team: iterations, freight yard, risks, poker", "Program view: shared epics"], cardTypes: ["Feature", "Story", "Risk", "PI objective"], mapsTo: "Nothing yet (its own document)" },
   { id: "pi-planning", name: "PI Planning board", blurb: "Teams × iterations with features, dependencies and capacity.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Milestones", "Uncommitted", "Risks (ROAM)"], cardTypes: ["Feature", "Enabler", "Milestone"], mapsTo: "Items and dependencies" },
   { id: "team-breakout", name: "Team PI board", blurb: "One team's PI in three tabs over the same stories: planning against each iteration's capacity, the Team Kanban, and PI objectives with planned and actual business value.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["Team planning: iterations, capacity and load", "Team backlog", "Features", "Risks to ROAM", "Team Kanban", "PI objectives (BV plan · actual)"], cardTypes: ["Story", "Feature", "Objective", "Risk"], mapsTo: "Items and objectives" },
@@ -143,6 +144,11 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
   const rowW = iterations.length * (W + GAP) - GAP;
 
   return [
+    // The launch readiness tool (readiness.ts, apps/web readiness-board.tsx): the board carries the marker, one frame holds the ratings and actions.
+    template(info("launch-readiness"), (b) => {
+      b.fields = { readiness: true };
+      b.frames = [{ id: "readiness", title: "AI-Native ART launch readiness", x: 0, y: 0, width: 2400, height: 900 }];
+    }),
     // The planning room keeps its own document (planning-room:<boardId>); the board carries only the marker.
     template(info("pi-planning-room"), (b) => {
       b.fields = { room: "planning" };

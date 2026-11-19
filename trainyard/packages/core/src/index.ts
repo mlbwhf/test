@@ -16,6 +16,7 @@ export * from "./artobjectives.js";
 export * from "./coachsync.js";
 export * from "./classes.js";
 export * from "./kanban.js";
+export * from "./readiness.js";
 export * from "./courses/events.js";
 export * from "./activities.js";
 export * from "./ainative.js";

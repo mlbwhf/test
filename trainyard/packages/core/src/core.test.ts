@@ -413,3 +413,28 @@ describe("kanban levels", () => {
     expect(upgradeKanbanBoard(old)).toBe(false);
   });
 });
+
+describe("launch readiness", () => {
+  it("scores the 48 statements, counts covered gaps and advises the trainings that close the most gaps", async () => {
+    const { READINESS_FACTORS, readinessTally, readinessFactorScore, readinessVerdict, readinessAdvice, readinessCsv } = await import("./index.js");
+    expect(READINESS_FACTORS).toHaveLength(12);
+    expect(READINESS_FACTORS.map((f) => f.shift)).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]);
+    expect(READINESS_FACTORS.flatMap((f) => f.statements)).toHaveLength(48);
+    expect(readinessTally({})).toMatchObject({ rated: 0, total: 48, ready: 0, gaps: 0 });
+    const st: Record<string, unknown> = {};
+    for (const f of READINESS_FACTORS) f.statements.forEach((_, i) => (st[`r:${f.code}:${i}`] = "F"));
+    expect(readinessTally(st).ready).toBe(100);
+    expect(readinessVerdict(100)).toBe("ready");
+    expect(readinessAdvice(st)).toEqual([]);
+    // Governance and ethics not in place: two not, two partially; one gap has an action.
+    Object.assign(st, { "r:SF12:0": "N", "r:SF12:1": "N", "r:SF12:2": "P", "r:SF12:3": "P", "a:SF12:0": { text: "Set a token budget per team", phase: 0 } });
+    expect(readinessTally(st)).toMatchObject({ F: 44, P: 2, N: 2, gaps: 4, covered: 1, ready: 94 });
+    expect(readinessFactorScore(st, READINESS_FACTORS[11]!)).toBe(25);
+    expect(readinessAdvice(st).map((c) => c.name)).toEqual(["Achieving Responsible AI with SAFe", "Leading the AI-Native Organization"]);
+    const csv = readinessCsv(st).split("\n");
+    expect(csv).toHaveLength(50);
+    expect(csv[45]).toContain('"Not in place","addressed","Set a token budget per team","Ahead of first PI Outcome Planning"');
+    expect(readinessVerdict(60)).toBe("plan");
+    expect(readinessVerdict(40)).toBe("not-yet");
+  });
+});
