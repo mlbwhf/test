@@ -1,0 +1,17 @@
+[Unit]
+Description=Ads Agent - weekly Monday analysis email (recommendations only)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=adsagent
+Group=adsagent
+WorkingDirectory=/opt/ads-agent
+ExecStart=/opt/ads-agent/venv/bin/python /opt/ads-agent/src/weekly_run.py
+TimeoutStartSec=15min
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/ads-agent/logs

@@ -27,8 +27,14 @@ var ALERT_EMAIL = 'mark@agile-agilist.com';  // <-- set to the inbox you actuall
 function main() {
   var ss = SpreadsheetApp.openById(SHEET_ID);
   var sheet = ss.getSheetByName(TAB_NAME) || ss.insertSheet(TAB_NAME);
+  var HEADER = ['date', 'campaign', 'cost', 'clicks', 'impressions', 'ctr', 'avgCpc', 'currency', 'loggedAt',
+                'status', 'biddingStrategy'];
   if (sheet.getLastRow() === 0) {
-    sheet.appendRow(['date', 'campaign', 'cost', 'clicks', 'impressions', 'ctr', 'avgCpc', 'currency', 'loggedAt']);
+    sheet.appendRow(HEADER);
+  } else if (sheet.getLastColumn() < HEADER.length) {
+    // Upgrade an older 9-column sheet in place: the agent's change-detection
+    // tripwires (paused->enabled, bid strategy changed) need the last two columns.
+    sheet.getRange(1, 1, 1, HEADER.length).setValues([HEADER]);
   }
 
   var tz = AdsApp.currentAccount().getTimeZone();
@@ -50,11 +56,12 @@ function main() {
     accCost += cost; accClicks += clicks; accImpr += impr;
     rows.push([yday, c.getName(), round2(cost), clicks, impr,
                impr ? round2(clicks / impr * 100) : 0,
-               clicks ? round2(cost / clicks) : 0, currency, nowStamp]);
+               clicks ? round2(cost / clicks) : 0, currency, nowStamp,
+               campaignStatus(c), biddingStrategy(c)]);
   }
   rows.push([yday, '__ACCOUNT_TOTAL__', round2(accCost), accClicks, accImpr,
              accImpr ? round2(accClicks / accImpr * 100) : 0,
-             accClicks ? round2(accCost / accClicks) : 0, currency, nowStamp]);
+             accClicks ? round2(accCost / accClicks) : 0, currency, nowStamp, '', '']);
   if (rows.length) {
     sheet.getRange(sheet.getLastRow() + 1, 1, rows.length, rows[0].length).setValues(rows);
   }
@@ -72,3 +79,14 @@ function main() {
 }
 
 function round2(n) { return Math.round(n * 100) / 100; }
+
+function campaignStatus(c) {
+  if (c.isEnabled()) return 'ENABLED';
+  if (c.isPaused()) return 'PAUSED';
+  return 'REMOVED';
+}
+
+function biddingStrategy(c) {
+  try { return c.getBiddingStrategyType(); }  // e.g. MAXIMIZE_CONVERSIONS, TARGET_SPEND, MANUAL_CPC
+  catch (e) { return ''; }
+}

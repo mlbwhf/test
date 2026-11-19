@@ -1,0 +1,4 @@
+requests>=2.31
+PyYAML>=6.0
+# Only if LLM_PROVIDER=anthropic (Groq, the default, needs nothing extra):
+# anthropic

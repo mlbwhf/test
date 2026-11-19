@@ -1,0 +1,10 @@
+[Unit]
+Description=Ads Agent daily run, 06:15 Toronto time (after the Google Ads Script logs yesterday at 05:30)
+
+[Timer]
+OnCalendar=*-*-* 06:15:00 America/Toronto
+Persistent=true
+RandomizedDelaySec=120
+
+[Install]
+WantedBy=timers.target

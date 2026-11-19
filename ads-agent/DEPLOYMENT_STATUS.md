@@ -1,106 +1,80 @@
-# Ads Agent — Deployment Status
+# Ads Agent: deployment status
 
-**Deployed to:** branch `claude/ads-agent-deploy-eisu0m` in `mlbwhf/test`, under `ads-agent/`
-**Date:** 2026-07-12 · **Mode:** Phase 1 (monitor + alert + recommend — ZERO writes to ad platforms)
+**Updated:** 2026-11-19 · **Mode:** Phase 1 (monitor + alert + recommend; **zero writes to ad platforms**)
+**Code:** branch `claude/ads-agent-deploy-eisu0m`, folder `ads-agent/` · **Host:** your VPS (82.180.155.101)
 
-This session ran inside a sandbox with two hard constraints that shaped what could be
-*executed* vs. what was *built ready-to-run*:
+## What runs where
+| Piece | Where | Status |
+|---|---|---|
+| Daily pull + tripwires (06:15 ET) | VPS, systemd timer | **Built + tested offline.** Install with `deploy/install.sh` |
+| Weekly analysis email (Mon 08:00 ET) | VPS, systemd timer | **Built + tested offline** (Groq by default) |
+| Ground truth: **website (Stripe)** payments | `src/stripe_pull.py` | Built; needs a read-only Stripe key |
+| Ground truth: Eventbrite orders | `src/eventbrite_pull.py` | Built; bugs fixed (see below) |
+| Google Ads spend → Sheet | `scripts/google_ads_daily_spend.gs` | **Re-paste the updated script** (now also logs status + bid strategy) |
+| Agent store | Airtable "Ads Agent" (`appCXSWnIISm0c6iF`) | Live; 75 of 220 baseline rows loaded |
+| Microsoft Ads data | n/a | Not wired: needs the one-time OAuth (`scripts/get_ms_refresh_token.py`) |
+| n8n workflows (`n8n/`) | n/a | **Superseded by the VPS timers.** Kept for reference; don't run both |
 
-1. **Network policy blocks outbound HTTPS to third-party APIs.** The agent proxy returned
-   `403 (policy denial)` for `eventbriteapi.com`; the same applies to Groq / Microsoft /
-   Google. So no live API call could be made from here.
-2. **Non-interactive session.** OAuth flows that need a browser sign-in can't be completed here.
+## Install on the VPS (about 15 minutes)
+I can't SSH in from my sandbox, and keys don't belong in chat. Run this yourself, or enable
+Remote Control on the VPS and I'll do it from there:
+```bash
+git clone -b claude/ads-agent-deploy-eisu0m https://github.com/mlbwhf/test.git ads-agent-src
+cd ads-agent-src/ads-agent
+sudo bash deploy/install.sh                 # installs to /opt/ads-agent, runs the offline self-test, timers OFF
+sudo nano /opt/ads-agent/.env               # fill in keys (see .env.example: read-only keys everywhere)
+sudo runuser -u adsagent -- /opt/ads-agent/venv/bin/python /opt/ads-agent/src/daily_run.py --dry-run
+sudo bash deploy/install.sh --enable        # switch the daily + weekly timers on
+```
+The agent runs as its own unprivileged `adsagent` user. systemd only lets it write its own
+`logs/` folder, so it can't touch the web server or the other sites on this machine.
 
-Everything below is committed to git (secrets excluded — `.env` is git-ignored).
+Keys to put in `/opt/ads-agent/.env`:
+- **Stripe:** a *restricted*, read-only Charges key
+- **Airtable:** a PAT scoped to the Ads Agent base only
+- **Eventbrite:** your token
+- **Google Sheet:** the published-CSV link to the `GoogleAdsSpend` tab
+- **Email:** SMTP details (a Gmail app password works)
+- **Groq:** your key
 
----
+**Rotate the Eventbrite, Groq and Microsoft keys that were shared in chat in July before you put
+them on the server.**
 
-## Step-by-step status
+## What the daily run does
+1. Pulls paid registrations from the **website (Stripe)** and **Eventbrite** (last 3 days) and
+   stores new ones in Airtable. It's de-duplicated by order ID, so re-runs are safe.
+2. Reads yesterday's Google Ads spend from the Sheet.
+3. Tripwires: account > 130% of the seasonal target · over plan 2 days running · brand CPC >
+   CA$2 · **a paused campaign re-enabled** · **a bid strategy changed** · smart bidding without
+   ≥15 verified registrations · no spend data at all.
+4. Black Friday reminders on **30 Nov and 1 Dec** to remove the promo assets.
+5. **Emails you only when something needs attention.** Logs go to `/opt/ads-agent/logs/`.
 
-### 1. Test `src/eventbrite_pull.py` — ⚠️ verified offline; live run is yours to make
-- The live call **cannot run in this sandbox** (proxy denies `eventbriteapi.com`).
-- The script was **hardened** and its parsing/grouping **proven** with an offline self-test:
-  ```
-  cd ads-agent && python3 src/eventbrite_pull.py --selftest      # PASS
-  ```
-  Fixes made: Eventbrite v3 paginates via `continuation` (the old `?page=` never worked
-  past page 1); env is read lazily; added `--days`, `--expand-event`, currency + course_family
-  in output; refunded/non-`placed` orders are dropped.
-- **To see your real recent orders**, run it where outbound to Eventbrite is allowed
-  (your laptop or the n8n Cloud box) with `EVENTBRITE_TOKEN` + `EVENTBRITE_ORG_ID` set:
-  ```
-  python3 src/eventbrite_pull.py --days 30 --expand-event
-  ```
+## Fixed in this round
+- **Tripwires never fired:** they checked "today", but spend is logged for *yesterday*. Now
+  checked on the completed day, with the change-detection tripwires from the spec added.
+- **Eventbrite course = buyer's name:** an order's `name` field is the *buyer*, not the course.
+  So every order fell into OTHER, and personal data was being read. Course now comes only from
+  the event; seats are counted from attendees; no personal data is stored. A test guards this.
+- **Weekly report fallback:** an outdated model ID, and it read the first content block (current
+  models return a thinking block first). Fixed; Groq remains the default.
+- **Your 19 Nov rules are now enforced in code** (`src/asset_generator.py`): approved stable
+  landing pages only; never `/event/`, `/wp-training/` or translations; no "pass guarantee" or
+  "money-back" wording; no CAD pricing for US; offer copy only inside owner-confirmed promo dates.
+  The validator self-test (14 cases) passes.
 
-### 2. Import 2-year sales CSV → Airtable baseline — ✅ base built, import in progress
-- Created a new dedicated Airtable base **"Ads Agent"** (`appCXSWnIISm0c6iF`) with two tables:
-  - **Registration Baseline** (`tblGznEo7jS2Dz0rs`) — ground-truth registrations
-  - **Ad Daily Snapshots** (`tblfivllr8U7t3hFX`) — per-campaign/platform/day (Layer 1)
-- Parsed the CSV (`Certified_SAFe_...Sales_...csv`): a per-class Eventbrite sales export,
-  2022-01-07 → 2026-08-10. Registrations = **Paid tickets sold**, revenue = **Net sales**.
-  Kept the 220 classes with ≥1 paid registration (zero-sale scheduled classes excluded).
-  Reconciles to the CSV TOTALS: **433 registrations, $974,402.94 net**.
-- **Course-family note:** per your correction, **ASPC is its own family** (23 classes,
-  41 registrations, first sale 2025-02-12 — the newer course), kept separate from **SPC**
-  (149 registrations). This split is locked into `eventbrite_pull.course_family` + its self-test.
-- Import status: **75 of 220 rows imported via MCP** before the Airtable connector became
-  unstable (it began dropping ~half of all writes mid-flight — a connector issue, not the data).
-  **Finish in one reliable command** (needs outbound network, which this sandbox blocks — run it
-  on your machine): it clears the partial 75 and loads all 220 cleanly, no duplicates:
-  ```
-  cd ads-agent && export AIRTABLE_TOKEN=pat...        # PAT with data.records:read+write on the base
-  python scripts/airtable_import_baseline.py "/path/to/Certified_SAFe...Sales...csv" --replace
-  ```
-  The script is pre-wired to base `appCXSWnIISm0c6iF` / table "Registration Baseline" and to this
-  CSV's columns. Registration totals of the full 220 (what you'll see after): **433 registrations,
-  $974,402.94 net.** By family (registrations): RTE 164, SPC 149, ASPC 41, LEADING_SAFE 29,
-  OTHER 23, SCRUM_MASTER 10, AI_NATIVE 9, POPM 8.
+## Tests
+`python tests/test_offline.py` runs the whole daily + weekly flow on generated data, with no
+network: **ALL PASS**. The installer runs it on the VPS before the timers can be enabled.
 
-### 3. Google Ads Script → Google Sheet — ✅ built (paste-to-install)
-- `scripts/google_ads_daily_spend.gs`, with your Sheet ID
-  `1kPbLU_wHGosHz4Oh02_e-LKHkDJ03NlCNJMAjfv_gu8` baked in.
-- Logs per-campaign + account-total daily spend to a `GoogleAdsSpend` tab, and emails an
-  alert if account spend crosses **CA$50/day** (the week-1 insurance from the spec).
-- Read-only — it never pauses or edits anything.
-- **You install it** (Ads Scripts run inside the Google Ads UI; can't be pushed via API):
-  Ads > Tools & Settings > Bulk Actions > Scripts > paste > authorize > schedule daily 05:30 ET.
-  Set `ALERT_EMAIL` at the top first.
-
-### 4. Microsoft OAuth refresh token — ⛔ must run on your machine
-- Interactive browser sign-in + network to `login.microsoftonline.com` — neither is available here.
-- `scripts/get_ms_refresh_token.py` walks the auth-code flow and prints
-  `MS_ADS_REFRESH_TOKEN=...` to paste into `.env`. You have Client ID + Secret already.
-- Azure prerequisite: register redirect URI `https://login.microsoftonline.com/common/oauth2/nativeclient`
-  and consent scope `https://ads.microsoft.com/msads.manage`. Details in the script header.
-
-### 5. Schedule daily + weekly in n8n — ✅ importable JSON built
-- The n8n MCP server was **not connected** this session, so workflows couldn't be pushed
-  directly to `agile-agilist.app.n8n.cloud`. Import these instead (n8n > Workflows > Import from File):
-  - `n8n/daily_tripwire_check.json` — Schedule 06:00 ET → Eventbrite ground-truth pull →
-    tripwire checks (ported from `rules_engine.py`) → Gmail alert only when something fires.
-  - `n8n/weekly_monday_analysis.json` — Schedule Mon 08:00 ET → gather 14d+YoY → Groq analysis
-    (mirrors `weekly_analysis.py`) → Gmail report.
-- On import: set workflow timezone to **America/Toronto**, attach Gmail OAuth2 + HTTP-Header-Auth
-  credentials, and replace the two clearly-marked ad-platform spend **STUB** nodes once the Google
-  Ads Sheet feed and the Microsoft API (needs step 4's refresh token) are wired.
-
-### 6. Phase 1 monitoring mode — ✅ enforced by construction
-- Nothing in this codebase writes to Google or Microsoft Ads. `rules_engine.py` only returns
-  alert strings; `asset_generator.py` only validates drafts; both n8n workflows only read + email.
-- The immutable core in `config/rules.yaml` (ground truth = registrations; no broad match /
-  Display / PMax / unverified smart bidding; human approval for campaign/bid/budget changes) is
-  the constitution — the agent may never propose weakening it.
-
----
-
-## What I need from you to finish the blocked items
-1. **The 2-year sales CSV** (+ which Airtable base) → I create the schema and load the baseline.
-2. Run `scripts/get_ms_refresh_token.py` once → paste `MS_ADS_REFRESH_TOKEN` into `.env`.
-3. Paste the `.gs` into Google Ads and import the two n8n workflows.
-4. Confirm the alert email address (placeholder is `mark@agile-agilist.com`).
-
-## 🔒 Security — rotate the shared tokens
-`SETUP.md` flags that the **Eventbrite token** and **Microsoft developer token** were shared in a
-chat transcript. The Groq key and MS client secret arrived the same way. **Rotate all of them**
-once the agent is confirmed working, and keep the fresh values only in `.env` (git-ignored) or the
-n8n credential store — never in git.
+## Waiting on you
+| # | Item | File |
+|---|---|---|
+| 1 | Approve keywords (29, in stages; AI-Native first) | `proposals/2026-11_keyword-proposal.md` |
+| 2 | Apply the Black Friday kit (24 validated strings, 19-30 Nov) + decide the promo budget | `proposals/2026-11_black-friday-kit.md` |
+| 3 | Website conversion tracking: send section 2 to your web team; add the Google/MS goal as **secondary** now, **primary from 1 Dec** | `proposals/2026-11_website-conversion-tracking.md` |
+| 4 | Upload the 2 career-progression photos + logo (Google only) | `proposals/2026-11_image-assets.md` |
+| 5 | Confirm your partner tier: **Gold or Platinum?** (site and rules disagree) | `config/rules.yaml` whitelist |
+| 6 | Install on the VPS (above) | `deploy/install.sh` |
+| 7 | Finish the Airtable baseline: re-upload the sales CSV, or run the importer with `--replace` | `scripts/airtable_import_baseline.py` |
+| 8 | Fix the account settings the Google export showed: **Search Partners on**, **"Display Select"** on Certifications - English, **smart bidding without verified registrations** | Google Ads UI |

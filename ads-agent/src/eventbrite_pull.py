@@ -7,11 +7,12 @@ over any platform "conversion" number.
 Usage:
   python src/eventbrite_pull.py                # last 7 days (daily snapshot)
   python src/eventbrite_pull.py --days 30      # wider window
-  python src/eventbrite_pull.py --expand-event # also fetch event names -> course family
+  python src/eventbrite_pull.py --no-expand-event  # skip the per-event name lookup (course = OTHER)
   python src/eventbrite_pull.py --selftest     # offline: exercise parsing on a sample payload (no network)
 
 Env: EVENTBRITE_TOKEN, EVENTBRITE_ORG_ID  (see .env / .env.example)
 """
+from __future__ import annotations
 import os, sys, json, datetime
 
 BASE = "https://www.eventbriteapi.com/v3"
@@ -34,10 +35,15 @@ def _parse_order(o: dict, event_names: dict | None = None) -> dict | None:
     if o.get("status") != "placed":
         return None
     event_id = o.get("event_id")
-    name = (event_names or {}).get(event_id, o.get("name", ""))
+    # NOTE: an order's own "name" is the BUYER's name (personal data), never the
+    # course - so the course name comes only from the event lookup.
+    name = (event_names or {}).get(event_id, "")
     return {
+        "order_id": o.get("id"),
         "date": (o.get("created") or "")[:10],
         "event_id": event_id,
+        "course_name": name,
+        "seats": len(o.get("attendees") or []) or 1,
         "gross": o.get("costs", {}).get("gross", {}).get("major_value"),
         "currency": o.get("costs", {}).get("gross", {}).get("currency"),
         "course_family": course_family(name),
@@ -53,7 +59,7 @@ def _event_name(session, event_id: str) -> str:
         return ""
 
 
-def pull_orders(days_back: int = 7, expand_event: bool = False) -> list:
+def pull_orders(days_back: int = 7, expand_event: bool = True) -> list:
     """Fetch PLACED orders changed in the window, grouped by course family.
 
     Eventbrite v3 paginates with a `continuation` token (NOT ?page=), so we
@@ -70,7 +76,8 @@ def pull_orders(days_back: int = 7, expand_event: bool = False) -> list:
 
     out, event_names, continuation = [], {}, None
     while True:
-        params = {"changed_since": since}
+        # attendees expanded only to COUNT seats per order; no attendee data is kept
+        params = {"changed_since": since, "expand": "attendees"}
         if continuation:
             params["continuation"] = continuation
         r = session.get(f"{BASE}/organizations/{org_id}/orders/", params=params, timeout=30)
@@ -93,16 +100,18 @@ def pull_orders(days_back: int = 7, expand_event: bool = False) -> list:
 
 
 # --- offline self-test: proves parsing/grouping without hitting the network ---
+# Realistic shape: an order's "name" is the BUYER (made-up names here), the
+# course name comes from the event lookup.
 _SAMPLE = {
     "orders": [
-        {"status": "placed", "created": "2026-07-09T14:12:00Z", "event_id": "111",
-         "name": "SAFe RTE Certification - Toronto",
-         "costs": {"gross": {"major_value": "2195.00", "currency": "CAD"}}},
-        {"status": "placed", "created": "2026-07-10T09:00:00Z", "event_id": "222",
-         "name": "AI-Native Foundations",
+        {"id": "o1", "status": "placed", "created": "2026-07-09T14:12:00Z", "event_id": "111",
+         "name": "Jordan Example", "attendees": [{"id": "a1"}, {"id": "a2"}],
+         "costs": {"gross": {"major_value": "4390.00", "currency": "CAD"}}},
+        {"id": "o2", "status": "placed", "created": "2026-07-10T09:00:00Z", "event_id": "222",
+         "name": "Sam Placeholder",
          "costs": {"gross": {"major_value": "1699.00", "currency": "CAD"}}},
-        {"status": "refunded", "created": "2026-07-10T10:00:00Z", "event_id": "222",
-         "name": "AI-Native Foundations",
+        {"id": "o3", "status": "refunded", "created": "2026-07-10T10:00:00Z", "event_id": "222",
+         "name": "Alex Sample",
          "costs": {"gross": {"major_value": "1699.00", "currency": "CAD"}}},
     ],
     "pagination": {"has_more_items": False},
@@ -115,7 +124,13 @@ def _selftest() -> int:
     assert len(rows) == 2, f"expected 2 placed orders, got {len(rows)} (refunded must be dropped)"
     assert rows[0]["course_family"] == "RTE", rows[0]
     assert rows[1]["course_family"] == "AI_NATIVE", rows[1]
-    assert rows[0]["gross"] == "2195.00" and rows[0]["currency"] == "CAD"
+    assert rows[0]["seats"] == 2 and rows[1]["seats"] == 1, "seats = attendee count, default 1"
+    assert rows[0]["order_id"] == "o1" and rows[0]["gross"] == "4390.00"
+    assert not any("Example" in json.dumps(r) or "Placeholder" in json.dumps(r) for r in rows), \
+        "buyer names must never reach the output"
+    unnamed = _parse_order(_SAMPLE["orders"][0], {})
+    assert unnamed["course_family"] == "OTHER" and unnamed["course_name"] == "", \
+        "without an event lookup the course is unknown - never derived from the buyer's name"
     # SPC vs ASPC are DISTINCT families (ASPC is its own newer course, not merged into SPC).
     assert course_family("Advanced SAFe Practice Consultant") == "ASPC"
     assert course_family("Certified SAFe 6 Practice Consultants (SPC)") == "SPC"
@@ -131,5 +146,5 @@ if __name__ == "__main__":
     days = 7
     if "--days" in args:
         days = int(args[args.index("--days") + 1])
-    orders = pull_orders(days_back=days, expand_event="--expand-event" in args)
+    orders = pull_orders(days_back=days, expand_event="--no-expand-event" not in args)
     print(json.dumps({"pulled": len(orders), "days_back": days, "orders": orders}, indent=2))

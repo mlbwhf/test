@@ -1,18 +1,21 @@
-# Agile Agilist Ads Agent — Starter Build
-Built July 2026. Deploy via Claude Code session with Ads_Agent_Build_Spec.md.
+# Agile Agilist Ads Agent
 
-## Structure
-- config/rules.yaml — the constitution (immutable core + adaptive calendar + tripwires)
-- src/eventbrite_pull.py — ground-truth registrations (needs EVENTBRITE_TOKEN, EVENTBRITE_ORG_ID)
-- src/rules_engine.py — daily tripwire checks (tested, working)
-- src/weekly_analysis.py — Monday Claude report (needs ANTHROPIC_API_KEY)
-- src/asset_generator.py — draft asset validation (tested: correctly blocks unverified claims)
+Monitors Google (and later Microsoft) Ads against **paid registrations**: website (Stripe)
+payments + Eventbrite orders. It enforces the strategy guardrails and emails you alerts and a
+weekly analysis. **Phase 1: it never changes anything in the ad accounts.**
 
-## Deploy order
-1. Set env vars; test eventbrite_pull.py against live API — backfill 2yr baseline from the sales CSV
-2. Add Google Ads API + Bing Ads API pull scripts (needs OAuth setup — Claude Code session)
-3. Schedule daily: pulls -> Airtable -> rules_engine alerts -> Gmail (via n8n at agile-agilist.app.n8n.cloud)
-4. Schedule weekly Monday: weekly_analysis.py -> email report
-5. Week 1 insurance: native Google Ads Script budget alert at $50/day (independent of this repo)
+Start with **[DEPLOYMENT_STATUS.md](DEPLOYMENT_STATUS.md)** (current state, VPS install steps,
+what's waiting on you).
 
-## Phase 1 (60 days): monitor + alert + recommend ONLY. No writes to ad platforms.
+## Layout
+- `config/rules.yaml`: the constitution (immutable core, seasonal calendar, tripwires, owner
+  directives, confirmed promotions)
+- `src/daily_run.py` / `src/weekly_run.py`: the two scheduled entry points
+- `src/stripe_pull.py`, `src/eventbrite_pull.py`: ground-truth registrations
+- `src/spend_sheet.py`: Google Ads spend from the Sheet the Ads Script writes
+- `src/rules_engine.py`: tripwires · `src/asset_generator.py`: copy + landing-page validator
+- `src/airtable_client.py`, `src/notify.py`, `src/config.py`: store, email, config
+- `scripts/`: Google Ads Script, Microsoft OAuth helper, baseline importer, proposal builders
+- `deploy/`: VPS installer + systemd timers · `tests/test_offline.py`: no-network end-to-end test
+- `proposals/`: drafts awaiting your approval (keywords, Black Friday kit, tracking, images)
+- `n8n/`: earlier n8n workflows, superseded by the VPS timers (reference only)

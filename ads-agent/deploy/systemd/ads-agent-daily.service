@@ -1,0 +1,18 @@
+[Unit]
+Description=Ads Agent - daily ground-truth pull + tripwires (Phase 1: read-only on ad platforms)
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+User=adsagent
+Group=adsagent
+WorkingDirectory=/opt/ads-agent
+ExecStart=/opt/ads-agent/venv/bin/python /opt/ads-agent/src/daily_run.py
+TimeoutStartSec=15min
+# Isolation: this machine also hosts websites; the agent can write only its logs.
+NoNewPrivileges=true
+ProtectSystem=strict
+ProtectHome=true
+PrivateTmp=true
+ReadWritePaths=/opt/ads-agent/logs
