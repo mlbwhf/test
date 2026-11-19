@@ -53,6 +53,11 @@ function aa_sf_at_map() {
 				'fs' => array( 'team' => 'launching-ai-native-arts', 'lead' => 'lpm',                             'service' => false ),
 				'gm' => array( 'team' => 'rte',                      'lead' => 'ai-native-ready-certification-2', 'service' => true ),
 			),
+			/* The book workshop (Crossing one, layer 02) that works on each principle. */
+			'workshops' => array(
+				'ff' => 'P1 Charter the Playground', 'oc' => 'P3 The Candor Contract', 'mm' => 'P7 The Rebrand Test',
+				'fs' => 'P5 The Cultural Wall', 'gm' => 'P2 Attention Audit', 'native' => 'P6 The Innovation Matrix',
+			),
 			/* Innovation Native: the band says "graduate to the AI-age frontier". */
 			'native' => array( 'team' => 'launching-ai-native-arts', 'lead' => 'ai-native-ready-certification-2' ),
 			'names'  => array(
@@ -127,6 +132,9 @@ function aa_sf_at_strings( $lang ) {
 			'mr_d'     => 'The AI-age extension of this framework: 18 questions, free.',
 			'team'     => 'Training a team? Request a team quote',
 			'until'    => 'until',
+			'wk_k'     => 'Layer 02 · Innovation Framework certification',
+			'wk'       => 'The workshops from the book that work on these principles, taught in the Innovation Creator and Innovation Facilitator certifications (launching soon):',
+			'wk_l'     => 'See the certifications on twochasms.com',
 		),
 		'fr' => array(
 			'h'        => 'Formations pour vos principes les plus faibles',
@@ -145,6 +153,9 @@ function aa_sf_at_strings( $lang ) {
 			'mr_d'     => 'Le prolongement de ce cadre à l’ère de l’IA : 18 questions, gratuit.',
 			'team'     => 'Former une équipe ? Demander un devis',
 			'until'    => 'jusqu’au',
+			'wk_k'     => 'Couche 02 · Certification Innovation Framework',
+			'wk'       => 'Les ateliers du livre qui travaillent ces principes, enseignés dans les certifications Innovation Creator et Innovation Facilitator (lancement prochain) :',
+			'wk_l'     => 'Voir les certifications sur twochasms.com',
 		),
 		'es' => array(
 			'h'        => 'Formación para sus principios más bajos',
@@ -163,6 +174,9 @@ function aa_sf_at_strings( $lang ) {
 			'mr_d'     => 'La extensión de este marco a la era de la IA: 18 preguntas, gratis.',
 			'team'     => '¿Forma a un equipo? Pida una cotización',
 			'until'    => 'hasta el',
+			'wk_k'     => 'Capa 02 · Certificación Innovation Framework',
+			'wk'       => 'Los talleres del libro que trabajan estos principios, enseñados en las certificaciones Innovation Creator e Innovation Facilitator (próximo lanzamiento):',
+			'wk_l'     => 'Ver las certificaciones en twochasms.com',
 		),
 	);
 	return isset( $s[ $lang ] ) ? $s[ $lang ] : $s['en'];
@@ -175,7 +189,9 @@ function aa_sf_at_links( $lang ) {
 		'es' => array( 'mr' => '/es/evaluacion-preparacion-mutacion/', 'service' => '/services/innovation-culture/' ),
 	);
 	$l = isset( $l[ $lang ] ) ? $l[ $lang ] : $l['en'];
-	return array_map( 'home_url', $l );
+	$l = array_map( 'home_url', $l );
+	$l['tc'] = apply_filters( 'aa_sf_at_twochasms_url', 'https://twochasms.com/?utm_source=agile-agilist&utm_medium=assessment&utm_campaign=innovation-certification' );
+	return $l;
 }
 
 /** "Nov 25–26" in the page's language. */
@@ -260,6 +276,7 @@ function aa_sf_at_payload( $key, $lang ) {
 	return array(
 		'dims'    => $m['dims'],
 		'native'  => isset( $m['native'] ) ? $m['native'] : null,
+		'wk'      => isset( $m['workshops'] ) ? $m['workshops'] : array(),
 		'names'   => isset( $m['names'][ $lang ] ) ? $m['names'][ $lang ] : $m['names']['en'],
 		'why'     => $m['why'][ $lang ],
 		'courses' => $courses,
@@ -324,6 +341,9 @@ add_action( 'wp_footer', function () {
 #aa-app .aa-at__svc{margin:0;font-size:13px;line-height:1.5;color:#475569}
 #aa-app .aa-at__svc a,#aa-app .aa-at__foot a{color:#0E8074;font-weight:700}
 #aa-app .aa-at__foot{margin:16px 0 0;font-size:14px}
+#aa-app .aa-at__wk{margin-top:16px;padding:16px 18px;border-radius:12px;border:1.5px dashed #0E8074;background:rgba(242,182,109,.10)}
+#aa-app .aa-at__wk ul{margin:8px 0 10px;padding-left:18px;font-size:14px;line-height:1.6;color:#0B2E35}
+#aa-app .aa-at__wk a{color:#0E8074;font-weight:700}
 @media (max-width:600px){#aa-app .aa-at{padding:18px}}
 </style>
 <script id="aa-at-data" type="application/json"><?php echo wp_json_encode( array( 'lang' => $lang, 'a' => $data ) ); ?></script>
@@ -351,18 +371,19 @@ function build(){
   var band=r.band&&r.band.id||'',scores=r.dimScores||{},ids=Object.keys(P.dims);
   var max=0;inner.querySelectorAll('.aa-dim-score').forEach(function(x){var m=/\/(\d+)/.exec(x.textContent);if(m)max=+m[1]});
   var colors={};inner.querySelectorAll('.aa-dim-fill').forEach(function(x,i){if(ids[i])colors[ids[i]]=x.style.background});
-  var cards='',seen={},head=P.s.h,sub,svc=0;
+  var cards='',seen={},head=P.s.h,sub,svc=0,wks=[];
   if(band==='native'&&P.native){
     head=P.s.h_native;sub=P.s.sub_n;var c=P.courses[P.native[pick]];
     cards+='<div class="aa-at__card"><p class="aa-at__k">Mutation Readiness</p><h4><a href="'+h(P.links.mr)+'">'+h(P.s.mr)+'</a></h4><p class="aa-at__why">'+h(P.s.mr_d)+'</p><a class="aa-at__go" href="'+h(P.links.mr)+'">'+h(P.s.mr)+' &rarr;</a></div>';
     if(c)cards+=card(P,'native',c,'',0,0,'#0E8074');
+    if(P.wk&&P.wk.native)wks.push(['',P.wk.native]);
   }else{
     var order=ids.slice().sort(function(a,b){return (scores[a]||0)-(scores[b]||0)});
     var n=band==='theatre'?1:2;sub=n===1?P.s.sub1:P.s.sub2;
     for(var i=0;i<order.length&&n>0;i++){
       var d=order[i],sl=P.dims[d][pick];if(seen[sl]||!P.courses[sl])sl=P.dims[d][pick==='lead'?'team':'lead'];
       if(seen[sl]||!P.courses[sl])continue;seen[sl]=1;n--;
-      if(P.dims[d].service)svc=1;cards+=card(P,d,P.courses[sl],P.names[d],scores[d]||0,max,colors[d]);
+      if(P.wk&&P.wk[d])wks.push([P.names[d],P.wk[d]]);if(P.dims[d].service)svc=1;cards+=card(P,d,P.courses[sl],P.names[d],scores[d]||0,max,colors[d]);
     }
   }
   if(!cards)return;
@@ -372,6 +393,7 @@ function build(){
    +(P.sale?'<p class="aa-at__sale">'+h(P.sale)+'</p>':'')
    +'<div class="aa-at__grid">'+cards+'</div>'
    +(svc?'<p class="aa-at__svc" style="margin-top:14px">'+h(P.s.service)+' <a href="'+h(P.links.service)+'">'+h(P.s.service_l)+' &rarr;</a></p>':'')
+   +(wks.length&&P.links.tc?'<div class="aa-at__wk"><p class="aa-at__k">'+h(P.s.wk_k)+'</p><p class="aa-at__why">'+h(P.s.wk)+'</p><ul>'+wks.map(function(w){return '<li>'+(w[0]?h(w[0])+': ':'')+'<b>'+h(w[1])+'</b></li>'}).join('')+'</ul><a href="'+h(P.links.tc)+'" data-aa-at="twochasms" rel="noopener">'+h(P.s.wk_l)+' &rarr;</a></div>':'')
    +(first?'<p class="aa-at__foot"><a href="'+h(first.team)+'" data-aa-at="team-quote">'+h(P.s.team)+' &rarr;</a></p>':'')+'</section>';
   var after=grid.nextElementSibling&&grid.nextElementSibling.classList.contains('aa-panel')?grid.nextElementSibling:grid;
   after.insertAdjacentHTML('afterend',html);
