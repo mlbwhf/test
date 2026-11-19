@@ -218,6 +218,102 @@ export function LanesBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
+interface MatrixRow {
+  title: string;
+  /** The row's own text is written by the group (e.g. a PI outcome and its key results). */
+  editable?: boolean;
+  placeholder?: string;
+  /** A tinted band, e.g. the ART milestones row. */
+  band?: boolean;
+}
+
+/**
+ * A grid template: rows down the side, columns across, stickies in every cell. `types` gives the
+ * stickies a kind to pick before adding (e.g. the four milestone kinds of a PI Outcome Planning
+ * board), drawn as a coloured diamond with the kind's outline; `examples` shows the template's own
+ * items in a cell ("row.col") until the group adds theirs.
+ */
+export function MatrixBoard({ config, st, op, readOnly }: BoardProps) {
+  const rows = (config.rows as MatrixRow[] | undefined) ?? [];
+  const cols = (config.cols as string[] | undefined) ?? [];
+  const corner = (config.corner as string | undefined) ?? "";
+  const types = (config.types as [string, string][] | undefined) ?? [];
+  const examples = (config.examples as Record<string, string[]> | undefined) ?? {};
+  const intro = config.intro as string | undefined;
+  const [type, setType] = useState(0);
+  const [drafts, setDrafts] = useState<Record<string, string>>({});
+  const add = (k: string) => {
+    const text = (drafts[k] ?? "").trim();
+    if (!text) return;
+    op({ key: k, op: "push", value: { text, ...(types.length ? { type } : {}) } });
+    setDrafts((d) => ({ ...d, [k]: "" }));
+  };
+  return (
+    <div className="ex-board">
+      {intro ? <div className="ex-intro">{intro}</div> : null}
+      {types.length ? (
+        <div className="ex-examples" role="radiogroup" aria-label="Kind of item to add">
+          <span className="ex-mono">Add as</span>
+          {types.map(([name, color], i) => (
+            <button key={name} role="radio" aria-checked={type === i} className={`ex-chip pick${type === i ? " on" : ""}`} disabled={readOnly} onClick={() => setType(i)}>
+              <span className="ex-diamond" style={{ background: color }} /> {name}
+            </button>
+          ))}
+        </div>
+      ) : null}
+      <div className="ex-matrix-wrap">
+        <div className="ex-matrix" style={{ gridTemplateColumns: `minmax(200px, 1.5fr) repeat(${cols.length}, minmax(130px, 1fr))` }}>
+          <div className="ex-matrix-head">{corner}</div>
+          {cols.map((c) => (
+            <div key={c} className="ex-matrix-head">
+              {c}
+            </div>
+          ))}
+          {rows.map((r, ri) => (
+            <div key={ri} style={{ display: "contents" }}>
+              <div className={`ex-matrix-row${r.band ? " band" : ""}`}>
+                <b>{r.title}</b>
+                {r.editable ? <RowText k={`rh:${ri}`} placeholder={r.placeholder} st={st} op={op} readOnly={readOnly} /> : null}
+              </div>
+              {cols.map((c, ci) => {
+                const k = `cell:${ri}.${ci}`, items = list<Sticky & { type?: number }>(st, k), ex = examples[`${ri}.${ci}`];
+                return (
+                  <div key={c} className={`ex-matrix-cell${r.band ? " band" : ""}`}>
+                    {items.map((x) => {
+                      const t = typeof x.type === "number" ? types[x.type] : undefined;
+                      return (
+                        <span key={x.id} className="ex-matrix-item" style={t ? { borderColor: t[1] } : undefined}>
+                          {t ? <span className="ex-diamond" style={{ background: t[1] }} title={t[0]} /> : null}
+                          <span>{x.text}</span>
+                          {!readOnly ? (
+                            <button className="ex-x" aria-label="Remove" onClick={() => op({ key: k, op: "remove", id: x.id })}>
+                              ×
+                            </button>
+                          ) : null}
+                        </span>
+                      );
+                    })}
+                    {!items.length && ex?.length ? <div className="ex-row-example">{ex.map((e) => `• ${e}`).join("\n")}</div> : null}
+                    {!readOnly ? <input className="ex-add" value={drafts[k] ?? ""} placeholder="+ add, Enter" aria-label={`${r.title}, ${c}`} onChange={(e) => setDrafts((d) => ({ ...d, [k]: e.target.value }))} onBlur={() => add(k)} onKeyDown={(e) => e.key === "Enter" && add(k)} /> : null}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/** A row's own text in a grid template, saved when the field is left. */
+function RowText({ k, placeholder, st, op, readOnly }: { k: string; placeholder?: string | undefined; st: Record<string, unknown>; op: Op; readOnly: boolean }) {
+  const saved = typeof st[k] === "string" ? (st[k] as string) : "";
+  const [v, setV] = useState(saved);
+  useEffect(() => setV(saved), [saved]);
+  return <textarea className="ex-matrix-text" rows={3} value={v} placeholder={placeholder} disabled={readOnly} onChange={(e) => setV(e.target.value)} onBlur={() => v !== saved && op({ key: k, op: "set", value: v.trim() || null })} />;
+}
+
 /** One line of text for the whole board, e.g. which ART event a group chose. */
 function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: { label: string; placeholder?: string; st: Record<string, unknown>; op: Op; readOnly: boolean; k?: string }) {
   const saved = typeof st[k] === "string" ? (st[k] as string) : "";
@@ -237,6 +333,7 @@ const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: fa
 
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} lang={typeof props.board.fields?.lang === "string" ? props.board.fields.lang : undefined} />;
+  if (props.kind === "matrix") return <MatrixBoard {...props} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || RTE_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 

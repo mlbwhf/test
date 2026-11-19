@@ -139,8 +139,9 @@ describe("the Launching AI-Native ARTs class", () => {
     expect(ex.map((f) => f.activity!.config!.step)).toEqual(["scale", "text", "flow", "okr", "sf", "sf", "sf", "text", "strategy", "sf", "sf", "sf", "text", "data", "sf", "sf", "sf", "gap"]);
     expect(ex.filter((f) => f.activity!.config!.step === "sf").map((f) => `${f.activity!.config!.sf}:${f.activity!.config!.mode}`)).toEqual(["sf1:assess", "sf1:discuss", "sf1:adjust", "sf2:assess", "sf2:discuss", "sf2:adjust", "sf3:assess", "sf3:discuss", "sf3:adjust"]);
     expect(b.frames.find((f) => f.title === "Activity: Compare workflows")!.activity).toMatchObject({ prepare: 10, share: 3 });
-    // Six success factors of four statements; the class board assesses the first three, the launch readiness package all six.
-    expect(Object.values(AI_NATIVE_SUCCESS_FACTORS).flatMap((f) => f.statements)).toHaveLength(24);
+    // Twelve success factors of four statements; the class board assesses the first three, the launch readiness package all twelve.
+    expect(Object.values(AI_NATIVE_SUCCESS_FACTORS).flatMap((f) => f.statements)).toHaveLength(48);
+    expect(AI_NATIVE_SUCCESS_FACTORS.sf12!.statements[0]![0]).toBe("We have effective mechanisms in place for controlling and monitoring token spend.");
     expect(AI_NATIVE_SUCCESS_FACTORS.sf6!.statements[3]![0]).toBe("AI Value Architects ensure AI usage is focused on optimizing outcomes.");
     expect(new Set(ex.filter((f) => f.activity!.config!.step === "sf").map((f) => f.activity!.config!.sf))).toEqual(new Set(["sf1", "sf2", "sf3"]));
     expect(AI_NATIVE_SUCCESS_FACTORS.sf3!.statements[2]![0]).toBe("We verify that datasets meet all four core curation standards: complete, accurate, maintained, and securely accessed.");

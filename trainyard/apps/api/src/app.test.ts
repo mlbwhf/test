@@ -1723,10 +1723,12 @@ describe("template packages", () => {
   it("creates a package as one event board in the class design, or as a board per part", async () => {
     const { call } = await setup();
     const list = await call("GET", "/v1/templates/boards");
-    expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["ai-native-launch-readiness", "prepare-pi-planning", "pi-planning", "closing-pi"]);
+    expect(list.body.packages.map((p: { id: string }) => p.id)).toEqual(["ai-native-launch-readiness", "pi-outcome-planning", "prepare-pi-planning", "pi-planning", "closing-pi"]);
     // The packages hold the classes' designed boards, not canvas templates.
-    expect(list.body.packages[0].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["Try the assessment scale"], ["Outcome-driven product development", "Portfolio and investment strategy", "Curated data"], ["AI-Native ART", "AI-Native Teams", "AI Value Architect"], ["Gap analysis review", "Build the AI-Native ART Launch Plan"]]);
-    expect(list.body.packages[1].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["How much preparation is enough?", "PI Planning readiness preparation"], ["Build your own ART kanban board"]]);
+    expect(list.body.packages[0].parts.map((p: { boards: string[] }) => p.boards.length)).toEqual([1, 3, 3, 3, 3, 4]);
+    expect(list.body.packages[0].parts[5].boards).toEqual(["Gap analysis review", "Build the AI-Native ART Launch Plan", "Share your plan", "Intent document"]);
+    expect(list.body.packages[1].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["Draft PI Outcomes"], ["One-day PI Outcome Planning agenda", "PI Outcome Planning board", "Team planning board", "Management review and problem-solving"], ["Sense and Respond event"]]);
+    expect(list.body.packages[2].parts.map((p: { boards: string[] }) => p.boards)).toEqual([["How much preparation is enough?", "PI Planning readiness preparation"], ["Build your own ART kanban board"]]);
     const one = await call("POST", "/v1/templates/packages/closing-pi/create", { name: "PI 26.4 close", mode: "one-board" });
     expect(one.status).toBe(201);
     expect(one.body.boards).toHaveLength(1);

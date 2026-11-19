@@ -631,3 +631,18 @@ span.studio-team { cursor: default; }
 .studio-board { min-width: 0; border: 2px solid #0d1815; border-radius: 16px 16px 6px 6px; background: #fffaf0 radial-gradient(#0d181833 1.3px, transparent 1.5px) 0 0 / 22px 22px; padding: 16px; box-shadow: 0 5px 0 #0d1815; color: #0d1815; font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; }
 /* The boards are generated from the Class Studio design, which lays out with the browser default box model. */
 .studio-board *, .studio-board *::before, .studio-board *::after { box-sizing: revert; }
+
+/* Grid templates (MatrixBoard): the launch plan, the PI Outcome Planning board. */
+.ex-matrix-wrap { overflow-x: auto; border: 2px solid #0d1815; border-radius: 10px; background: #fffaf0; }
+.ex-matrix { display: grid; min-width: 1100px; }
+.ex-matrix-head { background: #7b44f5; color: #fff; font-weight: 800; padding: 10px 12px; border-right: 1.5px solid #ffffff55; text-align: center; }
+.ex-matrix-head:first-child { text-align: left; }
+.ex-matrix-row { padding: 12px; border-top: 1.5px solid #0d181533; border-right: 2px solid #0d1815; background: #f3ead3; display: flex; flex-direction: column; gap: 6px; }
+.ex-matrix-cell { padding: 8px; border-top: 1.5px solid #0d181533; border-right: 1.5px solid #0d181522; display: flex; flex-direction: column; gap: 6px; min-height: 84px; min-width: 0; }
+.ex-matrix-row.band, .ex-matrix-cell.band { background: #ece9fb; }
+.ex-matrix-item { position: relative; display: flex; gap: 6px; align-items: flex-start; padding: 6px 22px 6px 8px; border: 2px solid #0d1815; border-radius: 4px; background: #fff; font-size: 13px; line-height: 1.3; overflow-wrap: break-word; min-width: 0; }
+.ex-matrix-item > span:nth-child(2), .ex-matrix-item > span:first-child:not(.ex-diamond) { min-width: 0; overflow-wrap: break-word; hyphens: auto; }
+.ex-matrix-item .ex-x { position: absolute; top: 2px; right: 4px; border: 0; background: none; cursor: pointer; opacity: 0.5; }
+.ex-matrix-text { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1.5px dashed #0d181566; background: transparent; font: inherit; font-size: 13px; font-weight: 400; line-height: 1.4; resize: vertical; }
+.ex-matrix-cell .ex-add { width: 100%; box-sizing: border-box; margin-top: auto; }
+.ex-diamond { display: inline-block; flex: none; width: 10px; height: 10px; transform: rotate(45deg); margin: 3px 2px 0; }

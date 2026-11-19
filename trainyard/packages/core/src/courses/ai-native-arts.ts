@@ -104,6 +104,62 @@ export const AI_NATIVE_SUCCESS_FACTORS: Record<
       ["AI Value Architects ensure AI usage is focused on optimizing outcomes.", "AI usage on outcomes"],
     ],
   },
+  // Lesson 4 (slides 4-14, 4-38, 4-49 and 4-54).
+  sf7: {
+    title: "SF7: Product Vision and Roadmap",
+    statements: [
+      ["We communicate a product vision that is desirable to customers, viable for the business and technically feasible.", "Product vision"],
+      ["We maintain a set of ART outcomes that describes its longer-term strategy.", "ART outcomes"],
+      ["We utilize outcome-driven roadmaps that express future work as intended business and customer outcomes rather than fixed feature deliverables", "Outcome-driven roadmaps"],
+      ["We identify learning milestones to validate technical and business opportunities and hypotheses", "Learning milestones"],
+    ],
+  },
+  sf8: {
+    title: "SF8: PI Outcome Planning",
+    statements: [
+      ["The ART plans on a cadence around a set of desired outcomes rather than a set of features.", "Plan around outcomes"],
+      ["Each PI the ART commits to a set of OKRs that will progress the ART’s long-term strategy.", "PI OKRs"],
+      ["Teams define and commit to OKRs that express their planned contributions through the PI.", "Team OKRs"],
+      ["The ART is effective in managing risks and making timely decisions throughout the PI.", "Risks and timely decisions"],
+    ],
+  },
+  sf9: {
+    title: "SF9: Sense and Respond Event",
+    statements: [
+      ["Teams routinely run customer demos to get real-world feedback.", "Customer demos"],
+      ["We actively measure customer usage, performance metrics, and operational signals instead of relying on assumptions.", "Measure real signals"],
+      ["The ART regularly adapts its plans based on progress against outcomes and new insights.", "Adapt plans"],
+      ["ART leaders and teams are empowered to make fast \"pivot, persevere, or stop\" decisions based on objective evidence.", "Pivot, persevere, or stop"],
+    ],
+  },
+  // Lesson 5 (slides 5-10, 5-21, 5-35 and 5-40).
+  sf10: {
+    title: "SF10: Intent, Specifications and Context",
+    statements: [
+      ["We define and regularly update our product’s intent, so teams and AI agents know which problems to solve and why.", "Product intent"],
+      ["We set clear product specifications to give teams and AI agents exact guardrails and solution details before building.", "Product specifications"],
+      ["We have established a product context, so teams and AI agents understand the customer, market, and operational landscape they operate in.", "Product context"],
+      ["All teams and AI agents build from shared intent, specifications, and context data to ensure consistency and traceability", "Shared intent, specifications and context"],
+    ],
+  },
+  sf11: {
+    title: "SF11: AI Innovation Pipeline",
+    statements: [
+      ["We continually invest in and optimize the tools, technologies, and architecture that enable flow.", "Invest in flow"],
+      ["We have embedded policies in the tools we use to ensure guardrails and human checks are in place.", "Embedded policies"],
+      ["We have configured systems to capture insights and evidence for auditing decisions and tracking early learning.", "Insights and evidence"],
+      ["The AI-Native Teams on the ART have access to a shared platform that connects and composes their workflows, policies, and data into unified capabilities.", "Shared platform"],
+    ],
+  },
+  sf12: {
+    title: "SF12: AI Governance and Ethics",
+    statements: [
+      ["We have effective mechanisms in place for controlling and monitoring token spend.", "Token spend controls"],
+      ["Everyone on the ART is trained in and practices Responsible AI.", "Responsible AI"],
+      ["AI agentic behaviors are monitored at every step in every workflow.", "Monitor agentic behaviors"],
+      ["We have defined and communicated a set of AI Ethics that everyone adheres to.", "AI Ethics"],
+    ],
+  },
 };
 
 const assess = (title: string, sf: string): ActivitySpec => ({
@@ -115,8 +171,10 @@ const assess = (title: string, sf: string): ActivitySpec => ({
   config: { step: "sf", tm: [["Prepare", 5]], shared: "assessment", sf, mode: "assess" },
   ...BOARD,
 });
-/** The assessments of success factors 4 to 6 (lesson 3), used by the launch readiness package. */
+/** The assessments of success factors 4 to 12 (lessons 3 to 5), used by the launch readiness package. */
 export const AI_NATIVE_ASSESS_456: ActivitySpec[] = [assess("AI-Native ART", "sf4"), assess("AI-Native Teams", "sf5"), assess("AI Value Architect", "sf6")];
+export const AI_NATIVE_ASSESS_789: ActivitySpec[] = [assess("Product vision and roadmap", "sf7"), assess("PI Outcome Planning", "sf8"), assess("Sense and Respond event", "sf9")];
+export const AI_NATIVE_ASSESS_101112: ActivitySpec[] = [assess("Intent, specifications, and context", "sf10"), assess("AI Innovation Pipeline", "sf11"), assess("AI Governance and Ethics", "sf12")];
 
 const lesson1: ActivitySpec[] = [
   {
