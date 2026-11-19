@@ -560,6 +560,12 @@
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:772"
  },
+ ", every iteration within its limit": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:77"
+ },
  ", in": {
   "fr": "",
   "status": "new",
@@ -580,6 +586,12 @@
   "where": "apps/web/components/studio-model-lpm.ts:407",
   "note": "not UI text (CSS grid template)"
  },
+ ", not counted in the plan total": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:216"
+ },
  ", now in band": {
   "fr": ", désormais dans la bande",
   "status": "draft",
@@ -597,6 +609,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/workspace-banner.tsx:28"
+ },
+ ", over capacity": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:116"
  },
  ", registered in": {
   "fr": "",
@@ -621,7 +639,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:204"
+  "where": "apps/web/app/(app)/templates/page.tsx:205"
  },
  ", then month by month: no card charge today, a reminder by email 7 days before the first charge, no yearly commitment to begin. Not satisfied in your first paid month?": {
   "fr": "",
@@ -728,6 +746,12 @@
   "phase": "3",
   "where": "apps/web/app/privacy/page.tsx:68"
  },
+ ": PI objectives": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:229"
+ },
  ": portfolio vision": {
   "fr": " : vision du portefeuille",
   "status": "draft",
@@ -746,6 +770,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/app/privacy/page.tsx:69"
+ },
+ ": stories against capacity": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:76"
  },
  ": the class board": {
   "fr": "",
@@ -989,7 +1019,7 @@
   "fr": "· {0} remplaceraient des imports précédents de la même carte",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:539",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:543",
   "note": "plural agreement assumed"
  },
  "· approver": {
@@ -1056,7 +1086,7 @@
   "fr": "· à partir d’un modèle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:96"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:98"
  },
  "· how to use": {
   "fr": "",
@@ -1099,6 +1129,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:168"
+ },
+ "· on the Team Kanban:": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:158"
  },
  "· portfolio asks": {
   "fr": "· demandes du portefeuille",
@@ -1688,6 +1724,12 @@
   "where": "packages/core/src/canvases.ts:482",
   "note": "check: code regex strips '(future state)'; {1} is lower-cased"
  },
+ "{0} {1} over capacity. Select a story and move it to rebalance: {2} points planned against {3} of capacity.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:77"
+ },
  "{0} / {1} pts loaded": {
   "fr": "{0} / {1} pts chargés",
   "status": "draft",
@@ -1766,7 +1808,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:391"
+  "where": "apps/web/app/(app)/templates/page.tsx:394"
  },
  "{0} epic{1} not tied to any objective": {
   "fr": "{0} épopée{1} sans objectif lié",
@@ -1961,6 +2003,12 @@
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:921"
  },
+ "{0} points planned against {1} of capacity{2}.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:77"
+ },
  "{0} record{1} waiting for review after an intent change.": {
   "fr": "",
   "status": "new",
@@ -2058,6 +2106,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/class-students.tsx:386"
+ },
+ "{0}% achievement: {1} actual of {2} planned business value": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:269"
  },
  "{0}% of finished work in {1} was enablers; the floor is {2}%.": {
   "fr": "{0} % du travail terminé en {1} concernait des enablers ; le plancher est de {2} %.",
@@ -2193,6 +2247,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:443"
+ },
+ "% achievement": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:267"
  },
  "% allocated: aim for 100%": {
   "fr": " % alloués : visez 100 %",
@@ -2531,7 +2591,7 @@
   "fr": "← Vos tableaux",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:79"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:81"
  },
  "→ Connect to another shape": {
   "fr": "→ Relier à une autre forme",
@@ -3172,7 +3232,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:435"
+  "where": "packages/core/src/templates.ts:428"
  },
  "▲ Vote ·": {
   "fr": "▲ Voter ·",
@@ -3606,7 +3666,7 @@
   "fr": "1 · Aucune confiance",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:245 packages/core/src/templates.ts:85 packages/core/src/templates.ts:223"
+  "where": "packages/core/src/classes.ts:245 packages/core/src/templates.ts:85 packages/core/src/templates.ts:216"
  },
  "1 · ONE IMPROVEMENT TO HOW YOUR ART DELIVERS VALUE": {
   "fr": "1 · UNE AMÉLIORATION DE LA FAÇON DONT VOTRE ART DÉLIVRE DE LA VALEUR",
@@ -4296,7 +4356,7 @@
   "fr": "5 · Confiance totale",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:245 packages/core/src/templates.ts:85 packages/core/src/templates.ts:223"
+  "where": "packages/core/src/classes.ts:245 packages/core/src/templates.ts:85 packages/core/src/templates.ts:216"
  },
  "5 · What do they do?": {
   "fr": "5 · Que font-ils ?",
@@ -4506,7 +4566,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:313"
+  "where": "apps/web/app/(app)/templates/page.tsx:316"
  },
  "A capability comparison of PI planning tools: iObeya, Easy Agile, Agile Hive, BigPicture, PIPlanning.io, Miro and Trainyard, by hosting, PI planning support, ART boards, what sits beyond planning, integration and how each is priced.": {
   "fr": "",
@@ -5014,6 +5074,12 @@
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:201"
  },
+ "Above 100%: was the plan too cautious?": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:279"
+ },
  "above 125: split": {
   "fr": "",
   "status": "new",
@@ -5263,7 +5329,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:421"
+  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:414"
  },
  "Act on it": {
   "fr": "",
@@ -5307,13 +5373,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:227"
+  "where": "packages/core/src/templates.ts:220"
  },
  "Actions (owner · due)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:569"
+  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:562"
  },
  "Actions as items": {
   "fr": "",
@@ -5331,13 +5397,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:173"
+  "where": "packages/core/src/templates.ts:166"
  },
  "Actions behind the reds (owner · due · status)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:531"
+  "where": "packages/core/src/templates.ts:524"
  },
  "actions scheduled": {
   "fr": "actions planifiées",
@@ -5386,25 +5452,25 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:285"
+  "where": "packages/core/src/templates.ts:278"
  },
  "Activity 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:285"
+  "where": "packages/core/src/templates.ts:278"
  },
  "Activity 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:285"
+  "where": "packages/core/src/templates.ts:278"
  },
  "Activity 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:285"
+  "where": "packages/core/src/templates.ts:278"
  },
  "Activity: Advocating the LPM implementation": {
   "fr": "Activité : Défendre la mise en œuvre du LPM",
@@ -5621,7 +5687,7 @@
   "fr": "Adapter",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:622 packages/core/src/templates.ts:382",
+  "where": "packages/core/src/classes.ts:622 packages/core/src/templates.ts:375",
   "note": "check: may be a value (Keep/Adapt/Drop column)."
  },
  "Adapt plans": {
@@ -5696,6 +5762,12 @@
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:360"
  },
+ "Add a feature this team works on": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:135"
+ },
  "Add a lane": {
   "fr": "",
   "status": "new",
@@ -5744,6 +5816,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:188"
  },
+ "Add a PI objective": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:236"
+ },
  "Add a PI outcome": {
   "fr": "",
   "status": "new",
@@ -5761,6 +5839,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:214"
+ },
+ "Add a risk or impediment": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:136"
  },
  "Add a source": {
   "fr": "",
@@ -5810,6 +5894,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lsa.tsx:214"
  },
+ "Add a story to the team backlog": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:90"
+ },
  "Add a team on the Outcomes view first.": {
   "fr": "",
   "status": "new",
@@ -5838,7 +5928,7 @@
   "fr": "Ajouter un modèle à ce tableau…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:297"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:301"
  },
  "Add a type with its fields and colour.": {
   "fr": "",
@@ -6122,6 +6212,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:841"
  },
+ "Add the team's stories, size them, set each iteration's capacity and place the stories in an iteration.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:77"
+ },
  "Add to board": {
   "fr": "Ajouter au tableau",
   "status": "draft",
@@ -6156,7 +6252,7 @@
   "fr": "« {0} » ajouté à ce tableau, à droite du contenu existant.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:191"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:193"
  },
  "Added {0} · not emailed": {
   "fr": "Ajouté le {0} · non envoyé par e-mail",
@@ -6180,7 +6276,7 @@
   "fr": "{0} éléments, {1} risques, {2} dépendances{3} ajoutés au plan.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:280",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:284",
   "note": "{3} is an appended fragment (English text), check it"
  },
  "Adding seats is charged pro rata for the rest of the period. We may change prices for future periods with at least 30 days&apos; notice by email; the change applies from your next renewal.": {
@@ -6703,7 +6799,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:398"
  },
  "Agree on the problem": {
   "fr": "S’entendre sur le problème",
@@ -7288,7 +7384,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:112"
+  "where": "apps/web/app/(app)/templates/page.tsx:113"
  },
  "All of our team’s work comes through the Team Backlog": {
   "fr": "Tout le travail de notre équipe passe par le carnet de l’équipe",
@@ -7622,7 +7718,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:463"
  },
  "Analyzing": {
   "fr": "Analyse",
@@ -7716,7 +7812,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:456"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:449"
  },
  "Annual Plan": {
   "fr": "Plan annuel",
@@ -7951,7 +8047,7 @@
   "fr": "Appliquer au plan",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:528"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:532"
  },
  "Applying Agile Portfolio Operations": {
   "fr": "Appliquer les opérations de portefeuille Agile",
@@ -8049,19 +8145,19 @@
   "fr": "Vision d’architecture et pratiques de développement",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:535 packages/core/src/templates.ts:178"
+  "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:535 packages/core/src/templates.ts:171"
  },
  "Archive class": {
   "fr": "Archiver la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:178"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:180"
  },
  "Archive this class? Students' links close and the class leaves your list; you keep it, can download it, and can reopen it. Archived classes are deleted after the retention period, with the record emailed to you first.": {
   "fr": "Archiver cette formation ? Les liens des participants sont désactivés et la formation disparaît de votre liste ; vous la conservez, pouvez la télécharger et la rouvrir. Les formations archivées sont supprimées après la durée de conservation, après envoi du dossier par e-mail.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:175"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:177"
  },
  "Archived": {
   "fr": "Archivée",
@@ -8118,7 +8214,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:473"
+  "where": "packages/core/src/templates.ts:466"
  },
  "Are we realising customer and business benefits?": {
   "fr": "",
@@ -8184,31 +8280,31 @@
   "fr": "ART 1",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:38 apps/web/components/planning-pages.tsx:86 packages/core/src/templates.ts:332"
+  "where": "apps/web/components/planning-pages.tsx:38 apps/web/components/planning-pages.tsx:86 packages/core/src/templates.ts:325"
  },
  "ART 1 · size · locations": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:306"
+  "where": "packages/core/src/templates.ts:299"
  },
  "ART 2": {
   "fr": "ART 2",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:38 apps/web/components/planning-pages.tsx:86 packages/core/src/templates.ts:332"
+  "where": "apps/web/components/planning-pages.tsx:38 apps/web/components/planning-pages.tsx:86 packages/core/src/templates.ts:325"
  },
  "ART 2 · size · locations": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:306"
+  "where": "packages/core/src/templates.ts:299"
  },
  "ART 3": {
   "fr": "ART 3",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:38 packages/core/src/templates.ts:332 packages/core/src/templates.ts:339"
+  "where": "apps/web/components/planning-pages.tsx:38 packages/core/src/templates.ts:325 packages/core/src/templates.ts:332"
  },
  "ART and ROAM boards": {
   "fr": "",
@@ -8298,7 +8394,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:298"
+  "where": "packages/core/src/templates.ts:291"
  },
  "ART Event:": {
   "fr": "Événement de l’ART :",
@@ -9722,7 +9818,7 @@
   "fr": "Interroger la salle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:241",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:243",
   "note": "Ask the room: assumed AI/room query; check context"
  },
  "Ask the workspace owner to reactivate it.": {
@@ -10198,7 +10294,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:545"
+  "where": "packages/core/src/templates.ts:538"
  },
  "Availability × Performance × Quality per line and shift, with the six big losses behind each.": {
   "fr": "",
@@ -10314,6 +10410,12 @@
   "phase": "2",
   "where": "apps/web/components/kanban-board.tsx:174"
  },
+ "Back to backlog": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:81"
+ },
  "Back to collection": {
   "fr": "Retour à la collection",
   "status": "draft",
@@ -10372,7 +10474,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:415"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:408"
  },
  "Backlog": {
   "fr": "Carnet",
@@ -10513,7 +10615,7 @@
   "fr": "Référence",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/ai/[id]/page.tsx:213 packages/core/src/classes.ts:620 packages/core/src/templates.ts:257",
+  "where": "apps/web/app/(app)/ai/[id]/page.tsx:213 packages/core/src/classes.ts:620 packages/core/src/templates.ts:250",
   "note": "Baseline: could also be « ligne de base »"
  },
  "Baseline end-to-end cycle time": {
@@ -10660,7 +10762,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:448"
+  "where": "packages/core/src/templates.ts:441"
  },
  "belong to a development value stream": {
   "fr": "",
@@ -10679,6 +10781,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:917"
+ },
+ "Below 80%: look at the commitments": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:279"
  },
  "Below target: needs to rise to {0}": {
   "fr": "",
@@ -10910,7 +11018,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:398"
  },
  "BLOCKS CHANGED": {
   "fr": "BLOCS MODIFIÉS",
@@ -10922,7 +11030,7 @@
   "fr": "Tableau",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:256 apps/web/app/(app)/imports/page.tsx:149 apps/web/components/lane-board.tsx:369"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:258 apps/web/app/(app)/imports/page.tsx:149 apps/web/components/lane-board.tsx:369"
  },
  "BOARD": {
   "fr": "TABLEAU",
@@ -10948,7 +11056,7 @@
   "fr": "Tableau tel qu’importé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:256"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:258"
  },
  "Board copied as Markdown": {
   "fr": "Tableau copié en Markdown",
@@ -10966,7 +11074,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/imports/page.tsx:413 apps/web/app/(app)/templates/page.tsx:197"
+  "where": "apps/web/app/(app)/imports/page.tsx:413 apps/web/app/(app)/templates/page.tsx:198"
  },
  "Board name (optional)": {
   "fr": "",
@@ -11200,7 +11308,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:455"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:448"
  },
  "Breakthrough objectives, annual objectives, improvement priorities and targets, with the correlation corners and owners.": {
   "fr": "",
@@ -11377,7 +11485,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:198"
+  "where": "packages/core/src/templates.ts:191"
  },
  "BUGS AND IDEAS": {
   "fr": "",
@@ -11598,7 +11706,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:91"
+  "where": "apps/web/app/(app)/templates/page.tsx:92"
  },
  "Built-in Quality": {
   "fr": "Qualité intégrée",
@@ -11700,7 +11808,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:469"
  },
  "Business case, problem statement, goal statement, scope, team, milestones.": {
   "fr": "",
@@ -11712,13 +11820,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/outcomes.ts:155 packages/core/src/templates.ts:178"
+  "where": "packages/core/src/outcomes.ts:155 packages/core/src/templates.ts:171"
  },
  "Business context · product / solution vision · architecture vision · planning requirements · team breakouts · draft plan review · management review and problem-solving": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:208"
+  "where": "packages/core/src/templates.ts:201"
  },
  "Business customer NPS": {
   "fr": "",
@@ -11823,6 +11931,12 @@
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:796"
  },
+ "Business Owners set planned value at PI planning and score actual value at the system demo. Achievement is actual over planned: uncommitted objectives add to the actual, never to the plan.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:230"
+ },
  "BUSINESS OWNERS SET VALUE 1–10 · DRAG AN OBJECTIVE BETWEEN COMMITTED AND UNCOMMITTED": {
   "fr": "LES BUSINESS OWNERS FIXENT LA VALEUR 1–10 · FAITES GLISSER UN OBJECTIF ENTRE ENGAGÉS ET NON ENGAGÉS",
   "status": "draft",
@@ -11870,7 +11984,7 @@
   "fr": "Colonne de la valeur métier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:488"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:492"
  },
  "Business value discussed with the Business Owners": {
   "fr": "Valeur métier discutée avec les Business Owners",
@@ -11890,11 +12004,23 @@
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:413 apps/web/components/planning-views.tsx:455 apps/web/components/planning-views.tsx:596"
  },
+ "BV actual": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:254"
+ },
  "BV committed": {
   "fr": "BV engagée",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:561"
+ },
+ "BV plan": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:253"
  },
  "By course": {
   "fr": "Par cours",
@@ -12045,7 +12171,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:95 packages/core/src/templates.ts:281"
+  "where": "packages/core/src/templates.ts:95 packages/core/src/templates.ts:274"
  },
  "Calibrate": {
   "fr": "Calibrer",
@@ -12252,7 +12378,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "Capability comparison of PI planning tools by hosting, PI planning support, ART and team boards, what sits beyond planning, tracker integration and what the price is counted by. No vendor prices, which change; what each tool does.": {
   "fr": "",
@@ -12280,7 +12406,7 @@
  },
  "Capacity · load": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82 packages/core/src/templates.ts:160"
  },
@@ -12292,7 +12418,7 @@
  },
  "Capacity and load per iteration, stories and features, IP iteration, PI objectives, risks, features backlog and planning poker for one team.": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82"
  },
@@ -12330,7 +12456,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:370"
+  "where": "packages/core/src/templates.ts:363"
  },
  "capacity typed in": {
   "fr": "",
@@ -12396,7 +12522,7 @@
   "fr": "Couleurs des cartes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:493"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:497"
  },
  "Card details go straight to Stripe; we never see or store your card number.": {
   "fr": "",
@@ -12438,7 +12564,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/card-types/page.tsx:51 apps/web/app/(app)/templates/page.tsx:185 apps/web/lib/help.ts:219"
+  "where": "apps/web/app/(app)/card-types/page.tsx:51 apps/web/app/(app)/templates/page.tsx:186 apps/web/lib/help.ts:219"
  },
  "Card, invoices and cancellation, in Stripe's customer portal": {
   "fr": "",
@@ -12469,7 +12595,7 @@
   "fr": "cartes sur le canevas (",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:434",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:438",
   "note": "sentence fragment"
  },
  "cards shown on the ART board": {
@@ -12584,7 +12710,7 @@
   "fr": "Causes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model.ts:602 packages/core/src/templates.ts:492"
+  "where": "apps/web/components/studio-model.ts:602 packages/core/src/templates.ts:485"
  },
  "causes ·": {
   "fr": "causes ·",
@@ -12596,7 +12722,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:493"
+  "where": "packages/core/src/templates.ts:486"
  },
  "Celebrate wins and connect them to the vision": {
   "fr": "Célébrer les victoires et les relier à la vision",
@@ -12830,7 +12956,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:518"
+  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:511"
  },
  "Chargeback automation": {
   "fr": "",
@@ -12842,13 +12968,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:469"
  },
  "Charter 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:469"
  },
  "Chatbot directs user to catalog": {
   "fr": "Le chatbot oriente l’utilisateur vers le catalogue",
@@ -12886,7 +13012,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:421"
+  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:414"
  },
  "Check battery before returning": {
   "fr": "Vérifier la batterie avant le retour",
@@ -13121,7 +13247,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:231"
+  "where": "apps/web/app/(app)/templates/page.tsx:232"
  },
  "CHOOSE THE SIMULATION": {
   "fr": "CHOISISSEZ LA SIMULATION",
@@ -13219,7 +13345,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:204"
+  "where": "apps/web/app/(app)/templates/page.tsx:205"
  },
  "Class boards are not listed here; start them under Classes.": {
   "fr": "",
@@ -13273,7 +13399,7 @@
   "fr": "Langue de la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:127"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:129"
  },
  "Class of service: standard · expedite · fixed date · intangible": {
   "fr": "",
@@ -13303,7 +13429,7 @@
   "fr": "Formations",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:308 apps/web/app/(app)/boards/page.tsx:56 apps/web/app/(app)/classroom/company/page.tsx:95"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:312 apps/web/app/(app)/boards/page.tsx:56 apps/web/app/(app)/classroom/company/page.tsx:95"
  },
  "CLASSES": {
   "fr": "",
@@ -13333,13 +13459,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:202"
+  "where": "apps/web/app/(app)/templates/page.tsx:203"
  },
  "Classes of service": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:112 packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:112 packages/core/src/templates.ts:393"
  },
  "Classes you are running are listed below for next time.": {
   "fr": "",
@@ -13441,13 +13567,13 @@
   "fr": "Vider tout le tableau",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:154"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:156"
  },
  "Clear the whole board, content and all?": {
   "fr": "Vider tout le tableau, contenu compris ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:149"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:151"
  },
  "Clear this exercise’s template for this team": {
   "fr": "Effacer le modèle de cet exercice pour cette équipe",
@@ -14065,7 +14191,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:386"
  },
  "Committed (WIP)": {
   "fr": "",
@@ -14083,7 +14209,7 @@
   "fr": "Engagé ou non engagé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-views.tsx:421"
+  "where": "apps/web/components/planning-views.tsx:421 apps/web/components/team-board.tsx:242"
  },
  "Committed:": {
   "fr": "Engagés :",
@@ -14576,7 +14702,7 @@
   "fr": "Connexions pas encore tracées",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:231"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:233"
  },
  "CONNECTIONS)": {
   "fr": "LIENS)",
@@ -14601,7 +14727,7 @@
   "fr": "les connecteurs deviennent des dépendances (flèche du fournisseur vers le consommateur)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:519"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:523"
  },
  "Consensus": {
   "fr": "Consensus",
@@ -14781,7 +14907,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:205"
+  "where": "packages/core/src/templates.ts:198"
  },
  "Continuous attention to technical excellence and good design enhances agility.": {
   "fr": "Une attention continue à l’excellence technique et à une bonne conception renforce l’agilité.",
@@ -14842,7 +14968,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:522"
+  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:515"
  },
  "Control phase": {
   "fr": "",
@@ -14860,7 +14986,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:463"
  },
  "Controlled development": {
   "fr": "Développement maîtrisé",
@@ -14872,7 +14998,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:526"
+  "where": "packages/core/src/templates.ts:519"
  },
  "Controlled-substances audit": {
   "fr": "",
@@ -15059,13 +15185,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:461 packages/core/src/templates.ts:462 packages/core/src/templates.ts:463"
+  "where": "packages/core/src/templates.ts:454 packages/core/src/templates.ts:455 packages/core/src/templates.ts:456"
  },
  "Correlation ● strong ○ weak": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:460"
+  "where": "packages/core/src/templates.ts:453"
  },
  "Correlation corners": {
   "fr": "",
@@ -15179,7 +15305,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:121"
+  "where": "apps/web/app/(app)/templates/page.tsx:122"
  },
  "Could not create the initiative": {
   "fr": "",
@@ -15239,7 +15365,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:416"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:409"
  },
  "Counts": {
   "fr": "",
@@ -15324,7 +15450,7 @@
   "fr": "Créez un tableau à partir de ce modèle : il s’ouvre comme salle de planification, avec ses propres équipes, son calendrier de PI et son carnet.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:267"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:269"
  },
  "Create a portfolio": {
   "fr": "",
@@ -15360,13 +15486,13 @@
   "fr": "Créer en tant que",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:439 apps/web/app/(app)/templates/page.tsx:306"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:443 apps/web/app/(app)/templates/page.tsx:309"
  },
  "Create board from template": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:209"
+  "where": "apps/web/app/(app)/templates/page.tsx:210"
  },
  "Create dashboard for outcome progress": {
   "fr": "Créer un tableau de bord de la progression des résultats",
@@ -15390,7 +15516,7 @@
   "fr": "créer les équipes manquantes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:481"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:485"
  },
  "Create Outcome-Driven Roadmap": {
   "fr": "Créer la feuille de route axée sur les résultats",
@@ -15414,7 +15540,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:341"
+  "where": "apps/web/app/(app)/templates/page.tsx:344"
  },
  "Create the Epic hypothesis statement": {
   "fr": "Créer l’énoncé d’hypothèse d’épopée",
@@ -15456,14 +15582,14 @@
   "fr": "Créé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:86",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:88",
   "note": "check: may be a value"
  },
  "Created \"{0}\" from this template.": {
   "fr": "« {0} » créé à partir de ce modèle.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:105"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:107"
  },
  "created in the funnel.": {
   "fr": "",
@@ -15487,7 +15613,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/rooms/page.tsx:93 apps/web/app/(app)/templates/page.tsx:341"
+  "where": "apps/web/app/(app)/rooms/page.tsx:93 apps/web/app/(app)/templates/page.tsx:344"
  },
  "Credibility": {
   "fr": "",
@@ -15523,7 +15649,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:485"
+  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:478"
  },
  "CRM": {
   "fr": "",
@@ -15597,7 +15723,7 @@
   "fr": "CSV",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/components/site-nav.tsx:47",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/components/site-nav.tsx:47",
   "note": "format, kept"
  },
  "CSV file": {
@@ -15634,7 +15760,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:485"
+  "where": "packages/core/src/templates.ts:478"
  },
  "Curated data": {
   "fr": "",
@@ -15682,7 +15808,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/ainative.tsx:371 packages/core/src/templates.ts:259"
+  "where": "apps/web/components/ainative.tsx:371 packages/core/src/templates.ts:252"
  },
  "CURRENT ·": {
   "fr": "ACTUEL ·",
@@ -15700,7 +15826,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:415"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:408"
  },
  "Current context:": {
   "fr": "Contexte actuel :",
@@ -15712,7 +15838,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:507"
+  "where": "packages/core/src/templates.ts:500"
  },
  "Current LPM process": {
   "fr": "Processus LPM actuel",
@@ -15766,7 +15892,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:430"
+  "where": "packages/core/src/templates.ts:423"
  },
  "Current state: process boxes and inventory": {
   "fr": "",
@@ -15832,7 +15958,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:428"
+  "where": "packages/core/src/templates.ts:421"
  },
  "Customer care": {
   "fr": "",
@@ -16243,19 +16369,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:87 packages/core/src/templates.ts:178"
+  "where": "packages/core/src/templates.ts:87 packages/core/src/templates.ts:171"
  },
  "Day 1–31: green or red": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:530"
+  "where": "packages/core/src/templates.ts:523"
  },
  "Day 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:87 packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:87 packages/core/src/templates.ts:172"
  },
  "Day plan": {
   "fr": "Programme de la journée",
@@ -16618,7 +16744,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:463"
  },
  "Defines the why, anchors to customer needs, synthesises feedback.": {
   "fr": "",
@@ -16630,13 +16756,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:370"
+  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:363"
  },
  "Definition of Done check": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:387"
+  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:380"
  },
  "Deflect 10% of tickets": {
   "fr": "",
@@ -16698,7 +16824,7 @@
   "fr": "Supprimer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:186 apps/web/app/(app)/canvases/[id]/page.tsx:141 apps/web/components/board-list.tsx:116"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:188 apps/web/app/(app)/canvases/[id]/page.tsx:141 apps/web/components/board-list.tsx:116"
  },
  "Delete \"{0}\"? It cannot be undone; a class's student links stop working.": {
   "fr": "",
@@ -16710,7 +16836,7 @@
   "fr": "Supprimer « {0} » ? Les liens des participants cessent de fonctionner et la salle de planification est supprimée avec. Une copie du dossier de la formation vous est d’abord envoyée par e-mail ; utilisez « Télécharger le dossier » si vous la voulez aussi sur cet ordinateur.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:183",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:185",
   "note": "\"Download record\" referenced as button label; keep in sync"
  },
  "Delete {0}? Its boards stay, open to the whole workspace.": {
@@ -16826,13 +16952,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:463"
  },
  "Delivered": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:386"
  },
  "Delivered.": {
   "fr": "",
@@ -16964,7 +17090,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "DEMO": {
   "fr": "",
@@ -17000,7 +17126,7 @@
   "fr": "dépendances ·",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:538",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:542",
   "note": "fragment after a number"
  },
  "Dependencies agreed with the other team": {
@@ -17063,7 +17189,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:171"
+  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:164"
  },
  "depends on": {
   "fr": "",
@@ -17311,7 +17437,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:508"
+  "where": "packages/core/src/templates.ts:501"
  },
  "Determine a realistic target start date for each type of event.": {
   "fr": "Fixez une date de début cible réaliste pour chaque type d’événement.",
@@ -17455,7 +17581,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:297"
+  "where": "packages/core/src/templates.ts:290"
  },
  "Development, Support, Legal…": {
   "fr": "",
@@ -17522,7 +17648,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:473"
+  "where": "packages/core/src/templates.ts:466"
  },
  "Did we achieve the targeted customer or business change?": {
   "fr": "",
@@ -17534,7 +17660,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:89 packages/core/src/templates.ts:226"
+  "where": "packages/core/src/templates.ts:89 packages/core/src/templates.ts:219"
  },
  "Diego": {
   "fr": "",
@@ -18084,7 +18210,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:107 packages/core/src/templates.ts:376"
+  "where": "packages/core/src/templates.ts:107 packages/core/src/templates.ts:369"
  },
  "Done editing": {
   "fr": "",
@@ -18156,13 +18282,13 @@
   "fr": "Télécharger le dossier…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:167"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:169"
  },
  "Download the class record": {
   "fr": "Télécharger le dossier de la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:158",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:160",
   "note": "class record = dossier de la formation"
  },
  "Download the LPM Adoption Roadmap": {
@@ -18187,7 +18313,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:544"
+  "where": "packages/core/src/templates.ts:537"
  },
  "Draft": {
   "fr": "",
@@ -18265,7 +18391,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:141 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:178"
+  "where": "packages/core/src/courses/events.ts:141 packages/core/src/courses/leading-safe.ts:496 packages/core/src/templates.ts:171"
  },
  "Draft plans, 4 min": {
   "fr": "",
@@ -18538,7 +18664,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/cards.ts:48 packages/core/src/templates.ts:119 packages/core/src/templates.ts:443"
+  "where": "packages/core/src/cards.ts:48 packages/core/src/templates.ts:119 packages/core/src/templates.ts:436"
  },
  "Due today": {
   "fr": "",
@@ -18779,7 +18905,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:127"
+  "where": "apps/web/app/(app)/templates/page.tsx:128"
  },
  "Each PI outcome, the other commitments, open decisions and risks, then the fist-of-five confidence vote.": {
   "fr": "",
@@ -18835,6 +18961,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:176 packages/core/src/classes.ts:664"
+ },
+ "Earlier iteration": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:81"
  },
  "Earlier PIs": {
   "fr": "PI précédents",
@@ -18967,13 +19099,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:497"
+  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:490"
  },
  "Effect (problem statement)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:491"
+  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:484"
  },
  "Effect at the head; causes on the bones: Man, Machine, Method, Material, Measurement, Mother Nature (environment).": {
   "fr": "",
@@ -19702,13 +19834,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:336"
+  "where": "packages/core/src/templates.ts:329"
  },
  "Epic hypothesis statement": {
   "fr": "Énoncé d’hypothèse d’épopée",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/canvases.ts:160 packages/core/src/templates.ts:247"
+  "where": "packages/core/src/canvases.ts:160 packages/core/src/templates.ts:240"
  },
  "Epic Hypothesis Statement": {
   "fr": "Énoncé d’hypothèse d’épopée",
@@ -19944,7 +20076,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:531"
+  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:524"
  },
  "Escape": {
   "fr": "",
@@ -20016,7 +20148,7 @@
   "fr": "Estimation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:559 apps/web/components/studio-model-lsa.ts:326 apps/web/components/studio-views-lsa.tsx:214"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:563 apps/web/components/studio-model-lsa.ts:326 apps/web/components/studio-views-lsa.tsx:214"
  },
  "Estimate · business value": {
   "fr": "",
@@ -20028,7 +20160,7 @@
   "fr": "Colonne de l’estimation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:487"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:491"
  },
  "Estimated implementation cost": {
   "fr": "Coût de mise en œuvre estimé",
@@ -20338,6 +20470,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:957"
+ },
+ "Every story is in an iteration.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:133"
  },
  "Every story is on a wagon": {
   "fr": "Chaque récit est sur un wagon",
@@ -20760,7 +20898,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:394"
+  "where": "packages/core/src/templates.ts:387"
  },
  "Experience working in an Agile environment": {
   "fr": "Expérience dans un environnement Agile",
@@ -20796,7 +20934,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:421"
+  "where": "packages/core/src/templates.ts:414"
  },
  "Experiments and prototypes learn and conclude at Validate (A/B tests may release); features and enablers deliver value through Release. Stopping is one click and one reason, from anywhere.": {
   "fr": "",
@@ -20840,7 +20978,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:395"
+  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:388"
  },
  "Exploration": {
   "fr": "Exploration",
@@ -21347,7 +21485,7 @@
   "fr": "Fonctionnalités",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:214 packages/core/src/templates.ts:162"
+  "where": "apps/web/components/team-board.tsx:135 packages/core/src/classes.ts:214 packages/core/src/templates.ts:82"
  },
  "FEATURES": {
   "fr": "FONCTIONNALITÉS",
@@ -21376,7 +21514,7 @@
  },
  "Features backlog": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82 packages/core/src/templates.ts:165"
  },
@@ -21406,7 +21544,7 @@
  },
  "Features per iteration": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82"
  },
@@ -21597,13 +21735,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:110"
+  "where": "apps/web/app/(app)/templates/page.tsx:111"
  },
  "Filter templates by kind": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:99"
+  "where": "apps/web/app/(app)/templates/page.tsx:100"
  },
  "Final": {
   "fr": "",
@@ -21645,13 +21783,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "Final verification and validation, and documentation (if releasing)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:198"
+  "where": "packages/core/src/templates.ts:191"
  },
  "Finalize the PI Outcome Planning Board, including other commitments.": {
   "fr": "",
@@ -21729,7 +21867,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:561"
  },
  "Finish ▸": {
   "fr": "Terminer ▸",
@@ -21862,7 +22000,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:113 packages/core/src/templates.ts:398"
  },
  "fits 50–125": {
   "fr": "",
@@ -21892,7 +22030,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:91 packages/core/src/templates.ts:240"
+  "where": "packages/core/src/templates.ts:91 packages/core/src/templates.ts:233"
  },
  "Five whys on the likely cause": {
   "fr": "",
@@ -21904,7 +22042,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:494"
+  "where": "packages/core/src/templates.ts:487"
  },
  "Five-Year Strategy": {
   "fr": "Stratégie à cinq ans",
@@ -21947,7 +22085,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:394"
+  "where": "packages/core/src/templates.ts:387"
  },
  "Fixed dates. Drag a milestone here to make it one.": {
   "fr": "",
@@ -21989,19 +22127,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:410"
+  "where": "packages/core/src/templates.ts:403"
  },
  "Flight level 2 · Coordination kanban (end-to-end flow across teams)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:410"
+  "where": "packages/core/src/templates.ts:403"
  },
  "Flight level 3 · Strategy kanban": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:410"
+  "where": "packages/core/src/templates.ts:403"
  },
  "Flight Levels": {
   "fr": "",
@@ -22031,7 +22169,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:38"
+  "where": "apps/web/app/(app)/templates/page.tsx:39"
  },
  "Flow ▸": {
   "fr": "Flux ▸",
@@ -22263,7 +22401,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:416"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:409"
  },
  "Follow-up and impact surveys": {
   "fr": "",
@@ -22287,7 +22425,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:566"
  },
  "For": {
   "fr": "Pour",
@@ -22684,7 +22822,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:192"
+  "where": "packages/core/src/templates.ts:185"
  },
  "From": {
   "fr": "",
@@ -22901,7 +23039,7 @@
   "fr": "Dossier complet (JSON, à conserver ou importer)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:169"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:171"
  },
  "Full screen": {
   "fr": "Plein écran",
@@ -23386,13 +23524,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:415"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:408"
  },
  "Goal statement (SMART)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:469"
  },
  "Goal: what are you trying to accomplish?": {
   "fr": "Objectif : que cherchez-vous à accomplir ?",
@@ -23410,7 +23548,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:549"
+  "where": "packages/core/src/templates.ts:542"
  },
  "Google Workspace": {
   "fr": "",
@@ -23726,7 +23864,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:410"
+  "where": "packages/core/src/templates.ts:403"
  },
  "Handles common variations": {
   "fr": "Absorbe les variations courantes",
@@ -24076,7 +24214,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:346"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:339"
  },
  "Horizon 1": {
   "fr": "Horizon 1",
@@ -24088,13 +24226,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:346"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:339"
  },
  "Horizon 1 · Investing": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:346"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:339"
  },
  "Horizon 2": {
   "fr": "Horizon 2",
@@ -24106,7 +24244,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:346"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:339"
  },
  "Horizon 3": {
   "fr": "Horizon 3",
@@ -24118,7 +24256,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:346"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:339"
  },
  "Horse": {
   "fr": "Cheval",
@@ -24130,7 +24268,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:464"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:457"
  },
  "hospitals and clinics served by autonomous delivery": {
   "fr": "hôpitaux et cliniques desservis par la livraison autonome",
@@ -24802,13 +24940,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:119 packages/core/src/templates.ts:440"
+  "where": "packages/core/src/templates.ts:103 packages/core/src/templates.ts:119 packages/core/src/templates.ts:433"
  },
  "Ideal cycle time (s)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:546"
+  "where": "packages/core/src/templates.ts:539"
  },
  "Ideas": {
   "fr": "Idées",
@@ -25148,7 +25286,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:377"
+  "where": "packages/core/src/templates.ts:370"
  },
  "Impediments to creating one": {
   "fr": "Obstacles à sa création",
@@ -25299,7 +25437,7 @@
   "fr": "Importé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:86 apps/web/app/(app)/boards/page.tsx:56 apps/web/app/(app)/imports/page.tsx:153",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:88 apps/web/app/(app)/boards/page.tsx:56 apps/web/app/(app)/imports/page.tsx:153",
   "note": "check: may be a value"
  },
  "Imported boards": {
@@ -25362,7 +25500,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:463"
  },
  "Improved ability to respond to market changes, emerging opportunities, and threats": {
   "fr": "Meilleure capacité à réagir aux évolutions du marché, aux opportunités émergentes et aux menaces",
@@ -25434,7 +25572,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:241"
+  "where": "packages/core/src/templates.ts:234"
  },
  "Improvement ideas from the gemba, with owner, due date and status, reviewed daily.": {
   "fr": "",
@@ -25470,7 +25608,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:388"
+  "where": "packages/core/src/templates.ts:381"
  },
  "Improving Relentlessly": {
   "fr": "S’améliorer sans relâche",
@@ -25544,7 +25682,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:90 packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:90 packages/core/src/templates.ts:386"
  },
  "In progress (WIP)": {
   "fr": "",
@@ -25767,7 +25905,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:83 packages/core/src/templates.ts:213"
+  "where": "packages/core/src/templates.ts:83 packages/core/src/templates.ts:206"
  },
  "Include traffic data in route planning": {
   "fr": "Inclure les données de trafic dans la planification des itinéraires",
@@ -25960,7 +26098,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:429"
+  "where": "packages/core/src/templates.ts:422"
  },
  "Infrastructure": {
   "fr": "Infrastructure",
@@ -26046,7 +26184,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:81 packages/core/src/templates.ts:198"
+  "where": "apps/web/components/landing.tsx:81 packages/core/src/templates.ts:191"
  },
  "Innovation accounting metrics that show early whether the hypothesis holds.": {
   "fr": "Métriques de comptabilité de l’innovation qui montrent tôt si l’hypothèse tient.",
@@ -26054,17 +26192,23 @@
   "phase": "1",
   "where": "packages/core/src/canvases.ts:180"
  },
+ "Innovation and planning: no committed stories. Innovation, the PI system demo, Inspect &amp; Adapt and planning for the next PI.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:122"
+ },
  "Innovation continues": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:203"
+  "where": "packages/core/src/templates.ts:196"
  },
  "Inputs": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:480"
+  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:473"
  },
  "Insatiable learning": {
   "fr": "Apprentissage insatiable",
@@ -26106,7 +26250,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:382 packages/core/src/templates.ts:387"
+  "where": "packages/core/src/templates.ts:375 packages/core/src/templates.ts:380"
  },
  "Inspect & Adapt": {
   "fr": "Inspecter et adapter",
@@ -26118,7 +26262,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:206"
+  "where": "packages/core/src/templates.ts:199"
  },
  "Inspect & Adapt: the three parts": {
   "fr": "Inspecter et adapter : les trois parties",
@@ -26210,7 +26354,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:394"
+  "where": "packages/core/src/templates.ts:387"
  },
  "Integrate advanced analytics": {
   "fr": "Intégrer l’analytique avancée",
@@ -26574,7 +26718,7 @@
   "fr": "Itération IP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:542 apps/web/components/studio-model-rte.ts:41 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/planning-pages.tsx:542 apps/web/components/studio-model-rte.ts:41 apps/web/components/team-board.tsx:16"
  },
  "IP iteration · Inspect & Adapt": {
   "fr": "",
@@ -26590,7 +26734,7 @@
  },
  "IP iteration: innovation, planning, PI system demo": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:163"
  },
@@ -26677,13 +26821,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:473"
+  "where": "packages/core/src/templates.ts:466"
  },
  "Is the problem worth solving, and is it scoped?": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:473"
+  "where": "packages/core/src/templates.ts:466"
  },
  "Is the scope (product, system, technology domains) of the planning process understood? Have we identified our value stream(s) and Agile Release Train(s)?": {
   "fr": "Le périmètre (produit, système, domaines technologiques) du processus de planification est-il compris ? Avons-nous identifié nos flux de valeur et nos trains de livraison agiles ?",
@@ -26791,7 +26935,7 @@
   "fr": "éléments ·",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:538",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:542",
   "note": "fragment after a number"
  },
  "Items (feedback as new items)": {
@@ -26858,7 +27002,7 @@
   "fr": "Itération",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:558 apps/web/app/(app)/dashboards/page.tsx:19 apps/web/app/(app)/outcome-planning/page.tsx:557"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:562 apps/web/app/(app)/dashboards/page.tsx:19 apps/web/app/(app)/outcome-planning/page.tsx:557"
  },
  "Iteration · Inspect & Adapt": {
   "fr": "",
@@ -26870,7 +27014,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 packages/core/src/templates.ts:140 packages/core/src/templates.ts:142"
+  "where": "apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
  },
  "Iteration 1.": {
   "fr": "Itération 1.",
@@ -26912,19 +27056,19 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 packages/core/src/templates.ts:140"
+  "where": "apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
  },
  "Iteration 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:140"
+  "where": "apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
  },
  "Iteration 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:140"
+  "where": "apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
  },
  "Iteration 5": {
   "fr": "",
@@ -26948,7 +27092,7 @@
   "fr": "Itération d’après",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:465",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:469",
   "note": "fragment, followed by a choice"
  },
  "ITERATION LENGTH": {
@@ -27209,7 +27353,7 @@
   "fr": "JSON",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40",
   "note": "format/brand name, kept"
  },
  "Jul": {
@@ -27264,7 +27408,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:432"
+  "where": "packages/core/src/templates.ts:425"
  },
  "Kaizen newspaper": {
   "fr": "",
@@ -27318,7 +27462,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "Kanban system design workshop": {
   "fr": "",
@@ -27456,7 +27600,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:485"
+  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:478"
  },
  "Key for": {
   "fr": "",
@@ -27831,13 +27975,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:221"
+  "where": "apps/web/app/(app)/templates/page.tsx:222"
  },
  "Language": {
   "fr": "Langue",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:125"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:127"
  },
  "Large Solution Integration and Delivery": {
   "fr": "Intégration et livraison de grandes solutions",
@@ -27916,6 +28060,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:455"
+ },
+ "Later iteration": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:82"
  },
  "Later PIs": {
   "fr": "PI suivants",
@@ -28062,7 +28212,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:398"
  },
  "Lead time from 90 to 45 days": {
   "fr": "Délai d’exécution de 90 à 45 jours",
@@ -28233,7 +28383,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:39"
+  "where": "apps/web/app/(app)/templates/page.tsx:40"
  },
  "Lean budget actuals vs guardrails": {
   "fr": "Budgets Lean : réel par rapport aux garde-fous",
@@ -28491,7 +28641,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:278"
+  "where": "packages/core/src/templates.ts:271"
  },
  "Lena": {
   "fr": "",
@@ -28811,7 +28961,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:132 packages/core/src/templates.ts:542"
+  "where": "packages/core/src/templates.ts:132 packages/core/src/templates.ts:535"
  },
  "Line and vehicle-centered parking": {
   "fr": "Stationnement centré sur les lignes et les véhicules",
@@ -29293,6 +29443,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcomes/page.tsx:853"
  },
+ "Lower actual value of {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:218"
+ },
  "Lower-middle income": {
   "fr": "",
   "status": "new",
@@ -29357,7 +29513,7 @@
   "fr": "Lucid",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:50",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:50",
   "note": "brand, kept"
  },
  "Lucidchart or Lucidspark: File → Export → CSV of Shape Data. Each page becomes a frame with its containers inside, shapes and sticky notes become cards with their text, and lines become connectors. The export has no positions, so cards are laid out in a grid.": {
@@ -29441,13 +29597,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:492"
+  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:485"
  },
  "Made standard": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:449"
+  "where": "packages/core/src/templates.ts:442"
  },
  "Mail is not set up on this server: copy the links and send them yourself.": {
   "fr": "L’envoi d’e-mails n’est pas configuré sur ce serveur : copiez les liens et envoyez-les vous-même.",
@@ -29609,7 +29765,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:492"
+  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:485"
  },
  "Manage agents": {
   "fr": "",
@@ -29658,7 +29814,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:178"
+  "where": "packages/core/src/templates.ts:171"
  },
  "Management Review and Problem-Solving": {
   "fr": "",
@@ -29755,7 +29911,7 @@
   "fr": "Reporter sur le plan",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:259"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:261"
  },
  "Map projects or area paths to teams and choose the work item types.": {
   "fr": "",
@@ -29779,7 +29935,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:187"
+  "where": "apps/web/app/(app)/templates/page.tsx:188"
  },
  "Mar": {
   "fr": "mars",
@@ -29894,7 +30050,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:493"
+  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:486"
  },
  "Max 3 nudges per week": {
   "fr": "",
@@ -29978,7 +30134,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:470"
+  "where": "packages/core/src/templates.ts:122 packages/core/src/templates.ts:463"
  },
  "Measure…": {
   "fr": "",
@@ -29990,13 +30146,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:91 packages/core/src/templates.ts:126 packages/core/src/templates.ts:493"
+  "where": "packages/core/src/templates.ts:91 packages/core/src/templates.ts:126 packages/core/src/templates.ts:486"
  },
  "Measurement method": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:520"
+  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:513"
  },
  "Measurements": {
   "fr": "Mesures",
@@ -30179,7 +30335,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:312 packages/core/src/templates.ts:126 packages/core/src/templates.ts:492"
+  "where": "apps/web/components/landing.tsx:312 packages/core/src/templates.ts:126 packages/core/src/templates.ts:485"
  },
  "Metric": {
   "fr": "",
@@ -30197,7 +30353,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:93 packages/core/src/templates.ts:261"
+  "where": "packages/core/src/templates.ts:93 packages/core/src/templates.ts:254"
  },
  "Metric name": {
   "fr": "",
@@ -30281,7 +30437,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:469"
  },
  "Milestones / Events": {
   "fr": "Jalons / événements",
@@ -30299,7 +30455,7 @@
   "fr": "Jalons et événements",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/classes.ts:664 packages/core/src/templates.ts:151 packages/core/src/templates.ts:219"
+  "where": "packages/core/src/classes.ts:664 packages/core/src/templates.ts:151 packages/core/src/templates.ts:212"
  },
  "Milestones and events on top, {0}s by team and {1}, significant dependencies in red with their strings, risks to ROAM below. Drag a card to replan it; changes queue to sync back to Jira or Azure DevOps.": {
   "fr": "",
@@ -30311,13 +30467,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:335"
+  "where": "packages/core/src/templates.ts:328"
  },
  "Milestones and solution events": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:341"
+  "where": "packages/core/src/templates.ts:334"
  },
  "Milestones give you fixed points even when the surrounding work is flexible. Releases are where you coordinate go-to-market activity. And the outcomes tell you what those releases are supposed to achieve.": {
   "fr": "Les jalons vous donnent des points fixes même quand le travail autour est flexible. Les mises en production sont le moment où vous coordonnez la mise sur le marché. Et les résultats vous disent ce que ces mises en production doivent accomplir.",
@@ -30398,7 +30554,7 @@
   "fr": "Miro",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:49",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:49",
   "note": "brand, kept"
  },
  "Miro boards import through the REST API or Miro's CSV export; class boards keep their frames and lessons.": {
@@ -30548,7 +30704,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:192"
+  "where": "packages/core/src/templates.ts:185"
  },
  "Money back": {
   "fr": "",
@@ -30741,7 +30897,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:493"
+  "where": "packages/core/src/templates.ts:126 packages/core/src/templates.ts:486"
  },
  "Motivated individuals": {
   "fr": "Personnes motivées",
@@ -30909,7 +31065,7 @@
   "fr": "Mural",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:51",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:51",
   "note": "brand, kept"
  },
  "Must be in place": {
@@ -31042,7 +31198,7 @@
   "fr": "Nommez cette formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:118"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:120"
  },
  "Name this train": {
   "fr": "Nommez ce train",
@@ -31359,7 +31515,7 @@
   "fr": "Nouveau tableau à partir du modèle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:108"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:110"
  },
  "New card": {
   "fr": "Nouvelle carte",
@@ -31455,7 +31611,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:364 packages/core/src/templates.ts:447"
+  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:357 packages/core/src/templates.ts:440"
  },
  "New increment of value": {
   "fr": "Nouvel incrément de valeur",
@@ -31540,7 +31696,7 @@
   "fr": "Nouvel objectif",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026 apps/web/components/team-board.tsx:235"
  },
  "New outcome": {
   "fr": "",
@@ -31651,6 +31807,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:393 apps/web/app/(app)/value-streams/page.tsx:1031 apps/web/app/(app)/value-streams/page.tsx:1460"
  },
+ "New story": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:89"
+ },
  "New team": {
   "fr": "",
   "status": "new",
@@ -31661,7 +31823,7 @@
   "fr": "nouvelles équipes ·",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:538",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:542",
   "note": "fragment after a number"
  },
  "New teams at the start of each day: the board switches seating with the day's chapters, by itself.": {
@@ -31746,7 +31908,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:375"
  },
  "Next team &rarr;": {
   "fr": "Équipe suivante &rarr;",
@@ -31892,7 +32054,13 @@
   "fr": "Aucune couleur sur ce tableau.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:516"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:520"
+ },
+ "No committed objectives yet.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:257"
  },
  "No confidence": {
   "fr": "",
@@ -32242,7 +32410,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:320"
+  "where": "apps/web/app/(app)/templates/page.tsx:323"
  },
  "No rooms yet. Create one above, then add boards to it, or keep working with boards on their own: rooms are optional.": {
   "fr": "",
@@ -32609,7 +32777,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:375"
  },
  "Not enough information": {
   "fr": "Pas assez d’informations",
@@ -32693,7 +32861,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:171"
+  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:164"
  },
  "not ROAMed": {
   "fr": "",
@@ -32744,6 +32912,18 @@
   "phase": "1",
   "where": "apps/web/components/classroom.tsx:349"
  },
+ "not scored yet": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:276"
+ },
+ "Not scored yet": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:269"
+ },
  "Not seated yet": {
   "fr": "Pas encore placés",
   "status": "draft",
@@ -32760,7 +32940,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:112"
+  "where": "apps/web/components/kanban-board.tsx:112 apps/web/components/team-board.tsx:66 apps/web/components/team-board.tsx:150"
  },
  "Not started": {
   "fr": "Non commencé",
@@ -32882,7 +33062,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:521 apps/web/components/ainative.tsx:637 packages/core/src/templates.ts:226"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:521 apps/web/components/ainative.tsx:637 packages/core/src/templates.ts:219"
  },
  "NOTES": {
   "fr": "NOTES",
@@ -32972,7 +33152,7 @@
   "fr": "Rien ne change tant que vous n’appuyez pas sur Appliquer. Prévisualisez d’abord : vous voyez exactement quels éléments, risques et dépendances seraient créés, et ce qui serait ignoré.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:429",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:433",
   "note": "refers to buttons Apply/Preview"
  },
  "Nothing follows this stage.": {
@@ -33009,7 +33189,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:162"
+  "where": "apps/web/app/(app)/templates/page.tsx:163"
  },
  "Nothing is on the outcome roadmap yet. The template adds three example outcomes (roofshot and moonshot) with their milestones, releases and outcome commitments across three PIs; nothing on the Roadmap and PI plan tabs changes. Or build your own with + Add an ART outcome.": {
   "fr": "Rien n’est encore placé sur la feuille de route des résultats. Le modèle ajoute trois résultats d’exemple (roofshot et moonshot) avec leurs jalons, leurs mises en production et leurs engagements de résultats sur trois PI ; rien ne change dans les onglets Feuille de route et Plan de PI. Vous pouvez aussi bâtir la vôtre avec + Ajouter un résultat d’ART.",
@@ -33299,19 +33479,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:264"
+  "where": "packages/core/src/templates.ts:257"
  },
  "Objective 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:265"
+  "where": "packages/core/src/templates.ts:258"
  },
  "Objective 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:266"
+  "where": "packages/core/src/templates.ts:259"
  },
  "objective evaluation": {
   "fr": "une évaluation objective",
@@ -33445,7 +33625,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:566"
  },
  "Observer": {
   "fr": "Observateur",
@@ -33463,7 +33643,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:506"
+  "where": "packages/core/src/templates.ts:499"
  },
  "Oct": {
   "fr": "oct.",
@@ -33493,7 +33673,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:551"
+  "where": "packages/core/src/templates.ts:544"
  },
  "OEE tracker": {
   "fr": "",
@@ -33913,7 +34093,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:309"
+  "where": "apps/web/app/(app)/templates/page.tsx:312"
  },
  "One board, templates side by side": {
   "fr": "",
@@ -34137,6 +34317,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-lsa.ts:50"
+ },
+ "One team's PI in three tabs over the same stories: planning against each iteration's capacity, the Team Kanban, and PI objectives with planned and actual business value.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "packages/core/src/templates.ts:82"
  },
  "one train": {
   "fr": "",
@@ -34383,7 +34569,7 @@
   "fr": "ouvrir dans",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:92",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:94",
   "note": "fragment, followed by tool name"
  },
  "Open it in a new tab ↗": {
@@ -34480,7 +34666,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:537"
+  "where": "packages/core/src/templates.ts:530"
  },
  "Open the AI-Native ART tabs": {
   "fr": "",
@@ -34625,7 +34811,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:230"
+  "where": "apps/web/app/(app)/templates/page.tsx:231"
  },
  "opens soon. Send us two or three times that suit you and we&apos;ll send the invite.": {
   "fr": "",
@@ -34757,7 +34943,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:295"
+  "where": "packages/core/src/templates.ts:288"
  },
  "Operations": {
   "fr": "Opérations",
@@ -34860,7 +35046,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:210"
+  "where": "packages/core/src/templates.ts:203"
  },
  "Options": {
   "fr": "",
@@ -34872,7 +35058,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:386"
  },
  "options explored": {
   "fr": "",
@@ -34938,7 +35124,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:95"
+  "where": "apps/web/app/(app)/templates/page.tsx:96"
  },
  "Or start blank from Your boards and add any templates to one board.": {
   "fr": "",
@@ -34968,7 +35154,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:355"
+  "where": "packages/core/src/templates.ts:348"
  },
  "Order received": {
   "fr": "",
@@ -35555,7 +35741,7 @@
   "fr": "Livrables",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:21 packages/core/src/templates.ts:124 packages/core/src/templates.ts:480"
+  "where": "apps/web/components/studio-model-aart.ts:21 packages/core/src/templates.ts:124 packages/core/src/templates.ts:473"
  },
  "outputs ·": {
   "fr": "",
@@ -35961,7 +36147,7 @@
   "fr": "Participants",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:113 packages/core/src/courses/lpm.ts:94 packages/core/src/courses/lpm.ts:96"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:115 packages/core/src/courses/lpm.ts:94 packages/core/src/courses/lpm.ts:96"
  },
  "Participants open the board in a browser. Viewers watch, planners move cards. Nothing to install.": {
   "fr": "",
@@ -36051,7 +36237,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:279"
+  "where": "apps/web/app/(app)/templates/page.tsx:282"
  },
  "Pass": {
   "fr": "",
@@ -36483,7 +36669,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:548"
+  "where": "packages/core/src/templates.ts:541"
  },
  "Performing": {
   "fr": "Performance (Performing)",
@@ -36641,7 +36827,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "PI HISTORY · % OF PLANNED BV ACHIEVED": {
   "fr": "HISTORIQUE DES PI · % DE LA BV PLANIFIÉE ATTEINTE",
@@ -36661,9 +36847,15 @@
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:600"
  },
- "PI objectives (BV · AV)": {
+ "PI objectives": {
   "fr": "",
   "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:17"
+ },
+ "PI objectives (BV · AV)": {
+  "fr": "",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82"
  },
@@ -36674,6 +36866,12 @@
   "where": "packages/core/src/classes.ts:215",
   "note": "AV = actual value, kept"
  },
+ "PI objectives (BV plan · actual)": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "packages/core/src/templates.ts:82"
+ },
  "PI objectives are mostly met": {
   "fr": "Les objectifs de PI sont en grande partie atteints",
   "status": "draft",
@@ -36682,7 +36880,7 @@
  },
  "PI objectives: committed · uncommitted (BV · AV)": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:165"
  },
@@ -36738,7 +36936,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:148 apps/web/lib/help.ts:194"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:149 apps/web/lib/help.ts:194"
  },
  "PI Outcome Planning (AI-Native SAFe)": {
   "fr": "PI Outcome Planning (AI-Native SAFe)",
@@ -36824,6 +37022,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:83"
+ },
+ "PI planning · team breakout": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:75"
  },
  "PI planning agenda": {
   "fr": "",
@@ -36963,7 +37167,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:207"
+  "where": "packages/core/src/templates.ts:200"
  },
  "PI Priorities": {
   "fr": "Priorités du PI",
@@ -37484,13 +37688,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:421"
+  "where": "packages/core/src/templates.ts:117 packages/core/src/templates.ts:414"
  },
  "Plan (who · what · when)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:416"
+  "where": "packages/core/src/templates.ts:116 packages/core/src/templates.ts:409"
  },
  "Plan {0} on the board": {
   "fr": "",
@@ -37528,6 +37732,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-arts.ts:120"
  },
+ "Plan in Iteration 1": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:82"
+ },
  "Plan review and business value": {
   "fr": "Revue des plans et valeur métier",
   "status": "draft",
@@ -37538,7 +37748,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "Plan stage": {
   "fr": "",
@@ -37582,6 +37792,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/inspectadapt.ts:7"
+ },
+ "Planned business value, 1 to 10": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:237"
  },
  "Planned BV": {
   "fr": "",
@@ -37648,7 +37864,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:543"
+  "where": "packages/core/src/templates.ts:536"
+ },
+ "Planned value {0}{1}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:216"
  },
  "Planned vs budget": {
   "fr": "",
@@ -37666,13 +37888,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "Planning adjustments · team breakouts · final plan review · program risks · PI confidence vote · plan rework if necessary · planning retrospective": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:209"
+  "where": "packages/core/src/templates.ts:202"
  },
  "Planning adjustments from the management review applied": {
   "fr": "Ajustements de planification issus de la revue de direction appliqués",
@@ -37688,7 +37910,7 @@
  },
  "Planning poker": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82 packages/core/src/templates.ts:165"
  },
@@ -37708,13 +37930,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:178"
+  "where": "packages/core/src/templates.ts:171"
  },
  "Planning retrospective and moving forward": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "Planning room": {
   "fr": "Salle de planification",
@@ -37921,13 +38143,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:398"
  },
  "Policy: when a card may enter this column": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:397"
+  "where": "packages/core/src/templates.ts:390"
  },
  "Polite, cautious; people wait to be told what to do": {
   "fr": "Polis, prudents ; les gens attendent qu’on leur dise quoi faire",
@@ -37957,7 +38179,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/portfolio/page.tsx:36 apps/web/app/(app)/portfolio/page.tsx:74 apps/web/app/(app)/templates/page.tsx:36"
+  "where": "apps/web/app/(app)/portfolio/page.tsx:36 apps/web/app/(app)/portfolio/page.tsx:74 apps/web/app/(app)/templates/page.tsx:37"
  },
  "Portfolio · 1–3 yr": {
   "fr": "Portefeuille · 1 à 3 ans",
@@ -38249,19 +38471,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:505"
+  "where": "packages/core/src/templates.ts:498"
  },
  "Potential effect": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:503"
+  "where": "packages/core/src/templates.ts:496"
  },
  "Potential failure mode": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:502"
+  "where": "packages/core/src/templates.ts:495"
  },
  "POTENTIAL IMPACT IN YOUR CONTEXT": {
   "fr": "IMPACT POTENTIEL DANS VOTRE CONTEXTE",
@@ -38400,6 +38622,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:835"
+ },
+ "Predictable: inside 80 to 100%": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:279"
  },
  "Prefer a longer but faster road when congestion crosses a threshold.": {
   "fr": "Préférer une route plus longue mais plus rapide lorsque la congestion dépasse un seuil.",
@@ -38684,13 +38912,13 @@
   "fr": "Aperçu",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:525 apps/web/app/(app)/boards/[id]/page.tsx:536 apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:529 apps/web/app/(app)/boards/[id]/page.tsx:540 apps/web/app/(app)/sync/page.tsx:93"
  },
  "Preview as": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:219"
+  "where": "apps/web/app/(app)/templates/page.tsx:220"
  },
  "Preview sync": {
   "fr": "",
@@ -38810,7 +39038,7 @@
   "fr": "Rapport imprimable (HTML)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:168"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:170"
  },
  "Priorities": {
   "fr": "Priorités",
@@ -38900,7 +39128,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/ai/page.tsx:155 packages/core/src/templates.ts:119 packages/core/src/templates.ts:441"
+  "where": "apps/web/app/(app)/ai/page.tsx:155 packages/core/src/templates.ts:119 packages/core/src/templates.ts:434"
  },
  "Problem statement": {
   "fr": "Énoncé du problème",
@@ -38949,13 +39177,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/ainative.tsx:377 packages/core/src/templates.ts:95 packages/core/src/templates.ts:281"
+  "where": "apps/web/components/ainative.tsx:377 packages/core/src/templates.ts:95 packages/core/src/templates.ts:274"
  },
  "Problems surfaced": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:135 packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:135 packages/core/src/templates.ts:566"
  },
  "Process": {
   "fr": "Processus",
@@ -38968,37 +39196,37 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:480"
+  "where": "packages/core/src/templates.ts:473"
  },
  "Process 1": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:436"
+  "where": "packages/core/src/templates.ts:429"
  },
  "Process 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:436"
+  "where": "packages/core/src/templates.ts:429"
  },
  "Process 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:436"
+  "where": "packages/core/src/templates.ts:429"
  },
  "Process 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:436"
+  "where": "packages/core/src/templates.ts:429"
  },
  "Process 5": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:436"
+  "where": "packages/core/src/templates.ts:429"
  },
  "Process and assembly engineering for the plant, with the bill of material": {
   "fr": "",
@@ -39028,19 +39256,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:128 packages/core/src/templates.ts:517"
+  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:128 packages/core/src/templates.ts:510"
  },
  "Process step / function": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:501"
+  "where": "packages/core/src/templates.ts:494"
  },
  "Process steps": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:513"
+  "where": "packages/core/src/templates.ts:506"
  },
  "Process time": {
   "fr": "Temps de traitement",
@@ -39082,7 +39310,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:178"
+  "where": "packages/core/src/templates.ts:171"
  },
  "Product / UX design CoE": {
   "fr": "Centre d’excellence design produit / UX",
@@ -39095,7 +39323,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:562"
+  "where": "packages/core/src/templates.ts:555"
  },
  "Product and Solution Management": {
   "fr": "Gestion de produit et de solution",
@@ -39107,7 +39335,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:562"
+  "where": "packages/core/src/templates.ts:555"
  },
  "Product Backlog": {
   "fr": "",
@@ -39119,13 +39347,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:369"
+  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:362"
  },
  "Product Backlog changes": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:375"
  },
  "Product Backlog item": {
   "fr": "",
@@ -39155,7 +39383,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:562"
+  "where": "packages/core/src/templates.ts:555"
  },
  "product category": {
   "fr": "catégorie de produit",
@@ -39216,7 +39444,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:361"
+  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:354"
  },
  "Product intent": {
   "fr": "",
@@ -39389,7 +39617,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:179"
+  "where": "packages/core/src/templates.ts:172"
  },
  "Program risks (ROAM)": {
   "fr": "Risques du programme (ROAM)",
@@ -39528,7 +39756,7 @@
   "fr": "Projets",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:169 packages/core/src/templates.ts:95 packages/core/src/templates.ts:281"
+  "where": "apps/web/components/studio-model-lpm.ts:169 packages/core/src/templates.ts:95 packages/core/src/templates.ts:274"
  },
  "Promising solutions proving market fit.": {
   "fr": "Solutions prometteuses qui démontrent leur adéquation au marché.",
@@ -39864,7 +40092,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "Purposes": {
   "fr": "",
@@ -39913,7 +40141,7 @@
   "fr": "Qualité",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lpm.ts:109 packages/core/src/templates.ts:130 packages/core/src/templates.ts:530"
+  "where": "apps/web/components/studio-model-lpm.ts:109 packages/core/src/templates.ts:130 packages/core/src/templates.ts:523"
  },
  "Quality (defects · startup rejects)": {
   "fr": "",
@@ -39925,7 +40153,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:550"
+  "where": "packages/core/src/templates.ts:543"
  },
  "Quality practices": {
   "fr": "Pratiques de qualité",
@@ -40015,7 +40243,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:566"
  },
  "Questions for the AI value architect": {
   "fr": "",
@@ -40149,6 +40377,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/readiness/page.tsx:205"
  },
+ "Raise actual value of {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:220"
+ },
  "Raise agent-change first-pass acceptance from 40% to": {
   "fr": "",
   "status": "new",
@@ -40195,7 +40429,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:358"
+  "where": "packages/core/src/templates.ts:351"
  },
  "raised by teams during the breakouts, with the options": {
   "fr": "",
@@ -40291,7 +40525,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:523"
+  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:516"
  },
  "Reactivate": {
   "fr": "",
@@ -40303,7 +40537,7 @@
   "fr": "Lu",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:432",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:436",
   "note": "Read: past participle assumed (\"Read N cards…\"); fragment, check"
  },
  "Read from the {0} metric": {
@@ -40455,7 +40689,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:171"
+  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:164"
  },
  "Ready for {0}": {
   "fr": "",
@@ -40479,7 +40713,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:362"
+  "where": "packages/core/src/templates.ts:355"
  },
  "Ready for the board": {
   "fr": "",
@@ -40491,7 +40725,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:111 packages/core/src/templates.ts:386"
  },
  "Ready to roll: {0} must-haves, {1} not needed, {2} depend on context. Be ready to explain every Depends.": {
   "fr": "Prêt à partir : {0} indispensables, {1} inutiles, {2} selon le contexte. Soyez prêts à justifier chaque « Selon le contexte ».",
@@ -40654,7 +40888,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:510"
+  "where": "packages/core/src/templates.ts:127 packages/core/src/templates.ts:503"
  },
  "Recompute the route mid-trip": {
   "fr": "Recalculer l’itinéraire en cours de trajet",
@@ -40788,7 +41022,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:363"
+  "where": "packages/core/src/templates.ts:105 packages/core/src/templates.ts:356"
  },
  "Reflect and adjust": {
   "fr": "Réfléchir et ajuster",
@@ -40941,13 +41175,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:288"
+  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:281"
  },
  "Release 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:288"
+  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:281"
  },
  "Release 26.4 to all stores": {
   "fr": "",
@@ -40959,7 +41193,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:288"
+  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:281"
  },
  "Release and learn": {
   "fr": "",
@@ -41309,7 +41543,7 @@
   "fr": "Renommer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:122 apps/web/components/board-list.tsx:107"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:124 apps/web/components/board-list.tsx:107"
  },
  "Rename frame": {
   "fr": "Renommer le cadre",
@@ -41333,7 +41567,7 @@
   "fr": "Rouvrir la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:178"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:180"
  },
  "Repay money": {
   "fr": "",
@@ -41625,7 +41859,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:459"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:452"
  },
  "Respect for People": {
   "fr": "Respect des personnes",
@@ -41872,7 +42106,7 @@
   "fr": "Revue",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:731 packages/core/src/canvases.ts:104 packages/core/src/templates.ts:405",
+  "where": "apps/web/components/planning-pages.tsx:731 packages/core/src/canvases.ts:104 packages/core/src/templates.ts:398",
   "note": "check: may be a value (Kanban column)"
  },
  "Review (WIP 2)": {
@@ -41885,7 +42119,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:398"
  },
  "Review cleared on {0}.": {
   "fr": "",
@@ -41921,7 +42155,7 @@
   "fr": "Revoir ce tableau",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:204"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:206"
  },
  "Review throughput is the ART's real constraint, not production hours.": {
   "fr": "",
@@ -41982,7 +42216,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:1076 apps/web/app/(app)/outcome-planning/page.tsx:1137 apps/web/app/(app)/templates/page.tsx:37"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:1076 apps/web/app/(app)/outcome-planning/page.tsx:1137 apps/web/app/(app)/templates/page.tsx:38"
  },
  "RISK": {
   "fr": "RISQUE",
@@ -42049,7 +42283,7 @@
   "fr": "risques ·",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:538",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:542",
   "note": "fragment after a number"
  },
  "Risks · dependencies": {
@@ -42110,7 +42344,13 @@
   "fr": "Risques suggérés par les cartes",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:221"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:223"
+ },
+ "Risks to ROAM": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:136 packages/core/src/templates.ts:82"
  },
  "Risks with ROAM state": {
   "fr": "",
@@ -42249,7 +42489,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "Roofshot": {
   "fr": "Roofshot",
@@ -42281,7 +42521,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:318"
+  "where": "apps/web/app/(app)/templates/page.tsx:321"
  },
  "Room for one more example or proof point.": {
   "fr": "Il reste de la place pour un exemple ou une preuve de plus.",
@@ -42359,7 +42599,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:239"
+  "where": "packages/core/src/templates.ts:232"
  },
  "Roster": {
   "fr": "Liste des participants",
@@ -42383,7 +42623,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:566"
  },
  "Route following": {
   "fr": "Suivi d’itinéraire",
@@ -42401,7 +42641,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:363 packages/core/src/templates.ts:93 packages/core/src/templates.ts:119"
+  "where": "apps/web/app/(app)/templates/page.tsx:366 packages/core/src/templates.ts:93 packages/core/src/templates.ts:119"
  },
  "ROW": {
   "fr": "LIGNE",
@@ -42413,7 +42653,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:281"
+  "where": "packages/core/src/templates.ts:274"
  },
  "Rows": {
   "fr": "",
@@ -42425,7 +42665,7 @@
   "fr": "lignes du tableau (",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:435",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:439",
   "note": "sentence fragment"
  },
  "rows, loaded": {
@@ -42444,7 +42684,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:509"
+  "where": "packages/core/src/templates.ts:502"
  },
  "RR · OE": {
   "fr": "RR · OE",
@@ -42592,7 +42832,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:538"
+  "where": "packages/core/src/templates.ts:531"
  },
  "RUNNING": {
   "fr": "EN COURS",
@@ -42670,13 +42910,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:143"
+  "where": "apps/web/app/(app)/templates/page.tsx:144"
  },
  "SAFe · AI-Native ART · outcomes, planning board, team boards, intent, Sense and Respond ↗": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:149"
+  "where": "apps/web/app/(app)/templates/page.tsx:150"
  },
  "SAFe (Essential, Portfolio, Full), AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and tribe models, as editable operating models. Change the model and the boards and dashboards follow.": {
   "fr": "",
@@ -42828,7 +43068,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:530"
+  "where": "packages/core/src/templates.ts:130 packages/core/src/templates.ts:523"
  },
  "Safety, Quality, Delivery, Cost (and People): daily letters coloured green or red, with the actions behind the reds, for tier 1 to tier 3 meetings.": {
   "fr": "",
@@ -42894,7 +43134,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:521"
+  "where": "packages/core/src/templates.ts:128 packages/core/src/templates.ts:514"
  },
  "Sara": {
   "fr": "",
@@ -42930,13 +43170,13 @@
   "fr": "Enregistrer comme mon modèle de formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:140"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:142"
  },
  "Save as template": {
   "fr": "Enregistrer comme modèle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:193"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:195"
  },
  "Save as template keeps the structure for next time; Map onto the plan turns cards into backlog items, risks and dependencies.": {
   "fr": "",
@@ -43044,13 +43284,13 @@
   "fr": "Enregistré comme modèle. Retrouvez-le dans Modèles.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:192"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:194"
  },
  "Saved as your own class template: start new classes from it under Classes.": {
   "fr": "Enregistré comme modèle de formation personnel : créez de nouvelles formations à partir de celui-ci dans Formations.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:139"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:141"
  },
  "Saved carts across devices": {
   "fr": "",
@@ -43062,19 +43302,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:157"
+  "where": "apps/web/app/(app)/templates/page.tsx:158"
  },
  "Saved from an import. Structure kept, content cleared.": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192"
+  "where": "apps/web/app/(app)/templates/page.tsx:193"
  },
  "Saved from imports": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:40"
+  "where": "apps/web/app/(app)/templates/page.tsx:41"
  },
  "Saved.": {
   "fr": "",
@@ -43166,7 +43406,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:123 packages/core/src/templates.ts:469"
  },
  "SCOPE IDEAS": {
   "fr": "IDÉES DE PÉRIMÈTRE",
@@ -43245,7 +43485,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:569"
+  "where": "packages/core/src/templates.ts:562"
  },
  "Score WSJF on each epic to rank the backlog.": {
   "fr": "",
@@ -43534,7 +43774,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:335"
+  "where": "apps/web/app/(app)/templates/page.tsx:338"
  },
  "See rating": {
   "fr": "Voir la note",
@@ -43620,6 +43860,12 @@
   "phase": "2",
   "where": "packages/core/src/kanban.ts:79"
  },
+ "Select a story to size it and move it between iterations.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:161"
+ },
  "Select all": {
   "fr": "",
   "status": "new",
@@ -43698,6 +43944,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:929"
+ },
+ "Selected story": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:138"
  },
  "Selection of mapping software": {
   "fr": "Choix du logiciel de cartographie",
@@ -44021,7 +44273,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:561"
  },
  "Set it up": {
   "fr": "",
@@ -44143,7 +44395,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:504"
+  "where": "packages/core/src/templates.ts:497"
  },
  "SF1: Outcome-driven product development": {
   "fr": "SF1 : Développement de produits axé sur les résultats",
@@ -44375,7 +44627,7 @@
   "fr": "Services partagés",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:878 packages/core/src/templates.ts:84 packages/core/src/templates.ts:218"
+  "where": "apps/web/components/planning-pages.tsx:878 packages/core/src/templates.ts:84 packages/core/src/templates.ts:211"
  },
  "Shared Services": {
   "fr": "Services partagés",
@@ -44424,7 +44676,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:555"
+  "where": "packages/core/src/templates.ts:548"
  },
  "Shift 1: Focus on Outcome-Driven Flow": {
   "fr": "",
@@ -44436,7 +44688,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:556"
+  "where": "packages/core/src/templates.ts:549"
  },
  "Shift 2: Cross-Functional, AI-Augmented Teams": {
   "fr": "",
@@ -44448,7 +44700,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:557"
+  "where": "packages/core/src/templates.ts:550"
  },
  "Shift 3: Iterative Learning and Rapid Experimentation Cycles": {
   "fr": "",
@@ -44472,7 +44724,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:561"
  },
  "Ship address autocomplete": {
   "fr": "",
@@ -44721,7 +44973,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:204 apps/web/app/(app)/welcome/page.tsx:60"
+  "where": "apps/web/app/(app)/templates/page.tsx:205 apps/web/app/(app)/welcome/page.tsx:60"
  },
  "Sign in": {
   "fr": "",
@@ -44763,7 +45015,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:204"
+  "where": "apps/web/app/(app)/templates/page.tsx:205"
  },
  "Sign up free": {
   "fr": "",
@@ -44897,7 +45149,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:480"
+  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:473"
  },
  "Site": {
   "fr": "Site",
@@ -44915,7 +45167,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:142 packages/core/src/templates.ts:356"
+  "where": "apps/web/components/kanban-board.tsx:142 packages/core/src/templates.ts:349"
  },
  "SIZE": {
   "fr": "TAILLE",
@@ -45011,7 +45263,7 @@
   "fr": "Ignorés :",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:585"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:589"
  },
  "Slide": {
   "fr": "Diapositive",
@@ -45354,7 +45606,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:202"
+  "where": "packages/core/src/templates.ts:195"
  },
  "Solution Train Sync": {
   "fr": "",
@@ -45470,7 +45722,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:561"
  },
  "Sort author search by publish date": {
   "fr": "Trier la recherche par auteur selon la date de publication",
@@ -45566,7 +45818,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:112 packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:112 packages/core/src/templates.ts:393"
  },
  "Sources, measures & funding": {
   "fr": "",
@@ -45650,13 +45902,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:519"
+  "where": "packages/core/src/templates.ts:512"
  },
  "Specification limits (LSL · USL · target)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:485"
+  "where": "packages/core/src/templates.ts:478"
  },
  "Specification limits (LSL · USL)": {
   "fr": "",
@@ -45812,13 +46064,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:376"
+  "where": "packages/core/src/templates.ts:369"
  },
  "Sprint Backlog (selected)": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:369"
+  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:362"
  },
  "Sprint Backlog board": {
   "fr": "",
@@ -45830,19 +46082,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:107 packages/core/src/templates.ts:375"
+  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:107 packages/core/src/templates.ts:368"
  },
  "Sprint Goal and outcome": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:375"
  },
  "Sprint Goal: why is this Sprint valuable?": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:368"
+  "where": "packages/core/src/templates.ts:361"
  },
  "Sprint Planning": {
   "fr": "",
@@ -45957,7 +46209,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:375"
  },
  "Stakeholders indicated feeling overwhelmed due to the complexity and level of change of the LPM implementation. What can you do to help them work through this and identify a path forward?": {
   "fr": "Les parties prenantes se disent dépassées par la complexité et l’ampleur du changement qu’implique la mise en place de la LPM. Que pouvez-vous faire pour les aider à surmonter cela et à trouver une voie à suivre ?",
@@ -45969,7 +46221,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:394"
+  "where": "packages/core/src/templates.ts:387"
  },
  "Standard, scalable processes": {
   "fr": "Processus standard et évolutifs",
@@ -45981,7 +46233,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:561"
  },
  "Stands alone. Connect it to the rooms it works with: an ART room to the portfolio and OKR rooms, a team room to its ART.": {
   "fr": "",
@@ -46122,7 +46374,7 @@
   "fr": "Repartir de zéro : supprimer le travail des participants",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:153"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:155"
  },
  "Start from": {
   "fr": "Partir de",
@@ -46134,7 +46386,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/boards/page.tsx:82 apps/web/app/(app)/templates/page.tsx:90 apps/web/app/(app)/templates/page.tsx:125"
+  "where": "apps/web/app/(app)/boards/page.tsx:82 apps/web/app/(app)/templates/page.tsx:91 apps/web/app/(app)/templates/page.tsx:126"
  },
  "Start from a template and the whole board speaks that method. SAFe becomes a train, Kanban enforces WIP limits, the shop floor gets its andon. Cards drag between lanes in every one.": {
   "fr": "",
@@ -46146,7 +46398,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:94"
+  "where": "apps/web/app/(app)/templates/page.tsx:95"
  },
  "Start from the current-state": {
   "fr": "",
@@ -46260,7 +46512,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/portfolio/page.tsx:175 apps/web/app/(app)/value-streams/page.tsx:1050 packages/core/src/templates.ts:357"
+  "where": "apps/web/app/(app)/portfolio/page.tsx:175 apps/web/app/(app)/value-streams/page.tsx:1050 packages/core/src/templates.ts:350"
  },
  "STATE": {
   "fr": "ÉTAT",
@@ -46284,13 +46536,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:401"
+  "where": "packages/core/src/templates.ts:394"
  },
  "STATIK 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:401"
+  "where": "packages/core/src/templates.ts:394"
  },
  "STATIK canvas": {
   "fr": "",
@@ -46308,37 +46560,37 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station 2": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station 5": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station 6": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:535"
+  "where": "packages/core/src/templates.ts:528"
  },
  "Station by station: running, slow, stopped, help called, with the reason and the response time.": {
   "fr": "",
@@ -46368,7 +46620,7 @@
   "fr": "Statut",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/agents/page.tsx:55 apps/web/app/(app)/boards/[id]/page.tsx:560 apps/web/app/(app)/outcome-planning/page.tsx:256"
+  "where": "apps/web/app/(app)/agents/page.tsx:55 apps/web/app/(app)/boards/[id]/page.tsx:564 apps/web/app/(app)/outcome-planning/page.tsx:256"
  },
  "STATUS": {
   "fr": "STATUT",
@@ -46380,7 +46632,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:536"
+  "where": "packages/core/src/templates.ts:529"
  },
  "Status (green · yellow · red)": {
   "fr": "",
@@ -46392,7 +46644,7 @@
   "fr": "Colonne du statut",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:489"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:493"
  },
  "Status for {0}": {
   "fr": "",
@@ -46440,7 +46692,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:301 packages/core/src/templates.ts:482"
+  "where": "packages/core/src/templates.ts:294 packages/core/src/templates.ts:475"
  },
  "STEP 1 · AS AN RTE, CONSIDER HOW YOU WILL SUSTAIN THE VICTORY": {
   "fr": "ÉTAPE 1 · EN TANT QUE RTE, RÉFLÉCHISSEZ À LA FAÇON DE FAIRE DURER LA VICTOIRE",
@@ -47249,7 +47501,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:301 packages/core/src/templates.ts:482"
+  "where": "packages/core/src/templates.ts:294 packages/core/src/templates.ts:475"
  },
  "STEP 2 · ONE PERSON’S CONTEXT, ONE UPCOMING PI EVENT, PRACTICE WHAT YOU WILL SAY": {
   "fr": "ÉTAPE 2 · LE CONTEXTE D’UNE PERSONNE, UN ÉVÉNEMENT DE PI À VENIR, EXERCEZ-VOUS À CE QUE VOUS DIREZ",
@@ -47674,7 +47926,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:301 packages/core/src/templates.ts:482"
+  "where": "packages/core/src/templates.ts:294 packages/core/src/templates.ts:475"
  },
  "STEP 3 · BE PREPARED TO SHARE WITH THE CLASS": {
   "fr": "ÉTAPE 3 · PRÉPAREZ-VOUS À PARTAGER AVEC L’ENSEMBLE DES PARTICIPANTS",
@@ -47879,7 +48131,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:301 packages/core/src/templates.ts:482"
+  "where": "packages/core/src/templates.ts:294 packages/core/src/templates.ts:475"
  },
  "Step 4: Be prepared to share one takeaway with the class": {
   "fr": "Étape 4 : Préparez-vous à partager un point à retenir en plénière",
@@ -47959,7 +48211,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:301 packages/core/src/templates.ts:482"
+  "where": "packages/core/src/templates.ts:294 packages/core/src/templates.ts:475"
  },
  "Step 5: Identify the uncommitted objectives.": {
   "fr": "Étape 5 : Déterminez les objectifs non engagés.",
@@ -48146,7 +48398,7 @@
  },
  "Stories per iteration": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:82"
  },
@@ -48197,7 +48449,7 @@
   "fr": "Récit",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 packages/core/src/classes.ts:403"
+  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 apps/web/components/team-board.tsx:141"
  },
  "STORY": {
   "fr": "RÉCIT",
@@ -48221,7 +48473,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:143"
+  "where": "apps/web/components/kanban-board.tsx:143 apps/web/components/team-board.tsx:149"
  },
  "STORY POINTS · PICK ONE": {
   "fr": "POINTS DE RÉCIT · CHOISISSEZ-EN UN",
@@ -48510,7 +48762,7 @@
   "fr": "Participants",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:113 apps/web/app/(app)/classroom/company/page.tsx:82 apps/web/app/(app)/classroom/company/page.tsx:108"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:115 apps/web/app/(app)/classroom/company/page.tsx:82 apps/web/app/(app)/classroom/company/page.tsx:108"
  },
  "Students in a class": {
   "fr": "",
@@ -48654,7 +48906,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:480"
+  "where": "packages/core/src/templates.ts:124 packages/core/src/templates.ts:473"
  },
  "Suppliers, Inputs, Process (5–7 steps), Outputs, Customers: the high-level process picture for the Define phase.": {
   "fr": "",
@@ -48768,7 +49020,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:97 packages/core/src/templates.ts:296"
+  "where": "packages/core/src/templates.ts:97 packages/core/src/templates.ts:289"
  },
  "Supports portfolio operations": {
   "fr": "Soutient les opérations du portefeuille",
@@ -48816,7 +49068,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:568"
+  "where": "packages/core/src/templates.ts:134 packages/core/src/templates.ts:561"
  },
  "Sustainable pace": {
   "fr": "Rythme soutenable",
@@ -48961,7 +49213,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:304"
+  "where": "packages/core/src/templates.ts:297"
  },
  "System architect": {
   "fr": "Architecte système",
@@ -48985,13 +49237,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:304"
+  "where": "packages/core/src/templates.ts:297"
  },
  "System C": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:304"
+  "where": "packages/core/src/templates.ts:297"
  },
  "System demo": {
   "fr": "Démonstration du système",
@@ -49321,7 +49573,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:458"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:451"
  },
  "Tariq Aziz": {
   "fr": "Tariq Aziz",
@@ -49411,7 +49663,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:305 packages/core/src/templates.ts:305 packages/core/src/templates.ts:305"
+  "where": "packages/core/src/templates.ts:298 packages/core/src/templates.ts:298 packages/core/src/templates.ts:298"
  },
  "Team (people · location)": {
   "fr": "",
@@ -49501,7 +49753,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:476"
+  "where": "packages/core/src/templates.ts:469"
  },
  "Team and roles (Champion · Black Belt · Green Belts)": {
   "fr": "",
@@ -49561,13 +49813,25 @@
   "fr": "Carnet de l’équipe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lsa.ts:325 packages/core/src/kanban.ts:81 packages/core/src/templates.ts:90"
+  "where": "apps/web/components/studio-model-lsa.ts:325 apps/web/components/team-board.tsx:158 packages/core/src/kanban.ts:81"
+ },
+ "Team backlog · not planned yet": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:132"
  },
  "Team backlog refinement": {
   "fr": "Affinement du carnet de l’équipe",
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:523"
+ },
+ "Team board": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:24"
  },
  "TEAM BOARD": {
   "fr": "TABLEAU DE L’ÉQUIPE",
@@ -49591,13 +49855,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/outcomes.ts:157 packages/core/src/outcomes.ts:163 packages/core/src/templates.ts:82"
+  "where": "packages/core/src/outcomes.ts:157 packages/core/src/outcomes.ts:163"
  },
  "Team breakouts": {
   "fr": "Séances d’équipe",
   "status": "draft",
   "phase": "2",
-  "where": "packages/core/src/courses/events.ts:140 packages/core/src/templates.ts:178 packages/core/src/templates.ts:179"
+  "where": "packages/core/src/courses/events.ts:140 packages/core/src/templates.ts:171 packages/core/src/templates.ts:172"
  },
  "Team breakouts test milestones, balance commitments, and refine outcomes.": {
   "fr": "",
@@ -49675,14 +49939,14 @@
   "fr": "Équipe d’après",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:449",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:453",
   "note": "fragment, followed by a choice"
  },
  "Team Kanban": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/kanban.ts:78 packages/core/src/templates.ts:90"
+  "where": "apps/web/components/team-board.tsx:17 packages/core/src/kanban.ts:78 packages/core/src/templates.ts:82"
  },
  "Team kanbans": {
   "fr": "",
@@ -49774,11 +50038,29 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcome-planning/page.tsx:808 apps/web/app/(app)/outcome-planning/page.tsx:984"
  },
+ "Team PI board": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "packages/core/src/templates.ts:82 packages/core/src/templates.ts:160"
+ },
+ "Team planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:17"
+ },
  "Team planning board": {
   "fr": "",
   "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:158"
+ },
+ "Team planning: iterations, capacity and load": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "packages/core/src/templates.ts:82"
  },
  "Team ready for the confidence vote": {
   "fr": "Équipe prête pour le vote de confiance",
@@ -50079,7 +50361,7 @@
   "fr": "Modèle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:86",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:88",
   "note": "check: may be a value"
  },
  "TEMPLATE · FULL BOARD": {
@@ -50110,13 +50392,13 @@
   "fr": "Modèle à ajouter",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:296"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:300"
  },
  "Templates": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/imports/page.tsx:135 apps/web/app/(app)/model/page.tsx:61 apps/web/app/(app)/templates/page.tsx:124"
+  "where": "apps/web/app/(app)/imports/page.tsx:135 apps/web/app/(app)/model/page.tsx:61 apps/web/app/(app)/templates/page.tsx:125"
  },
  "TEMPLATES": {
   "fr": "",
@@ -50322,7 +50604,7 @@
   "fr": "Cela n’a pas fonctionné",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:58 apps/web/app/(app)/boards/[id]/page.tsx:199 apps/web/app/(app)/canvases/page.tsx:44"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:60 apps/web/app/(app)/boards/[id]/page.tsx:201 apps/web/app/(app)/canvases/page.tsx:44"
  },
  "That file is not activity JSON.": {
   "fr": "Ce fichier n’est pas un JSON d’activités.",
@@ -50548,7 +50830,7 @@
   "fr": "Le tableau est vide.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:149"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:151"
  },
  "The boards an event needs, created together: on one board side by side, or a board each.": {
   "fr": "",
@@ -50621,19 +50903,19 @@
   "fr": "La formation est archivée.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:175"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:177"
  },
  "The class is open again.": {
   "fr": "La formation est de nouveau ouverte.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:175"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:177"
  },
  "The class record is downloading.": {
   "fr": "Le dossier de la formation est en cours de téléchargement.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:164"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:166"
  },
  "The class's lessons laid out over its days; each half-day holds 180 minutes.": {
   "fr": "",
@@ -50772,7 +51054,7 @@
   "fr": "le cadre qui contient la carte",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:460 apps/web/app/(app)/boards/[id]/page.tsx:476"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:464 apps/web/app/(app)/boards/[id]/page.tsx:480"
  },
  "The framework your workspace speaks: levels, roles, events, cadence. SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and more, or your own fork.": {
   "fr": "",
@@ -50792,11 +51074,17 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:897"
  },
+ "The green arc marks the 80 to 100% band a predictable team or train lands in.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:280"
+ },
  "the group the row is in": {
   "fr": "le groupe qui contient la ligne",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:460 apps/web/app/(app)/boards/[id]/page.tsx:476"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:464 apps/web/app/(app)/boards/[id]/page.tsx:480"
  },
  "The household's trusted health partner": {
   "fr": "",
@@ -50808,7 +51096,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:382"
+  "where": "packages/core/src/templates.ts:108 packages/core/src/templates.ts:375"
  },
  "The Insights plan is this dashboard as a product: load extracts from your CRM, finance, learning platform, survey vendors and Jira, define the outcomes and KPIs each entity owns, track what each initiative was funded with and what it bought, and print the one-pager for the executive team or the board. Northstar Bank is one of the built-in example customers; sign up and open Outcome dashboard to walk through it.": {
   "fr": "",
@@ -51088,7 +51376,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:369"
+  "where": "packages/core/src/templates.ts:106 packages/core/src/templates.ts:362"
  },
  "The plan must flow back to Jira or Azure DevOps and come from it: features, stories, risks and dependencies sync two ways through an inspectable queue.": {
   "fr": "",
@@ -51155,7 +51443,7 @@
   "fr": "Le rapport imprimable est en cours de téléchargement.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:164"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:166"
  },
  "The problem": {
   "fr": "Le problème",
@@ -51711,7 +51999,7 @@
   "fr": "Ce tableau est vide.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:277"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:281"
  },
  "This changes the {0} shown above only.": {
   "fr": "Cela ne modifie que le {0} affiché ci-dessus.",
@@ -51827,7 +52115,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:394"
+  "where": "apps/web/app/(app)/templates/page.tsx:397"
  },
  "This week": {
   "fr": "Cette semaine",
@@ -51983,13 +52271,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:405"
+  "where": "packages/core/src/templates.ts:398"
  },
  "Thursday": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:192"
+  "where": "packages/core/src/templates.ts:185"
  },
  "Tick a team's card to show it on the ART board; finish with the confidence vote.": {
   "fr": "",
@@ -52100,7 +52388,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:431"
+  "where": "packages/core/src/templates.ts:424"
  },
  "Timer": {
   "fr": "Minuteur",
@@ -52149,7 +52437,7 @@
   "fr": "Titre",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:555 apps/web/app/(app)/dashboards/page.tsx:242 apps/web/components/activity-editor.tsx:136"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:559 apps/web/app/(app)/dashboards/page.tsx:242 apps/web/components/activity-editor.tsx:136"
  },
  "TITLE": {
   "fr": "TITRE",
@@ -52167,7 +52455,7 @@
   "fr": "Colonne du titre",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:486"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:490"
  },
  "Title suggestions": {
   "fr": "Suggestions de titres",
@@ -52197,7 +52485,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:171"
+  "where": "packages/core/src/templates.ts:86 packages/core/src/templates.ts:164"
  },
  "To bill you": {
   "fr": "",
@@ -52333,7 +52621,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:471"
+  "where": "packages/core/src/templates.ts:464"
  },
  "Tollgate question": {
   "fr": "",
@@ -52345,7 +52633,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:471 packages/core/src/templates.ts:471 packages/core/src/templates.ts:471"
+  "where": "packages/core/src/templates.ts:464 packages/core/src/templates.ts:464 packages/core/src/templates.ts:464"
  },
  "Tom": {
   "fr": "",
@@ -52418,7 +52706,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:552"
+  "where": "packages/core/src/templates.ts:545"
  },
  "Top losses": {
   "fr": "",
@@ -52430,7 +52718,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:457"
+  "where": "packages/core/src/templates.ts:120 packages/core/src/templates.ts:450"
  },
  "Topic 1": {
   "fr": "Thème 1",
@@ -52508,7 +52796,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:547"
+  "where": "packages/core/src/templates.ts:540"
  },
  "Total portfolio budget; the most important and most expensive costs, resources and activities.": {
   "fr": "Budget total du portefeuille ; les coûts, ressources et activités les plus importants et les plus coûteux.",
@@ -52521,6 +52809,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:1202"
+ },
+ "Totals": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/team-board.tsx:261"
  },
  "Toward Lean Portfolio Management": {
   "fr": "Vers la gestion de portefeuille Lean",
@@ -52726,7 +53020,7 @@
   "fr": "Trainyard",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/classes/[id]/page.tsx:32",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/classes/[id]/page.tsx:32",
   "note": "brand, kept"
  },
  "Trainyard · Apache-2.0 · built by Agile Agilist": {
@@ -52889,7 +53183,7 @@
   "fr": "Trello",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:22 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:52",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:23 apps/web/app/(app)/imports/page.tsx:40 apps/web/app/(app)/imports/page.tsx:52",
   "note": "brand, kept"
  },
  "Trial to paid from 8 to 14 %": {
@@ -53050,7 +53344,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:192"
+  "where": "packages/core/src/templates.ts:185"
  },
  "Twelve success factors, four shifts": {
   "fr": "",
@@ -53148,7 +53442,7 @@
   "fr": "Type",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:556 apps/web/app/(app)/card-types/page.tsx:130 apps/web/app/(app)/value-streams/page.tsx:642"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:560 apps/web/app/(app)/card-types/page.tsx:130 apps/web/app/(app)/value-streams/page.tsx:642"
  },
  "TYPE": {
   "fr": "TYPE",
@@ -53519,7 +53813,7 @@
   "fr": "Sans titre",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/templates/page.tsx:372 apps/web/components/activity-editor.tsx:102"
+  "where": "apps/web/app/(app)/templates/page.tsx:375 apps/web/components/activity-editor.tsx:102"
  },
  "Up to 5 people in one hosted room": {
   "fr": "",
@@ -53839,7 +54133,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:183"
+  "where": "apps/web/app/(app)/templates/page.tsx:184"
  },
  "User": {
   "fr": "",
@@ -53857,7 +54151,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:286"
+  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:279"
  },
  "User activity log reflecting both authentication factors": {
   "fr": "Journal d’activité utilisateur reflétant les deux facteurs d’authentification",
@@ -53867,7 +54161,7 @@
  },
  "User stories": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "packages/core/src/templates.ts:161"
  },
@@ -53893,7 +54187,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:287"
+  "where": "packages/core/src/templates.ts:96 packages/core/src/templates.ts:280"
  },
  "User test flow": {
   "fr": "Parcours de test utilisateur",
@@ -54077,7 +54371,7 @@
   "fr": "Valeur",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-aart.ts:21 packages/core/src/templates.ts:301"
+  "where": "apps/web/components/studio-model-aart.ts:21 packages/core/src/templates.ts:294"
  },
  "Value Architect": {
   "fr": "Value Architect",
@@ -54480,7 +54774,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:393"
+  "where": "packages/core/src/templates.ts:386"
  },
  "Verify (WIP)": {
   "fr": "",
@@ -54655,7 +54949,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:485"
+  "where": "packages/core/src/templates.ts:125 packages/core/src/templates.ts:478"
  },
  "Voice of the customer → CTQ tree": {
   "fr": "",
@@ -54716,7 +55010,7 @@
   "fr": "Votes",
   "status": "draft",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:223"
+  "where": "packages/core/src/templates.ts:216"
  },
  "VP discussion: current commitments and flexibility": {
   "fr": "Discussion avec le VP : engagements actuels et flexibilité",
@@ -54770,7 +55064,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:573"
+  "where": "packages/core/src/templates.ts:566"
  },
  "Walk the example yourself at /examples/okrs-kpis, where every element is clickable, or load Northstar Bank as an example customer in the outcome dashboard.": {
   "fr": "",
@@ -55174,7 +55468,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:192"
+  "where": "packages/core/src/templates.ts:185"
  },
  "Week": {
   "fr": "",
@@ -55357,7 +55651,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:89 packages/core/src/templates.ts:226"
+  "where": "packages/core/src/templates.ts:89 packages/core/src/templates.ts:219"
  },
  "Went well, didn't go well, ideas, actions.": {
   "fr": "",
@@ -55525,7 +55819,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:387"
+  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:380"
  },
  "What did not work for you? (optional)": {
   "fr": "",
@@ -56143,7 +56437,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:387"
+  "where": "packages/core/src/templates.ts:109 packages/core/src/templates.ts:380"
  },
  "What will happen if DevOps capabilities are not built?": {
   "fr": "Que se passera-t-il si les capacités DevOps ne sont pas développées ?",
@@ -56479,7 +56773,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:224"
+  "where": "apps/web/app/(app)/templates/page.tsx:225"
  },
  "Whiteboards and templates": {
   "fr": "",
@@ -56863,7 +57157,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:473"
+  "where": "packages/core/src/templates.ts:466"
  },
  "Will you be ready to start writing PI Objectives in the next 15 minutes?": {
   "fr": "Serez-vous prêts à commencer à rédiger les objectifs de PI dans les 15 prochaines minutes ?",
@@ -56912,26 +57206,26 @@
   "fr": "Effacer tout ce que les participants ont ajouté et repartir de zéro ?",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:149"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:151"
  },
  "Wipe the class": {
   "fr": "Réinitialiser la formation",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:144",
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:146",
   "note": "Wipe: rendered as reset"
  },
  "Wipe…": {
   "fr": "Réinitialiser…",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:152"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:154"
  },
  "Wiped: the class is back as it starts.": {
   "fr": "Réinitialisé : la formation est revenue à son état de départ.",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:149"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:151"
  },
  "WIQL WHERE clause": {
   "fr": "",
@@ -56961,7 +57255,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:204"
+  "where": "apps/web/app/(app)/templates/page.tsx:205"
  },
  "with the steps to reproduce; you get an answer within three working days. Please do not open a public issue until a fix has shipped.": {
   "fr": "",
@@ -57040,7 +57334,7 @@
   "fr": "Travail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model.ts:48 apps/web/components/studio-model.ts:578 packages/core/src/templates.ts:369"
+  "where": "apps/web/components/studio-model.ts:48 apps/web/components/studio-model.ts:578 packages/core/src/templates.ts:362"
  },
  "Work as-is": {
   "fr": "Fonctionnent tels quels",
@@ -57130,7 +57424,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:400"
+  "where": "packages/core/src/templates.ts:393"
  },
  "Workflow (knowledge discovery)": {
   "fr": "",
@@ -57468,7 +57762,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:250"
+  "where": "packages/core/src/templates.ts:243"
  },
  "WSJF: Cost of Delay ÷ job size": {
   "fr": "WSJF : coût du délai ÷ taille du travail",
@@ -57948,7 +58242,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:171"
+  "where": "apps/web/app/(app)/templates/page.tsx:172"
  },
  "Your template, your way.": {
   "fr": "",
@@ -57960,7 +58254,7 @@
   "fr": "Vos modèles",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:317 apps/web/app/(app)/templates/page.tsx:71"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:321 apps/web/app/(app)/templates/page.tsx:72"
  },
  "Your value stream": {
   "fr": "Votre flux de valeur",

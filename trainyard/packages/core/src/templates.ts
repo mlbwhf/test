@@ -79,7 +79,7 @@ function template(info: TemplateInfo, build: (b: Board) => void): Board & { info
 export const TEMPLATE_CATALOG: TemplateInfo[] = [
   { id: "pi-planning-room", name: "PI planning room", blurb: "The multi-team planning room from the Leading SAFe design: a train per team with iterations as wagons, capacity gauges, planning poker, ROAM, PI objectives with business value, the yard view across teams and the program view of shared epics. Seed it with a simulation (ALICE, GeekBooks), your own backlog or Jira/Azure DevOps.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Setup: teams, PI calendar, backlog", "Yard · all teams", "One train per team: iterations, freight yard, risks, poker", "Program view: shared epics"], cardTypes: ["Feature", "Story", "Risk", "PI objective"], mapsTo: "Nothing yet (its own document)" },
   { id: "pi-planning", name: "PI Planning board", blurb: "Teams × iterations with features, dependencies and capacity.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Milestones", "Uncommitted", "Risks (ROAM)"], cardTypes: ["Feature", "Enabler", "Milestone"], mapsTo: "Items and dependencies" },
-  { id: "team-breakout", name: "Team breakout", blurb: "Capacity and load per iteration, stories and features, IP iteration, PI objectives, risks, features backlog and planning poker for one team.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["Capacity · load", "Stories per iteration", "Features per iteration", "IP iteration", "PI objectives (BV · AV)", "Risks", "Features backlog", "Planning poker"], cardTypes: ["Story", "Feature", "Objective", "Risk"], mapsTo: "Items and objectives" },
+  { id: "team-breakout", name: "Team PI board", blurb: "One team's PI in three tabs over the same stories: planning against each iteration's capacity, the Team Kanban, and PI objectives with planned and actual business value.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["Team planning: iterations, capacity and load", "Team backlog", "Features", "Risks to ROAM", "Team Kanban", "PI objectives (BV plan · actual)"], cardTypes: ["Story", "Feature", "Objective", "Risk"], mapsTo: "Items and objectives" },
   { id: "roam", name: "ROAM risk board", blurb: "Resolved, Owned, Accepted, Mitigated.", event: "PI Planning · ART Sync", method: "safe", tags: ["safe", "risk"], zones: ["Inbox", "Resolved", "Owned", "Accepted", "Mitigated"], cardTypes: ["Risk"], mapsTo: "Risks with ROAM state" },
   { id: "program-board", name: "PI planning board", blurb: "The living version of the PI plan (the program board), with dependency strings.", event: "ART Sync", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Shared services", "Milestones"], cardTypes: ["Feature", "Milestone"], mapsTo: "Items and dependencies" },
   { id: "confidence-vote", name: "Confidence vote", blurb: "Fist of five per team and for the ART.", event: "PI Planning", method: "safe", tags: ["safe", "team"], zones: ["1 · No confidence", "2", "3", "4", "5 · Full confidence"], cardTypes: ["Vote"], mapsTo: "Nothing (record only)" },
@@ -154,17 +154,10 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       b.frames = [milestones, ...body, strip("Uncommitted objectives and features", bottomY, Math.floor(rowW / 2) - GAP / 2, 260), strip("Program risks (ROAM)", bottomY, Math.floor(rowW / 2) - GAP / 2, 260, Math.floor(rowW / 2) + GAP / 2)];
       b.nodes = placeholders(body);
     }),
+    // One team's PI board (apps/web team-board.tsx): planning against capacity, the team Kanban and PI objectives over the same stories.
     template(info("team-breakout"), (b) => {
-      const all = [...iterations, "IP iteration"];
-      const fullW = all.length * (W + GAP) - GAP;
-      const cap = grid(all, ["Capacity · load"], { h: 120 });
-      const stories = grid(iterations, ["User stories"], { y: 160, h: 420 });
-      const features = grid(iterations, ["Features"], { y: 620, h: 220 });
-      const ip = { id: "ip-iteration", title: "IP iteration: innovation, planning, PI system demo", x: iterations.length * (W + GAP), y: 160, width: W, height: 680 };
-      const quarter = Math.floor((fullW - 3 * GAP) / 4);
-      const bottom = ["PI objectives: committed · uncommitted (BV · AV)", "Risks", "Features backlog", "Planning poker"].map((t, i) => strip(t, 880, quarter, 340, i * (quarter + GAP)));
-      b.frames = [...cap, ...stories, ...features, ip, ...bottom];
-      b.nodes = [...placeholders(stories, "#dcf3e4"), ...placeholders(features, "#cfe3fb"), ...placeholders([bottom[1]!], "#fbd9d2")];
+      b.fields = { teamBoard: true };
+      b.frames = [{ id: "team", title: "Team PI board", x: 0, y: 0, width: 2400, height: 900 }];
     }),
     template(info("pi-planning-readiness"), (b) => {
       // Built from PI_PLANNING_READINESS, the same list the ART launch canvas scores and the classes teach.
