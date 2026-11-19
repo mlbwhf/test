@@ -9,6 +9,7 @@
 
 import { emptyBoard, type Board, type BoardNode, type Frame } from "./boards.js";
 import { classTemplates } from "./classes.js";
+import { KANBAN_LEVELS } from "./kanban.js";
 import { EVENT_BOARDS } from "./courses/events.js";
 import { INSPECT_AND_ADAPT } from "./inspectadapt.js";
 import { PI_PLANNING_READINESS } from "./canvases.js";
@@ -86,7 +87,7 @@ export const TEMPLATE_CATALOG: TemplateInfo[] = [
   { id: "pi-planning-agenda", name: "PI planning agenda", blurb: "The two days of PI planning in SAFe's order: business context and visions, team breakouts and draft plans, management review, adjustments, final plans, program risks and the confidence vote.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Day 1", "Day 2", "Parking lot"], cardTypes: ["Agenda item", "Note"], mapsTo: "Nothing (record only)" },
   { id: "ip-iteration", name: "IP iteration calendar", blurb: "Two weeks that close the PI: buffer, final verification and validation, innovation and readiness, then pre-PI planning, continuing education, Inspect & Adapt and the next PI planning.", event: "IP iteration · Inspect & Adapt", method: "safe", tags: ["safe"], zones: ["Week 1: Monday to Friday", "Week 2: Monday to Friday"], cardTypes: ["Event", "Activity"], mapsTo: "Nothing (record only)" },
   { id: "retrospective", name: "Retrospective", blurb: "Went well, didn't go well, ideas, actions.", event: "Iteration · Inspect & Adapt", method: "general", tags: ["team"], zones: ["Went well", "Didn't go well", "Ideas", "Actions"], cardTypes: ["Note", "Action"], mapsTo: "Actions as items" },
-  { id: "kanban", name: "Team Kanban", blurb: "Columns with WIP limits.", event: "Daily", method: "kanban", tags: ["team", "flow"], zones: ["Ready", "In progress", "Review", "Done"], cardTypes: ["Work item"], mapsTo: "Items with status" },
+  { id: "kanban", name: "Team Kanban", blurb: "Stories, enabler stories and spikes from the team backlog to accepted, with WIP limits.", event: "Daily", method: "safe", tags: ["team", "flow"], zones: ["Team backlog", "Ready (WIP 5)", "In progress (WIP 3)", "In review (WIP 2)", "Integrated and tested (WIP 3)", "Accepted"], cardTypes: ["Story", "Enabler story", "Spike"], mapsTo: "Stories with state" },
   { id: "inspect-adapt", name: "Inspect & Adapt", blurb: "PI system demo, quantitative and qualitative measurement, and the problem-solving workshop: fishbone by SAFe's categories, five whys, improvement backlog.", event: "Inspect & Adapt", method: "safe", tags: ["safe", "team"], zones: ["PI system demo", "Measurement", "Problem statement", "Fishbone (people, processes, tools, program, environment)", "Five whys", "Improvement backlog"], cardTypes: ["Cause", "Improvement"], mapsTo: "Improvement items" },
   { id: "lean-business-case", name: "Epic / Lean business case", blurb: "Hypothesis, MVP, leading indicators, WSJF.", event: "Portfolio Sync", method: "safe", tags: ["portfolio"], zones: ["Hypothesis", "MVP", "Leading indicators", "WSJF"], cardTypes: ["Note"], mapsTo: "Portfolio epic" },
   { id: "okr-tree", name: "OKR tree", blurb: "Objectives with key results and owners.", event: "Quarterly", method: "general", tags: ["portfolio"], zones: ["Objective", "Key results", "Owner", "Metric link"], cardTypes: ["Row"], mapsTo: "OKRs" },
@@ -94,8 +95,9 @@ export const TEMPLATE_CATALOG: TemplateInfo[] = [
   { id: "obeya", name: "Obeya wall", blurb: "Strategy, KPIs, projects, problems, actions in one room.", event: "Weekly", method: "lean", tags: ["lean"], zones: ["Strategy", "KPIs", "Projects", "Problems", "Actions", "Calendar"], cardTypes: ["Note", "KPI tile", "Action"], mapsTo: "Actions as items" },
   { id: "story-map", name: "User story map", blurb: "Activities and tasks across the top, stories sliced into releases below.", event: "Backlog refinement · PI Planning prep", method: "general", tags: ["team"], zones: ["User activities", "User tasks", "Release 1", "Release 2", "Release 3"], cardTypes: ["Activity", "Task", "Story"], mapsTo: "Stories with release as iteration" },
   { id: "value-stream-art", name: "Value stream and ART identification", blurb: "Operational value stream, supporting systems, development value streams with people and locations, and the resulting ART design.", event: "Value Stream Identification workshop", method: "safe", tags: ["safe", "portfolio"], zones: ["Operational value stream", "Supporting systems", "Development value streams", "ART design"], cardTypes: ["Step", "System", "Team (people · location)", "ART"], mapsTo: "Teams and ARTs (structure only)" },
-  { id: "portfolio-kanban", name: "Portfolio Kanban", blurb: "Epics from funnel to done, with WIP limits per state and an MVP / persevere split.", event: "Portfolio Sync", method: "safe", tags: ["portfolio", "flow"], zones: ["Funnel", "Reviewing (WIP 4)", "Analyzing (WIP 4)", "Portfolio backlog", "Implementing: MVP (WIP 3)", "Implementing: persevere (WIP 5)", "Done"], cardTypes: ["Epic", "Key result"], mapsTo: "Epics with portfolio state" },
-  { id: "art-kanban", name: "ART Kanban", blurb: "Features through the continuous delivery pipeline, with WIP limits.", event: "ART Sync · PO Sync", method: "safe", tags: ["safe", "flow"], zones: ["Funnel", "Analyzing (WIP 2)", "Ready (WIP 6)", "Implementing (WIP 4)", "Validating on staging (WIP 6)", "Deploying to production (WIP 4)", "Releasing (WIP 5)", "Done"], cardTypes: ["Feature", "Enabler"], mapsTo: "Features with state" },
+  { id: "portfolio-kanban", name: "Portfolio Kanban", blurb: "Epics from funnel to done, with WIP limits per state and an MVP / persevere split.", event: "Portfolio Sync", method: "safe", tags: ["portfolio", "flow"], zones: ["Funnel", "Reviewing (WIP 4)", "Analyzing (WIP 4)", "Portfolio backlog", "Implementing: MVP (WIP 3)", "Implementing: persevere (WIP 5)", "Done"], cardTypes: ["Business epic", "Enabler epic", "Compliance or expedite"], mapsTo: "Epics with portfolio state" },
+  { id: "solution-kanban", name: "Solution Train Kanban", blurb: "Capabilities and enabler capabilities from funnel to done, with WIP limits.", event: "Solution Train Sync · Pre-PI Planning", method: "safe", tags: ["safe", "flow"], zones: ["Funnel", "Analyzing (WIP 3)", "Ready (WIP 6)", "Implementing (WIP 4)", "Validating on staging (WIP 3)", "Deploying to production (WIP 3)", "Releasing (WIP 2)", "Done"], cardTypes: ["Capability", "Enabler capability"], mapsTo: "Capabilities with state" },
+  { id: "art-kanban", name: "ART Kanban", blurb: "Features through the continuous delivery pipeline, with WIP limits.", event: "ART Sync · PO Sync", method: "safe", tags: ["safe", "flow"], zones: ["Funnel", "Analyzing (WIP 2)", "Ready (WIP 6)", "Implementing (WIP 4)", "Validating on staging (WIP 6)", "Deploying to production (WIP 4)", "Releasing (WIP 5)", "Done"], cardTypes: ["Feature", "Enabler feature"], mapsTo: "Features with state" },
   { id: "portfolio-roadmap", name: "Portfolio roadmap per ART", blurb: "Epics as bars across quarters, one lane per ART, with milestones.", event: "Portfolio Sync · Pre-PI Planning", method: "safe", tags: ["portfolio"], zones: ["Milestones", "ART lanes × quarters"], cardTypes: ["Epic", "Milestone"], mapsTo: "Epics and their target increments" },
   { id: "portfolio-art-board", name: "Portfolio ART planning board", blurb: "Epics and capabilities per ART across iterations, with milestones and cross-ART dependency strings.", event: "Pre-PI Planning · Solution Sync", method: "safe", tags: ["safe", "portfolio"], zones: ["Milestones", "ARTs × iterations"], cardTypes: ["Epic", "Capability", "Milestone"], mapsTo: "Items and dependencies" },
   { id: "solutions-horizon", name: "Solutions by investment horizon", blurb: "Ideas, then horizons 3 to 0: evaluating, emerging, investing, extracting, retiring.", event: "Strategic Portfolio Review", method: "safe", tags: ["portfolio", "lean"], zones: ["Ideas", "Horizon 3 · Evaluating", "Horizon 2 · Emerging", "Horizon 1 · Investing", "Horizon 1 · Extracting", "Horizon 0 · Retiring"], cardTypes: ["Solution", "Idea"], mapsTo: "Epics tagged with a horizon" },
@@ -226,19 +228,8 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
       b.nodes = [...placeholders(cols.slice(0, 1), "#dcf3e4"), ...placeholders(cols.slice(1, 2), "#fbd9d2"), ...placeholders(cols.slice(2, 3), "#cfe3fb")];
     }),
     template(info("kanban"), (b) => {
-      b.columns = [
-        { id: "title", title: "Work item", type: "text" },
-        { id: "state", title: "State", type: "status" },
-        { id: "owner", title: "Owner", type: "people" },
-        { id: "age", title: "Age (days)", type: "numbers" },
-        { id: "blocked", title: "Blocked", type: "checkbox" },
-      ];
-      b.groups = [
-        { id: "ready", title: "Ready" },
-        { id: "doing", title: "In progress (WIP 3)" },
-        { id: "review", title: "Review (WIP 2)" },
-        { id: "done", title: "Done" },
-      ];
+      b.fields = { kanban: "team" };
+      b.frames = [{ id: "kanban", title: KANBAN_LEVELS.team.name, x: 0, y: 0, width: 2400, height: 900 }];
     }),
     template(info("inspect-adapt"), (b) => {
       // Built from INSPECT_AND_ADAPT, the same definition the class boards use.
@@ -323,15 +314,18 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
         { id: "e-dvs-2", fromId: "dvs-2", toId: "sys-2" },
       ];
     }),
+    // The Kanban systems open as the Kanban board (kanban.ts): the board carries the level, one frame holds the work.
     template(info("portfolio-kanban"), (b) => {
-      const cols = grid(["Funnel", "Reviewing (WIP 4)", "Analyzing (WIP 4)", "Portfolio backlog", "Implementing: MVP (WIP 3)", "Implementing: persevere (WIP 5)", "Done"], ["Epics"], { h: 760, w: 300 });
-      b.frames = cols;
-      b.nodes = placeholders(cols.slice(0, 1), "#cfe3fb");
+      b.fields = { kanban: "portfolio" };
+      b.frames = [{ id: "kanban", title: KANBAN_LEVELS.portfolio.name, x: 0, y: 0, width: 2400, height: 900 }];
+    }),
+    template(info("solution-kanban"), (b) => {
+      b.fields = { kanban: "solution" };
+      b.frames = [{ id: "kanban", title: KANBAN_LEVELS.solution.name, x: 0, y: 0, width: 2400, height: 900 }];
     }),
     template(info("art-kanban"), (b) => {
-      const cols = grid(["Funnel", "Analyzing (WIP 2)", "Ready (WIP 6)", "Implementing (WIP 4)", "Validating on staging (WIP 6)", "Deploying to production (WIP 4)", "Releasing (WIP 5)", "Done"], ["Features"], { h: 760, w: 280 });
-      b.frames = cols;
-      b.nodes = placeholders(cols.slice(0, 1), "#cfe3fb");
+      b.fields = { kanban: "art" };
+      b.frames = [{ id: "kanban", title: KANBAN_LEVELS.art.name, x: 0, y: 0, width: 2400, height: 900 }];
     }),
     template(info("portfolio-roadmap"), (b) => {
       const quarters = ["Q1", "Q2", "Q3", "Q4"];

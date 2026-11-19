@@ -393,3 +393,23 @@ describe("boards", () => {
     expect(mapBoard({ ...table, columns: [] }, { from: "rows", level: "x" }, ctx).warnings[0]).toMatch(/no columns/);
   });
 });
+
+describe("kanban levels", () => {
+  it("gives each level its own states and kinds of work, and turns an old canvas Kanban into one", async () => {
+    const { KANBAN_LEVELS, kanbanWsjf, kanbanNext, upgradeKanbanBoard } = await import("./index.js");
+    expect(KANBAN_LEVELS.portfolio.states.map((s) => s.name)).toEqual(["Funnel", "Reviewing", "Analyzing", "Portfolio backlog", "Implementing: MVP", "Implementing: persevere", "Done"]);
+    expect(Object.values(KANBAN_LEVELS.solution.types).map((t) => t.name)).toEqual(["Capability", "Enabler capability"]);
+    expect(Object.values(KANBAN_LEVELS.art.types).map((t) => t.name)).toEqual(["Feature", "Enabler feature"]);
+    expect(Object.values(KANBAN_LEVELS.team.types).map((t) => t.name)).toEqual(["Story", "Enabler story", "Spike"]);
+    expect(kanbanWsjf({ bv: 13, tc: 8, rr: 5, size: 8 })).toBe(3.3);
+    expect(kanbanWsjf({ bv: 13 })).toBeNull();
+    // An MVP ends in a decision (persevere or pivot), not a plain move.
+    expect(kanbanNext(KANBAN_LEVELS.portfolio, 3)).toBe(4);
+    expect(kanbanNext(KANBAN_LEVELS.portfolio, 4)).toBeNull();
+    const old = { id: "b-1", templateId: "tpl-builtin-portfolio-kanban", frames: [{ id: "c0", title: "Funnel", x: 0, y: 0, width: 300, height: 760 }, { id: "c1", title: "Reviewing (WIP 4)", x: 340, y: 0, width: 300, height: 760 }], nodes: [{ id: "n1", text: "Add a card here", frameId: "c0" }, { id: "n2", text: "Partner platform", frameId: "c1" }] };
+    expect(upgradeKanbanBoard(old)).toBe(true);
+    expect((old as { fields?: Record<string, unknown> }).fields).toEqual({ kanban: "portfolio" });
+    expect((old.frames[0] as { state?: { items: { name: string; state: number }[] } }).state!.items).toMatchObject([{ name: "Partner platform", state: 1 }]);
+    expect(upgradeKanbanBoard(old)).toBe(false);
+  });
+});

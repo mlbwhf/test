@@ -3,10 +3,11 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { use, useState } from "react";
-import { TEMPLATE_METHODS, type Board, type BoardMapping, type CardType, type MappingResult, type TemplateInfo } from "@trainyard/core";
+import { TEMPLATE_METHODS, kanbanLevelOf, type Board, type BoardMapping, type CardType, type MappingResult, type TemplateInfo } from "@trainyard/core";
 import type { RefSummary } from "@/components/link-picker";
 import { CanvasEditor, cssColor } from "@/components/canvas-editor";
 import { ClassBoard } from "@/components/class-board";
+import { KanbanBoard } from "@/components/kanban-board";
 import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { CLASS_LANGUAGES, useClassLanguage } from "@/lib/translate";
@@ -47,6 +48,8 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
   const isClass = !!board.fields?.class;
   // A board made from the "PI planning room" template is the planning room with its own document.
   const isRoom = board.fields?.room === "planning";
+  // A board made from a Kanban template (portfolio, Solution Train, ART, team) is that level's Kanban board.
+  const kanban = board.frames[0] ? kanbanLevelOf(board) : null;
   const guest = !!me.data?.principal.guestBoardId;
   if (guest) {
     return (
@@ -265,10 +268,12 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
             ) : (
               <PlanningRoomPage docKey={`planning-room:${board.id}`} mode="template" />
             )
+          ) : kanban ? (
+            <KanbanBoard board={board} level={kanban} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : isClass ? (
             <ClassBoard board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : shape === "canvas" || shape === "mixed" || (shape === "empty" && !board.isTemplate) ? <CanvasEditor board={board} refs={view.data.refs} cardTypes={view.data.cardTypes} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} /> : null}
-          {shape === "table" || shape === "mixed" ? <Table board={board} /> : null}
+          {!kanban && (shape === "table" || shape === "mixed") ? <Table board={board} /> : null}
           {shape === "empty" && board.isTemplate && !isRoom ? <div className="panel panel-body faint">This board is empty.</div> : null}
         </>
       ) : (

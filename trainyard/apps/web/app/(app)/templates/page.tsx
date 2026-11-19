@@ -4,9 +4,10 @@ import Link from "next/link";
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useMemo, useState } from "react";
-import { TEMPLATE_METHODS, canEdit, type Board, type BoardOrigin, type LaneCard, type RoomAccess, type TemplateInfo, type TemplateMethod, type TemplatePackage } from "@trainyard/core";
+import { TEMPLATE_METHODS, canEdit, kanbanLevelOf, type Board, type BoardOrigin, type LaneCard, type RoomAccess, type TemplateInfo, type TemplateMethod, type TemplatePackage } from "@trainyard/core";
 import { CanvasEditor } from "@/components/canvas-editor";
 import { LaneBoard, type Lane } from "@/components/lane-board";
+import { KanbanBoard } from "@/components/kanban-board";
 import { useTheme } from "@/components/workspace-shell";
 import { METHOD_DOT, THEMES, methodTheme, type ThemeId } from "@/lib/themes";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -229,6 +230,8 @@ export default function TemplatesPage() {
                   <b>Opens as the planning room</b>
                   <span className="faint">Choose the number of teams, the PI calendar and the simulation or backlog, then every team gets its own train. Create a board from it to start; each board keeps its own room.</span>
                 </div>
+              ) : kanbanLevelOf(preview.data.board) && preview.data.board.frames[0] ? (
+                <KanbanBoard board={preview.data.board} level={kanbanLevelOf(preview.data.board)!} readOnly onChanged={() => undefined} onError={setErr} />
               ) : look === "lanes" ? <TemplateLanes board={preview.data.board} theme={theme} /> : <CanvasEditor board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />}
             </section>
           ) : null}

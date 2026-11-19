@@ -6,7 +6,7 @@ import type { FastifyInstance, FastifyRequest } from "fastify";
 import type { ZodTypeProvider } from "fastify-type-provider-zod";
 import { z } from "zod";
 import { addActivities, applyStateOp, boardRevision, courseBoard, type StateOp, timerLeft, type Activity, type ActivitySpec, type ClassTimer, classTeams, teamRounds } from "@trainyard/core";
-import { EVENT_BOARDS, TEMPLATE_CATALOG, TEMPLATE_PACKAGES, eventBoard, eventTemplate, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, needsTemplateUpgrade, templateFrom, templateRevision, upgradeFromTemplate, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
+import { EVENT_BOARDS, upgradeKanbanBoard, TEMPLATE_CATALOG, TEMPLATE_PACKAGES, eventBoard, eventTemplate, boardShape, builtinTemplates, emptyBoard, insertTemplate, instantiate, mapBoard, needsTemplateUpgrade, templateFrom, templateRevision, upgradeFromTemplate, type Board, type BoardMapping, type BoardNode, type Frame } from "@trainyard/core";
 import { CONNECTION_FIELDS, ImportError, boardFromCsv, boardFromIobeya, boardFromJson, boardFromPptx, createImporter, isIobeyaExport, isPptx, type ConnectableSource, type FetchLike, type Importer, boardFromLucidCsv, boardFromMiroCsv, isLucidCsvExport } from "@trainyard/importers";
 import { decodeText, isZip, readZip } from "./zip.js";
 import { require } from "./auth.js";
@@ -291,6 +291,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
   // next time it is opened, keeping what the class did.
   const upToDate = async (req: FastifyRequest, b: Board) => {
     if (!b.templateId || b.isTemplate) return;
+    // A board from a Kanban template made before the Kanban board existed becomes one, keeping its cards.
+    if (upgradeKanbanBoard(b)) await store.commit(req.principal, "board.upgrade-kanban", { id: b.id });
     const t = builtins().find((x) => x.id === b.templateId) ?? eventTemplate(b.templateId);
     if (!t || !needsTemplateUpgrade(b, t)) return;
     Object.assign(b, upgradeFromTemplate(b, t, store.now().toISOString()));

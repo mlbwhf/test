@@ -1746,6 +1746,26 @@ describe("template packages", () => {
   });
 });
 
+describe("kanban boards", () => {
+  it("opens a board from a Kanban template as that level's Kanban, and keeps its work in the frame's state", async () => {
+    const { call } = await setup();
+    const list = (await call("GET", "/v1/templates/boards")).body.builtin as { id: string }[];
+    expect(["portfolio", "solution", "art"].every((l) => list.some((t) => t.id === `tpl-builtin-${l}-kanban`))).toBe(true);
+    for (const [tpl, level] of [["portfolio-kanban", "portfolio"], ["solution-kanban", "solution"], ["art-kanban", "art"], ["kanban", "team"]]) {
+      const id = (await call("POST", `/v1/templates/boards/tpl-builtin-${tpl}/create`, { name: `${level} kanban` })).body.board.id as string;
+      const b = (await call("GET", `/v1/boards/${id}`)).body.board;
+      expect(b.fields.kanban).toBe(level);
+      expect(b.frames).toHaveLength(1);
+      const f = b.frames[0].id as string;
+      expect((await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(f)}/state`, { key: "items", op: "push", value: { name: "First", type: "business", state: 0 } })).status).toBe(200);
+      const item = (await call("GET", `/v1/boards/${id}`)).body.board.frames[0].state.items[0];
+      expect(item).toMatchObject({ name: "First", state: 0 });
+      expect((await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(f)}/state`, { key: "items", op: "update", id: item.id, value: { state: 1 } })).status).toBe(200);
+      expect((await call("GET", `/v1/boards/${id}`)).body.board.frames[0].state.items[0].state).toBe(1);
+    }
+  });
+});
+
 describe("security limits", () => {
   it("checks references and refuses unsafe links and reserved keys", async () => {
     const { call } = await setup();
