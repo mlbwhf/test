@@ -54,7 +54,7 @@ export default function TemplatesPage() {
   const [name, setName] = useState("");
   const [look, setLook] = useState<"lanes" | "canvas">("lanes");
   const selId = selectedId ?? data.data?.builtin.find((t) => !isClass(t) && (method === "all" || t.info?.method === method))?.id ?? null;
-  const preview = useApi<{ board: Board }>(selId ? `/v1/templates/boards/${encodeURIComponent(selId)}` : null);
+  const preview = useApi<{ board: Board }>(selId && !selId.startsWith("pkg:") ? `/v1/templates/boards/${encodeURIComponent(selId)}` : null);
   if (!data.data) return <Loading error={data.error} />;
 
   const all: Summary[] = [...data.data.builtin, ...data.data.saved.map((s) => ({ ...s, info: undefined }))];
@@ -63,7 +63,11 @@ export default function TemplatesPage() {
   const shown = gallery.filter((t) => (filter === "all" || (filter === "saved" ? !t.info : t.info?.tags.includes(filter as never))) && (method === "all" || t.info?.method === method));
   const methodBlurb = TEMPLATE_METHODS.find((m) => m.id === method)?.blurb;
   const sel = all.find((t) => t.id === selId);
+  // Event packages (prepare, plan and close a PI, launch readiness) are SAFe templates like the others.
+  const selPkg = selId?.startsWith("pkg:") ? data.data.packages.find((p) => `pkg:${p.id}` === selId) : undefined;
   const showPackages = (filter === "all" || filter === "safe") && (method === "all" || method === "safe") && data.data.packages.length > 0;
+  // The list in categories: one group per method (SAFe first, with its event packages), then your own templates.
+  const groups = [...TEMPLATE_METHODS.map((m) => ({ id: m.id as string, label: m.label, items: shown.filter((t) => t.info?.method === m.id) })), { id: "saved", label: "Your templates", items: shown.filter((t) => !t.info) }].filter((g) => g.items.length || (g.id === "safe" && showPackages));
   const gated = (isClass(sel) || (!!sel && !!savedClasses?.has(sel.id))) && !!me.data?.principal.anonymous;
 
   const create = async () => {
@@ -82,8 +86,8 @@ export default function TemplatesPage() {
     <>
       <ThemeFor theme={theme} />
       <PageHead
-        title={sel ? sel.name : "Start from a template"}
-        sub={sel?.info?.blurb ?? "Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."}
+        title={selPkg ? selPkg.name : sel ? sel.name : "Start from a template"}
+        sub={selPkg?.blurb ?? sel?.info?.blurb ?? "Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."}
         actions={
           <>
           <Link href="/boards" className="btn" title="Start from an empty whiteboard and add any of these templates to it">
@@ -115,43 +119,50 @@ export default function TemplatesPage() {
       </nav>
       {err ? <ErrorList title="Could not create the board" items={[{ message: err }]} /> : null}
 
-      {showPackages ? (
-        <section className="stack" aria-labelledby="pkg-head" style={{ gap: 10 }}>
-          <div className="stack" style={{ gap: 2 }}>
-            <h2 id="pkg-head" className="pkg-head">
-              Packages
-            </h2>
-            <p className="faint" style={{ margin: 0, fontSize: "0.88rem" }}>
-              The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. PI Outcome Planning for an AI-Native ART (outcomes, the planning board, team boards, management review, intent, Sense and Respond) is its own page: <Link href="/outcome-planning">PI Outcome Planning</Link>. The outcome-driven roadmap is on the <Link href="/roadmap?tab=outcomes">Roadmap, under Outcomes</Link>.
-            </p>
-          </div>
-          <div className="pkg-grid">
-            {data.data.packages.map((p) => (
-              <PackageCard key={p.id} pkg={p} rooms={(rooms.data?.rooms ?? []).filter((r) => canEdit(r.access))} />
-            ))}
-          </div>
-        </section>
-      ) : null}
-
       <div className="tpl-layout">
         <aside className="tpl-list" aria-label="Templates">
           <span className="ws-eyebrow">Start from a template</span>
           <p className="faint" style={{ fontSize: "0.85rem" }}>
             {methodBlurb ?? "Each method keeps its own vocabulary: SAFe boards say what SAFe says, Scrum boards what the Scrum Guide says, and so on."}
           </p>
-          {shown.map((t) => (
-            <button key={t.id} className="tpl-item" onClick={() => setSelectedId(t.id)} aria-pressed={t.id === selId}>
-              <Thumb summary={t} />
-              <strong>{t.name}</strong>
-              <span className="faint">
-                {t.info ? `${TEMPLATE_METHODS.find((m) => m.id === t.info!.method)?.label ?? ""} · ${t.info.event}` : `Saved from ${t.origin.system} on ${t.origin.importedAt.slice(0, 10)}`}
-              </span>
-            </button>
+          {groups.map((g) => (
+            <div key={g.id} className="stack" style={{ gap: 6 }}>
+              {groups.length > 1 ? (
+                <h2 className="tpl-group">
+                  <span className="dot" style={{ background: METHOD_DOT[g.id] ?? "#999" }} />
+                  {g.label} <span className="faint">{g.items.length + (g.id === "safe" && showPackages ? data.data!.packages.length + 1 : 0)}</span>
+                </h2>
+              ) : null}
+              {g.id === "safe" && showPackages ? (
+                <>
+                  {data.data!.packages.map((p) => (
+                    <button key={p.id} className="tpl-item" onClick={() => setSelectedId(`pkg:${p.id}`)} aria-pressed={selId === `pkg:${p.id}`}>
+                      <strong>{p.name}</strong>
+                      <span className="faint">
+                        SAFe · {p.when} · {p.parts.reduce((n, x) => n + x.boards.length, 0)} boards
+                      </span>
+                    </button>
+                  ))}
+                  <Link href="/outcome-planning" className="tpl-item" style={{ textDecoration: "none", color: "inherit" }}>
+                    <strong>PI Outcome Planning</strong>
+                    <span className="faint">SAFe · AI-Native ART · outcomes, planning board, team boards, intent, Sense and Respond ↗</span>
+                  </Link>
+                </>
+              ) : null}
+              {g.items.map((t) => (
+                <button key={t.id} className="tpl-item" onClick={() => setSelectedId(t.id)} aria-pressed={t.id === selId}>
+                  <Thumb summary={t} />
+                  <strong>{t.name}</strong>
+                  <span className="faint">{t.info ? t.info.event : `Saved from ${t.origin.system} on ${t.origin.importedAt.slice(0, 10)}`}</span>
+                </button>
+              ))}
+            </div>
           ))}
-          {shown.length === 0 ? <p className="faint">Nothing here yet. Import a board and choose “Save as template”.</p> : null}
+          {shown.length === 0 && !(showPackages) ? <p className="faint">Nothing here yet. Import a board and choose “Save as template”.</p> : null}
         </aside>
 
         <div className="stack" style={{ minWidth: 0, gap: 14 }}>
+          {selPkg ? <PackageCard key={selPkg.id} pkg={selPkg} rooms={(rooms.data?.rooms ?? []).filter((r) => canEdit(r.access))} /> : null}
           {sel ? (
             <section className="panel panel-body tpl-detail" aria-live="polite">
               <div className="stack" style={{ gap: 8, minWidth: 0 }}>
@@ -200,7 +211,7 @@ export default function TemplatesPage() {
             </section>
           ) : null}
 
-          {preview.data ? (
+          {preview.data && !selPkg ? (
             <section className="stack">
               <div className="row" style={{ justifyContent: "space-between" }}>
                 <span className="eyebrow">Preview</span>

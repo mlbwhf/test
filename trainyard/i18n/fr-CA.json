@@ -621,7 +621,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192"
+  "where": "apps/web/app/(app)/templates/page.tsx:203"
  },
  ", then month by month: no card charge today, a reminder by email 7 days before the first charge, no yearly commitment to begin. Not satisfied in your first paid month?": {
   "fr": "",
@@ -901,7 +901,7 @@
  },
  ". The outcome-driven roadmap is on the": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:125"
  },
@@ -1736,7 +1736,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:377"
+  "where": "apps/web/app/(app)/templates/page.tsx:388"
  },
  "{0} epic{1} not tied to any objective": {
   "fr": "{0} épopée{1} sans objectif lié",
@@ -4470,7 +4470,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:299"
+  "where": "apps/web/app/(app)/templates/page.tsx:310"
  },
  "A capability comparison of PI planning tools: iObeya, Easy Agile, Agile Hive, BigPicture, PIPlanning.io, Miro and Trainyard, by hosting, PI planning support, ART boards, what sits beyond planning, integration and how each is priced.": {
   "fr": "",
@@ -7240,7 +7240,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:107"
+  "where": "apps/web/app/(app)/templates/page.tsx:111"
  },
  "All of our team’s work comes through the Team Backlog": {
   "fr": "Tout le travail de notre équipe passe par le carnet de l’équipe",
@@ -10900,7 +10900,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/imports/page.tsx:413 apps/web/app/(app)/templates/page.tsx:185"
+  "where": "apps/web/app/(app)/imports/page.tsx:413 apps/web/app/(app)/templates/page.tsx:196"
  },
  "Board name (optional)": {
   "fr": "",
@@ -11532,7 +11532,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:86"
+  "where": "apps/web/app/(app)/templates/page.tsx:90"
  },
  "Built-in Quality": {
   "fr": "Qualité intégrée",
@@ -12342,7 +12342,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/card-types/page.tsx:51 apps/web/app/(app)/templates/page.tsx:173 apps/web/lib/help.ts:219"
+  "where": "apps/web/app/(app)/card-types/page.tsx:51 apps/web/app/(app)/templates/page.tsx:184 apps/web/lib/help.ts:219"
  },
  "Card, invoices and cancellation, in Stripe's customer portal": {
   "fr": "",
@@ -13013,7 +13013,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:219"
+  "where": "apps/web/app/(app)/templates/page.tsx:230"
  },
  "CHOOSE THE SIMULATION": {
   "fr": "CHOISISSEZ LA SIMULATION",
@@ -13111,7 +13111,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192"
+  "where": "apps/web/app/(app)/templates/page.tsx:203"
  },
  "Class boards are not listed here; start them under Classes.": {
   "fr": "",
@@ -13225,7 +13225,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:190"
+  "where": "apps/web/app/(app)/templates/page.tsx:201"
  },
  "Classes of service": {
   "fr": "",
@@ -15065,7 +15065,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:116"
+  "where": "apps/web/app/(app)/templates/page.tsx:120"
  },
  "Could not create the initiative": {
   "fr": "",
@@ -15240,13 +15240,13 @@
   "fr": "Créer en tant que",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:434 apps/web/app/(app)/templates/page.tsx:292"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:434 apps/web/app/(app)/templates/page.tsx:303"
  },
  "Create board from template": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:197"
+  "where": "apps/web/app/(app)/templates/page.tsx:208"
  },
  "Create dashboard for outcome progress": {
   "fr": "Créer un tableau de bord de la progression des résultats",
@@ -15294,7 +15294,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:327"
+  "where": "apps/web/app/(app)/templates/page.tsx:338"
  },
  "Create the Epic hypothesis statement": {
   "fr": "Créer l’énoncé d’hypothèse d’épopée",
@@ -15367,7 +15367,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/rooms/page.tsx:93 apps/web/app/(app)/templates/page.tsx:327"
+  "where": "apps/web/app/(app)/rooms/page.tsx:93 apps/web/app/(app)/templates/page.tsx:338"
  },
  "Credibility": {
   "fr": "",
@@ -18629,7 +18629,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:140"
+  "where": "apps/web/app/(app)/templates/page.tsx:126"
  },
  "Each PI outcome, the other commitments, open decisions and risks, then the fist-of-five confidence vote.": {
   "fr": "",
@@ -21411,13 +21411,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:105"
+  "where": "apps/web/app/(app)/templates/page.tsx:109"
  },
  "Filter templates by kind": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:94"
+  "where": "apps/web/app/(app)/templates/page.tsx:98"
  },
  "Final": {
   "fr": "",
@@ -27573,7 +27573,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:209"
+  "where": "apps/web/app/(app)/templates/page.tsx:220"
  },
  "Language": {
   "fr": "Langue",
@@ -29509,7 +29509,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:175"
+  "where": "apps/web/app/(app)/templates/page.tsx:186"
  },
  "Mar": {
   "fr": "mars",
@@ -31962,7 +31962,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:306"
+  "where": "apps/web/app/(app)/templates/page.tsx:317"
  },
  "No rooms yet. Create one above, then add boards to it, or keep working with boards on their own: rooms are optional.": {
   "fr": "",
@@ -32723,7 +32723,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:151"
+  "where": "apps/web/app/(app)/templates/page.tsx:161"
  },
  "Nothing is on the outcome roadmap yet. The template adds three example outcomes (roofshot and moonshot) with their milestones, releases and outcome commitments across three PIs; nothing on the Roadmap and PI plan tabs changes. Or build your own with + Add an ART outcome.": {
   "fr": "Rien n’est encore placé sur la feuille de route des résultats. Le modèle ajoute trois résultats d’exemple (roofshot et moonshot) avec leurs jalons, leurs mises en production et leurs engagements de résultats sur trois PI; rien ne change dans les onglets Feuille de route et Plan de PI. Vous pouvez aussi bâtir la vôtre avec + Ajouter un résultat d’ART.",
@@ -33621,7 +33621,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:295"
+  "where": "apps/web/app/(app)/templates/page.tsx:306"
  },
  "One board, templates side by side": {
   "fr": "",
@@ -34333,7 +34333,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:218"
+  "where": "apps/web/app/(app)/templates/page.tsx:229"
  },
  "opens soon. Send us two or three times that suit you and we&apos;ll send the invite.": {
   "fr": "",
@@ -34646,7 +34646,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:90"
+  "where": "apps/web/app/(app)/templates/page.tsx:94"
  },
  "Or start blank from Your boards and add any templates to one board.": {
   "fr": "",
@@ -35460,7 +35460,7 @@
  },
  "Packages": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:122"
  },
@@ -35747,7 +35747,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:265"
+  "where": "apps/web/app/(app)/templates/page.tsx:276"
  },
  "Pass": {
   "fr": "",
@@ -36434,7 +36434,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:125 apps/web/lib/help.ts:194"
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:147 apps/web/lib/help.ts:194"
  },
  "PI Outcome Planning (AI-Native SAFe)": {
   "fr": "PI Outcome Planning (AI-Native SAFe)",
@@ -38380,7 +38380,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:207"
+  "where": "apps/web/app/(app)/templates/page.tsx:218"
  },
  "Preview sync": {
   "fr": "",
@@ -41786,7 +41786,7 @@
  },
  "Roadmap, under Outcomes": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:125"
  },
@@ -41923,7 +41923,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:304"
+  "where": "apps/web/app/(app)/templates/page.tsx:315"
  },
  "Room for one more example or proof point.": {
   "fr": "Il reste de la place pour un exemple ou une preuve de plus.",
@@ -42043,7 +42043,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:349 packages/core/src/templates.ts:92 packages/core/src/templates.ts:117"
+  "where": "apps/web/app/(app)/templates/page.tsx:360 packages/core/src/templates.ts:92 packages/core/src/templates.ts:117"
  },
  "ROW": {
   "fr": "LIGNE",
@@ -42307,6 +42307,18 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:191 packages/core/src/valuestreams.ts:196 packages/core/src/valuestreams.ts:204"
+ },
+ "SAFe ·": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/templates/page.tsx:142"
+ },
+ "SAFe · AI-Native ART · outcomes, planning board, team boards, intent, Sense and Respond ↗": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/templates/page.tsx:148"
  },
  "SAFe (Essential, Portfolio, Full), AI-Native SAFe, LeSS, Scrum@Scale, Nexus, Flight Levels and tribe models, as editable operating models. Change the model and the boards and dashboards follow.": {
   "fr": "",
@@ -42686,13 +42698,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:147"
+  "where": "apps/web/app/(app)/templates/page.tsx:156"
  },
  "Saved from an import. Structure kept, content cleared.": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:180"
+  "where": "apps/web/app/(app)/templates/page.tsx:191"
  },
  "Saved from imports": {
   "fr": "",
@@ -43152,7 +43164,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:321"
+  "where": "apps/web/app/(app)/templates/page.tsx:332"
  },
  "See rating": {
   "fr": "Voir la note",
@@ -44279,7 +44291,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192 apps/web/app/(app)/welcome/page.tsx:60"
+  "where": "apps/web/app/(app)/templates/page.tsx:203 apps/web/app/(app)/welcome/page.tsx:60"
  },
  "Sign in": {
   "fr": "",
@@ -44321,7 +44333,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192"
+  "where": "apps/web/app/(app)/templates/page.tsx:203"
  },
  "Sign up free": {
   "fr": "",
@@ -45662,7 +45674,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/boards/page.tsx:82 apps/web/app/(app)/templates/page.tsx:85 apps/web/app/(app)/templates/page.tsx:138"
+  "where": "apps/web/app/(app)/boards/page.tsx:82 apps/web/app/(app)/templates/page.tsx:89 apps/web/app/(app)/templates/page.tsx:124"
  },
  "Start from a template and the whole board speaks that method. SAFe becomes a train, Kanban enforces WIP limits, the shop floor gets its andon. Cards drag between lanes in every one.": {
   "fr": "",
@@ -45674,7 +45686,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:89"
+  "where": "apps/web/app/(app)/templates/page.tsx:93"
  },
  "Start from the current-state": {
   "fr": "",
@@ -49620,7 +49632,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/imports/page.tsx:135 apps/web/app/(app)/model/page.tsx:61 apps/web/app/(app)/templates/page.tsx:137"
+  "where": "apps/web/app/(app)/imports/page.tsx:135 apps/web/app/(app)/model/page.tsx:61 apps/web/app/(app)/templates/page.tsx:123"
  },
  "TEMPLATES": {
   "fr": "",
@@ -50062,7 +50074,7 @@
  },
  "The boards an event needs, in the class design: the readiness, kanban, planning room, ROAM and problem-solving boards from the RTE and Leading SAFe classes. One board with every part, or a board per part. PI Outcome Planning for an AI-Native ART (outcomes, the planning board, team boards, management review, intent, Sense and Respond) is its own page:": {
   "fr": "",
-  "status": "new",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/templates/page.tsx:125"
  },
@@ -51325,7 +51337,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:380"
+  "where": "apps/web/app/(app)/templates/page.tsx:391"
  },
  "This week": {
   "fr": "Cette semaine",
@@ -53011,7 +53023,7 @@
   "fr": "Sans titre",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/templates/page.tsx:358 apps/web/components/activity-editor.tsx:102"
+  "where": "apps/web/app/(app)/templates/page.tsx:369 apps/web/components/activity-editor.tsx:102"
  },
  "Up to 5 people in one hosted room": {
   "fr": "",
@@ -53325,7 +53337,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:171"
+  "where": "apps/web/app/(app)/templates/page.tsx:182"
  },
  "User": {
   "fr": "",
@@ -55947,7 +55959,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:212"
+  "where": "apps/web/app/(app)/templates/page.tsx:223"
  },
  "Whiteboards and templates": {
   "fr": "",
@@ -56423,7 +56435,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:192"
+  "where": "apps/web/app/(app)/templates/page.tsx:203"
  },
  "with the steps to reproduce; you get an answer within three working days. Please do not open a public issue until a fix has shipped.": {
   "fr": "",
@@ -57410,7 +57422,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:159"
+  "where": "apps/web/app/(app)/templates/page.tsx:170"
  },
  "Your template, your way.": {
   "fr": "",
@@ -57422,7 +57434,7 @@
   "fr": "Vos modèles",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:312"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:312 apps/web/app/(app)/templates/page.tsx:70"
  },
  "Your value stream": {
   "fr": "Votre flux de valeur",

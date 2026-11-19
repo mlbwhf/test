@@ -646,3 +646,6 @@ span.studio-team { cursor: default; }
 .ex-matrix-text { width: 100%; box-sizing: border-box; border: 0; border-bottom: 1.5px dashed #0d181566; background: transparent; font: inherit; font-size: 13px; font-weight: 400; line-height: 1.4; resize: vertical; }
 .ex-matrix-cell .ex-add { width: 100%; box-sizing: border-box; margin-top: auto; }
 .ex-diamond { display: inline-block; flex: none; width: 10px; height: 10px; transform: rotate(45deg); margin: 3px 2px 0; }
+.tpl-group { display: flex; align-items: center; gap: 8px; margin: 10px 0 0; font-size: 0.95rem; }
+.tpl-group .dot { width: 10px; height: 10px; border-radius: 99px; display: inline-block; }
+.tpl-group .faint { font-weight: 500; font-size: 0.8rem; }
