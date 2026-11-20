@@ -16,6 +16,9 @@ maintenance and improvement work.
   the machine.
 
 ## One-time setup (as root, about 10 minutes)
+**Shortcut:** after `deploy/install.sh`, run `sudo bash deploy/setup-claude-vps.sh`. It does steps
+1-3 below plus the install and clone, then prints the one interactive login step.
+
 ```bash
 # 1. Dedicated user (no sudo except the dry-run rule below)
 adduser --disabled-password --gecos "" claudeops
