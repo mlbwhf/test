@@ -1,0 +1,8 @@
+Campaign,Ad group,Keyword,Criterion Type,Final URL,Status
+Certifications - English,RTE Training,safe rte certification,Phrase,https://agile-agilist.com/training/adv-safe/rte/,Enabled
+Certifications - English,RTE Training,release train engineer certification,Phrase,https://agile-agilist.com/training/adv-safe/rte/,Enabled
+Certifications - English,SPC Certification,safe practice consultant,Phrase,https://agile-agilist.com/training/adv-safe/spc/,Enabled
+Certifications - English,SPC Certification,spc certification,Exact,https://agile-agilist.com/training/adv-safe/spc/,Enabled
+Certifications - English,POPM,popm certification,Phrase,https://agile-agilist.com/training/safe/popm/,Enabled
+Certifications - English,ASPC (new course),advanced safe practice consultant,Phrase,https://agile-agilist.com/training/adv-safe/aspc/,Enabled
+Certifications - English,ASPC (new course),aspc certification,Exact,https://agile-agilist.com/training/adv-safe/aspc/,Enabled
