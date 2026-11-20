@@ -20,7 +20,7 @@ import yaml
 
 DEFAULT_LIMITS = {
     "headline": 30, "description": 90, "callout": 25, "sitelink_text": 25,
-    "sitelink_desc": 35, "promo_item": 20,
+    "sitelink_desc": 35, "promo_item": 20, "display_path": 15,
 }
 OFFER_PATTERNS = [r"\d+\s*%\s*off", r"black\s*friday", r"cyber\s*monday",
                   r"\bsale\b", r"\bends\s+(nov|dec|jan|today|soon)", r"early\s*bird"]

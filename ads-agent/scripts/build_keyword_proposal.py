@@ -75,7 +75,7 @@ PLAN = [
             ("advanced safe practice consultant", "phrase", f"{GSC}: 573 impressions, pos 18.6", "P1"),
             ("aspc certification", "exact", "41 registrations since Feb 2025; its own family", "P1"),
         ]),
-        ("Advanced Scrum Master", "https://agile-agilist.com/training/adv-safe/asm/", False, [
+        ("Advanced Scrum Master", "https://agile-agilist.com/training/safe/asm/", True, [
             ("asm certification", "phrase", f"{GSC}: 1,300 impressions, pos 10 (biggest single query)", "P1"),
             ("safe advanced scrum master", "phrase", f"{GSC}: 667 impressions, pos 36", "P2"),
         ]),
@@ -88,8 +88,11 @@ NEGATIVES = ["free", "pdf", "jobs", "job", "salary", "practice test", "dumps", "
 # Owner decision (Mark Saymen, 2026-11-20): all keywords approved. Ad groups whose landing page
 # is not confirmed stay on hold (never shipped to a guessed URL).
 APPROVED_ON = "2026-11-20"
-ON_HOLD = {"Advanced Scrum Master": "No English page found at /training/adv-safe/asm/ (only /fr/asm/ and "
-                                    "/es/asm/, which English campaigns must never use). Send the English URL."}
+ON_HOLD: dict = {}  # ad group -> reason (ASM released 2026-11-20: owner sent /training/safe/asm/)
+# Single keywords held back: landing page contradicts the keyword's promise.
+HOLD_KW = {"ai training toronto": "The English AI-Native Foundations page says *live online*, while this keyword "
+                                  "(and the Face-to-Face campaign) promise an in-person Toronto class. Confirm the "
+                                  "format and I'll release it."}
 # Campaign names exactly as in Google Ads (heading text before any parenthesis).
 CAMPAIGN_NAME = {"Certifications - English (February-peak SAFe)": "Certifications - English"}
 STAGES = [
@@ -129,9 +132,11 @@ def main() -> int:
                 if match not in ("exact", "phrase"):
                     bad.append(f"{kw}: match type {match} not allowed")
                 shown = f"[{kw}]" if match == "exact" else f'"{kw}"'
-                if ag in ON_HOLD:
+                if ag in ON_HOLD or kw in HOLD_KW:
                     mark, stage = "⏸️", "hold"
                     held += 1
+                    if kw in HOLD_KW:
+                        ev = f"{ev}. **On hold:** {HOLD_KW[kw]}"
                 else:
                     mark, stage = "☑", stage_of(campaign, pri)
                     csv_rows[stage].append([camp_name, ag, kw, match.capitalize(), url, "Enabled"])

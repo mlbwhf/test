@@ -1,7 +1,7 @@
 # Keyword plan, November 2026: APPROVED
 
-**Approved by Mark Saymen on 2026-11-20.** 27 keywords approved and ready to import;
-2 on hold until their English landing page is confirmed. Phase 1: **you** import them. I
+**Approved by Mark Saymen on 2026-11-20.** 28 keywords approved and ready to import;
+1 on hold until their English landing page is confirmed. Phase 1: **you** import them. I
 haven't touched the ad accounts.
 
 **Rules applied:** phrase and exact match only (no broad match, ever). Every final URL is a
@@ -18,7 +18,7 @@ Stripe numbers, not on the "Conversions" column.
 | Stage | When | Keywords | File |
 |---|---|---|---|
 | 1 | Now (20 Nov, Black Friday) | 6 | `proposals/2026-11_keywords_stage1_google-ads-editor.csv` |
-| 2 | 1 Dec (February ramp) | 7 | `proposals/2026-11_keywords_stage2_google-ads-editor.csv` |
+| 2 | 1 Dec (February ramp) | 8 | `proposals/2026-11_keywords_stage2_google-ads-editor.csv` |
 | 3 | Not before 4 Dec, after stage 1 has run 14 days | 14 | `proposals/2026-11_keywords_stage3_google-ads-editor.csv` |
 
 Stage 1 also adds the 12 negative keywords to each campaign.
@@ -47,7 +47,7 @@ Final URL: https://agile-agilist.com/training/ai-native/ai-native-foundations/
 | ☑ | `[ai native foundations]` | exact | GSC: 596 impressions, avg pos 13, 0 clicks | P1 | stage1 |
 | ☑ | `"ai native foundations certification"` | phrase | GSC: same query family | P1 | stage1 |
 | ☑ | `"ai native certification"` | phrase | Course name; you are the only Canadian F2F provider | P1 | stage1 |
-| ☑ | `"ai training toronto"` | phrase | In-person class; Toronto is your top Canadian city | P2 | stage3 |
+| ⏸️ | `"ai training toronto"` | phrase | In-person class; Toronto is your top Canadian city. **On hold:** The English AI-Native Foundations page says *live online*, while this keyword (and the Face-to-Face campaign) promise an in-person Toronto class. Confirm the format and I'll release it. | P2 | hold |
 | ☑ | `"ai upskilling course"` | phrase | Career-progression intent | P3 | stage3 |
 
 
@@ -139,13 +139,12 @@ Final URL: https://agile-agilist.com/training/adv-safe/aspc/
 | ☑ | `[aspc certification]` | exact | 41 registrations since Feb 2025; its own family | P1 | stage2 |
 
 ### Advanced Scrum Master
-Final URL: https://agile-agilist.com/training/adv-safe/asm/  
-⏸️ **On hold:** No English page found at /training/adv-safe/asm/ (only /fr/asm/ and /es/asm/, which English campaigns must never use). Send the English URL.
+Final URL: https://agile-agilist.com/training/safe/asm/
 
 | ✓ | Keyword | Match | Evidence | Priority | Stage |
 |---|---|---|---|---|---|
-| ⏸️ | `"asm certification"` | phrase | GSC: 1,300 impressions, pos 10 (biggest single query) | P1 | hold |
-| ⏸️ | `"safe advanced scrum master"` | phrase | GSC: 667 impressions, pos 36 | P2 | hold |
+| ☑ | `"asm certification"` | phrase | GSC: 1,300 impressions, pos 10 (biggest single query) | P1 | stage2 |
+| ☑ | `"safe advanced scrum master"` | phrase | GSC: 667 impressions, pos 36 | P2 | stage3 |
 
 ## Negative keywords (phrase, every campaign)
 "free", "pdf", "jobs", "job", "salary", "practice test", "dumps", "exam answers", "login", "reddit", "course hero", "youtube"
@@ -160,4 +159,4 @@ These are free, instant-result lead magnets, so link them under the matching ads
 - SAFe ads → **Agile Career Selector**: https://agile-agilist.com/assessments/cert-recommender/
 - All campaigns → **Career Compass**: https://agile-agilist.com/career-compass/
 
-Total: 29 keywords across 12 ad groups (27 approved, 2 on hold).
+Total: 29 keywords across 12 ad groups (28 approved, 1 on hold).
