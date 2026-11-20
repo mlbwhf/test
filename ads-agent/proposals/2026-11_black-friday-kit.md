@@ -1,54 +1,54 @@
-# Black Friday 2026 - ad kit (APPROVED by Mark, 2026-11-19)
+# Black Friday + Cyber Monday 2026: ad kit (APPROVED; dates updated 20 Nov)
 
-**Approved to apply.** I have no write access to the ad accounts (and Phase 1 keeps it that way),
-so the **apply checklist at the bottom** is your 15-minute path.
+**Offer (owner-confirmed 20 Nov):** 15% off every public SAFe and AI-Native class, any upcoming
+date, **20-30 Nov 2026**, applied automatically at checkout. It's labelled **Black Friday on 20-29
+Nov** and **Cyber Monday on 30 Nov** (a Monday). Final URL: https://agile-agilist.com/black-friday/
 
-**Offer (owner-confirmed 2026-11-19):** 15% off every public SAFe and AI-Native class, any upcoming
-date, **18-30 Nov 2026**, applied automatically at checkout. Final URL: https://agile-agilist.com/black-friday/
+**One change from the version you approved on 19 Nov:** the ad headlines no longer name the event
+("15% Off Until Nov 30" instead of "Black Friday: 15% Off"). Only the dated assets below carry
+"Black Friday" or "Cyber Monday", and Google switches those on and off by date. So **set it up
+once, today, and nothing needs swapping on 30 Nov.**
 
-**Validated:** all 25 strings pass `src/asset_generator.py` for both US and Canada audiences on
-2026-11-19: character limits, no "pass guarantee" / "money-back" (uses "exam prep and support"), no CAD
-pricing (no prices at all), no scarcity claims, and offer copy only inside the confirmed dates. The
-same copy **fails validation from 1 Dec**. That's deliberate, and the daily run emails you to
-remove it.
+**Validated:** all 27 strings pass `src/asset_generator.py` for US and Canada on every promo day.
+"Black Friday" copy fails from 30 Nov, "Cyber Monday" copy fails before 30 Nov, and all offer copy
+fails from 1 Dec. The agent's daily email reminds you.
 
 ## Where to apply
 English campaigns that send people to the website checkout: **Certifications - English,
 AI-Native - Virtual, AI-Native - Face-to-Face** (Google and Microsoft). Skip the brand campaign
-(people searching your name don't need a discount to find you) and **Certificaciones - Spanish**
-(English copy; no Spanish offer page confirmed).
+and **Certificaciones - Spanish** (English copy; no Spanish offer page).
 
-## 1. Promotion asset (Google) / Promotion extension (Microsoft)
-| Field | Value |
-|---|---|
-| Occasion | Black Friday |
-| Promotion type | Percent discount: **15%** |
-| Item | SAFe & AI Courses |
-| Final URL | https://agile-agilist.com/black-friday/ |
-| Promotion dates | **19 Nov 2026 to 30 Nov 2026** (the site offer started 18 Nov; ads can't start in the past) |
-| Asset/ad schedule end | 30 Nov 2026, 23:59 |
-| Language | English |
-
-## 2. Sitelink
-| Link text | Description 1 | Description 2 | Final URL | End date |
+## 1. Promotion assets (Google) / Promotion extensions (Microsoft): two, pre-scheduled
+| Occasion | Discount | Item | Start | End |
 |---|---|---|---|---|
-| Black Friday: 15% Off | Every public SAFe & AI class | Ends Nov 30 - any class date | https://agile-agilist.com/black-friday/ | 30 Nov 2026 |
+| Black Friday | 15% | SAFe & AI Courses | 20 Nov | 29 Nov 23:59 |
+| Cyber Monday | 15% | SAFe & AI Courses | 30 Nov | 30 Nov 23:59 |
 
-## 3. Callouts (set end date 30 Nov)
+Final URL for both: https://agile-agilist.com/black-friday/. Language: English.
+
+## 2. Sitelinks: two, pre-scheduled
+| Link text | Description 1 | Description 2 | Start | End |
+|---|---|---|---|---|
+| Black Friday: 15% Off | Every public SAFe & AI class | Any class date, until Nov 30 | 20 Nov | 29 Nov |
+| Cyber Monday: 15% Off | Every public SAFe & AI class | Last day: ends tonight | 30 Nov | 30 Nov |
+
+## 3. Callouts (end date 30 Nov)
 - 15% Off Until Nov 30
 - Exam Included
 - Live Online Classes
 - Exam Prep and Support
 
-## 4. Responsive search ad additions
-Add these to the **existing** RSAs, or add one Black Friday RSA per ad group. Keep the course
-page as the final URL, or use the offer page. Pin "Black Friday: 15% Off" to position 1.
+## 4. Responsive search ad additions (run 20-30 Nov, no swap needed)
+Add these to the existing RSAs (or one offer RSA per ad group). Pin "15% Off Until Nov 30" to
+position 1. **If you already added "Black Friday: 15% Off" or "Black Friday Ends Nov 30" from the
+19 Nov version, replace them with the first and fourth headlines below.** Otherwise they would
+still say Black Friday on Cyber Monday.
 
 **Headlines**
-- Black Friday: 15% Off (21/30)
+- 15% Off Until Nov 30 (20/30)
 - 15% Off Every SAFe Class (24/30)
 - 15% Off AI-Native Courses (25/30)
-- Black Friday Ends Nov 30 (24/30)
+- Offer Ends Nov 30 (17/30)
 - Exam Prep and Support (21/30)
 - SAFe Platinum Partner (21/30)
 - Live Online, Exam Included (26/30)
@@ -60,42 +60,35 @@ page as the final URL, or use the offer page. Pin "Black Friday: 15% Off" to pos
 - Lead AI Change at Work (22/30)
 
 **Descriptions**
-- Black Friday: 15% off every public SAFe and AI-Native class. Offer ends Nov 30. (79/90)
+- 15% off every public SAFe and AI-Native class, any upcoming date. Offer ends Nov 30. (84/90)
 - Live online and instructor-led. Exam included, plus exam prep and support. (74/90)
 - Any upcoming class date. The 15% discount is applied automatically at checkout. (79/90)
 - Grow your career with AI-Native and SAFe certifications. 15% off until Nov 30. (78/90)
 
-## 5. Budget for the promo window - your decision
-Your trailing spend is about **CA$21/day**, well under the November seasonal band of **~CA$50/day**.
-A live 15% offer is a good reason to spend *up to the band*, not past it:
-- Raise total daily budget toward **CA$50/day for 19-30 Nov**. That's a move above 20%, so it needs
-  your approval under the rules. Per the Microsoft-first rule, give Microsoft the first increase.
-- On **1 Dec** the calendar moves to the February-peak ramp (~CA$100/day). That's a separate
-  decision, taken once you've seen the Black Friday registrations.
+## 5. Budget for the promo window: your decision
+Trailing spend is about **CA$21/day**, under the November band of **~CA$50/day**. A live 15% offer
+justifies spending *up to the band*, not past it: raise toward **CA$50/day for 20-30 Nov** (a
+change above 20%, so it needs your OK; give Microsoft the first increase). On **1 Dec** the calendar
+moves to the February ramp (~CA$100/day), which is a separate decision.
 
-## 6. Partner claim
-**"SAFe Platinum Partner"** is confirmed (2026-11-19) and included above. The validator now
-*rejects* the old "Gold Partner" / "Gold SPCT" wording. If any existing ad or asset in either
-account still says "Gold Partner", update it, because it understates you.
+## 6. Website
+The /black-friday/ page currently says **23-30 Nov**. It needs to say **20-30 Nov**, with 30 Nov
+as Cyber Monday, so the ads and the page agree (`proposals/2026-11_site-fixes.md`, item 1.3).
 
-## Apply checklist (about 15 minutes)
+## Apply checklist (about 20 minutes, once)
 **Google Ads**
-1. Campaigns → select **Certifications - English, AI-Native - Virtual, AI-Native - Face-to-Face**
-   → Assets → **+ Promotion**: fill in table 1 → set the schedule end to 30 Nov 23:59 → Save.
-2. Same three campaigns → **+ Sitelink** (table 2) and **+ Callout** (section 3), each with
-   end date 30 Nov.
-3. Each ad group's RSA → Edit → add the headlines and descriptions from section 4 → pin
-   "Black Friday: 15% Off" to position 1 → Save. (Editing an RSA sends it back for review; that's
-   normal and usually takes under a day.)
-4. Tools → Policy manager the next morning → fix anything flagged as "Limited" or "Disapproved".
+1. Select **Certifications - English, AI-Native - Virtual, AI-Native - Face-to-Face** → Assets →
+   **+ Promotion** twice (table 1): Black Friday 20-29 Nov, Cyber Monday 30 Nov (set each one's
+   start and end dates).
+2. Same campaigns: **+ Sitelink** twice (table 2, each with its dates) and **+ Callouts** (end 30 Nov).
+3. Each RSA: add the section 4 headlines and descriptions, pin "15% Off Until Nov 30" to
+   position 1, and remove any old "Black Friday" headlines.
+4. Next morning: Tools → Policy manager → fix anything "Limited" or "Disapproved".
 
-**Microsoft Ads**: add these **by hand**, not with "Import from Google Ads"
-5. The import can overwrite your **Microsoft tracking suffixes** and campaign settings (your rule:
-   keep the suffixes as they are). Add the promotion extension, sitelink and callouts manually,
-   with the same values and dates, on the same three campaigns.
-6. Don't add any images or multimedia assets on Microsoft (your Multimedia opt-out rule).
+**Microsoft Ads: by hand, not "Import from Google Ads"**
+5. The import can overwrite your tracking suffixes (your rule). Add the two promotion extensions,
+   the sitelinks and the callouts manually, with the same dates. No images or multimedia assets.
 
-## Remove on 1 Dec
-The promotion asset, sitelink and callouts end automatically if you set the end dates above.
-Remove the Black Friday headlines and descriptions by hand. The daily email reminds you on 30 Nov
-and 1 Dec.
+## 1 Dec
+Dated assets end on their own. Remove the section 4 headlines and descriptions by hand. The daily
+email reminds you on 30 Nov and 1 Dec.

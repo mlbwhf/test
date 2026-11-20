@@ -1,4 +1,4 @@
-"""Build + validate the Black Friday 2026 ad kit (Google + Microsoft), as a DRAFT.
+"""Build + validate the Black Friday / Cyber Monday 2026 ad kit (Google + Microsoft).
 
 Every string runs through src/asset_generator.py (char limits, owner wording rules,
 US-safe pricing, and the owner-confirmed 15% / Nov 18-30 promotion). Fails loudly
@@ -14,14 +14,16 @@ sys.path.insert(0, str(ROOT / "src"))
 import config  # noqa: E402
 from asset_generator import validate_asset, validate_final_url  # noqa: E402
 
-ON = datetime.date(2026, 11, 19)  # first day the ads run
+BF_ON, CM_ON = datetime.date(2026, 11, 20), datetime.date(2026, 11, 30)
 URL = "https://agile-agilist.com/black-friday/"
+EVERY_DAY = [BF_ON, datetime.date(2026, 11, 25), CM_ON]  # RSA copy must pass on all promo days
 
+# RSA headlines/descriptions carry NO event name, so they run 20-30 Nov with no swap on Cyber Monday.
 HEADLINES = [
-    "Black Friday: 15% Off",
+    "15% Off Until Nov 30",
     "15% Off Every SAFe Class",
     "15% Off AI-Native Courses",
-    "Black Friday Ends Nov 30",
+    "Offer Ends Nov 30",
     "Exam Prep and Support",
     "SAFe Platinum Partner",
     "Live Online, Exam Included",
@@ -33,82 +35,101 @@ HEADLINES = [
     "Lead AI Change at Work",
 ]
 DESCRIPTIONS = [
-    "Black Friday: 15% off every public SAFe and AI-Native class. Offer ends Nov 30.",
+    "15% off every public SAFe and AI-Native class, any upcoming date. Offer ends Nov 30.",
     "Live online and instructor-led. Exam included, plus exam prep and support.",
     "Any upcoming class date. The 15% discount is applied automatically at checkout.",
     "Grow your career with AI-Native and SAFe certifications. 15% off until Nov 30.",
 ]
 CALLOUTS = ["15% Off Until Nov 30", "Exam Included", "Live Online Classes", "Exam Prep and Support"]
-SITELINK = {"text": "Black Friday: 15% Off", "desc1": "Every public SAFe & AI class",
-            "desc2": "Ends Nov 30 - any class date"}
+# Event-named assets: each one is date-scheduled, so Google swaps them for you.
+EVENTS = [  # (label, occasion for Google, start, end, sitelink text, sitelink desc2)
+    ("Black Friday", "Black Friday", BF_ON, datetime.date(2026, 11, 29),
+     "Black Friday: 15% Off", "Any class date, until Nov 30"),
+    ("Cyber Monday", "Cyber Monday", CM_ON, CM_ON,
+     "Cyber Monday: 15% Off", "Last day: ends tonight"),
+]
+SITELINK_DESC1 = "Every public SAFe & AI class"
 PROMO_ITEM = "SAFe & AI Courses"
 
 
 def main() -> int:
     rules = config.load_rules()
-    checks = [(h, "headline") for h in HEADLINES] + [(d, "description") for d in DESCRIPTIONS] + \
-             [(c, "callout") for c in CALLOUTS] + \
-             [(SITELINK["text"], "sitelink_text"), (SITELINK["desc1"], "sitelink_desc"),
-              (SITELINK["desc2"], "sitelink_desc"), (PROMO_ITEM, "promo_item")]
     bad = []
-    for text, kind in checks:
+
+    def check(text, kind, days):
         for aud in ("US", "CA"):
-            ok, why = validate_asset(text, kind, rules, audience=aud, on_date=ON)
-            if not ok:
-                bad.append(f"{kind} {text!r} [{aud}]: {why}")
-    ok, why = validate_final_url(URL, rules, on_date=ON)
+            for day in days:
+                ok, why = validate_asset(text, kind, rules, audience=aud, on_date=day)
+                if not ok:
+                    bad.append(f"{kind} {text!r} [{aud} {day}]: {why}")
+
+    for t in HEADLINES:
+        check(t, "headline", EVERY_DAY)
+    for t in DESCRIPTIONS:
+        check(t, "description", EVERY_DAY)
+    for t in CALLOUTS:
+        check(t, "callout", EVERY_DAY)
+    check(SITELINK_DESC1, "sitelink_desc", EVERY_DAY)
+    check(PROMO_ITEM, "promo_item", EVERY_DAY)
+    for _label, _occ, start, end, sl_text, sl_desc2 in EVENTS:
+        check(sl_text, "sitelink_text", [start, end])
+        check(sl_desc2, "sitelink_desc", [start, end])
+    for day, text in [(CM_ON, "Black Friday: 15% Off"), (datetime.date(2026, 11, 29), "Cyber Monday: 15% Off"),
+                      (datetime.date(2026, 12, 1), "15% Off Until Nov 30")]:
+        if validate_asset(text, "headline", rules, on_date=day)[0]:
+            bad.append(f"date guard broken: {text!r} still validates on {day}")
+    ok, why = validate_final_url(URL, rules, on_date=BF_ON)
     if not ok:
         bad.append(f"final URL {URL}: {why}")
-    late, _ = validate_asset("Black Friday: 15% Off", "headline", rules, on_date=datetime.date(2026, 12, 1))
-    if late:
-        bad.append("promo copy still validates on Dec 1 - expiry guard broken")
     if bad:
         print("KIT FAILED VALIDATION:\n  " + "\n  ".join(bad))
         return 1
 
-    n = len(checks)
-    md = f"""# Black Friday 2026 - ad kit (APPROVED by Mark, 2026-11-19)
+    n = len(HEADLINES) + len(DESCRIPTIONS) + len(CALLOUTS) + 2 + 2 * len(EVENTS)
+    ev_rows = "\n".join(
+        f"| {occ} | 15% | {PROMO_ITEM} | {start:%d %b} | {end:%d %b} 23:59 |" for _l, occ, start, end, _t, _d in EVENTS)
+    sl_rows = "\n".join(
+        f"| {t} | {SITELINK_DESC1} | {d2} | {start:%d %b} | {end:%d %b} |" for _l, _o, start, end, t, d2 in EVENTS)
+    md = f"""# Black Friday + Cyber Monday 2026: ad kit (APPROVED; dates updated 20 Nov)
 
-**Approved to apply.** I have no write access to the ad accounts (and Phase 1 keeps it that way),
-so the **apply checklist at the bottom** is your 15-minute path.
+**Offer (owner-confirmed 20 Nov):** 15% off every public SAFe and AI-Native class, any upcoming
+date, **20-30 Nov 2026**, applied automatically at checkout. It's labelled **Black Friday on 20-29
+Nov** and **Cyber Monday on 30 Nov** (a Monday). Final URL: {URL}
 
-**Offer (owner-confirmed 2026-11-19):** 15% off every public SAFe and AI-Native class, any upcoming
-date, **18-30 Nov 2026**, applied automatically at checkout. Final URL: {URL}
+**One change from the version you approved on 19 Nov:** the ad headlines no longer name the event
+("15% Off Until Nov 30" instead of "Black Friday: 15% Off"). Only the dated assets below carry
+"Black Friday" or "Cyber Monday", and Google switches those on and off by date. So **set it up
+once, today, and nothing needs swapping on 30 Nov.**
 
-**Validated:** all {n} strings pass `src/asset_generator.py` for both US and Canada audiences on
-{ON}: character limits, no "pass guarantee" / "money-back" (uses "exam prep and support"), no CAD
-pricing (no prices at all), no scarcity claims, and offer copy only inside the confirmed dates. The
-same copy **fails validation from 1 Dec**. That's deliberate, and the daily run emails you to
-remove it.
+**Validated:** all {n} strings pass `src/asset_generator.py` for US and Canada on every promo day.
+"Black Friday" copy fails from 30 Nov, "Cyber Monday" copy fails before 30 Nov, and all offer copy
+fails from 1 Dec. The agent's daily email reminds you.
 
 ## Where to apply
 English campaigns that send people to the website checkout: **Certifications - English,
 AI-Native - Virtual, AI-Native - Face-to-Face** (Google and Microsoft). Skip the brand campaign
-(people searching your name don't need a discount to find you) and **Certificaciones - Spanish**
-(English copy; no Spanish offer page confirmed).
+and **Certificaciones - Spanish** (English copy; no Spanish offer page).
 
-## 1. Promotion asset (Google) / Promotion extension (Microsoft)
-| Field | Value |
-|---|---|
-| Occasion | Black Friday |
-| Promotion type | Percent discount: **15%** |
-| Item | {PROMO_ITEM} |
-| Final URL | {URL} |
-| Promotion dates | **19 Nov 2026 to 30 Nov 2026** (the site offer started 18 Nov; ads can't start in the past) |
-| Asset/ad schedule end | 30 Nov 2026, 23:59 |
-| Language | English |
-
-## 2. Sitelink
-| Link text | Description 1 | Description 2 | Final URL | End date |
+## 1. Promotion assets (Google) / Promotion extensions (Microsoft): two, pre-scheduled
+| Occasion | Discount | Item | Start | End |
 |---|---|---|---|---|
-| {SITELINK['text']} | {SITELINK['desc1']} | {SITELINK['desc2']} | {URL} | 30 Nov 2026 |
+{ev_rows}
 
-## 3. Callouts (set end date 30 Nov)
+Final URL for both: {URL}. Language: English.
+
+## 2. Sitelinks: two, pre-scheduled
+| Link text | Description 1 | Description 2 | Start | End |
+|---|---|---|---|---|
+{sl_rows}
+
+## 3. Callouts (end date 30 Nov)
 """ + "\n".join(f"- {c}" for c in CALLOUTS) + """
 
-## 4. Responsive search ad additions
-Add these to the **existing** RSAs, or add one Black Friday RSA per ad group. Keep the course
-page as the final URL, or use the offer page. Pin "Black Friday: 15% Off" to position 1.
+## 4. Responsive search ad additions (run 20-30 Nov, no swap needed)
+Add these to the existing RSAs (or one offer RSA per ad group). Pin "15% Off Until Nov 30" to
+position 1. **If you already added "Black Friday: 15% Off" or "Black Friday Ends Nov 30" from the
+19 Nov version, replace them with the first and fourth headlines below.** Otherwise they would
+still say Black Friday on Cyber Monday.
 
 **Headlines**
 """ + "\n".join(f"- {h} ({len(h)}/30)" for h in HEADLINES) + """
@@ -116,45 +137,37 @@ page as the final URL, or use the offer page. Pin "Black Friday: 15% Off" to pos
 **Descriptions**
 """ + "\n".join(f"- {d} ({len(d)}/90)" for d in DESCRIPTIONS) + """
 
-## 5. Budget for the promo window - your decision
-Your trailing spend is about **CA$21/day**, well under the November seasonal band of **~CA$50/day**.
-A live 15% offer is a good reason to spend *up to the band*, not past it:
-- Raise total daily budget toward **CA$50/day for 19-30 Nov**. That's a move above 20%, so it needs
-  your approval under the rules. Per the Microsoft-first rule, give Microsoft the first increase.
-- On **1 Dec** the calendar moves to the February-peak ramp (~CA$100/day). That's a separate
-  decision, taken once you've seen the Black Friday registrations.
+## 5. Budget for the promo window: your decision
+Trailing spend is about **CA$21/day**, under the November band of **~CA$50/day**. A live 15% offer
+justifies spending *up to the band*, not past it: raise toward **CA$50/day for 20-30 Nov** (a
+change above 20%, so it needs your OK; give Microsoft the first increase). On **1 Dec** the calendar
+moves to the February ramp (~CA$100/day), which is a separate decision.
 
-## 6. Partner claim
-**"SAFe Platinum Partner"** is confirmed (2026-11-19) and included above. The validator now
-*rejects* the old "Gold Partner" / "Gold SPCT" wording. If any existing ad or asset in either
-account still says "Gold Partner", update it, because it understates you.
+## 6. Website
+The /black-friday/ page currently says **23-30 Nov**. It needs to say **20-30 Nov**, with 30 Nov
+as Cyber Monday, so the ads and the page agree (`proposals/2026-11_site-fixes.md`, item 1.3).
 
-## Apply checklist (about 15 minutes)
+## Apply checklist (about 20 minutes, once)
 **Google Ads**
-1. Campaigns → select **Certifications - English, AI-Native - Virtual, AI-Native - Face-to-Face**
-   → Assets → **+ Promotion**: fill in table 1 → set the schedule end to 30 Nov 23:59 → Save.
-2. Same three campaigns → **+ Sitelink** (table 2) and **+ Callout** (section 3), each with
-   end date 30 Nov.
-3. Each ad group's RSA → Edit → add the headlines and descriptions from section 4 → pin
-   "Black Friday: 15% Off" to position 1 → Save. (Editing an RSA sends it back for review; that's
-   normal and usually takes under a day.)
-4. Tools → Policy manager the next morning → fix anything flagged as "Limited" or "Disapproved".
+1. Select **Certifications - English, AI-Native - Virtual, AI-Native - Face-to-Face** → Assets →
+   **+ Promotion** twice (table 1): Black Friday 20-29 Nov, Cyber Monday 30 Nov (set each one's
+   start and end dates).
+2. Same campaigns: **+ Sitelink** twice (table 2, each with its dates) and **+ Callouts** (end 30 Nov).
+3. Each RSA: add the section 4 headlines and descriptions, pin "15% Off Until Nov 30" to
+   position 1, and remove any old "Black Friday" headlines.
+4. Next morning: Tools → Policy manager → fix anything "Limited" or "Disapproved".
 
-**Microsoft Ads**: add these **by hand**, not with "Import from Google Ads"
-5. The import can overwrite your **Microsoft tracking suffixes** and campaign settings (your rule:
-   keep the suffixes as they are). Add the promotion extension, sitelink and callouts manually,
-   with the same values and dates, on the same three campaigns.
-6. Don't add any images or multimedia assets on Microsoft (your Multimedia opt-out rule).
+**Microsoft Ads: by hand, not "Import from Google Ads"**
+5. The import can overwrite your tracking suffixes (your rule). Add the two promotion extensions,
+   the sitelinks and the callouts manually, with the same dates. No images or multimedia assets.
 
-## Remove on 1 Dec
-The promotion asset, sitelink and callouts end automatically if you set the end dates above.
-Remove the Black Friday headlines and descriptions by hand. The daily email reminds you on 30 Nov
-and 1 Dec.
+## 1 Dec
+Dated assets end on their own. Remove the section 4 headlines and descriptions by hand. The daily
+email reminds you on 30 Nov and 1 Dec.
 """
     out = ROOT / "proposals" / "2026-11_black-friday-kit.md"
-    out.parent.mkdir(exist_ok=True)
     out.write_text(md)
-    print(f"Black Friday kit: {n} strings validated for US + CA -> {out.relative_to(ROOT)}")
+    print(f"Black Friday + Cyber Monday kit: {n} strings validated for US + CA -> {out.relative_to(ROOT)}")
     return 0
 
 

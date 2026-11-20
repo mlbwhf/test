@@ -71,6 +71,10 @@ def validate_asset(text: str, kind: str, rules: dict, audience: str | None = Non
         promos = _active_promos(rules, on_date)
         if not promos:
             return False, "time-bound offer copy with no owner-confirmed promotion active on this date"
+        for occ in ("black friday", "cyber monday"):
+            if re.search(occ.replace(" ", r"\s*"), low) and not any(
+                    p.get("occasion", occ) == occ for p in promos):
+                return False, f"'{occ}' wording outside its confirmed dates"
         pct = re.search(r"(\d+)\s*%\s*off", low)
         if pct and int(pct.group(1)) not in {int(p.get("percent_off", -1)) for p in promos}:
             return False, f"{pct.group(1)}% off does not match the confirmed promotion"

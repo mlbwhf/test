@@ -50,6 +50,12 @@ def promo_reminders(rules: dict, today: datetime.date) -> list:
     out = []
     for p in rules.get("confirmed_promotions") or []:
         end = datetime.date.fromisoformat(str(p["end"]))
+        if p.get("followed_by"):
+            if today == end:
+                out.append(f"LAST DAY of {p['id']} wording. Tomorrow the same {p['percent_off']}% offer "
+                           f"continues as {p['followed_by']}: swap the promotion asset / sitelink labels "
+                           "(if not pre-scheduled). Generic '% off' headlines can stay.")
+            continue
         if today == end:
             out.append(f"PROMO ENDS TODAY: {p['id']} ({p['offer']}). Tomorrow, remove its promotion "
                        "assets, sitelink, callout and offer headlines in Google AND Microsoft Ads.")

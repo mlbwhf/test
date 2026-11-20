@@ -48,7 +48,7 @@ them on the server.**
 3. Tripwires: account > 130% of the seasonal target · over plan 2 days running · brand CPC >
    CA$2 · **a paused campaign re-enabled** · **a bid strategy changed** · smart bidding without
    ≥15 verified registrations · no spend data at all.
-4. Black Friday reminders on **30 Nov and 1 Dec** to remove the promo assets.
+4. Promo reminders: **29 Nov** (Black Friday wording ends; Cyber Monday takes over 30 Nov), **30 Nov** and **1 Dec** (remove offer copy).
 5. **Emails you only when something needs attention.** Logs go to `/opt/ads-agent/logs/`.
 
 ## Fixed in this round
