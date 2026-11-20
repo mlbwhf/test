@@ -19,122 +19,150 @@ from asset_generator import validate_asset, validate_final_url  # noqa: E402
 from build_keyword_proposal import CAMPAIGN_NAME, HOLD_KW, ON_HOLD, PLAN, STAGES, stage_of  # noqa: E402
 
 CHECK_DATES = [datetime.date(2026, 11, 20), datetime.date(2026, 12, 15)]  # during + after the promo
-TRUST = ["SAFe Platinum Partner", "SPCT-Led Training", "Exam Included", "Exam Prep and Support"]
+PP, EPS, EXAM = "SAFe Platinum Partner", "Exam Prep and Support", "Exam Included"
+# Claims the OWNER confirmed in chat that the course page does not state yet (web team to add).
+OWNER_CONFIRMED = {
+    "Launching AI-Native ARTs": "PI Planning in one day / PI Outcome Planning (Mark, 2026-11-20). "
+                                "Only in the blog today; add it to the course page so the ad matches it.",
+}
 
-# ad group -> (path1, path2, source note, headlines, descriptions)
+# ad group -> (path1, path2, facts used + source, headlines, descriptions)
+# Facts: each course's English page (full read 2026-11-20). Left out on purpose: ratings, graduate
+# counts, employer logos, unsourced statistics, refund wording, and any detail the site contradicts.
 ADS = {
     "AI-Native Foundations": ("AI-Native", "Foundations",
-        "Format left out on purpose: English page says live online; campaign is Face-to-Face.",
+        "2 days, prompt engineering, daily workflows, ethics, tool selection, 30-day plan, guardrails, "
+        "exam, 1:1 career coaching. Delivery format left out: the site says both online-only and in-person.",
         ["AI-Native Foundations", "AI-Native Foundations Cert", "AI Native Certification",
-         "Become AI-Fluent at Work", "Use AI Tools in Your Own Work", "Start Your AI-Native Path",
-         "Instructor-Led AI Training", "Upskill in AI for Your Career", "First Step to Value Architect",
-         *TRUST],
-        ["Become productive with AI tools in your own work. Instructor-led, exam included.",
-         "The first credential on the AI-Native path and the prerequisite for Value Architect.",
-         "Taught by an SPCT at a SAFe Platinum Partner. Exam prep and support included.",
-         "Grow your career with practical AI skills. See upcoming class dates and register."]),
+         "Become AI-Fluent in 2 Days", "Master Prompt Engineering", "Build Daily AI Workflows",
+         "Practical AI Guardrails", "Your 30-Day AI Habit Plan", "1:1 Career Coaching Included",
+         "Pick the Right AI Tools", "Start Your AI-Native Path", "Upskill in AI for Your Career",
+         EXAM, EPS, PP],
+        ["Become AI-fluent in two days: prompt engineering, daily AI workflows, ethics and tools.",
+         "Practical guardrails for confidentiality, bias, hallucination and IP at work.",
+         "Exam included, plus a 1:1 career-coaching session and exam prep and support.",
+         "The first step on the AI-Native path and the prerequisite for Value Architect."]),
     "AI-Native SAFe Fundamentals": ("AI-Native", "Fundamentals",
-        "One day, no prerequisites, exam included (45 questions).",
+        "One day, no prerequisites, core concepts + shared language + operating model, AI Innovation "
+        "Pipeline (experiment to value), exam, for leaders who need a common language for AI.",
         ["AI-Native SAFe Fundamentals", "SAFe AI-Native Course", "AI-Native SAFe in One Day",
          "One-Day AI-Native Course", "No Prerequisites", "AI Innovation Pipeline",
-         "Shared Language for AI + SAFe", "Start With AI-Native SAFe", "Instructor-Led AI Training",
-         *TRUST],
-        ["One-day AI-Native SAFe course: core concepts, the operating model and the AI pipeline.",
-         "No prerequisites. Exam included, plus exam prep and support from an SPCT.",
-         "Learn the shared language your teams need to bring AI into SAFe. See class dates.",
-         "Taught at a SAFe Platinum Partner. Register online for an upcoming class."]),
+         "Shared Language for AI + SAFe", "From AI Experiment to Value", "A Common AI Language",
+         "Start With AI-Native SAFe", EXAM, EPS, PP],
+        ["One day: AI-Native SAFe core concepts, shared language and the operating model.",
+         "Learn the AI Innovation Pipeline: how AI ideas move from experiment to value.",
+         "No prerequisites. Exam included, with exam prep and support.",
+         "For leaders who need a common language for AI. See upcoming dates and register."]),
     "AI-Native Value Architect": ("AI-Native", "Value-Architect",
-        "Two days live virtual, exam included; builds on AI-Native Foundations.",
+        "Lead enterprise AI adoption: diagnose readiness, roadmap, habits, govern risk, measure change. "
+        "2 days live online, exam. AI-Native Foundations is a hard prerequisite.",
         ["AI-Native Value Architect", "Value Architect Certification", "AI Change Agent Certification",
-         "Lead AI Adoption at Scale", "Beyond Copilots: Scale AI", "AI Transformation Training",
-         "Redesign Processes for AI", "2 Days, Live Virtual", "Lead AI Change at Work", *TRUST],
-        ["Drive AI adoption across the enterprise: processes, roles and governance.",
-         "Two days, live virtual, exam included. For change agents and transformation leads.",
-         "Builds on AI-Native Foundations. Taught at a SAFe Platinum Partner, with exam prep.",
+         "Lead Enterprise AI Adoption", "Build Your AI Roadmap", "Diagnose AI Readiness",
+         "Govern AI Risk, Measure Change", "Beyond Copilots: Scale AI", "After AI-Native Foundations",
+         "2 Days Live Online", "Lead AI Change at Work", EXAM, EPS, PP],
+        ["Lead enterprise AI adoption: diagnose readiness, build the roadmap and govern risk.",
+         "Go beyond personal AI fluency to drive AI habits and measure sustained change.",
+         "Two days live online, exam included. AI-Native Foundations is required first.",
          "Become the person who leads AI change at work. See upcoming dates and register."]),
     "Launching AI-Native ARTs": ("AI-Native", "ART-Leader",
-        "Two days live online, authorized SAFe instructor, SAFe ART Leader certification.",
-        ["Launching AI-Native ARTs", "SAFe ART Leader Certification", "ART Leader Certification",
-         "Become an ART Leader", "AI-Driven ART Execution", "Lead an AI-Native ART", "2 Days Live Online",
-         "Authorized SAFe Instructor", *TRUST],
-        ["Become an ART Leader: turn your Lean-Agile foundation into AI-driven execution.",
+        "Page: 2 days live online, authorized SAFe instructor, SAFe ART Leader exam, 15 PDUs, no required "
+        "prerequisites, 12 critical success factors, live launch-readiness assessment, launch plan, "
+        "evolving roles; audience RTEs, PMs, System Architects. Owner-confirmed: PI Outcome Planning.",
+        ["Launching AI-Native ARTs", "SAFe ART Leader Certification", "PI Planning in One Day",
+         "Learn PI Outcome Planning", "From PI Objectives to Outcomes", "12 AI-Native Success Factors",
+         "ART Launch Readiness Check", "Leave With an ART Launch Plan", "For RTEs, PMs & Architects",
+         "Lead an AI-Native ART", "2 Days Live Online, 15 PDUs", "No Required Prerequisites",
+         "Authorized SAFe Instructor", EPS, PP],
+        ["PI Planning becomes one-day PI Outcome Planning. Learn to run it for an AI-Native ART.",
+         "Assess your ART's launch readiness live in class and leave with a plan for Monday.",
          "Two days live online with an authorized SAFe instructor. ART Leader exam included.",
-         "Earn the SAFe ART Leader certification, with exam prep and support.",
-         "Learn from a SAFe Platinum Partner. See upcoming class dates and register online."]),
+         "For RTEs, Product Managers and System Architects whose roles are changing with AI."]),
     "Leading the AI-Native Organization": ("AI-Native", "Leaders",
-        "Two-day leaders' workshop: strategy, investment, governance. Live virtual, exam included.",
+        "2-day executive cohort capped at 12 (CEOs, COOs, CTOs, CAIOs), 6 months follow-up coaching, capital "
+        "allocation, board oversight, talent, vision; 16 PDUs, no prerequisites, capstone. Format left "
+        "out: the site says both online and in-person.",
         ["Leading the AI-Native Org", "AI Leadership for Executives", "AI Strategy for Leaders",
-         "Executive AI Workshop", "Govern AI Across Your Org", "AI Investment & Governance",
-         "2-Day Leaders Workshop", "Lead Your AI Transformation", "Live Virtual Workshop", *TRUST],
-        ["Two-day workshop for leaders: AI strategy, investment decisions and governance.",
-         "Lead an organization that is becoming AI-Native. Live virtual, exam included.",
-         "Taught by an SPCT at a SAFe Platinum Partner, with exam prep and support.",
+         "Executive AI Workshop", "For CEOs, COOs, CTOs & CAIOs", "Capped at 12 Senior Leaders",
+         "6 Months of Follow-Up Coaching", "Board Oversight of AI", "Capital Allocation for AI",
+         "2-Day Executive Cohort", "Lead Your AI Transformation", "Taught by an SPCT",
+         "16 PDUs, No Prerequisites", PP],
+        ["A 2-day executive cohort capped at 12 senior leaders, with 6 months of coaching.",
+         "Capital allocation for AI, board oversight, talent and communicating the vision.",
+         "For CEOs, COOs, CTOs and CAIOs setting AI direction. No prerequisites, 16 PDUs.",
          "Training a leadership team? Ask about private classes on your dates."]),
     "RTE Training": ("SAFe", "RTE",
-        "Three days live virtual, authorized SAFe instructor, exam included.",
+        "3 days live virtual, 16 PDUs, exam; PI Planning, Inspect & Adapt, ROAM, Scrum of Scrums; "
+        "SPC/ASPC instructor. Prerequisites and 'SPCT-led' left out: the page contradicts itself.",
         ["SAFe RTE Certification", "Release Train Engineer Cert", "SAFe Release Train Engineer",
          "RTE Training, Live Virtual", "3-Day SAFe RTE Course", "Facilitate PI Planning",
-         "Lead Your Agile Release Train", "Advance Your Agile Career", *TRUST],
-        ["Coach the Agile Release Train, facilitate PI Planning and keep value flowing.",
-         "Three days, live virtual, with an authorized SAFe instructor. Exam included.",
-         "SAFe Platinum Partner, SPCT-led. Exam prep and support for every learner.",
+         "Master Inspect & Adapt", "Lead Your Agile Release Train", "Advance Your Agile Career",
+         "16 PDUs, Exam Included", "Authorized SAFe Instructor", EPS, PP],
+        ["Coach the Agile Release Train: PI Planning, Inspect & Adapt, ROAM and Scrum of Scrums.",
+         "Three days, live virtual, with an authorized SAFe instructor. 16 PDUs, exam included.",
+         "Taught at a SAFe Platinum Partner, with exam prep and support for every learner.",
          "Move into a Release Train Engineer role. See upcoming class dates and register."]),
     "SPC Certification": ("SAFe", "SPC",
-        "Implementing SAFe; four days live virtual, exam included.",
+        "Implementing SAFe; 4 days live virtual, led by SPCTs, 16 PDUs, exam; licensed to teach SAFe "
+        "courses; included SAFe Studio year renews your SAFe certifications.",
         ["SPC Certification", "SAFe Practice Consultant", "Implementing SAFe (SPC)",
          "Become a Certified SPC", "4-Day Live Virtual SPC Class", "Lead a SAFe Transformation",
-         "Teach & Coach SAFe", "Advance Your Agile Career", *TRUST],
+         "Teach & Coach SAFe", "Renews Your SAFe Certs", "Advance Your Agile Career",
+         "16 PDUs, Exam Included", "SPCT-Led Training", EPS, PP],
         ["Implementing SAFe with SPC certification: lead a Lean-Agile transformation at scale.",
-         "Four days, live virtual, taught by an SPCT. Exam included.",
-         "Train and coach others in SAFe as a certified SPC. Exam prep and support included.",
-         "Learn from a SAFe Platinum Partner. See upcoming class dates and register online."]),
+         "Four days, live virtual, led by SPCTs. 16 PDUs, exam included.",
+         "Get licensed to teach SAFe courses. Your SAFe Studio year renews your SAFe certs.",
+         "Learn from a SAFe Platinum Partner, with exam prep and support. See class dates."]),
     "POPM": ("SAFe", "POPM",
-        "Two days live virtual, exam included.",
+        "2 days live virtual, 16 PDUs, exam; own the backlog, lead PI Planning, Lean UX, Design Thinking.",
         ["POPM Certification", "SAFe Product Owner/Manager", "SAFe POPM Training",
          "Product Owner Certification", "Product Manager Certification", "2-Day Live Virtual POPM",
-         "Deliver Value Through the ART", "Advance Your Agile Career", *TRUST],
-        ["SAFe Product Owner / Product Manager certification. Two days, live virtual.",
-         "Deliver value through the Continuous Delivery Pipeline as a PO or PM in SAFe.",
+         "Lead PI Planning as a PO/PM", "Lean UX & Design Thinking", "16 PDUs, Exam Included",
+         "Advance Your Agile Career", EPS, PP],
+        ["Own the backlog, lead PI Planning and apply Lean UX and Design Thinking.",
+         "SAFe Product Owner / Product Manager certification. Two days, live virtual, 16 PDUs.",
          "Exam included, with exam prep and support. Taught at a SAFe Platinum Partner.",
          "Step up into a product role. See upcoming POPM class dates and register online."]),
     "Lean Portfolio Management": ("SAFe", "LPM",
-        "Two days live virtual (+1 optional day), exam included.",
+        "2 days + optional workshop day, live virtual, 16 PDUs, exam; fund value streams not projects, "
+        "Lean Budget Guardrails, Portfolio Kanban with WSJF, Value Management Office.",
         ["SAFe LPM Certification", "Lean Portfolio Management", "LPM Training, Live Virtual",
-         "Align Strategy & Execution", "Lean Budgeting & Governance", "For Portfolio Leaders",
-         "Advance Your Agile Career", *TRUST],
-        ["SAFe Lean Portfolio Management: connect strategy, funding and governance to execution.",
-         "Two days live virtual, with an optional third day. Exam included.",
+         "Fund Value Streams", "Lean Budget Guardrails", "Portfolio Kanban With WSJF",
+         "Set Up a Value Mgmt Office", "For Portfolio Leaders", "16 PDUs, Exam Included", EPS, PP],
+        ["Fund value streams instead of projects, with Lean Budget Guardrails and Portfolio Kanban.",
+         "Two days live virtual, plus an optional workshop day. 16 PDUs, exam included.",
          "Taught at a SAFe Platinum Partner, with exam prep and support for every learner.",
          "For portfolio, PMO and finance leaders. See upcoming class dates and register."]),
     "SAFe DevOps": ("SAFe", "DevOps",
-        "SAFe DevOps Practitioner; three days live virtual, exam included.",
+        "SAFe DevOps Practitioner; 3 days live virtual, 16 PDUs, exam; map the CDP with value stream "
+        "mapping; separate deploy from release.",
         ["SAFe DevOps Certification", "SAFe DevOps Practitioner", "SAFe DevOps Training",
-         "3-Day Live Virtual DevOps", "Map Your Delivery Pipeline", "Advance Your Agile Career",
-         *TRUST],
-        ["SAFe DevOps Practitioner certification. Three days, live virtual, exam included.",
-         "Learn to map and improve your Continuous Delivery Pipeline across the ART.",
+         "3-Day Live Virtual DevOps", "Map Your Delivery Pipeline", "Separate Deploy From Release",
+         "Value Stream Mapping for CDP", "16 PDUs, Exam Included", "Advance Your Agile Career", EPS, PP],
+        ["Map your Continuous Delivery Pipeline from idea to production with value stream mapping.",
+         "Separate deploy from release. Three days, live virtual, 16 PDUs, exam included.",
          "Taught at a SAFe Platinum Partner, with exam prep and support.",
          "For engineers, operations and release roles. See class dates and register online."]),
     "ASPC (new course)": ("SAFe", "ASPC",
-        "Four days live virtual, 16 PDUs, requires an active SPC, exam included.",
+        "4 days live virtual, 16 PDUs, exam, requires a current SPC; teach the advanced courses; the only "
+        "path to SPCT.",
         ["ASPC Certification", "Advanced SAFe (ASPC)", "Adv. SAFe Practice Consultant",
-         "For Certified SPCs", "4-Day Live Virtual ASPC", "The Next Step After SPC",
-         "Sustain SAFe Transformations", "16 PDUs, Exam Included", "SAFe Platinum Partner",
-         "SPCT-Led Training", "Exam Prep and Support"],
+         "For Certified SPCs", "4-Day Live Virtual ASPC", "The Next Step After SPC", "The Only Path to SPCT",
+         "Teach Advanced SAFe Courses", "Sustain SAFe Transformations", "16 PDUs, Exam Included", EPS, PP],
         ["Advanced SAFe Practice Consultant: the next step for SPCs leading change at scale.",
-         "Four days, live virtual, 16 PDUs, exam included. Requires an active SPC.",
-         "Stop theorizing, start sustaining. AI-driven insights and hands-on tools.",
+         "Four days, live virtual, 16 PDUs, exam included. Requires a current SPC.",
+         "Teach the advanced SAFe courses and take the only path toward SPCT.",
          "Taught at a SAFe Platinum Partner, with exam prep and support. See class dates."]),
     "Advanced Scrum Master": ("SAFe", "ASM",
-        "Two days live virtual, 16 PDUs, no prerequisites, exam included.",
+        "2 days live virtual, 16 PDUs, exam; cross-team facilitation, flow across the ART; SSM = one team, "
+        "SASM = multiple teams. Prerequisites left out: the page contradicts itself.",
         ["SAFe Advanced Scrum Master", "ASM Certification", "SASM Certification",
-         "Advanced Scrum Master Course", "2-Day Live Virtual ASM", "No Prerequisites",
-         "16 PDUs, Exam Included", "Coach Agile Teams at Scale", "Advance Your Agile Career",
-         "SAFe Platinum Partner", "SPCT-Led Training", "Exam Prep and Support"],
-        ["SAFe Advanced Scrum Master certification. Two days, live virtual, 16 PDUs.",
-         "Coach Agile teams beyond the basics and grow into a senior Scrum Master role.",
-         "No prerequisites. Exam included, with exam prep and support.",
-         "Taught at a SAFe Platinum Partner. See upcoming class dates and register online."]),
+         "Advanced Scrum Master Course", "2-Day Live Virtual ASM", "Coach Across Multiple Teams",
+         "Accelerate Flow Across the ART", "Beyond a Single Scrum Team", "16 PDUs, Exam Included",
+         "Advance Your Agile Career", EPS, PP],
+        ["Facilitate cross-team work and accelerate flow across the Agile Release Train.",
+         "Grow from leading one Scrum team to coaching across multiple teams in SAFe.",
+         "SAFe Advanced Scrum Master certification. Two days, live virtual, 16 PDUs.",
+         "Exam included, with exam prep and support. Taught at a SAFe Platinum Partner."]),
 }
 
 
@@ -177,7 +205,9 @@ def main() -> int:
                 f"### {ag} · stage {stage[-1]}\n"
                 f"Campaign **{camp}** · Final URL {url} · Display path `/{p1}/{p2}`  \n"
                 f"*Facts used:* {note}\n\n"
-                "| # | Headline | Chars |\n|---|---|---|\n"
+                + (f"⚠️ **Owner-confirmed, not on the course page yet:** {OWNER_CONFIRMED[ag]}\n\n"
+                   if ag in OWNER_CONFIRMED else "")
+                + "| # | Headline | Chars |\n|---|---|---|\n"
                 + "\n".join(f"| {i} | {h} | {len(h)} |" for i, h in enumerate(heads, 1))
                 + "\n\n| # | Description | Chars |\n|---|---|---|\n"
                 + "\n".join(f"| {i} | {d} | {len(d)} |" for i, d in enumerate(descs, 1)) + "\n")
@@ -210,9 +240,12 @@ Partner" (never Gold), "exam prep and support" (no pass guarantee or money-back)
 **Evergreen on purpose:** no Black Friday wording, so these don't need editing on 1 Dec. To
 promote the offer in a stage 1 ad group until 30 Nov, add the headlines from the Black Friday kit.
 
-**Facts:** taken only from each course's English page on agile-agilist.com, read 20 Nov. No
-ratings, graduate counts or salary claims, because those aren't on your approved claims list.
-Tell me if any detail has changed, e.g. a course length.
+**Built on what each course actually teaches** (full English course pages, read 20 Nov), plus
+one claim you confirmed in chat: one-day **PI Outcome Planning** in Launching AI-Native ARTs.
+**Left out on purpose:** ratings, graduate counts, employer logos, unsourced statistics, the
+pages' refund wording, and any detail the site contradicts (delivery format for AI-Native
+Foundations and the executive course; prerequisites for RTE and ASM; "SPCT-led" except SPC).
+Site fixes for the web team are in `proposals/2026-11_site-fixes.md`.
 
 ## Import with the keywords, stage by stage
 Import the ad file **first**, then the keyword file for the same stage, in Google Ads Editor
