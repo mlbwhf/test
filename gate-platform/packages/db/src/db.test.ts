@@ -14,7 +14,7 @@ describe.skipIf(!url)("Postgres integration", () => {
     pool = createPool(url!);
     await pool.query(`DROP SCHEMA public CASCADE; CREATE SCHEMA public;`);
     const ran = await migrate(pool);
-    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql", "0020_categories_promotions.sql", "0021_organization_logos.sql", "0022_course_language.sql", "0023_class_page.sql", "0024_organizer_profiles.sql", "0025_organization_sales.sql"]);
+    expect(ran).toEqual(["0001_init.sql", "0002_training.sql", "0003_corporate.sql", "0004_selfservice.sql", "0005_delivery.sql", "0006_release.sql", "0007_cheque_payouts.sql", "0008_pricing.sql", "0009_course_images.sql", "0010_checkin.sql", "0011_identity.sql", "0012_payments_status.sql", "0013_instructor_access.sql", "0014_badges_certificates.sql", "0015_integrations.sql", "0016_payment_modes.sql", "0017_certificate_badges.sql", "0018_marketplace_flexible.sql", "0019_invoice_reminders.sql", "0020_categories_promotions.sql", "0021_organization_logos.sql", "0022_course_language.sql", "0023_class_page.sql", "0024_organizer_profiles.sql", "0025_organization_sales.sql", "0026_badge_awards.sql"]);
     expect(await migrate(pool)).toEqual([]);
   });
   afterAll(async () => { await pool?.end(); });
@@ -152,6 +152,14 @@ describe.skipIf(!url)("Postgres integration", () => {
     expect((await core.getOrganization(org.id)).sale).toEqual(sale);
     await core.updateSale(org.id, null);
     expect((await core.getOrganization(org.id)).sale).toBeUndefined();
+    const prog = await core.createCourse(org.id, { slug: "innov", name: "Innovation" });
+    await core.updateCourse(org.id, prog.id, { badge: { platform: "own", name: "Innovation", imageUrl: "https://x.test/b.png" } });
+    const moved = await core.importBadgeEarners(org.id, prog.id, { csv: "Recipient Name,Recipient Email,Issued At\nAda,Ada@x.co,2024-03-05T00:00:00Z", platform: "credly" });
+    expect(moved.imported).toBe(1);
+    expect((await core.importBadgeEarners(org.id, prog.id, { csv: "Recipient Email\nada@x.co", platform: "credly" })).imported).toBe(0);
+    const [award] = await core.listBadgeAwards(org.id, prog.id);
+    expect(award).toMatchObject({ recipientEmail: "ada@x.co", source: "import", importedFrom: "credly", billable: false, issuedAt: new Date("2024-03-05T00:00:00Z") });
+    expect((await core.verifyCertificate(award!.verifyCode)).valid).toBe(true);
     const course = await core.createCourse(org.id, { slug: "rte", name: "RTE" });
     await core.updateCourse(org.id, course.id, { page: { tagline: "Three live days.", videoUrl: "https://vimeo.com/123456789", agenda: [["Role"], ["PI Planning"]], included: [{ title: "Certificate PDF" }], modules: { banner: false } } });
     expect((await core.getCourse(org.id, course.id)).page).toEqual({ tagline: "Three live days.", videoUrl: "https://vimeo.com/123456789", agenda: [["Role"], ["PI Planning"]], included: [{ title: "Certificate PDF" }], modules: { banner: false } });

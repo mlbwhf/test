@@ -1,4 +1,4 @@
-import type { Attendee, Certificate, CorporateAccount, Course, Event, Invoice, InvoiceReminderStep, Order, Organization, Refund, Seat, SequenceStep, TicketType, WaitlistEntry } from "./types.js";
+import type { BadgeAward, Attendee, Certificate, CorporateAccount, Course, Event, Invoice, InvoiceReminderStep, Order, Organization, Refund, Seat, SequenceStep, TicketType, WaitlistEntry } from "./types.js";
 
 export interface OrderPaidContext {
   organization: Organization;
@@ -53,6 +53,8 @@ export interface CoreHooks {
   cohortAtRisk?: ((ctx: { event: Event; organization: Organization; confirmed: number; minimum: number }) => Promise<void>) | undefined;
   cohortCancelled?: ((ctx: { event: Event; organization: Organization; target?: Event | undefined; refunded: number; transferred: number }) => Promise<void>) | undefined;
   certificateIssued?: ((ctx: { certificate: Certificate; seat: Seat; event: Event; course?: Course | undefined }) => Promise<void>) | undefined;
+  /** A verified badge was issued outside a class (imported from another platform, or directly). */
+  badgeAwarded?: ((ctx: { award: BadgeAward; course: Course }) => Promise<void>) | undefined;
   /** A class was created (live or draft) or a draft was published. */
   eventCreated?: ((ctx: { event: Event }) => Promise<void>) | undefined;
   eventPublished?: ((ctx: { event: Event }) => Promise<void>) | undefined;

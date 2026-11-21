@@ -1,6 +1,6 @@
 import type { ApiKey, AuthSession, IdentityRepos, IntegrationRepos, WebhookDelivery, WebhookEndpoint, Invitation, Membership, Role, User } from "@gate/core";
 import type {
-  Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Promotion, PromotionRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
+  BadgeAward, BadgeAwardRepo, Certificate, CertificateRepo, CorporateAccount, CorporateAccountRepo, Course, CourseRepo, Event, EventRepo, Invoice, InvoiceRepo, MessageLogEntry, MessageLogRepo, Order, OrderRepo, Organization, OrganizationRepo, Party, PartyRepo, Payout, PayoutRepo, ProcessedEventRepo, Promotion, PromotionRepo, Refund, RefundRepo, Repos, Seat, SeatRepo, SeatTransfer, SeatTransferRepo, TicketType, TicketTypeRepo, WaitlistEntry, WaitlistRepo,
 } from "@gate/core";
 import type { Pool } from "./pool.js";
 
@@ -97,6 +97,14 @@ function toSeat(r: Row): Seat {
 function toCertificate(r: Row): Certificate {
   const revokedAt = opt<Date>(r.revoked_at);
   return { id: str(r.id), organizationId: str(r.organization_id), seatId: str(r.seat_id), eventId: str(r.event_id), courseName: str(r.course_name), attendeeName: str(r.attendee_name), attendeeEmail: str(r.attendee_email), issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}), kind: (opt<string>(r.kind) ?? "completion") as NonNullable<Certificate["kind"]>, ...(opt<unknown>(r.hours) !== undefined ? { hours: num(r.hours) } : {}), ...(opt<Certificate["badge"]>(r.badge) ? { badge: r.badge as NonNullable<Certificate["badge"]> } : {}) };
+}
+function toBadgeAward(r: Row): BadgeAward {
+  const revokedAt = opt<Date>(r.revoked_at), notifiedAt = opt<Date>(r.notified_at), from = opt<string>(r.imported_from);
+  return {
+    id: str(r.id), organizationId: str(r.organization_id), courseId: str(r.course_id), badge: r.badge as BadgeAward["badge"], recipientName: str(r.recipient_name), recipientEmail: str(r.recipient_email),
+    issuedAt: date(r.issued_at), verifyCode: str(r.verify_code), ...(revokedAt ? { revokedAt } : {}), source: r.source as BadgeAward["source"], ...(from ? { importedFrom: from } : {}),
+    billable: r.billable === true, ...(notifiedAt ? { notifiedAt } : {}), createdAt: date(r.created_at),
+  };
 }
 function toTransfer(r: Row): SeatTransfer {
   const paymentRef = opt<string>(r.payment_ref), toSeatId = opt<string>(r.to_seat_id), completedAt = opt<Date>(r.completed_at);
@@ -302,6 +310,19 @@ class PgCertificates implements CertificateRepo {
   async getBySeat(seatId: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE seat_id=$1`, [seatId]); return r.rows[0] ? toCertificate(r.rows[0]) : undefined; }
   async listByEvent(eventId: string) { const r = await this.pool.query(`SELECT * FROM certificates WHERE event_id=$1 ORDER BY issued_at`, [eventId]); return r.rows.map(toCertificate); }
 }
+class PgBadgeAwards implements BadgeAwardRepo {
+  constructor(private readonly pool: Pool) {}
+  async create(a: BadgeAward) {
+    await this.pool.query(
+      `INSERT INTO badge_awards (id, organization_id, course_id, badge, recipient_name, recipient_email, issued_at, verify_code, revoked_at, source, imported_from, billable, notified_at, created_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)`,
+      [a.id, a.organizationId, a.courseId, JSON.stringify(a.badge), a.recipientName, a.recipientEmail, a.issuedAt, a.verifyCode, a.revokedAt ?? null, a.source, a.importedFrom ?? null, a.billable, a.notifiedAt ?? null, a.createdAt],
+    );
+  }
+  async update(a: BadgeAward) { await this.pool.query(`UPDATE badge_awards SET revoked_at=$2, notified_at=$3, recipient_name=$4 WHERE id=$1`, [a.id, a.revokedAt ?? null, a.notifiedAt ?? null, a.recipientName]); }
+  async getByCode(code: string) { const r = await this.pool.query(`SELECT * FROM badge_awards WHERE verify_code=$1`, [code]); return r.rows[0] ? toBadgeAward(r.rows[0]) : undefined; }
+  async listByCourse(courseId: string) { const r = await this.pool.query(`SELECT * FROM badge_awards WHERE course_id=$1 ORDER BY issued_at`, [courseId]); return r.rows.map(toBadgeAward); }
+  async listByOrganization(organizationId: string) { const r = await this.pool.query(`SELECT * FROM badge_awards WHERE organization_id=$1 ORDER BY created_at`, [organizationId]); return r.rows.map(toBadgeAward); }
+}
 class PgMessageLog implements MessageLogRepo {
   constructor(private readonly pool: Pool) {}
   async record(e: MessageLogEntry) {
@@ -366,6 +387,7 @@ export function createPgRepos(pool: Pool): Repos {
     seatTransfers: new PgSeatTransfers(pool),
     waitlist: new PgWaitlist(pool),
     certificates: new PgCertificates(pool),
+    badgeAwards: new PgBadgeAwards(pool),
     messageLog: new PgMessageLog(pool),
     payouts: new PgPayouts(pool),
     refunds: new PgRefunds(pool),

@@ -389,7 +389,8 @@ export type UpdateCourseInput = {
 export type BadgePlatform = "credly" | "accredible" | "badgr" | "certopus" | "other" | "own";
 export const BADGE_PLATFORMS: Record<BadgePlatform, string> = { own: "EnrollClass verified badge (Open Badges 3.0)", credly: "Credly", accredible: "Accredible", badgr: "Badgr / Canvas Credentials", certopus: "Certopus", other: "Other platform" };
 export type BadgeMigration = { courseId: string; status: "moved" | "already" | "no_badge" | "no_image" | "failed"; reason?: string };
-export type BadgeOverviewItem = { course: Course; verified: boolean; issued: number; awaiting: number };
+export type BadgeOverviewItem = { course: Course; verified: boolean; issued: number; awaiting: number; imported?: number; direct?: number };
+export type BadgeImportResult = { imported: number; already: number; skipped: { line: number; reason: string }[]; columns: { email: string; name: string; issued: string | null }; preview: { name: string; email: string; issuedAt: string | null }[] };
 /** "own" badges have an uploaded image and no outside link. */
 export type CourseBadge = { platform: BadgePlatform; name: string; url?: string; imageUrl?: string };
 /** A text/csv payload proxied through to the browser by the roster route handler. */
@@ -827,6 +828,9 @@ export const api = {
   buildSchedule: (eventId: string, input: ScheduleInput) => request<{ plan: SchedulePlanRow[]; created: Event[] }>("POST", `/v1/events/${enc(eventId)}/schedule`, input),
   removeCourseImage: (id: string) => request<Course>("DELETE", `/v1/courses/${enc(id)}/image`),
   listBadges: () => request<{ items: BadgeOverviewItem[] }>("GET", "/v1/badges"),
+  importBadgeEarners: (courseId: string, input: { csv: string; platform: string; notify?: boolean; dryRun?: boolean }) => request<BadgeImportResult>("POST", `/v1/courses/${enc(courseId)}/badge/import`, input),
+  issueBadges: (courseId: string, input: { recipients: { name: string; email: string }[]; notify?: boolean }) => request<{ issued: number; already: string[] }>("POST", `/v1/courses/${enc(courseId)}/badge/issue`, input),
+  badgeUsage: () => request<{ month: string; billable: number; imported: number }>("GET", "/v1/badges/usage"),
   migrateBadge: (courseId: string) => request<{ result: BadgeMigration; course: Course }>("POST", `/v1/courses/${enc(courseId)}/badge/migrate`, {}),
   migrateAllBadges: () => request<{ results: BadgeMigration[] }>("POST", "/v1/badges/migrate", {}),
   awardBadge: (courseId: string, notify: boolean) => request<{ awarded: number }>("POST", `/v1/courses/${enc(courseId)}/badge/award`, { notify }),

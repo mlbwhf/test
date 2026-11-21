@@ -21,3 +21,4 @@ export * from "./credentials.js";
 export * from "./categories.js";
 export * from "./schedule.js";
 export * from "./class-page.js";
+export * from "./badge-import.js";

@@ -7,7 +7,7 @@ import { APP } from "../sections";
 
 export const metadata: Metadata = {
   title: "Verified digital badges for training providers",
-  description: "Design a badge, issue it with every certificate and let anyone verify it. Open Badges 3.0, shareable on LinkedIn, no badge platform subscription: $1 per paid seat, free on free classes.",
+  description: "Design a badge, issue it with every certificate or on its own, and let anyone verify it. Open Badges 3.0, shareable on LinkedIn. Move your earners from Credly for free. $1 per badge, no subscription.",
   alternates: { canonical: "/badges" },
 };
 
@@ -27,11 +27,19 @@ const FEATURES = [
   ["Works with what you use", "Keep a Credly or Accredible badge linked if you prefer, or send every new certificate to other tools with a webhook."],
 ] as const;
 
+const MOVE = [
+  ["Export from Credly", "In Credly, open the badge's issued list and export it as CSV. Accredible, Badgr / Canvas Credentials and Certopus exports work too."],
+  ["Upload and check", "Create the badge program on EnrollClass, upload the file and see exactly who will move, with any rows we can't read, before anything happens."],
+  ["Earners keep their dates", "Each person gets the same badge, signed by you, with their original issue date. Nobody has to earn it again."],
+  ["“Your badge has moved”", "We email each earner a link to their badge on EnrollClass, ready to add to LinkedIn. Or move them quietly and tell them yourself."],
+] as const;
+
 const FAQ = [
   ["Who issues the badge, EnrollClass or me?", "You do. The badge names your organization as the issuer and is signed for you; EnrollClass hosts the verification."],
   ["Do learners need an account?", "No. They receive the badge by email and can download it or add it to LinkedIn straight away."],
-  ["Can I bring badges from Credly?", "Yes. We copy each badge's name and image, then award it to past learners if you want. Badges already issued on Credly stay valid there."],
-  ["What does it cost?", "Nothing to design or set up. Each paid seat on a course that issues a verified badge carries a small fee, shown below; free classes are free."],
+  ["Can I bring my earners from Credly?", "Yes. Upload the CSV export of a badge's earners: each person gets the badge on EnrollClass with their original issue date and an email with a link to it. Moving earners is free. Badges already issued on Credly stay valid there until you close your account."],
+  ["Do I have to sell classes on EnrollClass?", "No. Create a badge program, design its badge and issue it to people directly: after an exam, an event or training you ran somewhere else."],
+  ["What does it cost?", "Nothing to design, set up or move earners. A badge you issue directly is $1, invoiced monthly. Badges on paid EnrollClass classes are $1 per paid seat, collected with the booking; free classes are free."],
 ] as const;
 
 export default async function BadgesMarketingPage() {
@@ -51,9 +59,9 @@ export default async function BadgesMarketingPage() {
         <div>
           <p className="eyebrow">Verified digital badges</p>
           <h1 className="site-h1">Badges your learners are proud to share.</h1>
-          <p className="site-lede">Design a badge, issue it with every certificate, and let anyone check it in seconds. Open Badges 3.0, no badge platform subscription.</p>
+          <p className="site-lede">Design a badge, issue it with your classes or on its own, and let anyone check it in seconds. Open Badges 3.0, no badge platform subscription. Moving from Credly? Bring your earners for free.</p>
           <div className="site-cta">
-            <a href={`${APP}/login?mode=signup`} className="pill pill-green">
+            <a href={`${APP}/login?mode=signup&returnTo=${encodeURIComponent("/badges")}`} className="pill pill-green">
               Start issuing badges
             </a>
             <a href={`${APP}/verify`} className="pill pill-outline">
@@ -61,7 +69,7 @@ export default async function BadgesMarketingPage() {
             </a>
           </div>
           <p className="hero-learner">
-            {price} per paid seat on courses that issue one. Free classes: free.
+            {price} per badge, no subscription. Moving earners from Credly: free.
           </p>
         </div>
         <SampleBadge />
@@ -82,7 +90,23 @@ export default async function BadgesMarketingPage() {
         </div>
       </section>
 
-      <section className="site-section" aria-labelledby="badge-why">
+      <section className="site-section" aria-labelledby="badge-move">
+        <p className="eyebrow">Moving from Credly, Accredible or Badgr?</p>
+        <h2 className="site-h2" id="badge-move">
+          Bring your earners with you, free
+        </h2>
+        <div className="steps steps-4">
+          {MOVE.map(([t, d], i) => (
+            <article key={t} className="step">
+              <p className="mono green">{String(i + 1).padStart(2, "0")}</p>
+              <h3>{t}</h3>
+              <p>{d}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="site-section sand" aria-labelledby="badge-why">
         <h2 className="site-h2" id="badge-why">
           Real credentials, not just pictures
         </h2>
@@ -98,24 +122,30 @@ export default async function BadgesMarketingPage() {
 
       <section className="site-section sand badge-price" aria-labelledby="badge-price">
         <h2 className="site-h2" id="badge-price">
-          One price, only when a seat sells
+          Pay per badge, never per month
         </h2>
         <div className="tiers">
           <article className="tier tier-ink">
-            <p className="mono">VERIFIED BADGE</p>
-            <p className="rate">{price}</p>
-            <p className="rate-sub">per paid seat, collected with the booking</p>
-            <p>Designer, signing, hosting, verification and emails included. No setup fee, no monthly plan, no per-badge invoice.</p>
+            <p className="mono">BADGES ON THEIR OWN</p>
+            <p className="rate">$1</p>
+            <p className="rate-sub">per badge issued, invoiced monthly</p>
+            <p>Issue to anyone: exam passes, events, training you run elsewhere. Designer, signing, hosting, verification and emails included.</p>
           </article>
           <article className="tier tier-paper">
-            <p className="mono">FREE CLASSES</p>
+            <p className="mono">MOVING FROM CREDLY</p>
             <p className="rate">$0</p>
-            <p className="rate-sub">badges on free classes are free</p>
-            <p>Run a free workshop or an internal training for your team and badge everyone who attends.</p>
+            <p className="rate-sub">for every earner you move</p>
+            <p>Bring every earner from Credly, Accredible or Badgr with their original issue date. No limit on how many.</p>
+          </article>
+          <article className="tier tier-paper">
+            <p className="mono">WITH YOUR CLASSES</p>
+            <p className="rate">{price}</p>
+            <p className="rate-sub">per paid seat, collected with the booking</p>
+            <p>Every certificate on an EnrollClass class comes with the badge. Free classes stay free.</p>
           </article>
         </div>
         <p className="footnote">
-          Badges come with EnrollClass registrations and certificates. See <a href="/pricing">full pricing</a> for the seat fee.
+          No setup fee, no monthly plan. See <a href="/pricing">full pricing</a> for the seat fee.
         </p>
       </section>
 
@@ -133,9 +163,9 @@ export default async function BadgesMarketingPage() {
       </section>
 
       <section className="site-section ink cta-band">
-        <h2 className="site-h2">Give your next cohort a badge</h2>
+        <h2 className="site-h2">Give your earners a badge they'll share</h2>
         <div className="site-cta">
-          <a href={`${APP}/login?mode=signup`} className="pill pill-green">
+          <a href={`${APP}/login?mode=signup&returnTo=${encodeURIComponent("/badges")}`} className="pill pill-green">
             Sign up free
           </a>
           <a href={`${APP}/verify`} className="pill pill-outline-paper">

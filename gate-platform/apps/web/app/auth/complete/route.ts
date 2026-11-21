@@ -14,7 +14,9 @@ export async function GET(request: NextRequest) {
   }
   const { token, returnTo, me } = result.data;
   const wantsInvite = returnTo?.startsWith("/invite/");
-  const next = !me.organization && !wantsInvite ? "/onboarding" : safePath(returnTo);
+  // New accounts set up their organization first, then continue where they were headed (e.g. /badges).
+  const after = safePath(returnTo);
+  const next = !me.organization && !wantsInvite ? `/onboarding${after && after !== "/dashboard" ? `?next=${encodeURIComponent(after)}` : ""}` : after;
   const res = new NextResponse(null, { status: 303, headers: { location: next } });
   res.cookies.set(SESSION_COOKIE, token, sessionCookieOptions(request));
   return res;

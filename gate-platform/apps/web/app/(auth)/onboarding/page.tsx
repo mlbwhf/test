@@ -21,6 +21,9 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
   const me = await api.me();
   if (!me.ok) redirect("/login?returnTo=/onboarding");
   const another = sp.new === "1";
+  const nextRaw = Array.isArray(sp.next) ? sp.next[0] : sp.next;
+  const next = nextRaw && nextRaw.startsWith("/") && !nextRaw.startsWith("//") ? nextRaw : "";
+  const forBadges = next.startsWith("/badges");
   if (me.data.organization && !another) redirect("/dashboard");
   const first = me.data.user.name?.split(" ")[0];
 
@@ -28,8 +31,13 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
     <section className="auth-card auth-card-wide">
       <p className="eyebrow-mono">{another ? "NEW WORKSPACE" : "STEP 1 OF 2"}</p>
       <h1>{first && !another ? `Welcome, ${first}. How do you teach?` : "How do you teach?"}</h1>
-      <p className="muted">Both can publish classes, take payments and check people in. You can invite colleagues later either way.</p>
+      <p className="muted">
+        {forBadges
+          ? "Your organization's name is the issuer on every badge. Next you'll create a badge program, design its badge and move your earners from Credly or another platform."
+          : "Both can publish classes, take payments and check people in. You can invite colleagues later either way."}
+      </p>
       <ActionForm action={createOrganizationAction} submitLabel="Continue" pendingLabel="Setting up…" wide>
+        {next && <input type="hidden" name="next" value={next} />}
         <div className="kind-choice" role="radiogroup" aria-label="Account type">
           <label className="kind-card">
             <input type="radio" name="kind" value="individual" defaultChecked />

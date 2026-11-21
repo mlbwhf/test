@@ -29,7 +29,9 @@ export async function createOrganizationAction(_prev: ActionState, data: FormDat
   if (!/^[A-Z]{3}$/.test(currency)) return fail("Choose a currency.");
   const r = await api.createOrganization({ kind, ...(name ? { name } : {}), country, currency });
   if (!r.ok) return fail(describeFailure(r.error));
-  redirect("/dashboard?welcome=1");
+  // Continue where sign-up was headed (e.g. /badges from enrollclass.com/badges); otherwise the dashboard.
+  const next = f(data, "next");
+  redirect(next.startsWith("/") && !next.startsWith("//") && !next.startsWith("/\\") ? next : "/dashboard?welcome=1");
 }
 
 export async function acceptInvitationAction(_prev: ActionState, data: FormData): Promise<ActionState> {

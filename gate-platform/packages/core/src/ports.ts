@@ -1,5 +1,5 @@
 import type { Currency, MinorUnits } from "@gate/ledger";
-import type { BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Payout, Promotion, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { BadgeAward, BillingAddress, Certificate, CorporateAccount, Course, Event, Invoice, MeetingInfo, MessageLogEntry, Order, Organization, Party, Payout, Promotion, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 export interface Clock {
   now(): Date;
@@ -179,6 +179,13 @@ export interface CertificateRepo {
   getBySeat(seatId: string): Promise<Certificate | undefined>;
   listByEvent(eventId: string): Promise<Certificate[]>;
 }
+export interface BadgeAwardRepo {
+  create(a: BadgeAward): Promise<void>;
+  update(a: BadgeAward): Promise<void>;
+  getByCode(code: string): Promise<BadgeAward | undefined>;
+  listByCourse(courseId: string): Promise<BadgeAward[]>;
+  listByOrganization(organizationId: string): Promise<BadgeAward[]>;
+}
 export interface MessageLogRepo {
   /** Returns false when the key was already recorded (idempotent sends). */
   record(entry: MessageLogEntry): Promise<boolean>;
@@ -239,6 +246,7 @@ export interface Repos {
   seatTransfers: SeatTransferRepo;
   waitlist: WaitlistRepo;
   certificates: CertificateRepo;
+  badgeAwards: BadgeAwardRepo;
   messageLog: MessageLogRepo;
   payouts: PayoutRepo;
   refunds: RefundRepo;

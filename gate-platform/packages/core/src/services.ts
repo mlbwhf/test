@@ -14,9 +14,10 @@ import { DEFAULT_CHANGE_POLICY, cancelTerms, substituteTerms, transferTerms, typ
 import { DEFAULT_PRICING, convertMinor, validatePricingSettings, type FxRateSource, type PricingSettings } from "./fx.js";
 import { daysBetween, localDate, shiftDays } from "./zoned.js";
 import { badgeSnapshot, issuesVerifiedBadge } from "./credentials.js";
+import { parseEarners, type EarnerRow, type ParsedEarners } from "./badge-import.js";
 import { DEFAULT_INSTRUCTOR_ACCESS, type InstructorAccess } from "./types.js";
 import type { InvoiceReminderStep } from "./types.js";
-import type { Attendance, AttendanceStatus, Attendee, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, CoursePage, OrganizationProfile, ReadyChecks, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
+import type { Attendance, AttendanceStatus, Attendee, BadgeAward, BillingAddress, Certificate, CorporateAccount, Course, CourseBadge, CoursePage, OrganizationProfile, ReadyChecks, DeliveryFormat, Event, Invoice, InvoicePaymentMethod, MeetingInfo, Order, Organization, Party, PartyKind, PaymentsStatus, Payout, PayoutMethod, PriceTier, Promotion, Refund, ReleasePolicy, Seat, SeatTransfer, SequenceStep, Session, TicketType, WaitlistEntry } from "./types.js";
 
 export interface CoreDeps {
   repos: Repos;
@@ -2257,8 +2258,95 @@ export class Core {
     return { awarded };
   }
 
+  /**
+   * Move earners from another badge platform: each person in the export gets this course's verified
+   * badge, dated as originally issued. Free (not billable). Anyone already holding it is skipped.
+   */
+  async importBadgeEarners(organizationId: string, courseId: string, input: { csv: string; platform: string; notify?: boolean | undefined; dryRun?: boolean | undefined }): Promise<{ imported: number; already: number; skipped: Array<{ line: number; reason: string }>; columns: ParsedEarners["columns"]; preview: EarnerRow[] }> {
+    const course = await this.getCourse(organizationId, courseId);
+    if (!issuesVerifiedBadge(course)) throw new DomainError("INVALID_STATE", "this course has no EnrollClass verified badge", "move its badge to EnrollClass or design one first, then import its earners");
+    let parsed: ParsedEarners;
+    try {
+      parsed = parseEarners(input.csv);
+    } catch (err) {
+      throw new DomainError("VALIDATION", (err as Error).message);
+    }
+    if (parsed.rows.length > 20_000) throw new DomainError("VALIDATION", "import at most 20,000 earners at a time");
+    const holders = await this.badgeHolders(courseId);
+    const fresh = parsed.rows.filter((r) => !holders.has(r.email));
+    if (input.dryRun) return { imported: fresh.length, already: parsed.rows.length - fresh.length, skipped: parsed.skipped, columns: parsed.columns, preview: fresh.slice(0, 5) };
+    const platform = input.platform.trim().toLowerCase().slice(0, 40) || "other";
+    for (const r of fresh) await this.createBadgeAward(organizationId, course, { name: r.name, email: r.email, issuedAt: r.issuedAt ?? this.clock.now(), source: "import", importedFrom: platform, notify: input.notify === true });
+    return { imported: fresh.length, already: parsed.rows.length - fresh.length, skipped: parsed.skipped, columns: parsed.columns, preview: fresh.slice(0, 5) };
+  }
+
+  /** Issue this course's verified badge to people directly (no class). Billable for badges-only use. */
+  async issueBadges(organizationId: string, courseId: string, input: { recipients: Array<{ name: string; email: string }>; notify?: boolean | undefined }): Promise<{ issued: number; already: string[] }> {
+    const course = await this.getCourse(organizationId, courseId);
+    if (!issuesVerifiedBadge(course)) throw new DomainError("INVALID_STATE", "this course has no EnrollClass verified badge", "design its badge first");
+    if (input.recipients.length < 1 || input.recipients.length > 500) throw new DomainError("VALIDATION", "issue to 1–500 people at a time");
+    const holders = await this.badgeHolders(courseId);
+    const already: string[] = [];
+    let issued = 0;
+    for (const r of input.recipients) {
+      const email = r.email.trim().toLowerCase();
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new DomainError("VALIDATION", `"${r.email}" is not an email address`);
+      if (holders.has(email)) {
+        already.push(email);
+        continue;
+      }
+      holders.add(email);
+      await this.createBadgeAward(organizationId, course, { name: r.name.trim().slice(0, 200) || email.split("@")[0]!, email, issuedAt: this.clock.now(), source: "direct", notify: input.notify !== false });
+      issued += 1;
+    }
+    return { issued, already };
+  }
+
+  /** Badges issued outside classes for a course (imports and direct awards). */
+  async listBadgeAwards(organizationId: string, courseId: string): Promise<BadgeAward[]> {
+    await this.getCourse(organizationId, courseId);
+    return this.repos.badgeAwards.listByCourse(courseId);
+  }
+
+  /** Billable badges issued in a calendar month (UTC), for the badges-only fee. */
+  async badgeUsage(organizationId: string, month?: string | undefined): Promise<{ month: string; billable: number; imported: number }> {
+    const now = this.clock.now();
+    const m = month && /^\d{4}-\d{2}$/.test(month) ? month : `${now.getUTCFullYear()}-${String(now.getUTCMonth() + 1).padStart(2, "0")}`;
+    let billable = 0, imported = 0;
+    for (const a of await this.repos.badgeAwards.listByOrganization(organizationId)) {
+      if (a.createdAt.toISOString().slice(0, 7) !== m || a.revokedAt) continue;
+      if (a.billable) billable += 1;
+      else imported += 1;
+    }
+    return { month: m, billable, imported };
+  }
+
+  /** Emails (lower case) that already hold the course's verified badge: from classes or awarded directly. */
+  private async badgeHolders(courseId: string): Promise<Set<string>> {
+    const out = new Set<string>();
+    for (const a of await this.repos.badgeAwards.listByCourse(courseId)) if (!a.revokedAt) out.add(a.recipientEmail.toLowerCase());
+    for (const e of await this.repos.events.listByCourse(courseId)) for (const c of await this.repos.certificates.listByEvent(e.id)) if (c.badge && !c.revokedAt) out.add(c.attendeeEmail.toLowerCase());
+    return out;
+  }
+
+  private async createBadgeAward(organizationId: string, course: Course, r: { name: string; email: string; issuedAt: Date; source: BadgeAward["source"]; importedFrom?: string; notify: boolean }): Promise<BadgeAward> {
+    const award: BadgeAward = {
+      id: this.ids.next("bdg"), organizationId, courseId: course.id, badge: badgeSnapshot(course, await this.getOrganization(organizationId)),
+      recipientName: r.name, recipientEmail: r.email, issuedAt: r.issuedAt, verifyCode: randomBytes(12).toString("base64url"),
+      source: r.source, ...(r.importedFrom ? { importedFrom: r.importedFrom } : {}), billable: r.source === "direct", createdAt: this.clock.now(),
+    };
+    await this.repos.badgeAwards.create(award);
+    if (r.notify) {
+      await this.runHooks("badgeAwarded", award.id, (hook) => hook({ award, course }));
+      const sent = { ...award, notifiedAt: this.clock.now() };
+      await this.repos.badgeAwards.update(sent);
+      return sent;
+    }
+    return award;
+  }
+
   /** Every course's badge: where it lives, and how many learners hold the verified one or could. */
-  async badgeOverview(organizationId: string): Promise<Array<{ course: Course; verified: boolean; issued: number; awaiting: number }>> {
+  async badgeOverview(organizationId: string): Promise<Array<{ course: Course; verified: boolean; issued: number; awaiting: number; imported: number; direct: number }>> {
     const out = [];
     for (const course of await this.repos.courses.listByOrganization(organizationId)) {
       let issued = 0, awaiting = 0;
@@ -2269,7 +2357,8 @@ export class Core {
           else awaiting += 1;
         }
       }
-      out.push({ course, verified: issuesVerifiedBadge(course), issued, awaiting });
+      const awards = (await this.repos.badgeAwards.listByCourse(course.id)).filter((a) => !a.revokedAt);
+      out.push({ course, verified: issuesVerifiedBadge(course), issued, awaiting, imported: awards.filter((a) => a.source === "import").length, direct: awards.filter((a) => a.source === "direct").length });
     }
     return out;
   }
@@ -2281,7 +2370,20 @@ export class Core {
 
   async verifyCertificate(code: string): Promise<{ valid: boolean; certificate?: Certificate | undefined; organizationName?: string | undefined; cohort?: Event | undefined; course?: Course | undefined; instructors?: string[] }> {
     const cert = await this.repos.certificates.getByCode(code);
-    if (!cert || cert.revokedAt) return { valid: false, ...(cert ? { certificate: cert } : {}) };
+    if (!cert) {
+      // A badge issued outside a class (imported or direct) verifies the same way, with no class details.
+      const award = await this.repos.badgeAwards.getByCode(code);
+      if (!award) return { valid: false };
+      const asCert: Certificate = {
+        id: award.id, organizationId: award.organizationId, seatId: "", eventId: "", courseName: award.badge.name, attendeeName: award.recipientName, attendeeEmail: award.recipientEmail,
+        issuedAt: award.issuedAt, verifyCode: award.verifyCode, ...(award.revokedAt ? { revokedAt: award.revokedAt } : {}), kind: "completion", badge: award.badge,
+      };
+      if (award.revokedAt) return { valid: false, certificate: asCert };
+      const org = await this.repos.organizations.get(award.organizationId);
+      const course = await this.repos.courses.get(award.courseId);
+      return { valid: true, certificate: asCert, organizationName: org?.name, ...(course ? { course } : {}), instructors: [] };
+    }
+    if (cert.revokedAt) return { valid: false, certificate: cert };
     const org = await this.repos.organizations.get(cert.organizationId);
     const cohort = await this.repos.events.get(cert.eventId);
     const course = cohort?.courseId ? await this.repos.courses.get(cohort.courseId) : undefined;

@@ -19,7 +19,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
   const mode = one(sp.mode);
   if (await sessionToken()) {
     const me = await api.me();
-    if (me.ok) redirect(me.data.organization ? returnTo || "/dashboard" : "/onboarding");
+    if (me.ok) redirect(me.data.organization ? returnTo || "/dashboard" : `/onboarding${returnTo ? `?next=${encodeURIComponent(returnTo)}` : ""}`);
   }
   const providers = await api.providers();
   const list = providers.ok ? providers.data.providers : [];

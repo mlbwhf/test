@@ -7,20 +7,25 @@ import { HelpLink } from "@/components/help-link";
 import { BadgeDesigner } from "@/components/badge-designer";
 import { awardBadgeAction, migrateBadgeAction, updateCourseBadgeAction } from "@/app/actions";
 import { initials } from "@/lib/course-utils";
+import { BadgeAwardsPanel, NewBadgeProgram } from "@/components/badge-awards";
 
 export const dynamic = "force-dynamic";
+
+const usd = (minor: number) => new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(minor / 100);
 
 type SearchParams = Promise<{ course?: string; missing?: string }>;
 
 /** Every course's badge in one place, with the designer opening inline under the course. */
 export default async function BadgesPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
-  const [res, me] = await Promise.all([api.listBadges(), getMe()]);
+  const [res, me, usageRes] = await Promise.all([api.listBadges(), getMe(), api.badgeUsage()]);
+  const usage = usageRes.ok ? usageRes.data : null;
   const canEdit = me.ok && me.data.permissions.includes("settings");
   const items = res.ok ? [...res.data.items].sort((a, b) => a.course.name.localeCompare(b.course.name)) : [];
   const elsewhere = items.filter((b) => b.course.badge && b.course.badge.platform !== "own");
   const verified = items.filter((b) => b.verified);
-  const issued = verified.reduce((a, b) => a + b.issued, 0);
+  const issued = verified.reduce((a, b) => a + b.issued + (b.imported ?? 0) + (b.direct ?? 0), 0);
+  const moved = verified.reduce((a, b) => a + (b.imported ?? 0), 0);
   const awaiting = verified.reduce((a, b) => a + b.awaiting, 0);
   const withBadge = items.filter((b) => b.course.badge).length;
   const missingOnly = sp.missing === "1";
@@ -32,7 +37,7 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
         <h1>
           Badges <HelpLink slug="badges" />
         </h1>
-        <p>Verified digital badges (Open Badges 3.0), issued with your certificates.</p>
+        <p>Verified digital badges (Open Badges 3.0): issued with your certificates, moved from Credly and other platforms, or issued directly.</p>
       </div>
       {!res.ok && <ApiNotice failure={res.error} />}
 
@@ -50,8 +55,12 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
           <span>past learners who could get one</span>
         </div>
         <div>
-          <strong>{elsewhere.length}</strong>
-          <span>badges still on other platforms</span>
+          <strong>{moved}</strong>
+          <span>earners moved from other platforms</span>
+        </div>
+        <div>
+          <strong>{usage ? usage.billable : "—"}</strong>
+          <span>issued directly this month{usage && usage.billable ? ` · ${usd(usage.billable * 100)}, invoiced monthly` : ""}</span>
         </div>
       </section>
 
@@ -75,15 +84,18 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
         <span>
           COURSES · {withBadge} OF {items.length} HAVE A BADGE
         </span>
-        <Link className={`m-btn m-btn-sm${missingOnly ? " m-btn-ink" : ""}`} href={missingOnly ? "/badges" : "/badges?missing=1"} aria-pressed={missingOnly}>
-          Missing only
-        </Link>
+        <span style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+          {canEdit && <NewBadgeProgram />}
+          <Link className={`m-btn m-btn-sm${missingOnly ? " m-btn-ink" : ""}`} href={missingOnly ? "/badges" : "/badges?missing=1"} aria-pressed={missingOnly}>
+            Missing only
+          </Link>
+        </span>
       </div>
 
       {shown.length === 0 ? (
-        <p className="admin-empty">{items.length ? "Every course has a badge." : "No courses yet."}</p>
+        <p className="admin-empty">{items.length ? "Every course has a badge." : "No badge programs yet. Create one with “New badge program”, design its badge, then move its earners from Credly or issue it to people."}</p>
       ) : (
-        shown.map(({ course, verified: v, issued: n, awaiting: w }) => (
+        shown.map(({ course, verified: v, issued: n, awaiting: w, imported: im = 0, direct: dr = 0 }) => (
           <details key={course.id} className="admin-row badge-row" name="badge-row" open={sp.course === course.id} id={`badge-${course.id}`}>
             <summary>
               <span className={`admin-tile${course.badge?.imageUrl ? " admin-tile-img" : course.badge ? "" : " admin-tile-empty"}`} aria-hidden="true">
@@ -93,7 +105,7 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
                 <strong>{course.name}</strong>
                 <span className="badge-status">
                   {course.badge ? `Badge: ${course.badge.name} · ${v ? "EnrollClass verified" : BADGE_PLATFORMS[course.badge.platform]}` : "No badge"}
-                  {v ? ` · ${n} issued${w ? ` · ${w} past learner${w === 1 ? "" : "s"} without it` : ""}` : ""}
+                  {v ? ` · ${n + im + dr} issued${im ? ` (${im} moved)` : ""}${w ? ` · ${w} past learner${w === 1 ? "" : "s"} without it` : ""}` : ""}
                 </span>
               </span>
               {canEdit && (
@@ -106,6 +118,8 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
             {canEdit && (
               <div className="admin-row-open">
                 <BadgeDesigner courseId={course.id} courseName={course.name} action={updateCourseBadgeAction} />
+                {v && course.badge && <BadgeAwardsPanel courseId={course.id} badgeName={course.badge.name} />}
+                {course.badge && !v && <p className="hint">Move this badge to EnrollClass first; then you can move its earners from {BADGE_PLATFORMS[course.badge.platform]} and issue it to people.</p>}
                 <div className="admin-actions">
                   {v && w > 0 && (
                     <ActionForm action={awardBadgeAction} submitLabel={`Award to ${w} past learner${w === 1 ? "" : "s"}`} pendingLabel="Awarding…" inline>
@@ -136,7 +150,7 @@ export default async function BadgesPage({ searchParams }: { searchParams: Searc
         ))
       )}
       <p className="hint">
-        Verified badges cost $1 per paid seat on courses that issue them, collected with the seat fee. Free classes stay free. Anyone can check a badge at <a href="/verify">/verify</a>.
+        Verified badges cost $1 per paid seat on courses that issue them, collected with the seat fee; free classes stay free. Badges issued directly here are $1 each, invoiced monthly. Moving earners from Credly or another platform is free. Anyone can check a badge at <a href="/verify">/verify</a>.
       </p>
     </div>
   );

@@ -373,6 +373,30 @@ describe("API", () => {
     expect(photo.photoUrl).toMatch(/\/public\/v1\/media\//);
   });
 
+  it("moves badge earners from Credly and issues badges outside classes", async () => {
+    const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments: new FakePaymentsAdapter() });
+    const im = await buildApp({ core, adminKey: "admin", env: "test", publicUrl: "https://api.test" });
+    const key = (await im.inject({ method: "POST", url: "/v1/organizations", headers: { "x-admin-key": "admin", "content-type": "application/json" }, payload: { name: "Agile Agilist", country: "CA", currency: "CAD" } })).json().apiKey as string;
+    const J = { "x-api-key": key, "content-type": "application/json" };
+    const course = (await im.inject({ method: "POST", url: "/v1/courses", headers: J, payload: { slug: "innovation", name: "Innovation Framework" } })).json();
+    await im.inject({ method: "PATCH", url: `/v1/courses/${course.id}`, headers: J, payload: { badge: { platform: "own", name: "Innovation Framework Practitioner", imageUrl: "https://x.test/b.png" } } });
+    const csv = "Recipient First Name,Recipient Last Name,Recipient Email,Issued At\nAda,Lovelace,ada@example.com,2024-03-05 14:02:11 UTC\nBad,Row,nope,2024-01-01";
+    const preview = (await im.inject({ method: "POST", url: `/v1/courses/${course.id}/badge/import`, headers: J, payload: { csv, platform: "credly", dryRun: true } })).json();
+    expect(preview).toMatchObject({ imported: 1, skipped: [{ line: 3 }], preview: [{ name: "Ada Lovelace", issuedAt: "2024-03-05T14:02:11.000Z" }] });
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${course.id}/badge/import`, headers: J, payload: { csv, platform: "credly" } })).json().imported).toBe(1);
+    expect((await im.inject({ method: "POST", url: `/v1/courses/${course.id}/badge/issue`, headers: J, payload: { recipients: [{ name: "Linus", email: "linus@example.com" }] } })).json()).toEqual({ issued: 1, already: [] });
+    const awards = (await im.inject({ url: `/v1/courses/${course.id}/badge/awards`, headers: J })).json().items;
+    expect(awards.map((a: { recipientEmail: string; source: string }) => [a.recipientEmail, a.source])).toEqual([["ada@example.com", "import"], ["linus@example.com", "direct"]]);
+    expect((await im.inject({ url: "/v1/badges/usage", headers: J })).json()).toMatchObject({ billable: 1, imported: 1 });
+    expect((await im.inject({ url: "/v1/badges", headers: J })).json().items[0]).toMatchObject({ imported: 1, direct: 1 });
+    const code = awards[0].verifyCode;
+    const pub = (await im.inject(`/public/v1/certificates/${code}`)).json();
+    expect(pub).toMatchObject({ valid: true, attendeeName: "Ada Lovelace", organization: "Agile Agilist", issuedAt: "2024-03-05T14:02:11.000Z", verifiedBadge: { name: "Innovation Framework Practitioner" } });
+    const cred = await im.inject(`/public/v1/credentials/${code}`);
+    expect(cred.statusCode).toBe(200);
+    expect(cred.json()).toMatchObject({ type: ["VerifiableCredential", "OpenBadgeCredential"], validFrom: "2024-03-05T14:02:11.000Z" });
+  });
+
   it("never shows Stripe key fragments when Stripe refuses the platform key", async () => {
     const payments = new FakePaymentsAdapter();
     const core = new Core({ repos: createInMemoryRepos(), ledger: new Ledger({ store: new InMemoryLedgerStore() }), payments });

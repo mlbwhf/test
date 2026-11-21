@@ -321,6 +321,32 @@ export interface Certificate {
   badge?: CertificateBadge;
 }
 
+/**
+ * A verified badge issued outside a class: imported from another badge platform (Credly,
+ * Accredible, Badgr…) for someone who already holds it, or issued directly by the organizer.
+ * It verifies, downloads and shares exactly like a badge earned in a class.
+ */
+export interface BadgeAward {
+  id: string;
+  organizationId: string;
+  /** The course (badge program) whose verified badge this is. */
+  courseId: string;
+  badge: CertificateBadge;
+  recipientName: string;
+  recipientEmail: string;
+  /** For imports, the original issue date from the other platform. */
+  issuedAt: Date;
+  verifyCode: string;
+  revokedAt?: Date;
+  source: "import" | "direct";
+  /** The platform an import came from, e.g. "credly". */
+  importedFrom?: string;
+  /** Counts toward the badges-only fee: direct awards do, imports are free. */
+  billable: boolean;
+  notifiedAt?: Date;
+  createdAt: Date;
+}
+
 export interface CertificateBadge {
   courseId: string;
   name: string;

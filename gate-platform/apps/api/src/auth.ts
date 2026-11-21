@@ -270,6 +270,6 @@ export function permissionFor(method: string, url: string): Permission {
   if (/^\/v1\/seats\/[^/]+\/cancel$/.test(path)) return "money:write";
   if (/^\/v1\/parties(\/|$)/.test(path) && write) return "settings";
   // Moving badges to EnrollClass changes what paid seats cost, and awarding emails past learners.
-  if ((/^\/v1\/badges(\/|$)/.test(path) || /^\/v1\/courses\/[^/]+\/badge\/(migrate|award)$/.test(path)) && write) return "settings";
+  if ((/^\/v1\/badges(\/|$)/.test(path) || /^\/v1\/courses\/[^/]+\/badge\/(migrate|award|import|issue)$/.test(path)) && write) return "settings";
   return write ? "classes:write" : "classes:read";
 }

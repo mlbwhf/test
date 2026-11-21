@@ -1,8 +1,8 @@
 import type { AuthSession, Identity, IdentityRepos, Invitation, Membership, OneTimeToken, TokenKind, User } from "./identity.js";
 import type {
-  CertificateRepo, CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, MessageLogRepo, OrderRepo, OrganizationRepo, PartyRepo, PayoutRepo, ProcessedEventRepo, PromotionRepo, RefundRepo, Repos, SeatRepo, SeatTransferRepo, TicketTypeRepo, WaitlistRepo,
+  BadgeAwardRepo, CertificateRepo, CorporateAccountRepo, CourseRepo, EventRepo, InvoiceRepo, MessageLogRepo, OrderRepo, OrganizationRepo, PartyRepo, PayoutRepo, ProcessedEventRepo, PromotionRepo, RefundRepo, Repos, SeatRepo, SeatTransferRepo, TicketTypeRepo, WaitlistRepo,
 } from "./ports.js";
-import type { Certificate, CorporateAccount, Course, Event, Invoice, MessageLogEntry, Order, Organization, Party, Payout, Promotion, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
+import type { BadgeAward, Certificate, CorporateAccount, Course, Event, Invoice, MessageLogEntry, Order, Organization, Party, Payout, Promotion, Refund, Seat, SeatTransfer, TicketType, WaitlistEntry } from "./types.js";
 
 class MemOrganizations implements OrganizationRepo {
   private readonly byId = new Map<string, Organization>();
@@ -122,6 +122,14 @@ class MemCertificates implements CertificateRepo {
   async getBySeat(seatId: string) { for (const c of this.byId.values()) if (c.seatId === seatId) return structuredClone(c); return undefined; }
   async listByEvent(eventId: string) { return [...this.byId.values()].filter((c) => c.eventId === eventId).map((c) => structuredClone(c)); }
 }
+class MemBadgeAwards implements BadgeAwardRepo {
+  private readonly byId = new Map<string, BadgeAward>();
+  async create(a: BadgeAward) { this.byId.set(a.id, structuredClone(a)); }
+  async update(a: BadgeAward) { this.byId.set(a.id, structuredClone(a)); }
+  async getByCode(code: string) { for (const a of this.byId.values()) if (a.verifyCode === code) return structuredClone(a); return undefined; }
+  async listByCourse(courseId: string) { return [...this.byId.values()].filter((a) => a.courseId === courseId).sort((x, y) => x.issuedAt.getTime() - y.issuedAt.getTime()).map((a) => structuredClone(a)); }
+  async listByOrganization(organizationId: string) { return [...this.byId.values()].filter((a) => a.organizationId === organizationId).map((a) => structuredClone(a)); }
+}
 class MemMessageLog implements MessageLogRepo {
   private readonly byKey = new Map<string, MessageLogEntry>();
   async record(e: MessageLogEntry) { if (this.byKey.has(e.key)) return false; this.byKey.set(e.key, structuredClone(e)); return true; }
@@ -167,6 +175,7 @@ export function createInMemoryRepos(): Repos {
     seatTransfers: new MemSeatTransfers(),
     waitlist: new MemWaitlist(),
     certificates: new MemCertificates(),
+    badgeAwards: new MemBadgeAwards(),
     messageLog: new MemMessageLog(),
     payouts: new MemPayouts(),
     refunds: new MemRefunds(),

@@ -309,6 +309,20 @@ export function sequenceHooks(notifier: Notifier, opts: SequenceMailOptions): Co
         html: `<p>Congratulations ${esc(certificate.attendeeName)}. Your certificate of completion for <strong>${esc(certificate.courseName)}</strong> is ready.</p><p><a href="${esc(url)}" style="display:inline-block;background:#fbbf24;color:#053947;font-weight:800;padding:12px 22px;border-radius:8px;text-decoration:none">View certificate</a></p><p>Share the link; anyone can verify it.</p><p>${esc(sign)}</p>`,
       });
     },
+    badgeAwarded: async ({ award }) => {
+      const url = opts.certificateUrl(award.verifyCode);
+      const moved = award.source === "import";
+      const from = award.importedFrom && award.importedFrom !== "other" ? award.importedFrom.charAt(0).toUpperCase() + award.importedFrom.slice(1) : "your previous badge platform";
+      const subject = moved ? `Your "${award.badge.name}" badge has moved to EnrollClass` : `You earned the "${award.badge.name}" badge`;
+      const intro = moved
+        ? `${award.badge.issuerName} now issues its badges on EnrollClass. Your "${award.badge.name}" badge (first issued ${award.issuedAt.toISOString().slice(0, 10)}) has moved from ${from}, with the same date.`
+        : `${award.badge.issuerName} has issued you the "${award.badge.name}" badge.`;
+      await notifier.send({
+        key: `badge:${award.id}`, to: award.recipientEmail, replyTo: opts.replyTo, subject,
+        text: `Hi ${award.recipientName},\n\n${intro}\n\nView it, download it (a signed Open Badges 3.0 credential anyone can check) or add it to LinkedIn: ${url}\n\nNo account needed. ${sign}`,
+        html: `<p>Hi ${esc(award.recipientName)},</p><p>${esc(intro)}</p><p><a href="${esc(url)}" style="display:inline-block;background:#3fcb7e;color:#14213d;font-weight:800;padding:12px 22px;border-radius:999px;text-decoration:none">View my badge</a></p><p>Download it as a signed credential anyone can check, or add it to LinkedIn. No account needed.</p><p>${esc(sign)}</p>`,
+      });
+    },
   };
 }
 
