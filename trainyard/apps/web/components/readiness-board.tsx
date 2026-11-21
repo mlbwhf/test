@@ -10,8 +10,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
   READINESS_FACTORS, READINESS_PHASES, READINESS_RATINGS, READINESS_SHIFTS, READINESS_TRAINING_SITE,
-  readinessAction, readinessAdvice, readinessCsv, readinessFactorScore, readinessKey, readinessRating, readinessTally, readinessVerdict,
-  type Board, type ReadinessAction, type ReadinessFactor,
+  readinessAction, readinessCsv, readinessFactorAdvice, readinessFactorScore, readinessKey, readinessRating, readinessTally, readinessVerdict,
+  type Board, type ReadinessAction, type ReadinessCourse, type ReadinessFactor,
 } from "@trainyard/core";
 import { useFrameState } from "@/components/exercise-boards";
 
@@ -79,10 +79,127 @@ export function ReadinessBoard({ board, readOnly, onChanged, onError }: { board:
 type St = Record<string, unknown>;
 const Pip = ({ r }: { r: string | null }) => <span className={`rd-pip ${r ?? ""}`} />;
 
+const STAGE_SECONDS = 7;
+const tone = (s: number | null) => (s === null ? "#8b95a1" : s >= 80 ? "#2f9e7a" : s >= 55 ? "#d99400" : "#c2412d");
+
+/** A small ring that draws itself to a percentage. */
+function Gauge({ value, size = 64, label }: { value: number | null; size?: number; label: string }) {
+  const r = size / 2 - 6, C = 2 * Math.PI * r;
+  return (
+    <span className="rd-gauge" style={{ width: size, height: size }}>
+      <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={label}>
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="rgba(23,33,43,0.1)" strokeWidth="6" />
+        <circle className="rd-gauge-v" cx={size / 2} cy={size / 2} r={r} fill="none" stroke={tone(value)} strokeWidth="6" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - (value ?? 0) / 100)} transform={`rotate(-90 ${size / 2} ${size / 2})`} />
+      </svg>
+      <b>{value === null ? "–" : <CountUp value={value} suffix="%" />}</b>
+    </span>
+  );
+}
+
+function Offer({ c, main }: { c: ReadinessCourse; main?: boolean }) {
+  return (
+    <a className={`rd-offer${main ? " main" : ""}${c.kind === "soon" ? " soon" : ""}`} href={READINESS_TRAINING_SITE + c.path} target="_blank" rel="noopener noreferrer">
+      <span className="rd-offer-k">{main ? "Main focus" : c.kind === "soon" ? "Launching soon" : c.kind === "free" ? "Free" : "Also helps"}</span>
+      <b>{c.name} ↗</b>
+      <span>{c.why}</span>
+    </a>
+  );
+}
+
+/**
+ * The results as a path through the four shifts: each stage lights up in turn (or when picked)
+ * and shows, for each of its success factors, how far it is in place and what its own gaps call
+ * for. Nothing is shown for a factor without gaps.
+ */
+function Journey({ st, open }: { st: St; open: (code: string) => void }) {
+  const stages = READINESS_SHIFTS.map((name, si) => {
+    const factors = READINESS_FACTORS.filter((f) => f.shift === si);
+    const x = readinessTally(st, factors.flatMap((f) => f.statements.map((_, i) => readinessKey(f.code, i))));
+    return { name, factors, rated: x.rated, gaps: x.gaps, score: x.rated ? x.ready : null };
+  });
+  const rated = stages.filter((s) => s.score !== null);
+  const first = rated.length ? stages.indexOf([...rated].sort((a, b) => a.score! - b.score!)[0]!) : 0;
+  const [at, setAt] = useState(first);
+  const [playing, setPlaying] = useState(true);
+  const picked = useRef(false);
+  // Until someone picks a stage, follow the results: the weakest stage is where to start.
+  useEffect(() => {
+    if (!picked.current) setAt(first);
+  }, [first]);
+  useEffect(() => {
+    if (!playing || !rated.length || (typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches)) return;
+    const id = window.setTimeout(() => setAt((a) => (a + 1) % stages.length), STAGE_SECONDS * 1000);
+    return () => window.clearTimeout(id);
+  }, [playing, at, rated.length, stages.length]);
+  const go = (i: number) => ((picked.current = true), setPlaying(false), setAt(i));
+  const s = stages[at]!;
+  const headline = s.score === null ? "Not rated yet" : !s.gaps ? "In place: keep it that way" : s.score >= 80 ? "Nearly there: a few gaps to close" : s.score >= 55 ? "Workable: plan for these gaps" : "Focus here first";
+
+  return (
+    <section className="kb-glass rd-pad rd-c12 rd-journey">
+      <div className="rd-advhead">
+        <div>
+          <span className="kb-eyebrow">What your results call for</span>
+          <h3 className="kb-name" style={{ fontSize: 21 }}>Your path, stage by stage</h3>
+        </div>
+        <span className="kb-actions">
+          {rated.length ? <button className="kb-btn" aria-pressed={playing} onClick={() => ((picked.current = true), setPlaying(!playing))}>{playing ? "Pause the tour" : "Play the tour"}</button> : null}
+          <a href={`${READINESS_TRAINING_SITE}/about/contact/`} target="_blank" rel="noopener noreferrer">Talk to an advisor ↗</a>
+        </span>
+      </div>
+      <div className="rd-path" role="tablist" aria-label="Stages" style={{ ["--at" as string]: at, ["--n" as string]: stages.length }}>
+        <i className="rd-path-line" aria-hidden />
+        <i className="rd-path-fill" aria-hidden />
+        {stages.map((x, i) => (
+          <button key={x.name} role="tab" aria-selected={i === at} className={`rd-stop${i === at ? " on" : ""}${i < at ? " past" : ""}`} onClick={() => go(i)}>
+            <Gauge value={x.score} label={x.score === null ? "not rated" : `${x.score}% in place`} />
+            <small>Stage {i + 1}{i === first && rated.length && x.gaps ? <em>Start here</em> : null}</small>
+            <b>{x.name}</b>
+            {i === at && playing && rated.length ? <i className="rd-timer" key={`${at}-t`} style={{ animationDuration: `${STAGE_SECONDS}s` }} aria-hidden /> : null}
+          </button>
+        ))}
+      </div>
+      <div className="rd-stage" key={at} role="tabpanel" aria-label={`Stage ${at + 1}: ${s.name}`}>
+        <div className="rd-stage-head" style={{ borderColor: tone(s.score) }}>
+          <span className="kb-eyebrow">Stage {at + 1} of {stages.length}</span>
+          <b>{headline}</b>
+          <span className="kb-note" style={{ padding: 0 }}>{s.score === null ? "Rate this stage's statements on the Readiness map and its advice appears here." : s.gaps ? `${s.gaps} of this stage's ${s.factors.reduce((n, f) => n + f.statements.length, 0)} statements are not fully in place.` : "Every rated statement in this stage is fully in place."}</span>
+        </div>
+        <div className="rd-facs">
+          {s.factors.map((f, i) => {
+            const score = readinessFactorScore(st, f), adv = readinessFactorAdvice(st, f.code);
+            return (
+              <article key={f.code} className="rd-fac" style={{ animationDelay: `${i * 140}ms` }}>
+                <header>
+                  <Gauge value={score} size={76} label={score === null ? `${f.name}: not rated` : `${f.name}: ${score}% in place`} />
+                  <div>
+                    <small>{f.code}</small>
+                    <b>{f.name}</b>
+                    <div className="rd-pips" aria-hidden>{f.statements.map((_, j) => (<span key={j} className={`rd-pip ${readinessRating(st, readinessKey(f.code, j)) ?? ""}`} />))}</div>
+                  </div>
+                </header>
+                {score === null ? (
+                  <button className="kb-btn" onClick={() => open(f.code)}>Rate this factor</button>
+                ) : !adv.gap ? (
+                  <p className="rd-ok">✓ In place. Nothing to add here.</p>
+                ) : (
+                  <>
+                    <p className="kb-note" style={{ padding: 0 }}>{[adv.N ? `${adv.N} not in place` : "", adv.P ? `${adv.P} partially in place` : ""].filter(Boolean).join(", ")}. <button className="rd-link" onClick={() => open(f.code)}>See the statements</button></p>
+                    {adv.main.map((c) => (<Offer key={c.id} c={c} main />))}
+                    {adv.also.map((c) => (<Offer key={c.id} c={c} />))}
+                  </>
+                )}
+              </article>
+            );
+          })}
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Results({ st, open }: { st: St; open: (code: string) => void }) {
   const t = readinessTally(st), v = VERDICT[readinessVerdict(t.ready)], C = 502.7;
-  const advice = readinessAdvice(st), top = advice[0]?.weight || 1;
-  const weakest = READINESS_FACTORS.map((f) => ({ f, s: readinessFactorScore(st, f) })).filter((x): x is { f: ReadinessFactor; s: number } => x.s !== null).sort((a, b) => a.s - b.s).slice(0, 3);
   const heat = (s: number | null) => (s === null ? ["rgba(23,33,43,0.08)", "#17212b"] : s >= 80 ? ["rgba(47,158,122,0.85)", "#fff"] : s >= 50 ? ["rgba(224,161,0,0.8)", "#2b2000"] : ["rgba(194,65,45,0.85)", "#fff"]);
   return (
     <div className="rd-dash">
@@ -131,33 +248,7 @@ function Results({ st, open }: { st: St; open: (code: string) => void }) {
           })}
         </div>
       </section>
-      <section className="kb-glass rd-pad rd-c12">
-        <div className="rd-advhead">
-          <div>
-            <span className="kb-eyebrow">Advice from your results</span>
-            <h3 className="kb-name" style={{ fontSize: 21 }}>Where to start, and the training that closes the most gaps</h3>
-          </div>
-          <a href={`${READINESS_TRAINING_SITE}/about/contact/`} target="_blank" rel="noopener noreferrer">Talk to an advisor at Agile Agilist ↗</a>
-        </div>
-        {weakest.length && advice.length ? (
-          <p>Your weakest success factors are {weakest.map((x, i) => (<span key={x.f.code}>{i ? (i === weakest.length - 1 ? " and " : ", ") : ""}<b>{x.f.name} ({x.s}%)</b></span>))}. The suggestions below are ranked by how many of your open gaps each one addresses; courses that are launching soon come last.</p>
-        ) : (
-          <p className="kb-note" style={{ padding: 0 }}>{t.rated ? "No gaps: every rated statement is fully in place." : "Rate some statements and the advice appears here."}</p>
-        )}
-        {advice.map((c, i) => (
-          <div key={c.id} className="rd-rec" style={{ animationDelay: `${i * 90}ms` }}>
-            <span className="rd-n">{c.kind === "soon" ? "+" : i + 1}</span>
-            <div className="rd-recbody">
-              <b>{c.name}{c.kind === "soon" ? <span className="rd-soon">Launching soon</span> : c.kind === "free" ? <span className="rd-soon free">Free</span> : null}</b>
-              <span className="kb-note" style={{ padding: 0 }}>{c.why}</span>
-              <div className="rd-tags">{c.closes.map((code) => (<span key={code}>{code} · {READINESS_FACTORS.find((f) => f.code === code)!.name}</span>))}</div>
-              <div className="rd-impact" role="img" aria-label={`Relative impact ${Math.round((c.weight / top) * 100)}%`}><i style={{ width: `${(c.weight / top) * 100}%` }} /></div>
-            </div>
-            <a className="rd-go" href={READINESS_TRAINING_SITE + c.path} target="_blank" rel="noopener noreferrer">{c.kind === "free" ? "Take the assessment ↗" : c.kind === "soon" ? "Learn more ↗" : "See the course ↗"}</a>
-          </div>
-        ))}
-        {t.gaps >= 12 ? <p className="kb-note" style={{ padding: 0 }}>With this many gaps across the ART, a private cohort is usually the faster route: <a href={`${READINESS_TRAINING_SITE}/team-training/`} target="_blank" rel="noopener noreferrer">Team &amp; Corporate Training ↗</a></p> : null}
-      </section>
+      <Journey st={st} open={open} />
     </div>
   );
 }

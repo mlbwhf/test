@@ -152,6 +152,19 @@ export function readinessAdvice(state: Record<string, unknown>, limit = 5): Read
   return [...ranked.filter((c) => c.kind !== "soon").slice(0, limit), ...ranked.filter((c) => c.kind === "soon")];
 }
 
+/**
+ * What one success factor's own ratings call for: nothing while it has no gaps, else its row of
+ * the matrix, the main suggestion(s) first and courses that are launching soon last.
+ */
+export function readinessFactorAdvice(state: Record<string, unknown>, code: string): { gap: number; N: number; P: number; main: ReadinessCourse[]; also: ReadinessCourse[] } {
+  const f = READINESS_FACTORS.find((x) => x.code === code), row = READINESS_MATRIX[code];
+  const n = (c: ReadinessRating) => (f ? f.statements.filter((_, i) => ratingOf(state, readinessKey(code, i)) === c).length : 0);
+  const N = n("N"), P = n("P"), pick = (ids: string[]) => ids.map((id) => READINESS_COURSES.find((c) => c.id === id)).filter((c): c is ReadinessCourse => !!c);
+  if (!row || !(N + P)) return { gap: 0, N, P, main: [], also: [] };
+  const also = pick(row.also);
+  return { gap: N * 2 + P, N, P, main: pick(row.main), also: [...also.filter((c) => c.kind !== "soon"), ...also.filter((c) => c.kind === "soon")] };
+}
+
 /** The assessment as the CSV of the companion app: a row per statement. */
 export function readinessCsv(state: Record<string, unknown>): string {
   const q = (s: string) => `"${s.replace(/"/g, '""')}"`;

@@ -416,7 +416,7 @@ describe("kanban levels", () => {
 
 describe("launch readiness", () => {
   it("scores the 48 statements, counts covered gaps and advises the trainings that close the most gaps", async () => {
-    const { READINESS_FACTORS, readinessTally, readinessFactorScore, readinessVerdict, readinessAdvice, readinessCsv } = await import("./index.js");
+    const { READINESS_FACTORS, readinessTally, readinessFactorScore, readinessVerdict, readinessAdvice, readinessFactorAdvice, readinessCsv } = await import("./index.js");
     expect(READINESS_FACTORS).toHaveLength(12);
     expect(READINESS_FACTORS.map((f) => f.shift)).toEqual([0, 0, 0, 1, 1, 1, 2, 2, 2, 3, 3, 3]);
     expect(READINESS_FACTORS.flatMap((f) => f.statements)).toHaveLength(48);
@@ -431,6 +431,9 @@ describe("launch readiness", () => {
     expect(readinessTally(st)).toMatchObject({ F: 44, P: 2, N: 2, gaps: 4, covered: 1, ready: 94 });
     expect(readinessFactorScore(st, READINESS_FACTORS[11]!)).toBe(25);
     expect(readinessAdvice(st).map((c) => c.name)).toEqual(["Achieving Responsible AI with SAFe", "Leading the AI-Native Organization"]);
+    expect(readinessFactorAdvice(st, "SF12")).toMatchObject({ gap: 6, N: 2, P: 2, main: [{ id: "responsible" }], also: [{ id: "leading" }] });
+    expect(readinessFactorAdvice(st, "SF1")).toEqual({ gap: 0, N: 0, P: 0, main: [], also: [] });
+    expect(readinessFactorAdvice({ "r:SF2:0": "P" }, "SF2").also.map((c) => c.id)).toEqual(["bo", "leading", "inno-leader"]);
     // A course that is launching soon is always last, after one people can register for.
     const soon = readinessAdvice({ "r:SF1:0": "N", "r:SF11:0": "N", "r:SF11:1": "N" });
     expect(soon.map((c) => c.id)).toEqual(["devops", "fundamentals", "arch", "popm", "apm", "inno-facilitator", "inno-creator"]);
