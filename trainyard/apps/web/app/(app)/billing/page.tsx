@@ -296,7 +296,7 @@ export default function BillingPage() {
               <div className="panel-body stack">
                 {confirmRefund ? (
                   <>
-                    <p>This refunds your first month to the card, ends the subscription today and moves {ws.name} to the free plan: one board, up to 5 people, everything kept. Tell us why, if you like.</p>
+                    <p>This refunds your first month to the card, ends the subscription today and moves {ws.name} to the free plan: five boards at a time, up to 10 people, everything kept. Tell us why, if you like.</p>
                     <textarea className="input" rows={2} value={refundNote} onChange={(e) => setRefundNote(e.target.value)} placeholder="What did not work for you? (optional)" />
                     <div className="row">
                       <button className="btn primary" disabled={busy} onClick={() => void refund()}>

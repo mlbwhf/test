@@ -78,6 +78,8 @@ export interface StoreState {
   purchases?: Purchase[];
   /** Students invited to class boards by link (platform state; students.ts). */
   classGuests?: ClassGuest[];
+  /** The workspace's Azure DevOps connection for its Kanban and team boards (ado-boards.ts); the token is sealed. */
+  ado?: import("./ado-boards.js").AdoConnection;
   /** Rooms that organise boards and who may open them. */
   rooms?: Room[];
   /** Stripe event ids already handled (the last few hundred), so a redelivery does nothing. */

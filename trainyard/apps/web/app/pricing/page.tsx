@@ -6,7 +6,7 @@ import { siteUrl } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Pricing: free for small rooms, per trainer or per train, with a free trial and money back",
-  description: "Trainyard pricing. Practice is free: self-host with no limits, or one hosted room up to 5 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.",
+  description: "Trainyard pricing. Practice is free: self-host with no limits, or five hosted boards with up to 10 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.",
   alternates: { canonical: "/pricing" },
 };
 
@@ -50,7 +50,7 @@ export default function PricingPage() {
           columns={["", "Practice", "Trainer", "Academy", "Insights"]}
           rows={[
             ["Price", "Free", "$19 per trainer per month ($16 yearly)", "$249 per train per month ($199 yearly)", "$99 per pack of 10 data sources per month ($83 yearly)"],
-            ["Who counts", "Up to 5 people in one hosted room", "Trainers and planners; participants are free", "Trains; people are free", "Data sources; viewers are free, up to 5 editors"],
+            ["Who counts", "Up to 10 people, five boards at a time", "Trainers and planners; participants are free", "Trains; people are free", "Data sources; viewers are free, up to 5 editors"],
             ["Rooms (boards by purpose, access per room)", "1, open to everyone", "5 per trainer, open or private", "Unlimited, open or private", "2, open or private"],
             ["Boards of your own", "1", "Unlimited", "Unlimited", "1"],
             ["Outcome dashboard sources", "2", "3", "Unlimited", "10 per pack"],

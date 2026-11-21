@@ -564,13 +564,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:90"
+  "where": "apps/web/components/team-board.tsx:91"
  },
  ", in": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:98"
+  "where": "apps/web/app/(app)/sync/page.tsx:99"
  },
  ", including the IP iteration. The gauge's − and + still adjust a single iteration on top of this.": {
   "fr": ", y compris l’itération IP. Les boutons − et + de la jauge ajustent toujours une seule itération en plus de ce réglage.",
@@ -590,7 +590,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:232"
+  "where": "apps/web/components/team-board.tsx:235"
  },
  ", now in band": {
   "fr": ", désormais dans la bande",
@@ -614,7 +614,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:132"
+  "where": "apps/web/components/team-board.tsx:135"
  },
  ", registered in": {
   "fr": "",
@@ -696,6 +696,12 @@
   "phase": "3",
   "where": "apps/web/app/support/page.tsx:81"
  },
+ "; then this board&apos;s cards can be work items.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:92"
+ },
  "; we answer within 30 days. If you are a student or a member of someone else&apos;s workspace, we may refer your request to the workspace owner, who controls that content. You can also complain to your data protection authority, such as the Office of the Privacy Commissioner of Canada.": {
   "fr": "",
   "status": "new",
@@ -750,7 +756,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:245"
+  "where": "apps/web/components/team-board.tsx:248"
  },
  ": portfolio vision": {
   "fr": " : vision du portefeuille",
@@ -775,7 +781,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:89"
+  "where": "apps/web/components/team-board.tsx:90"
  },
  ": the class board": {
   "fr": "",
@@ -947,6 +953,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/billing/page.tsx:178"
  },
+ ". This board is not linked yet: its cards live only here.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:90"
+ },
  ". This policy explains what we collect when you use trainyard.app, why, and what you can do about it. In effect from": {
   "fr": "",
   "status": "new",
@@ -1046,6 +1058,18 @@
   "phase": "2",
   "where": "apps/web/app/(app)/board/page.tsx:592 apps/web/app/(app)/board/page.tsx:629 apps/web/app/(app)/board/page.tsx:703"
  },
+ "· cards are": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:86"
+ },
+ "· connected to": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:90"
+ },
  "· development value stream canvas:": {
   "fr": "",
   "status": "new",
@@ -1124,6 +1148,12 @@
   "phase": "2",
   "where": "apps/web/components/okr-explorer.tsx:75"
  },
+ "· not connected. An admin connects it under": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:92"
+ },
  "· not on board": {
   "fr": "· absent du tableau",
   "status": "draft",
@@ -1134,7 +1164,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:174"
+  "where": "apps/web/components/team-board.tsx:177"
  },
  "· portfolio asks": {
   "fr": "· demandes du portefeuille",
@@ -1148,6 +1178,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:368"
+ },
+ "· refreshed": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:87"
  },
  "· review": {
   "fr": "",
@@ -1453,7 +1489,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:87"
+  "where": "apps/web/app/(app)/sync/page.tsx:88"
  },
  "(not traced)": {
   "fr": "",
@@ -1728,7 +1764,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:90"
+  "where": "apps/web/components/team-board.tsx:91"
  },
  "{0} / {1} pts loaded": {
   "fr": "{0} / {1} pts chargés",
@@ -1856,7 +1892,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:38"
+  "where": "apps/web/components/kanban-board.tsx:39"
  },
  "{0} is in and has been emailed the class link.": {
   "fr": "{0} est ajouté et a reçu le lien de la formation par courriel.",
@@ -1939,7 +1975,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:73"
+  "where": "apps/web/app/(app)/sync/page.tsx:74"
  },
  "{0} now leads {1}.": {
   "fr": "{0} dirige maintenant {1}.",
@@ -2007,7 +2043,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:90"
+  "where": "apps/web/components/team-board.tsx:91"
  },
  "{0} record{1} waiting for review after an intent change.": {
   "fr": "",
@@ -2071,6 +2107,12 @@
   "where": "packages/core/src/classes.ts:286",
   "note": "{3} is the plural 's' from code; 'Lesson 1' tab name generated in code ('Lesson N: title')"
  },
+ "{0}: {1} work items, {2} new, {3} changed, {4} gone.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:47"
+ },
  "{0}: {1}%, {2} points above the {3}% target. Still open.": {
   "fr": "",
   "status": "new",
@@ -2111,7 +2153,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:286"
+  "where": "apps/web/components/team-board.tsx:289"
  },
  "{0}% of finished work in {1} was enablers; the floor is {2}%.": {
   "fr": "{0} % du travail terminé en {1} concernait des enablers; le plancher est de {2} %.",
@@ -2252,7 +2294,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:284"
+  "where": "apps/web/components/team-board.tsx:287"
  },
  "% allocated: aim for 100%": {
   "fr": " % alloués : visez 100 %",
@@ -4772,7 +4814,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:100"
+  "where": "apps/web/app/methods/page.tsx:103"
  },
  "A new code was sent a moment ago; wait a minute.": {
   "fr": "",
@@ -4851,6 +4893,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/valuestreams.ts:230"
+ },
+ "a project that is no longer connected": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:86"
  },
  "A real system or document, not a category": {
   "fr": "Un système ou un document réel, pas une catégorie",
@@ -5078,7 +5126,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:296"
+  "where": "apps/web/components/team-board.tsx:299"
  },
  "above 125: split": {
   "fr": "",
@@ -5766,7 +5814,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:151"
+  "where": "apps/web/components/team-board.tsx:154"
  },
  "Add a lane": {
   "fr": "",
@@ -5820,7 +5868,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:253"
+  "where": "apps/web/components/team-board.tsx:256"
  },
  "Add a PI outcome": {
   "fr": "",
@@ -5844,7 +5892,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:152"
+  "where": "apps/web/components/team-board.tsx:155"
  },
  "Add a source": {
   "fr": "",
@@ -5898,7 +5946,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:106"
+  "where": "apps/web/components/team-board.tsx:109"
  },
  "Add a team on the Outcomes view first.": {
   "fr": "",
@@ -6216,7 +6264,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:90"
+  "where": "apps/web/components/team-board.tsx:91"
  },
  "Add to board": {
   "fr": "Ajouter au tableau",
@@ -6447,7 +6495,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/ui.tsx:31"
+  "where": "apps/web/components/ado-bar.tsx:83 apps/web/components/ui.tsx:31"
  },
  "Adoption": {
   "fr": "Adoption",
@@ -6582,11 +6630,23 @@
   "phase": "2",
   "where": "apps/web/app/(app)/outcome-planning/page.tsx:120"
  },
+ "Agenda & vote, inside PI Outcome Planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:76"
+ },
  "Agenda item": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:87"
+ },
+ "Agenda, review and confidence vote": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:76"
  },
  "Agent": {
   "fr": "",
@@ -6998,7 +7058,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/ainative.tsx:87"
+  "where": "apps/web/app/coverage/page.tsx:74 apps/web/components/ainative.tsx:87"
  },
  "AI Innovation Pipeline": {
   "fr": "",
@@ -7765,6 +7825,12 @@
   "where": "apps/web/components/studio-model.ts:327",
   "note": "Fragment (line 2)."
  },
+ "and iteration": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:145"
+ },
  "and meet tax and accounting obligations: subscriptions, invoices, trial confirmations and the reminder before your first charge.": {
   "fr": "",
   "status": "new",
@@ -8228,6 +8294,12 @@
   "phase": "2",
   "where": "packages/core/src/ainative.ts:417"
  },
+ "are written to Azure DevOps. Removing a card here does not delete the work item.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:145"
+ },
  "Are you discussing trade-offs and conflicting priorities with your Business Owners?": {
   "fr": "Discutez-vous des arbitrages et des priorités contradictoires avec vos responsables d’affaires?",
   "status": "draft",
@@ -8245,6 +8317,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/classes.ts:512"
+ },
+ "Area path (optional)": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:114"
  },
  "Area Product Owner": {
   "fr": "",
@@ -8267,8 +8345,8 @@
  "ART": {
   "fr": "ART",
   "status": "draft",
-  "phase": "1",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:511 apps/web/app/(app)/value-streams/page.tsx:857 apps/web/components/planning-views.tsx:434"
+  "phase": "2",
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:511 apps/web/app/(app)/value-streams/page.tsx:857 apps/web/app/coverage/page.tsx:45"
  },
  "ART / Milestone planning board": {
   "fr": "Tableau de planification de l’ART / des jalons",
@@ -8425,6 +8503,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:732 apps/web/components/planning-pages.tsx:732 apps/web/components/planning-pages.tsx:732"
+ },
+ "ART Kanban with WSJF": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:48"
  },
  "ART lanes × quarters": {
   "fr": "",
@@ -9888,6 +9972,12 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:47"
  },
+ "Assessment, inside PI Outcome Planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:77"
+ },
  "Assessments for each level of the Framework, LPM Assessment": {
   "fr": "Évaluations pour chaque niveau du Framework, évaluation LPM",
   "status": "draft",
@@ -10386,11 +10476,29 @@
   "phase": "2",
   "where": "apps/web/app/(app)/board/page.tsx:66 apps/web/app/(app)/sync/page.tsx:32 apps/web/app/(app)/value-streams/page.tsx:1271"
  },
+ "Azure DevOps boards": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:188"
+ },
  "Azure DevOps extension": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/layout.tsx:18"
+ },
+ "Azure DevOps state for {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:123"
+ },
+ "Azure DevOps work items as cards": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:173"
  },
  "B2B retail software": {
   "fr": "Logiciel de commerce de détail B2B",
@@ -10408,13 +10516,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:177"
+  "where": "apps/web/components/kanban-board.tsx:181"
  },
  "Back to backlog": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:95"
+  "where": "apps/web/components/team-board.tsx:96"
  },
  "Back to collection": {
   "fr": "Retour à la collection",
@@ -10786,7 +10894,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:296"
+  "where": "apps/web/components/team-board.tsx:299"
  },
  "Below target: needs to rise to {0}": {
   "fr": "",
@@ -11030,7 +11138,7 @@
   "fr": "Tableau",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:258 apps/web/app/(app)/imports/page.tsx:149 apps/web/components/lane-board.tsx:369"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:258 apps/web/app/(app)/imports/page.tsx:149 apps/web/app/coverage/page.tsx:160"
  },
  "BOARD": {
   "fr": "TABLEAU",
@@ -11104,13 +11212,19 @@
   "fr": "TABLEAUX",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/class-board.tsx:298"
+  "where": "apps/web/app/coverage/page.tsx:152 apps/web/components/class-board.tsx:298"
  },
  "boards ·": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/admin/page.tsx:160"
+ },
+ "BOARDS ·": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:105"
  },
  "Boards and dashboards follow the model's vocabulary.": {
   "fr": "",
@@ -11122,7 +11236,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:88"
+  "where": "apps/web/app/methods/page.tsx:91"
  },
  "Boards from iObeya, Miro, Lucid, Mural, monday.com, Trello, CSV and JSON import as they are; Jira and Azure DevOps data syncs rather than imports.": {
   "fr": "",
@@ -11935,7 +12049,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:246"
+  "where": "apps/web/components/team-board.tsx:249"
  },
  "BUSINESS OWNERS SET VALUE 1–10 · DRAG AN OBJECTIVE BETWEEN COMMITTED AND UNCOMMITTED": {
   "fr": "LES RESPONSABLES D’AFFAIRES FIXENT LA VALEUR 1–10 · FAITES GLISSER UN OBJECTIF ENTRE ENGAGÉS ET NON ENGAGÉS",
@@ -11978,7 +12092,7 @@
   "fr": "Valeur d’affaires",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/kanban-board.tsx:146 apps/web/components/studio-views-lsa.tsx:214 apps/web/components/studio-views-lsa.tsx:214"
+  "where": "apps/web/components/kanban-board.tsx:150 apps/web/components/studio-views-lsa.tsx:214 apps/web/components/studio-views-lsa.tsx:214"
  },
  "Business value column": {
   "fr": "Colonne de la valeur d’affaires",
@@ -12008,7 +12122,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:271"
+  "where": "apps/web/components/team-board.tsx:274"
  },
  "BV committed": {
   "fr": "BV engagée",
@@ -12020,7 +12134,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:270"
+  "where": "apps/web/components/team-board.tsx:273"
  },
  "By course": {
   "fr": "Par cours",
@@ -12324,6 +12438,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:99"
  },
+ "Capabilities and enablers across several ARTs.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:38"
+ },
  "Capabilities from a side-by-side evaluation of PI planning dashboard tools and each vendor&apos;s public pages. Products change; check each vendor for its current features. Product names are trademarks of their owners.": {
   "fr": "",
   "status": "new",
@@ -12352,7 +12472,7 @@
   "fr": "Capacité (capability)",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 packages/core/src/frameworks.ts:186",
+  "where": "apps/web/components/ado-bar.tsx:24 apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017",
   "note": "glossary form; check fit in a short label"
  },
  "CAPABILITY": {
@@ -12832,6 +12952,12 @@
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:113"
  },
+ "Change link": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:97"
+ },
  "Change parent": {
   "fr": "Changer de parent",
   "status": "draft",
@@ -12866,13 +12992,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:85"
+  "where": "apps/web/components/kanban-board.tsx:88"
  },
  "Changed": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:120"
+  "where": "apps/web/app/(app)/sync/page.tsx:121"
  },
  "changed · was": {
   "fr": "modifié · avant",
@@ -12884,13 +13010,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "changed on both sides (here": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:98"
+  "where": "apps/web/app/(app)/sync/page.tsx:99"
  },
  "Changes": {
   "fr": "",
@@ -12914,7 +13040,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:112"
+  "where": "apps/web/app/(app)/sync/page.tsx:113"
  },
  "Channel Support": {
   "fr": "",
@@ -13067,7 +13193,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/(app)/imports/page.tsx:306 apps/web/components/landing.tsx:675"
+  "where": "apps/web/app/(app)/imports/page.tsx:306 apps/web/app/(app)/sync/page.tsx:202 apps/web/components/landing.tsx:675"
  },
  "Checkout": {
   "fr": "",
@@ -13258,8 +13384,8 @@
  "Choose…": {
   "fr": "Choisir…",
   "status": "draft",
-  "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:782 apps/web/components/class-board.tsx:764 apps/web/components/class-students.tsx:491"
+  "phase": "2",
+  "where": "apps/web/app/(app)/outcomes/page.tsx:782 apps/web/components/ado-bar.tsx:109 apps/web/components/ado-bar.tsx:124"
  },
  "Choosing a type loads its example.": {
   "fr": "",
@@ -13435,7 +13561,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/lib/pricing.ts:39"
+  "where": "apps/web/app/coverage/page.tsx:105 apps/web/lib/pricing.ts:39"
  },
  "Classes · Classroom theme": {
   "fr": "",
@@ -13789,7 +13915,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/admin/page.tsx:82 apps/web/app/(app)/ai/page.tsx:28 apps/web/components/ainative.tsx:181"
+  "where": "apps/web/app/(app)/admin/page.tsx:82 apps/web/app/(app)/ai/page.tsx:28 apps/web/components/ado-bar.tsx:97"
  },
  "Close and feedback": {
   "fr": "Clôture et retours",
@@ -14209,7 +14335,7 @@
   "fr": "Engagé ou non engagé",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-views.tsx:421 apps/web/components/team-board.tsx:259"
+  "where": "apps/web/components/planning-views.tsx:421 apps/web/components/team-board.tsx:262"
  },
  "Committed:": {
   "fr": "Engagés :",
@@ -14272,9 +14398,15 @@
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:32"
  },
- "Companies: every instructor and co-instructor you need, one class at a time": {
+ "Companies: every instructor and co-instructor you need, five classes at a time": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/lib/pricing.ts:32"
+ },
+ "Companies: every instructor and co-instructor you need, one class at a time": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:32"
  },
@@ -14509,7 +14641,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/templates.ts:85"
+  "where": "apps/web/app/coverage/page.tsx:53 packages/core/src/templates.ts:85"
  },
  "Confidence vote · fist of five": {
   "fr": "Vote de confiance · poing de cinq",
@@ -14584,6 +14716,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:251"
  },
+ "Connect Azure DevOps": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:202"
+ },
  "Connect draws a dependency between two cards.": {
   "fr": "",
   "status": "new",
@@ -14620,6 +14758,12 @@
   "phase": "3",
   "where": "apps/web/components/landing.tsx:93"
  },
+ "Connect one Azure DevOps project. Then link a Portfolio, Solution Train, ART or Team Kanban, or a team PI board, to a work item type: its cards are the work items, and changes made on the board are written to Azure DevOps straight away.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:174"
+ },
  "Connect or upload; boards arrive as they are": {
   "fr": "Connectez ou importez : vos tableaux arrivent tels quels",
   "status": "draft",
@@ -14642,7 +14786,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:67"
+  "where": "apps/web/app/(app)/sync/page.tsx:68 apps/web/app/(app)/sync/page.tsx:178"
  },
  "Connected {0}. Pick a board under Connections below.": {
   "fr": "",
@@ -15415,6 +15559,24 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/classroom/company/page.tsx:227"
+ },
+ "Coverage": {
+  "fr": "",
+  "status": "new",
+  "phase": "1",
+  "where": "apps/web/components/site-nav.tsx:159"
+ },
+ "coverage page: no package {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:19"
+ },
+ "coverage page: no template {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:14"
  },
  "Coverage per level": {
   "fr": "",
@@ -17849,6 +18011,18 @@
   "phase": "2",
   "where": "packages/core/src/ainative.ts:667"
  },
+ "Disconnect": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:182"
+ },
+ "Disconnect Azure DevOps? Linked boards keep their cards but stop following Azure DevOps.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:182"
+ },
  "Discount platforms undercutting on price": {
   "fr": "Plateformes discount qui cassent les prix",
   "status": "draft",
@@ -18228,7 +18402,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:85"
+  "where": "apps/web/components/kanban-board.tsx:88"
  },
  "Donut": {
   "fr": "",
@@ -18846,6 +19020,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/ai-native-arts.ts:92"
  },
+ "Each board state writes this Azure DevOps state": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:119"
+ },
  "Each class is a board: a start-here strip, one frame per lesson holding its exercises, and a PI planning simulation. Open one per cohort, hand out the link, and participants work in the room.": {
   "fr": "",
   "status": "new",
@@ -18881,6 +19061,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:185"
+ },
+ "Each framework's events and artifacts next to the Trainyard board that runs them. SAFe from portfolio to team, with PI planning, the Kanban at every level, Inspect & Adapt and PI Outcome Planning for AI-native ARTs; Scrum, the Kanban Method, Lean, Six Sigma and the shop floor.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:8"
  },
  "Each guide is generated from the same data the rooms run on, so what you read here is what the canvas, board or pipeline does.": {
   "fr": "",
@@ -18931,6 +19117,12 @@
   "phase": "1",
   "where": "apps/web/components/outcome-roadmap.tsx:28"
  },
+ "Each row is something the framework names: an event, an artifact or a workflow. Next to it is the Trainyard board that covers it, in the framework&apos;s own words.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:94"
+ },
  "Each table gets its own sheet.": {
   "fr": "Chaque table a sa propre feuille.",
   "status": "draft",
@@ -18966,7 +19158,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:95"
+  "where": "apps/web/components/team-board.tsx:96"
  },
  "Earlier PIs": {
   "fr": "PI précédents",
@@ -19836,6 +20028,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:329"
  },
+ "Epic hypothesis and Lean business case": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:30"
+ },
  "Epic hypothesis statement": {
   "fr": "Énoncé d’hypothèse d’épopée",
   "status": "draft",
@@ -19943,6 +20141,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/portfolio/vision/page.tsx:116"
+ },
+ "Epics and enablers, from an idea to a funded, measured bet.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:27"
  },
  "Epics and the Portfolio Kanban": {
   "fr": "",
@@ -20252,6 +20456,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views.tsx:101"
  },
+ "EVENT PACKAGES ·": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:105"
+ },
  "Event streaming backbone": {
   "fr": "",
   "status": "new",
@@ -20281,6 +20491,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/help.ts:117"
+ },
+ "Every board on this page is in the free plan, for up to five boards and ten people.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:197"
  },
  "Every canvas →": {
   "fr": "",
@@ -20389,7 +20605,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:100"
+  "where": "apps/web/app/methods/page.tsx:103"
  },
  "Every objective has business value": {
   "fr": "Chaque objectif a une valeur d’affaires",
@@ -20475,7 +20691,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:149"
+  "where": "apps/web/components/team-board.tsx:152"
  },
  "Every story is on a wagon": {
   "fr": "Chaque récit est sur un wagon",
@@ -21333,8 +21549,8 @@
  "Feature": {
   "fr": "Fonctionnalité",
   "status": "draft",
-  "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:230 apps/web/components/canvas-editor.tsx:19 apps/web/components/planning-pages.tsx:26"
+  "phase": "2",
+  "where": "apps/web/app/(app)/readiness/page.tsx:230 apps/web/components/ado-bar.tsx:24 apps/web/components/ado-bar.tsx:24"
  },
  "FEATURE": {
   "fr": "FONCTIONNALITÉ",
@@ -21485,7 +21701,7 @@
   "fr": "Fonctionnalités",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/team-board.tsx:151 packages/core/src/classes.ts:214 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/team-board.tsx:154 packages/core/src/classes.ts:214 packages/core/src/templates.ts:82"
  },
  "FEATURES": {
   "fr": "FONCTIONNALITÉS",
@@ -21505,6 +21721,12 @@
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:686",
   "note": "sentence fragment joined with other text in JSX; check the assembled sentence"
+ },
+ "Features and enablers, planned every PI and delivered on cadence.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:46"
  },
  "Features and milestones on the ART planning board": {
   "fr": "Fonctionnalités et jalons sur le tableau de planification de l’ART",
@@ -21642,7 +21864,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/card-types/page.tsx:89 apps/web/app/(app)/card-types/page.tsx:133 apps/web/app/(app)/sync/page.tsx:119"
+  "where": "apps/web/app/(app)/card-types/page.tsx:89 apps/web/app/(app)/card-types/page.tsx:133 apps/web/app/(app)/sync/page.tsx:120"
  },
  "Fifty board templates by method, each in its own words: SAFe (PI planning, team breakout, ROAM, Inspect and Adapt, portfolio and ART Kanban, roadmaps), Scrum (Product Backlog, Sprint Planning, Sprint Backlog, Sprint Review, Sprint Retrospective), Kanban (system board, STATIK, service delivery review, flight levels), Lean (A3, PDCA, value stream map, kaizen, hoshin kanri, obeya), Six Sigma (DMAIC, charter, SIPOC, VOC to CTQ, fishbone, FMEA, control plan), manufacturing (SQDC, andon, OEE, heijunka, 5S, gemba).": {
   "fr": "",
@@ -22463,6 +22685,12 @@
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:58"
  },
+ "For AI-native ARTs: the PI planned by outcome, with people and AI agents on the same train.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:70"
+ },
  "For enterprise": {
   "fr": "",
   "status": "new",
@@ -22690,11 +22918,35 @@
   "phase": "2",
   "where": "apps/web/app/(app)/imports/page.tsx:431"
  },
+ "Framework coverage": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:88"
+ },
+ "FRAMEWORK COVERAGE": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:90"
+ },
+ "Framework coverage: what Trainyard covers in SAFe, Scrum, Kanban, Lean, Six Sigma and manufacturing": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:7"
+ },
  "Framework names are trademarks of their owners. SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Templates are summaries for configuration, not copies of framework materials.": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/model/page.tsx:223"
+ },
+ "Frameworks": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:95"
  },
  "Framing the swap as 'for your plan' rather than 'healthier' doubles acceptance.": {
   "fr": "",
@@ -22773,6 +23025,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/cards.ts:34"
+ },
+ "Free to start": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:196"
  },
  "Free trial": {
   "fr": "",
@@ -24294,9 +24552,15 @@
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:59"
  },
- "Hosted: one class at a time, up to 5 people": {
+ "Hosted: five boards or classes at a time, up to 10 people": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/lib/pricing.ts:32"
+ },
+ "Hosted: one class at a time, up to 5 people": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:32"
  },
@@ -25401,7 +25665,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:89"
+  "where": "apps/web/app/methods/page.tsx:92"
  },
  "Import from Miro, Lucid, Mural, Trello, monday.com, iObeya or a CSV, keep it exactly as it came, and save it as a template for the next class or the next PI.": {
   "fr": "",
@@ -25640,6 +25904,18 @@
   "phase": "1",
   "where": "packages/core/src/canvases.ts:647"
  },
+ "in Azure DevOps ↗": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/kanban-board.tsx:134"
+ },
+ "In Azure DevOps: User settings, Personal access tokens, New token, scope Work Items (Read &amp; write). The token is stored encrypted and never shown again.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:200"
+ },
  "In class as": {
   "fr": "",
   "status": "new",
@@ -25726,6 +26002,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model-lpm.ts:73"
  },
+ "in scope. After that, adding a card creates a work item, and a card&apos;s title, state, kind, size, business value": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:145"
+ },
  "in the": {
   "fr": "lors du déploiement d’",
   "status": "draft",
@@ -25798,6 +26080,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/okrs.tsx:107"
+ },
+ "In Trainyard": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:116"
  },
  "In use": {
   "fr": "",
@@ -26192,11 +26480,17 @@
   "phase": "1",
   "where": "packages/core/src/canvases.ts:180"
  },
+ "Innovation and planning iteration": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:55"
+ },
  "Innovation and planning: no committed stories. Innovation, the PI system demo, Inspect &amp; Adapt and planning for the next PI.": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:138"
+  "where": "apps/web/components/team-board.tsx:141"
  },
  "Innovation continues": {
   "fr": "",
@@ -26263,6 +26557,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:199"
+ },
+ "Inspect & Adapt: PI system demo, predictability measure, problem-solving workshop": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:54"
  },
  "Inspect & Adapt: the three parts": {
   "fr": "Inspecter et adapter : les trois parties",
@@ -26473,14 +26773,20 @@
  "Intent document": {
   "fr": "",
   "status": "course",
-  "phase": "course",
-  "where": "packages/core/src/courses/events.ts:67"
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:73 packages/core/src/courses/events.ts:67"
  },
  "Intent provides people with a shared reason behind daily decisions, and provides AI with a stable reference to reason from when priorities compete. Everything traces back up to the vision.": {
   "fr": "",
   "status": "course",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:76"
+ },
+ "Intent, inside PI Outcome Planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:73"
  },
  "Intent, specification, context": {
   "fr": "",
@@ -26718,7 +27024,7 @@
   "fr": "Itération IP",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:542 apps/web/components/studio-model-rte.ts:41 apps/web/components/team-board.tsx:16"
+  "where": "apps/web/components/ado-bar.tsx:25 apps/web/components/planning-pages.tsx:542 apps/web/components/studio-model-rte.ts:41"
  },
  "IP iteration · Inspect & Adapt": {
   "fr": "",
@@ -27014,7 +27320,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
+  "where": "apps/web/components/ado-bar.tsx:25 apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:17"
  },
  "Iteration 1.": {
   "fr": "Itération 1.",
@@ -27056,19 +27362,19 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
+  "where": "apps/web/components/ado-bar.tsx:25 apps/web/components/landing.tsx:323 apps/web/components/team-board.tsx:17"
  },
  "Iteration 3": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
+  "where": "apps/web/components/ado-bar.tsx:25 apps/web/components/team-board.tsx:17 packages/core/src/templates.ts:140"
  },
  "Iteration 4": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:16 packages/core/src/templates.ts:140"
+  "where": "apps/web/components/ado-bar.tsx:25 apps/web/components/team-board.tsx:17 packages/core/src/templates.ts:140"
  },
  "Iteration 5": {
   "fr": "",
@@ -27113,6 +27419,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/model/page.tsx:136"
  },
+ "Iteration path for {0}": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:137"
+ },
  "Iteration Planning": {
   "fr": "",
   "status": "new",
@@ -27124,6 +27436,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/coachsync.ts:46"
+ },
+ "Iteration retrospective": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:64"
  },
  "Iteration Retrospective": {
   "fr": "",
@@ -27219,7 +27537,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/lib/help.ts:215"
+  "where": "apps/web/app/coverage/page.tsx:185 apps/web/lib/help.ts:215"
  },
  "Jira and Azure DevOps sync": {
   "fr": "",
@@ -27291,7 +27609,7 @@
   "fr": "Taille du travail",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:41 apps/web/components/kanban-board.tsx:146 packages/core/src/canvases.ts:205"
+  "where": "apps/web/app/(app)/readiness/page.tsx:41 apps/web/components/kanban-board.tsx:150 packages/core/src/canvases.ts:205"
  },
  "Job size (for duration)": {
   "fr": "",
@@ -27433,6 +27751,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model-agenda.ts:87"
+ },
+ "Kanban and team boards": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:172"
  },
  "Kanban slots": {
   "fr": "",
@@ -28029,7 +28353,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:73"
+  "where": "apps/web/app/(app)/sync/page.tsx:74"
  },
  "Last-mile carriers": {
   "fr": "Transporteurs du dernier kilomètre",
@@ -28065,7 +28389,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:96"
+  "where": "apps/web/components/team-board.tsx:97"
  },
  "Later PIs": {
   "fr": "PI suivants",
@@ -28132,6 +28456,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:844"
+ },
+ "Launch readiness across the success factors": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:77"
  },
  "Launch the LPM CoP": {
   "fr": "Lancer la CoP LPM",
@@ -28987,11 +29317,23 @@
   "phase": "2",
   "where": "apps/web/app/(app)/ai/[id]/page.tsx:336"
  },
+ "Link a Kanban or team board to a work item type and its cards are the work items: adding a card creates one, and moving it writes the state you mapped. You choose which Azure DevOps state each board state writes.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:189"
+ },
  "Link a record to this board": {
   "fr": "Lier un enregistrement à ce tableau",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/canvas-editor.tsx:1239"
+ },
+ "Link and bring the work items in": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:146"
  },
  "Link at least one outcome: the link is what makes the work defensible.": {
   "fr": "",
@@ -29023,6 +29365,18 @@
   "phase": "2",
   "where": "apps/web/app/(app)/canvases/[id]/page.tsx:303"
  },
+ "Link to Azure DevOps": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:97"
+ },
+ "Linked": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:105"
+ },
  "Linked canvas block…": {
   "fr": "Bloc du canevas lié…",
   "status": "draft",
@@ -29034,6 +29388,18 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:205"
+ },
+ "Linking brings in every": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:145"
+ },
+ "Linking…": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:146"
  },
  "Links, shown once: copy them now": {
   "fr": "Liens affichés une seule fois : copiez-les maintenant",
@@ -29447,7 +29813,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:234"
+  "where": "apps/web/components/team-board.tsx:237"
  },
  "Lower-middle income": {
   "fr": "",
@@ -30982,7 +31348,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/ai/[id]/page.tsx:128 apps/web/components/kanban-board.tsx:176"
+  "where": "apps/web/app/(app)/ai/[id]/page.tsx:128 apps/web/components/kanban-board.tsx:180"
  },
  "Move to autonomous Level 5": {
   "fr": "Passer à l’autonomie de niveau 5",
@@ -31469,7 +31835,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/canvas-cards.tsx:53 apps/web/components/kanban-board.tsx:77"
+  "where": "apps/web/components/canvas-cards.tsx:53 apps/web/components/kanban-board.tsx:80"
  },
  "NEW": {
   "fr": "NOUVEAU",
@@ -31698,7 +32064,7 @@
   "fr": "Nouvel objectif",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026 apps/web/components/team-board.tsx:252"
+  "where": "apps/web/app/(app)/outcomes/page.tsx:618 apps/web/components/planning-pages.tsx:1026 apps/web/components/team-board.tsx:255"
  },
  "New outcome": {
   "fr": "",
@@ -31813,7 +32179,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:105"
+  "where": "apps/web/components/team-board.tsx:108"
  },
  "New team": {
   "fr": "",
@@ -31862,7 +32228,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "Next": {
   "fr": "",
@@ -32062,7 +32428,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:274"
+  "where": "apps/web/components/team-board.tsx:277"
  },
  "No confidence": {
   "fr": "",
@@ -32238,7 +32604,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "No members yet. Add people below; the calculated mode needs them.": {
   "fr": "",
@@ -32767,7 +33133,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:67"
+  "where": "apps/web/app/(app)/sync/page.tsx:68"
  },
  "Not decided": {
   "fr": "",
@@ -32918,13 +33284,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:293"
+  "where": "apps/web/components/team-board.tsx:296"
  },
  "Not scored yet": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:286"
+  "where": "apps/web/components/team-board.tsx:289"
  },
  "Not seated yet": {
   "fr": "Pas encore placés",
@@ -32936,13 +33302,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/value-streams/page.tsx:645"
+  "where": "apps/web/app/(app)/value-streams/page.tsx:645 apps/web/components/ado-bar.tsx:138"
  },
  "not sized": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:115 apps/web/components/team-board.tsx:79 apps/web/components/team-board.tsx:166"
+  "where": "apps/web/components/kanban-board.tsx:118 apps/web/components/team-board.tsx:80 apps/web/components/team-board.tsx:169"
  },
  "Not started": {
   "fr": "Non commencé",
@@ -33247,7 +33613,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:185"
+  "where": "apps/web/components/kanban-board.tsx:189"
  },
  "Nothing pasted yet.": {
   "fr": "Rien n’a encore été collé.",
@@ -33283,7 +33649,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:134"
+  "where": "apps/web/app/(app)/sync/page.tsx:135"
  },
  "Nothing yet (its own document)": {
   "fr": "",
@@ -33887,6 +34253,12 @@
   "phase": "3",
   "where": "apps/web/lib/public.ts:136"
  },
+ "OKRs and KPIs workspace": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:33"
+ },
  "OKRs for the transformation": {
   "fr": "OKR de la transformation",
   "status": "draft",
@@ -33981,7 +34353,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:87"
+  "where": "apps/web/app/(app)/sync/page.tsx:88"
  },
  "ON THE ART BOARD": {
   "fr": "SUR LE TABLEAU DE L’ART",
@@ -34005,7 +34377,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:74"
+  "where": "apps/web/app/methods/page.tsx:77"
  },
  "On the OKR board": {
   "fr": "Sur le tableau des OKR",
@@ -35084,7 +35456,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:89"
+  "where": "apps/web/app/methods/page.tsx:92"
  },
  "OR BRING YOUR OWN": {
   "fr": "",
@@ -35204,7 +35576,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/classes/[id]/page.tsx:32 apps/web/app/guides/[slug]/page.tsx:29 apps/web/app/guides/[slug]/page.tsx:30"
+  "where": "apps/web/app/(app)/sync/page.tsx:188 apps/web/app/classes/[id]/page.tsx:32 apps/web/app/guides/[slug]/page.tsx:29"
  },
  "Organization and Alignment": {
   "fr": "Organisation et alignement",
@@ -35708,6 +36080,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/site-nav.tsx:41"
+ },
+ "Outcomes, the outcome board and team boards": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:72"
  },
  "Outline of teams, their topologies and responsibilities": {
   "fr": "Aperçu des équipes, de leurs topologies et de leurs responsabilités",
@@ -36689,7 +37067,7 @@
   "fr": "Persévérer",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/kanban-board.tsx:172 apps/web/components/studio-model-lpm.ts:429",
+  "where": "apps/web/components/kanban-board.tsx:176 apps/web/components/studio-model-lpm.ts:429",
   "note": "check: may be a value."
  },
  "Persistent shopping cart": {
@@ -36745,6 +37123,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:187"
+ },
+ "Personal access token": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:196"
  },
  "Personalized book recommendations": {
   "fr": "Recommandations de livres personnalisées",
@@ -36853,7 +37237,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:17"
+  "where": "apps/web/components/team-board.tsx:18"
  },
  "PI objectives (BV · AV)": {
   "fr": "",
@@ -36937,8 +37321,8 @@
  "PI Outcome Planning": {
   "fr": "",
   "status": "new",
-  "phase": "3",
-  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:149 apps/web/lib/help.ts:194"
+  "phase": "2",
+  "where": "apps/web/app/(app)/outcome-planning/page.tsx:140 apps/web/app/(app)/templates/page.tsx:149 apps/web/app/coverage/page.tsx:69"
  },
  "PI Outcome Planning (AI-Native SAFe)": {
   "fr": "PI Outcome Planning (AI-Native SAFe)",
@@ -36964,6 +37348,12 @@
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/outcome-planning/page.tsx:117 apps/web/app/(app)/outcome-planning/page.tsx:799"
+ },
+ "PI Outcome Planning workspace": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:72"
  },
  "PI Outcome Planning, one day, then Sense and Respond each iteration": {
   "fr": "",
@@ -37029,7 +37419,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:88"
+  "where": "apps/web/components/team-board.tsx:89"
  },
  "PI planning agenda": {
   "fr": "",
@@ -37055,6 +37445,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-views.tsx:383"
+ },
+ "PI planning board (program board) with dependencies and milestones": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:51"
  },
  "PI planning board with milestones and dependency strings, team breakouts, ROAM, story map, Kanban and roadmap boards, pre-built and facilitator-ready.": {
   "fr": "",
@@ -37171,6 +37567,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:200"
  },
+ "PI planning: team breakouts, draft and final plans, management review": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:50"
+ },
  "PI Priorities": {
   "fr": "Priorités du PI",
   "status": "draft",
@@ -37248,7 +37650,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:87"
+  "where": "apps/web/app/methods/page.tsx:90"
  },
  "Pick a method and the whole board changes shape.": {
   "fr": "Choisissez une méthode et tout le tableau change de forme.",
@@ -37566,6 +37968,12 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:42"
  },
+ "Pipeline, inside PI Outcome Planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:74"
+ },
  "Pipelines, environments, platforms and tooling that make features possible.": {
   "fr": "",
   "status": "new",
@@ -37588,7 +37996,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:173"
+  "where": "apps/web/components/kanban-board.tsx:177"
  },
  "Pivot or persevere decision made": {
   "fr": "Décision de pivoter ou persévérer prise",
@@ -37738,7 +38146,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:96"
+  "where": "apps/web/components/team-board.tsx:97"
  },
  "Plan review and business value": {
   "fr": "Revue des plans et valeur d’affaires",
@@ -37799,7 +38207,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:254"
+  "where": "apps/web/components/team-board.tsx:257"
  },
  "Planned BV": {
   "fr": "",
@@ -37872,7 +38280,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:232"
+  "where": "apps/web/components/team-board.tsx:235"
  },
  "Planned vs budget": {
   "fr": "",
@@ -37969,6 +38377,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:34 packages/core/src/canvases.ts:529"
+ },
+ "Plans and roadmaps": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:192"
  },
  "Plans, seats, invoices and the switch to yearly are under": {
   "fr": "",
@@ -38353,6 +38767,12 @@
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:94"
  },
+ "Portfolio Kanban: funnel, reviewing, analyzing, portfolio backlog, implementing (MVP, then persevere or pivot), done": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:29"
+ },
  "Portfolio Kanban: move each epic to its state, then set a WIP limit per state": {
   "fr": "Kanban du portefeuille : placez chaque épopée dans son état, puis fixez une limite de WIP par état",
   "status": "draft",
@@ -38395,6 +38815,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/frameworks.ts:177"
+ },
+ "Portfolio roadmap and investment horizons": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:32"
  },
  "Portfolio roadmap per ART": {
   "fr": "",
@@ -38565,6 +38991,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:102"
  },
+ "Pre-PI planning across ARTs": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:41"
+ },
  "Pre-reads sent early": {
   "fr": "Lectures préalables envoyées tôt",
   "status": "draft",
@@ -38629,7 +39061,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:296"
+  "where": "apps/web/components/team-board.tsx:299"
  },
  "Prefer a longer but faster road when congestion crosses a threshold.": {
   "fr": "Préférer une route plus longue mais plus rapide lorsque la congestion dépasse un seuil.",
@@ -38854,6 +39286,12 @@
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:153 packages/core/src/courses/rte.ts:330"
  },
+ "Preparing PI planning: readiness, backlog, agenda": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:49"
+ },
  "Present, feedback, adjust": {
   "fr": "Présenter, recueillir les retours, ajuster",
   "status": "draft",
@@ -38914,7 +39352,7 @@
   "fr": "Aperçu",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/boards/[id]/page.tsx:529 apps/web/app/(app)/boards/[id]/page.tsx:540 apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/boards/[id]/page.tsx:529 apps/web/app/(app)/boards/[id]/page.tsx:540 apps/web/app/(app)/sync/page.tsx:94"
  },
  "Preview as": {
   "fr": "",
@@ -38926,7 +39364,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:79"
+  "where": "apps/web/app/(app)/sync/page.tsx:80"
  },
  "Previous step": {
   "fr": "Étape précédente",
@@ -39367,7 +39805,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "packages/core/src/frameworks.ts:258 packages/core/src/frameworks.ts:284 packages/core/src/frameworks.ts:337"
+  "where": "apps/web/components/ado-bar.tsx:24 packages/core/src/frameworks.ts:258 packages/core/src/frameworks.ts:284"
  },
  "Product Backlog refinement": {
   "fr": "",
@@ -39693,6 +40131,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/ainative.ts:664"
+ },
+ "Project": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:192 apps/web/components/ado-bar.tsx:115"
  },
  "project = LOAN AND resolved >= -90d": {
   "fr": "",
@@ -40383,7 +40827,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:236"
+  "where": "apps/web/components/team-board.tsx:239"
  },
  "Raise agent-change first-pass acceptance from 40% to": {
   "fr": "",
@@ -41051,6 +41495,18 @@
   "phase": "2",
   "where": "apps/web/app/(app)/imports/page.tsx:225"
  },
+ "Refresh from Azure DevOps": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:96"
+ },
+ "Refreshed": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:96"
+ },
  "REFRESHING EVERY 3 S": {
   "fr": "ACTUALISATION TOUTES LES 3 S",
   "status": "draft",
@@ -41541,6 +41997,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:231"
  },
+ "Removed": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:125"
+ },
  "Rename": {
   "fr": "Renommer",
   "status": "draft",
@@ -41687,6 +42149,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-views-lpm.tsx:209",
   "note": "Fragment."
+ },
+ "Requirement": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:24"
  },
  "Requirement Area": {
   "fr": "",
@@ -42236,7 +42704,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:146"
+  "where": "apps/web/components/kanban-board.tsx:150"
  },
  "risk reduction / opportunity enablement": {
   "fr": "",
@@ -42352,7 +42820,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:152 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/team-board.tsx:155 packages/core/src/templates.ts:82"
  },
  "Risks with ROAM state": {
   "fr": "",
@@ -42420,6 +42888,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/templates.ts:83"
+ },
+ "ROAM risks": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:52"
  },
  "ROAM stands for:": {
   "fr": "ROAM signifie :",
@@ -42866,6 +43340,12 @@
   "phase": "3",
   "where": "apps/web/app/classes/[id]/page.tsx:59 apps/web/lib/public.ts:159"
  },
+ "runs it.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:92"
+ },
  "Runway and capacity": {
   "fr": "Piste et capacité",
   "status": "draft",
@@ -42937,6 +43417,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/public.ts:188"
+ },
+ "SAFe asks for": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:115"
  },
  "SAFe Big Picture": {
   "fr": "SAFe Big Picture",
@@ -43024,6 +43510,12 @@
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:365"
  },
+ "SAFe, from portfolio to team": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:106"
+ },
  "SAFe's ART readiness checklist as a working tool: nine needed items and six desirable ones, each with the consideration question behind it, mapped to the launch timeline. Score it before the date-certain quick-start.": {
   "fr": "",
   "status": "new",
@@ -43048,11 +43540,23 @@
   "phase": "3",
   "where": "apps/web/lib/help.ts:173"
  },
+ "SAFe® ·": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:105"
+ },
  "SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Jira is a trademark of Atlassian. Azure DevOps is a trademark of Microsoft. Other product names belong to their owners. Trainyard is not affiliated with them.": {
   "fr": "SAFe® et Scaled Agile Framework® sont des marques déposées de Scaled Agile, Inc. Jira est une marque d’Atlassian. Azure DevOps est une marque de Microsoft. Les autres noms de produits appartiennent à leurs propriétaires. Trainyard n’est pas affilié à ces sociétés.",
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/site-nav.tsx:166"
+ },
+ "SAFe® and Scaled Agile Framework® are registered trademarks of Scaled Agile, Inc. Other framework names belong to their owners. The boards are Trainyard&apos;s own; this page is not an endorsement by any framework&apos;s owner.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:200"
  },
  "SAFe® and the course name are trademarks of Scaled Agile, Inc.; the name identifies the class a trainer runs. Exercises are the trainer&apos;s and Trainyard&apos;s.": {
   "fr": "",
@@ -43167,6 +43671,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/kanban.ts:84"
+ },
+ "Save and refresh": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:146"
  },
  "Save as my class template": {
   "fr": "Enregistrer comme mon modèle de formation",
@@ -43772,6 +44282,12 @@
   "phase": "3",
   "where": "apps/web/lib/public.ts:132"
  },
+ "See framework coverage": {
+  "fr": "",
+  "status": "new",
+  "phase": "3",
+  "where": "apps/web/app/methods/page.tsx:41"
+ },
  "See plans and billing": {
   "fr": "",
   "status": "new",
@@ -43801,6 +44317,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/lib/public.ts:161"
+ },
+ "See the plans": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:197"
  },
  "See the seven classes": {
   "fr": "",
@@ -43836,7 +44358,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:185"
+  "where": "apps/web/components/kanban-board.tsx:189"
  },
  "Select a capability to read its benefit hypothesis and move it on. A state at its limit turns amber and refuses more work until something leaves it.": {
   "fr": "",
@@ -43860,7 +44382,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:95 apps/web/components/team-board.tsx:96"
+  "where": "apps/web/components/team-board.tsx:96 apps/web/components/team-board.tsx:97"
  },
  "Select a story to read it and move it on. A state at its limit turns amber and refuses more work until something leaves it.": {
   "fr": "",
@@ -43872,7 +44394,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:177"
+  "where": "apps/web/components/team-board.tsx:180"
  },
  "Select all": {
   "fr": "",
@@ -43957,7 +44479,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:154"
+  "where": "apps/web/components/team-board.tsx:157"
  },
  "Selection of mapping software": {
   "fr": "Choix du logiciel de cartographie",
@@ -43966,6 +44488,12 @@
   "where": "apps/web/components/planning-pages.tsx:348"
  },
  "Self-host the whole product, or run one small room on ours. Free up to 5 people; paid plans start from the sixth.": {
+  "fr": "",
+  "status": "stale",
+  "phase": "3",
+  "where": "apps/web/lib/pricing.ts:31"
+ },
+ "Self-host the whole product, or start on ours with five boards and ten people. Free; paid plans start when you outgrow that.": {
   "fr": "",
   "status": "new",
   "phase": "3",
@@ -44115,6 +44643,18 @@
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:44"
  },
+ "Sense & respond, inside PI Outcome Planning": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:75"
+ },
+ "Sense and respond": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:75"
+ },
  "Sense and Respond": {
   "fr": "",
   "status": "new",
@@ -44257,7 +44797,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:87 apps/web/app/(app)/users/page.tsx:330"
+  "where": "apps/web/app/(app)/sync/page.tsx:88 apps/web/app/(app)/users/page.tsx:330"
  },
  "Set a password": {
   "fr": "",
@@ -44764,6 +45304,12 @@
   "phase": "1",
   "where": "apps/web/components/handout-scenarios.ts:132"
  },
+ "Shop": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:193"
+ },
  "Shop-floor management: SQDC tiered boards, andon, OEE, heijunka, 5S, gemba walks.": {
   "fr": "",
   "status": "new",
@@ -45175,7 +45721,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:145 packages/core/src/templates.ts:349"
+  "where": "apps/web/components/kanban-board.tsx:149 packages/core/src/templates.ts:349"
  },
  "SIZE": {
   "fr": "TAILLE",
@@ -45193,7 +45739,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:88"
+  "where": "apps/web/app/methods/page.tsx:91"
  },
  "size range": {
   "fr": "fourchette de taille",
@@ -45585,6 +46131,12 @@
   "phase": "1",
   "where": "packages/core/src/canvases.ts:125 packages/core/src/frameworks.ts:195"
  },
+ "Solution train": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:37"
+ },
  "Solution Train": {
   "fr": "",
   "status": "new",
@@ -45609,6 +46161,12 @@
   "status": "new",
   "phase": "2",
   "where": "packages/core/src/kanban.ts:62 packages/core/src/templates.ts:99"
+ },
+ "Solution Train Kanban: funnel to done, through staging, deployment and release": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:40"
  },
  "Solution Train pre-PI planning": {
   "fr": "",
@@ -48434,6 +48992,12 @@
   "phase": "2",
   "where": "packages/core/src/templates.ts:90"
  },
+ "Stories, enabler stories and spikes.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:60"
+ },
  "STORIES, WHEN": {
   "fr": "RÉCITS, QUAND",
   "status": "draft",
@@ -48457,7 +49021,7 @@
   "fr": "Récit",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 apps/web/components/team-board.tsx:157"
+  "where": "apps/web/components/planning-pages.tsx:318 apps/web/components/planning-pages.tsx:1017 apps/web/components/team-board.tsx:160"
  },
  "STORY": {
   "fr": "RÉCIT",
@@ -48477,11 +49041,17 @@
   "phase": "1",
   "where": "packages/core/src/classes.ts:676"
  },
+ "Story mapping": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:65"
+ },
  "Story points": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:146 apps/web/components/team-board.tsx:165"
+  "where": "apps/web/components/kanban-board.tsx:150 apps/web/components/team-board.tsx:168"
  },
  "STORY POINTS · PICK ONE": {
   "fr": "POINTS DE RÉCIT · CHOISISSEZ-EN UN",
@@ -48602,6 +49172,12 @@
   "status": "draft",
   "phase": "1",
   "where": "packages/core/src/canvases.ts:64"
+ },
+ "Strategic themes as OKRs": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:33"
  },
  "Strategy": {
   "fr": "",
@@ -49166,13 +49742,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:82"
+  "where": "apps/web/app/(app)/sync/page.tsx:83"
  },
  "Synced": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "Synchronization milestone": {
   "fr": "",
@@ -49821,13 +50397,13 @@
   "fr": "Carnet de l’équipe",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/studio-model-lsa.ts:325 apps/web/components/team-board.tsx:174 packages/core/src/kanban.ts:81"
+  "where": "apps/web/components/studio-model-lsa.ts:325 apps/web/components/team-board.tsx:177 packages/core/src/kanban.ts:81"
  },
  "Team backlog · not planned yet": {
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:148"
+  "where": "apps/web/components/team-board.tsx:151"
  },
  "Team backlog refinement": {
   "fr": "Affinement du carnet de l’équipe",
@@ -49851,7 +50427,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:33"
+  "where": "apps/web/components/team-board.tsx:34"
  },
  "Team boards": {
   "fr": "",
@@ -49960,7 +50536,13 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:17 packages/core/src/kanban.ts:78 packages/core/src/templates.ts:82"
+  "where": "apps/web/components/team-board.tsx:18 packages/core/src/kanban.ts:78 packages/core/src/templates.ts:82"
+ },
+ "Team Kanban with WIP limits": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:63"
  },
  "Team kanbans": {
   "fr": "",
@@ -50062,13 +50644,19 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:17"
+  "where": "apps/web/components/team-board.tsx:18"
  },
  "Team planning board": {
   "fr": "",
   "status": "stale",
   "phase": "course",
   "where": "packages/core/src/courses/events.ts:158"
+ },
+ "Team planning by iteration against capacity, with PI objectives (planned and actual business value)": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:62"
  },
  "Team planning: iterations, capacity and load": {
   "fr": "",
@@ -51039,6 +51627,12 @@
   "phase": "3",
   "where": "apps/web/app/insights/page.tsx:16"
  },
+ "The exercises of each class as live boards, for trainers and their students.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:138"
+ },
  "The file has no activities.": {
   "fr": "Le fichier ne contient aucune activité.",
   "status": "draft",
@@ -51092,7 +51686,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:297"
+  "where": "apps/web/components/team-board.tsx:300"
  },
  "the group the row is in": {
   "fr": "le groupe qui contient la ligne",
@@ -51403,6 +51997,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:910"
+ },
+ "The planning workspace reads epics, features and stories from Jira or Azure DevOps and writes the plan back: iteration, team and dates.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:193"
  },
  "The Portfolio Canvas is adapted from The Business Model Canvas by Strategyzer (strategyzer.com/canvas/business-model-canvas).": {
   "fr": "Le canevas de portefeuille est adapté du Business Model Canvas de Strategyzer (strategyzer.com/canvas/business-model-canvas).",
@@ -51754,7 +52354,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:87"
+  "where": "apps/web/app/methods/page.tsx:90"
  },
  "The terms for using Trainyard: accounts, plans and payment, the free trial, the money-back guarantee, cancellation, your content, acceptable use and liability.": {
   "fr": "",
@@ -51898,7 +52498,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:59"
+  "where": "apps/web/app/methods/page.tsx:62"
  },
  "Then click a related card": {
   "fr": "",
@@ -51952,7 +52552,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:88"
+  "where": "apps/web/components/kanban-board.tsx:91"
  },
  "these people": {
   "fr": "",
@@ -52119,6 +52719,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/billing/page.tsx:299"
  },
+ "This server has no TRAINYARD_SECRET set, so the connection will not survive a restart.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/sync/page.tsx:200"
+ },
  "This subscription is": {
   "fr": "",
   "status": "new",
@@ -52201,7 +52807,7 @@
   "fr": "",
   "status": "new",
   "phase": "3",
-  "where": "apps/web/app/methods/page.tsx:83"
+  "where": "apps/web/app/methods/page.tsx:86"
  },
  "Three teams plan one PI for the autonomous delivery vehicle. Teams pull stories for their features into iterations against capacity (e.g. 7 people × 8 days = 56, minus 8 for the IP iteration = 48), find dependencies on other teams, raise risks, and write PI objectives. The ART reviews the consolidated plan and votes.": {
   "fr": "Trois équipes planifient un PI pour le véhicule de livraison autonome. Les équipes tirent les récits de leurs fonctionnalités dans les itérations en fonction de leur capacité (p. ex. 7 personnes × 8 jours = 56, moins 8 pour l’itération IP = 48), repèrent les dépendances avec les autres équipes, signalent les risques et rédigent leurs objectifs de PI. L’ART revoit le plan consolidé et vote.",
@@ -52321,7 +52927,7 @@
   "fr": "Urgence temporelle",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/kanban-board.tsx:146 apps/web/components/studio-model-lpm.ts:446",
+  "where": "apps/web/app/(app)/readiness/page.tsx:39 apps/web/components/kanban-board.tsx:150 apps/web/components/studio-model-lpm.ts:446",
   "note": "Time criticality: WSJF; official fr-ca may differ"
  },
  "Time Criticality": {
@@ -52583,9 +53189,15 @@
   "phase": "2",
   "where": "apps/web/components/okr-explorer.tsx:213"
  },
- "to the free plan: one board, up to 5 people, everything kept. Tell us why, if you like.": {
+ "to the free plan: five boards at a time, up to 10 people, everything kept. Tell us why, if you like.": {
   "fr": "",
   "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/(app)/billing/page.tsx:299"
+ },
+ "to the free plan: one board, up to 5 people, everything kept. Tell us why, if you like.": {
+  "fr": "",
+  "status": "stale",
   "phase": "2",
   "where": "apps/web/app/(app)/billing/page.tsx:299"
  },
@@ -52611,7 +53223,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "Toggle enabler": {
   "fr": "Activer/désactiver enabler",
@@ -52828,7 +53440,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/team-board.tsx:278"
+  "where": "apps/web/components/team-board.tsx:281"
  },
  "Toward Lean Portfolio Management": {
   "fr": "Vers la gestion de portefeuille Lean",
@@ -53097,9 +53709,15 @@
   "phase": "3",
   "where": "apps/web/lib/public.ts:84"
  },
- "Trainyard pricing. Practice is free: self-host with no limits, or one hosted room up to 5 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.": {
+ "Trainyard pricing. Practice is free: self-host with no limits, or five hosted boards with up to 10 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/app/pricing/page.tsx:9"
+ },
+ "Trainyard pricing. Practice is free: self-host with no limits, or one hosted room up to 5 people. Trainer $19 per trainer per month, Academy $249 per train per month, both with a free 30-day trial, month by month, and a money-back guarantee on the first paid month.": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/app/pricing/page.tsx:9"
  },
@@ -53785,7 +54403,19 @@
   "fr": "Délier",
   "status": "draft",
   "phase": "1",
-  "where": "apps/web/components/canvas-editor.tsx:618 apps/web/components/canvas-editor.tsx:1060 apps/web/components/canvas-editor.tsx:1071"
+  "where": "apps/web/components/ado-bar.tsx:98 apps/web/components/canvas-editor.tsx:618 apps/web/components/canvas-editor.tsx:1060"
+ },
+ "Unlink this board? The cards stay here and stop following Azure DevOps; nothing is deleted there.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:98"
+ },
+ "Unlinked. The cards stay here.": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:98"
  },
  "Unlock the": {
   "fr": "Libérer la",
@@ -53829,9 +54459,15 @@
   "phase": "1",
   "where": "apps/web/app/(app)/templates/page.tsx:375 apps/web/components/activity-editor.tsx:102"
  },
- "Up to 5 people in one hosted room": {
+ "Up to 10 people, five boards at a time": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/app/pricing/page.tsx:53"
+ },
+ "Up to 5 people in one hosted room": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/app/pricing/page.tsx:53"
  },
@@ -54147,7 +54783,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/templates/page.tsx:184"
+  "where": "apps/web/app/(app)/templates/page.tsx:184 apps/web/app/coverage/page.tsx:159"
  },
  "User": {
   "fr": "",
@@ -54184,6 +54820,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:724 apps/web/components/studio-model-lsa.ts:336 packages/core/src/cards.ts:36"
+ },
+ "User Story": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:24"
  },
  "USER STORY · AS A / I WANT / SO THAT": {
   "fr": "RÉCIT UTILISATEUR · EN TANT QUE / JE VEUX / AFIN DE",
@@ -54524,7 +55166,7 @@
   "fr": "Identification des flux de valeur et des ART",
   "status": "draft",
   "phase": "1",
-  "where": "packages/core/src/canvases.ts:111 packages/core/src/templates.ts:97"
+  "where": "apps/web/app/coverage/page.tsx:31 packages/core/src/canvases.ts:111 packages/core/src/templates.ts:97"
  },
  "Value stream and ART identification · ART launch": {
   "fr": "Identification des flux de valeur et des ART · lancement de l’ART",
@@ -55602,7 +56244,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:145"
+  "where": "apps/web/components/kanban-board.tsx:149"
  },
  "Welcome": {
   "fr": "",
@@ -56141,6 +56783,12 @@
   "phase": "1",
   "where": "apps/web/components/planning-pages.tsx:510 apps/web/components/planning-pages.tsx:512"
  },
+ "What it holds": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:161"
+ },
  "What it is": {
   "fr": "Ce que c’est",
   "status": "draft",
@@ -56512,6 +57160,12 @@
   "status": "new",
   "phase": "3",
   "where": "apps/web/app/privacy/page.tsx:43"
+ },
+ "What your framework asks for, and the board that": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:92"
  },
  "What's one AI-enabled improvement you'd consider trying next PI?": {
   "fr": "Quelle amélioration fondée sur l’IA envisageriez-vous d’essayer au prochain PI?",
@@ -57202,7 +57856,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/components/kanban-board.tsx:102"
+  "where": "apps/web/components/kanban-board.tsx:105"
  },
  "WIP limited": {
   "fr": "WIP limité",
@@ -57380,17 +58034,41 @@
   "phase": "1",
   "where": "apps/web/components/studio-model.ts:575"
  },
+ "work item": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:145"
+ },
  "Work item": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "apps/web/components/link-picker.tsx:13 packages/core/src/templates.ts:111 packages/core/src/templates.ts:114"
  },
+ "Work item #": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/kanban-board.tsx:134"
+ },
  "Work item revisions through the connected organization. Narrow it with WIQL.": {
   "fr": "",
   "status": "new",
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:1271"
+ },
+ "Work item type": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:107"
+ },
+ "work items in": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:86"
  },
  "Work level": {
   "fr": "",
@@ -57573,6 +58251,12 @@
   "phase": "2",
   "where": "apps/web/app/(app)/value-streams/page.tsx:1429"
  },
+ "Working…": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/components/ado-bar.tsx:96"
+ },
  "Works as is at scale": {
   "fr": "Fonctionne tel quel à l’échelle",
   "status": "draft",
@@ -57621,9 +58305,15 @@
   "phase": "3",
   "where": "apps/web/app/privacy/page.tsx:77"
  },
- "workspace is ready: one room, up to 5 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.": {
+ "workspace is ready: five boards at a time, up to 10 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/components/landing.tsx:717"
+ },
+ "workspace is ready: one room, up to 5 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/components/landing.tsx:717"
  },
@@ -57721,7 +58411,7 @@
   "fr": "",
   "status": "new",
   "phase": "2",
-  "where": "apps/web/app/(app)/sync/page.tsx:93"
+  "where": "apps/web/app/(app)/sync/page.tsx:94"
  },
  "WSJF": {
   "fr": "",
@@ -57859,9 +58549,15 @@
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:113"
  },
- "Yes. Practice is free for one hosted class at a time with up to 5 people (a company adds every instructor and co-instructor it needs; archive a finished class to start the next), and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. To run several classes at once, or from the sixth person, Trainer or Academy.": {
+ "Yes. Practice is free for five hosted boards or classes at a time with up to 10 people (a company adds every instructor and co-instructor it needs; archive a finished class to start the next), and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. To run more than five at once, or from the eleventh person, Trainer or Academy.": {
   "fr": "",
   "status": "new",
+  "phase": "3",
+  "where": "apps/web/lib/pricing.ts:109"
+ },
+ "Yes. Practice is free for one hosted class at a time with up to 5 people (a company adds every instructor and co-instructor it needs; archive a finished class to start the next), and the whole product is open source under Apache-2.0: self-host it with every feature and no limits. To run several classes at once, or from the sixth person, Trainer or Academy.": {
+  "fr": "",
+  "status": "stale",
   "phase": "3",
   "where": "apps/web/lib/pricing.ts:109"
  },
@@ -58269,6 +58965,12 @@
   "status": "draft",
   "phase": "1",
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:321 apps/web/app/(app)/templates/page.tsx:72"
+ },
+ "YOUR TRACKER": {
+  "fr": "",
+  "status": "new",
+  "phase": "2",
+  "where": "apps/web/app/coverage/page.tsx:184"
  },
  "Your value stream": {
   "fr": "Votre flux de valeur",

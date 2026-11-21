@@ -56,6 +56,7 @@ export default function SyncPage() {
         title="Jira & Azure DevOps"
         sub={`Teams keep working in their own tracker. Trainyard reads their work, and plan changes made here are queued and written back on the next sync. ${state.data.schedule ? `Scheduled every ${state.data.schedule} min.` : "No schedule set (TRAINYARD_SYNC_EVERY_MINUTES)."} ${state.data.webhooks ? "Webhooks on." : "Webhooks off (TRAINYARD_WEBHOOK_SECRET)."}`}
       />
+      <AdoConnect />
       <div className="grid-2">
         {TRACKERS.map((t) => {
           const connected = state.data!.connectors.includes(t.key);
@@ -139,5 +140,68 @@ export default function SyncPage() {
         </table>
       </section>
     </>
+  );
+}
+
+/** The workspace's own Azure DevOps connection, for the Kanban and team boards: cards become work items. */
+function AdoConnect() {
+  const conn = useApi<{ connection: { organization: string; project: string; account: string; createdAt: string } | null; persistent: boolean }>("/v1/ado");
+  const [organization, setOrganization] = useState("");
+  const [project, setProject] = useState("");
+  const [pat, setPat] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  if (!conn.data) return null;
+  const c = conn.data.connection;
+  const connect = async () => {
+    setBusy(true);
+    setErr(null);
+    try {
+      await api("PUT", "/v1/ado", { organization: organization.trim(), project: project.trim(), pat: pat.trim() });
+      setPat("");
+      await conn.reload();
+    } catch (e) {
+      setErr((e as ApiFailure).message);
+    } finally {
+      setBusy(false);
+    }
+  };
+  return (
+    <section className="panel panel-body stack" style={{ gap: 10 }} aria-labelledby="ado-boards-head">
+      <div className="stack" style={{ gap: 2 }}>
+        <span className="eyebrow">Kanban and team boards</span>
+        <h2 id="ado-boards-head" style={{ fontSize: "1.15rem" }}>Azure DevOps work items as cards</h2>
+        <p className="muted" style={{ margin: 0 }}>Connect one Azure DevOps project. Then link a Portfolio, Solution Train, ART or Team Kanban, or a team PI board, to a work item type: its cards are the work items, and changes made on the board are written to Azure DevOps straight away.</p>
+      </div>
+      {c ? (
+        <div className="row" style={{ gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+          <span className="chip">Connected</span>
+          <span>
+            <b>{c.organization} / {c.project}</b> <span className="faint">since {c.createdAt.slice(0, 10)}</span>
+          </span>
+          <button className="btn small" style={{ marginLeft: "auto" }} onClick={() => window.confirm("Disconnect Azure DevOps? Linked boards keep their cards but stop following Azure DevOps.") && void api("DELETE", "/v1/ado").then(() => conn.reload())}>Disconnect</button>
+        </div>
+      ) : (
+        <form className="stack" style={{ gap: 10 }} onSubmit={(e) => (e.preventDefault(), void connect())}>
+          <div className="row" style={{ gap: 10, flexWrap: "wrap" }}>
+            <label className="field" style={{ flex: "1 1 200px" }}>
+              Organization
+              <input className="input" value={organization} onChange={(e) => setOrganization(e.target.value)} placeholder="contoso" required maxLength={64} autoComplete="off" />
+            </label>
+            <label className="field" style={{ flex: "1 1 200px" }}>
+              Project
+              <input className="input" value={project} onChange={(e) => setProject(e.target.value)} placeholder="Shop" required maxLength={64} autoComplete="off" />
+            </label>
+            <label className="field" style={{ flex: "2 1 280px" }}>
+              Personal access token
+              <input className="input" type="password" value={pat} onChange={(e) => setPat(e.target.value)} required minLength={20} maxLength={4000} autoComplete="off" />
+            </label>
+          </div>
+          <p className="faint" style={{ margin: 0, fontSize: "0.85rem" }}>In Azure DevOps: User settings, Personal access tokens, New token, scope Work Items (Read &amp; write). The token is stored encrypted and never shown again.{conn.data.persistent ? "" : " This server has no TRAINYARD_SECRET set, so the connection will not survive a restart."}</p>
+          {err ? <div className="notice crit" role="alert">{err}</div> : null}
+          <button className="btn primary" style={{ alignSelf: "flex-start" }} type="submit" disabled={busy}>{busy ? "Checking…" : "Connect Azure DevOps"}</button>
+        </form>
+      )}
+    </section>
   );
 }

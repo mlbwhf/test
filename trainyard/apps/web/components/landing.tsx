@@ -714,7 +714,7 @@ function SignupForm({ plan, setPlan, audience, yearly }: { plan: PlanId; setPlan
               <p>
                 {c.plan === "practice" ? (
                   <>
-                    Your <strong>Practice</strong> workspace is ready: one room, up to 5 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.
+                    Your <strong>Practice</strong> workspace is ready: five boards at a time, up to 10 people, free. Sign in with your email and password. The key below is for scripts and integrations; it is shown once.
                   </>
                 ) : (
                   <>

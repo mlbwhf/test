@@ -241,6 +241,7 @@ export function publicPaths(): { path: string; priority: number; updated: string
     ...COMPETITORS.map((c) => ({ path: `/compare/${c.slug}`, priority: 0.7, updated: SITE_UPDATED })),
     { path: "/classes", priority: 0.9, updated: SITE_UPDATED },
     { path: "/methods", priority: 0.9, updated: SITE_UPDATED },
+    { path: "/coverage", priority: 0.9, updated: SITE_UPDATED },
     { path: "/insights", priority: 0.9, updated: SITE_UPDATED },
     { path: "/support", priority: 0.6, updated: SITE_UPDATED },
     { path: "/book", priority: 0.6, updated: SITE_UPDATED },

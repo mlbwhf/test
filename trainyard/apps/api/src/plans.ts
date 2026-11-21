@@ -51,9 +51,9 @@ export interface PlanLimits {
 export function limitsFor(plan: Plan, seats: number, kind?: WorkspaceRecord["kind"]): PlanLimits {
   switch (plan) {
     case "practice":
-      // One class at a time (archived ones do not count). A company adds every instructor and
-      // co-instructor it needs; running several classes at once is what the paid plans are for.
-      return { members: kind === "company" ? null : 5, staff: null, boards: 1, trains: 1, sources: 2, rooms: 1, privateRooms: false };
+      // Generous enough to start for real: five boards or classes at a time (archived ones do not
+      // count) and ten people. A company adds every instructor and co-instructor it needs.
+      return { members: kind === "company" ? null : 10, staff: null, boards: 5, trains: 1, sources: 2, rooms: 1, privateRooms: false };
     case "trainer":
       // A room per cohort: five per trainer seat.
       return { members: null, staff: Math.max(1, seats), boards: null, trains: null, sources: 3, rooms: 5 * Math.max(1, seats), privateRooms: true };
@@ -93,7 +93,7 @@ const WHAT: Record<keyof Usage, string> = { members: "people", staff: "trainers"
 
 export function planLimitError(record: WorkspaceRecord, kind: keyof Usage, limit: number, current: number): ApiError {
   const upgrade = kind === "sources" ? (record.plan === "insights" ? "Add a source pack under Billing." : "Add the Insights plan under Billing: ten sources a pack, unlimited viewers.") : record.plan === "practice" ? "Upgrade to Trainer or Academy under Billing." : record.plan === "trainer" ? "Add trainers under Billing." : record.plan === "insights" ? "Insights is the outcome dashboard; for planning rooms add Trainer or Academy under Billing." : "Add trains under Billing.";
-  if (kind === "boards" && record.plan === "practice") return new ApiError(402, "PLAN_LIMIT", "The free plan runs one class or board at a time. Archive the one that has finished to start the next, or upgrade to Trainer or Academy under Billing to run several at once.", { kind, limit, current, plan: record.plan, upgrade: "/billing" });
+  if (kind === "boards" && record.plan === "practice") return new ApiError(402, "PLAN_LIMIT", "The free plan runs five boards or classes at a time. Archive one that has finished to start the next, or upgrade to Trainer or Academy under Billing to run several at once.", { kind, limit, current, plan: record.plan, upgrade: "/billing" });
   return new ApiError(402, "PLAN_LIMIT", `The ${record.plan} plan allows ${limit} ${WHAT[kind]} and this workspace has ${current}. ${upgrade}`, { kind, limit, current, plan: record.plan, upgrade: "/billing" });
 }
 

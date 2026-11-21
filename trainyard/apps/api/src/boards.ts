@@ -13,6 +13,7 @@ import { require } from "./auth.js";
 import { stream } from "./events.js";
 import { ApiError, defined, notFound } from "./errors.js";
 import type { SecretBox } from "./secrets.js";
+import { adoBoards } from "./ado-boards.js";
 import type { Store } from "./store.js";
 import { REF_KINDS, backlinks, cardTypes, resolveRef, writeThrough, type RefSummary } from "./refs.js";
 import { boardAccess, canEdit, canView, refKey, roomAccess, type Ref, type RefKind } from "@trainyard/core";
@@ -77,6 +78,7 @@ const MappingBody = z.object({
 
 export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, fetchFn?: FetchLike, hooks: { afterReset?: (req: FastifyRequest, b: Board) => Promise<void>; /** Runs before a board is removed (a class's record is emailed to its trainer). */ beforeDelete?: (req: FastifyRequest, b: Board) => Promise<void> } = {}) {
   const s = () => store.state;
+  const ado = adoBoards(store, secrets, fetchFn as never);
   const boards = () => (s().workspace.boards ??= []);
   const findBoard = (id: string) => boards().find((b) => b.id === id) ?? (() => { throw notFound("Board"); })();
   const publicConnection = ({ sealed: _s, ...c }: Connection) => c;
@@ -628,6 +630,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
     return reply.code(201).send({ frame });
   });
 
+  ado.routes(app, editable);
+
   // ---- class activities and the class timer ---------------------------------------------
   // What people add on a purpose-built exercise board: one change at a time, so many can add at once.
   app.put("/v1/boards/:id/frames/:frameId/state", { bodyLimit: 2 * 1024 * 1024, schema: { params: z.object({ id: Id, frameId: Id }), body: z.discriminatedUnion("op", [z.object({ key: StateKey, op: z.literal("set"), value: z.unknown() }), z.object({ key: StateKey, op: z.literal("push"), value: z.record(z.string().max(60), z.unknown()) }), z.object({ key: StateKey, op: z.literal("update"), id: Id, value: z.record(z.string().max(60), z.unknown()) }), z.object({ key: StateKey, op: z.literal("remove"), id: Id })]) } }, async (req) => {
@@ -647,6 +651,8 @@ export function registerBoardRoutes(app: App, store: Store, secrets: SecretBox, 
       const table = /^pb(?:bids|table):(.+)$/.exec(key)?.[1];
       if ((all.has(prefix) && !mine.has(prefix)) || key === "pbcfg" || key === "pbtables" || (table && all.has(table) && !mine.has(table))) throw new ApiError(403, "FORBIDDEN", "This part of the exercise belongs to another team or to the trainer.");
     }
+    // A linked Kanban or team board writes the change to Azure DevOps first; a refusal there keeps nothing here.
+    if (f === b.frames[0]) await ado.writeBack(b, req.body as StateOp);
     const state = (f.state ??= {});
     const before = JSON.stringify(state).length;
     const value = applyStateOp(state, req.body as StateOp, () => `s${Date.now().toString(36)}${Math.floor(Math.random() * 1e4).toString(36)}`);
