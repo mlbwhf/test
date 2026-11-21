@@ -8,7 +8,7 @@ const AI_CRAWLERS = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Cl
 // owner can see at a glance they are welcome on the public pages.
 export default function robots(): MetadataRoute.Robots {
   const base = siteUrl();
-  const allow = ["/", "/pricing", "/compare", "/compare/", "/classes", "/classes/", "/guides", "/guides/", "/examples/", "/methods", "/coverage", "/insights", "/support", "/llms.txt", "/llms-full.txt", "/og.png", "/icon.svg", `/${INDEXNOW_KEY}.txt`];
+  const allow = ["/", "/pricing", "/compare", "/compare/", "/classes", "/classes/", "/guides", "/guides/", "/examples/", "/methods", "/coverage", "/integrations", "/integrations/", "/insights", "/support", "/llms.txt", "/llms-full.txt", "/og.png", "/icon.svg", `/${INDEXNOW_KEY}.txt`];
   const disallow = ["/dashboards", "/outcomes", "/value-streams", "/canvases", "/outcome-planning", "/embed/", "/board", "/boards/", "/portfolio", "/templates", "/imports", "/ai", "/agents", "/model", "/sync", "/users", "/billing", "/card-types", "/admin", "/okrs", "/rooms", "/classroom", "/readiness", "/help", "/welcome", "/login", "/join/", "/api/"];
   return {
     rules: [

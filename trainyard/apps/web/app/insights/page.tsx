@@ -19,11 +19,11 @@ const CARDS: [string, string, string, string, string][] = [
 export default function InsightsPage() {
   const insights = PLANS.find((p) => p.id === "insights")!;
   return (
-    <ModulePage crumb={{ href: "/insights", label: "OKRs" }}>
+    <ModulePage crumb={{ href: "/insights", label: "Dashboards" }}>
       <header className="mp-hero">
         <div className="mp-split">
           <div>
-            <div className="eyebrow">OKRs · FOR EXECUTIVES AND BOARDS</div>
+            <div className="eyebrow">DASHBOARDS · OKRs AND KPIs FOR EXECUTIVES AND BOARDS</div>
             <h1>
               Show what the <span className="hl" style={{ background: "#ff9fc6" }}>money</span> bought.
             </h1>

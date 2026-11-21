@@ -5,7 +5,7 @@
 export interface HelpTopic {
   /** The route it explains; the most specific match wins (/board/coach-sync over /board). */
   path: string;
-  space: "Getting started" | "Rooms" | "OKRs" | "Classes" | "Templates and boards" | "Plan" | "Setup";
+  space: "Getting started" | "Rooms" | "Dashboards" | "Classes" | "Templates and boards" | "Plan" | "Setup";
   title: string;
   /** What the page is for, in a sentence or two. */
   what: string;
@@ -30,7 +30,7 @@ export const HELP: HelpTopic[] = [
   },
   {
     path: "/okrs",
-    space: "OKRs",
+    space: "Dashboards",
     title: "OKR dashboard",
     what: "The read-only view of every objective and its key results: overall progress, how many are on track, at risk or off track, days left in the quarter, the trend and what needs attention.",
     steps: ["Pick an entity at the top to see only its objectives and everything beneath it.", "Read the ring for overall progress: each key result is measured from its first value (the baseline) to its target.", "Open check-in from Needs attention to say what is true this week."],
@@ -38,14 +38,14 @@ export const HELP: HelpTopic[] = [
   },
   {
     path: "/okrs/alignment",
-    space: "OKRs",
+    space: "Dashboards",
     title: "Alignment",
     what: "Key results grouped by the objective they prove.",
     steps: ["Drag a key result onto another objective to realign it; it stays an outcome or a KPI.", "Use Note, Pen and Timer in the dock to run an alignment workshop on the same board.", "Switch to List for a printable view, or Copy as text to paste the result anywhere."],
   },
   {
     path: "/okrs/check-in",
-    space: "OKRs",
+    space: "Dashboards",
     title: "Weekly check-in",
     what: "The same key results grouped by status. The data proposes a status; your check-in overrides it until the next one.",
     steps: ["Drag a key result to On track, At risk or Off track.", "The card shows who checked in last; the dashboard follows at once."],
@@ -53,7 +53,7 @@ export const HELP: HelpTopic[] = [
   },
   {
     path: "/outcomes",
-    space: "OKRs",
+    space: "Dashboards",
     title: "Sources, measures and funding",
     what: "Where the evidence comes in: sources (CSV from your CRM, finance, learning platform, surveys, Jira), measures over them, objectives per entity, initiatives with their funding, and the printable one-pager.",
     steps: [
@@ -233,4 +233,4 @@ export function helpFor(path: string): HelpTopic | undefined {
   return best;
 }
 
-export const HELP_SPACES: HelpTopic["space"][] = ["Getting started", "Rooms", "OKRs", "Classes", "Templates and boards", "Plan", "Setup"];
+export const HELP_SPACES: HelpTopic["space"][] = ["Getting started", "Rooms", "Dashboards", "Classes", "Templates and boards", "Plan", "Setup"];

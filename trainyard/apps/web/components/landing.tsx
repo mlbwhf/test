@@ -429,6 +429,11 @@ export function Landing() {
       <section id="integrations">
         <div className="eyebrow">04 / INTEGRATIONS</div>
         <h2 className="h2">Plugs into what you already use.</h2>
+        <p style={{ margin: "0 0 26px" }}>
+          <Link href="/integrations" className="pill">
+            See every integration →
+          </Link>
+        </p>
         <div className="it-grid">
           {INTEGRATIONS.map((g, i) => (
             <article key={g.t} className="it-card" style={{ background: STICKY[i % 4], transform: `rotate(${TILT[i % 4]})` }}>

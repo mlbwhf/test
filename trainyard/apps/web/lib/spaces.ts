@@ -37,11 +37,11 @@ export const SPACES: Space[] = [
   },
   {
     id: "okrs",
-    label: "OKRs",
+    label: "Dashboards",
     theme: "okr",
-    eyebrow: "OKRs · Executive theme",
+    eyebrow: "Dashboards · OKRs & KPIs",
     subs: [
-      { href: "/okrs", label: "Dashboard" },
+      { href: "/okrs", label: "OKR dashboard" },
       { href: "/okrs/alignment", label: "Alignment" },
       { href: "/okrs/check-in", label: "Check-in" },
       { href: "/okrs/board", label: "OKR board" },
