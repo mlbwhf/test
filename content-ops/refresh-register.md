@@ -1440,4 +1440,30 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
   - The AIOSEO description is the auto breadcrumb text.
   - Revenue figures are dated April 2026: OpenAI "~$25B" run rate, against ~$50B in Sept 2026; Anthropic ~$30B.
   - Needs a full content-depth rebuild.
-- **IDC $487B/$497B still shown on pages 93, 73, 320, 354 and 318** (per `content-ops/state-of-ai/data/spending.json`).
+- **IDC $487B/$497B on pages 93, 73, 320, 354 and 318: fixed the same day.** See the section below.
+
+## 21 Nov 2026: IDC 2026 AI-infrastructure forecast → $521B (6 Nov 2026) on five more pages
+| Page | Was | Where it changed | CSV |
+|---|---|---|---|
+| 93 AI Infrastructure 2026 | $497B (~56%), Jul | tile, takeaway, text, table, FAQ (visible and JSON-LD), sources, schema description and citation | reissued as `…-rev20261121.csv` |
+| 73 AI Investment & Funding 2026 | $487B (+53%), Apr | tile, takeaway, text, table, FAQ (visible and JSON-LD), sources, schema description | reissued |
+| 320 AI Market Forecast 2026–2030 | $487B (~53%), Apr | takeaway, text, table, sidebar source, Dataset citation | reissued |
+| 318 State of AI Timeline 2022–2026 | $487B (2026 milestone) | table cell, takeaway | reissued |
+| 354 Glossary: Capex | $487B, ">$1T by 2029" | paragraph, now $1.17T 2029 / $1.33T 2030; /stats/ link pointed at the canonical URL | none |
+
+- Each page got a What-changed block: none of the five had one before, so each block is inline-styled.
+- Stamps and `dateModified` now read 21 Nov. The old CSVs stay in the media library, unlinked.
+- Corrections log: five Superseded rows. Records: `content-ops/golive/idc-{93,73,320,318,354}-20261121.md`. Backups:
+  `backups/{ID}-20261121.html`.
+- **Found in passing (not fixed):**
+  - 318: ChatGPT "900M weekly users" (now 1B+, 31 Aug 2026), a "2026 (early)" row label, and a ChatGPT figure that had
+    been miscredited to IDC (its citation is now missing).
+  - 73: OpenAI $500B and Anthropic $183B valuations (end-2025), and early-2026 hyperscaler capex guidance.
+  - 320: the IDC 2029 figure is kept as ">$1 trillion", which is still true against $1.17T; "$600B+ capex" is unsourced; the EU AI
+    Act timing and the #kt and #cite anchors are broken.
+  - 93: IEA and Gartner energy figures from 2025 and June 2026; external links use `noreferrer` with no `nofollow`.
+  - 354: the hyperscaler capex sentence is undated.
+  - 93, 73, 320 and 318 are all thin under the content-depth rule: no Analysis section, no Methodology note, 3 FAQs.
+  - The note column in the public State of AI CSVs (spending, year-over-year, 2026 in Numbers) still says "Report AI pages 93
+    and 376 show $497B; pages 73, 320, 354 and 318 show $487B". That is no longer true; fix it at the next regeneration.
+
