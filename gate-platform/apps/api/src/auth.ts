@@ -137,7 +137,9 @@ export async function registerAuth(app: FastifyInstance, d: AuthDeps) {
       } catch (err) {
         // The email service refused or failed (key, sending domain, outage): say so, and log why for the operator.
         req.log.error({ reason: err instanceof Error ? err.message : String(err) }, "sign-in email not sent");
-        throw new DomainError("EMAIL_UPSTREAM", "We couldn't send the sign-in email just now. Try again in a minute, or sign in with Google, Microsoft or LinkedIn.", "if it keeps happening, write to support@enrollclass.com");
+        const others = d.providers.map((p) => p.label);
+        const alt = others.length ? `, or sign in with ${others.length > 1 ? `${others.slice(0, -1).join(", ")} or ${others.at(-1)}` : others[0]}` : "";
+        throw new DomainError("EMAIL_UPSTREAM", `We couldn't send the sign-in email just now. Try again in a minute${alt}.`, "if it keeps happening, write to support@enrollclass.com");
       }
       return reply.code(202).send({ sent: true });
     });
