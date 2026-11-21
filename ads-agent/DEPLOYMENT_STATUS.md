@@ -72,6 +72,7 @@ network: **ALL PASS**. The installer runs it on the VPS before the timers can be
 | # | Item | File |
 |---|---|---|
 | 1 | **Approved 20 Nov:** import the keywords in 3 stages (stage 1 now: 6 AI-Native keywords + negatives; stage 2 on 1 Dec; stage 3 only after stage 1's 14-day review). 2 Advanced Scrum Master keywords are on hold until you send the English page URL | `proposals/2026-11_keyword-proposal.md`, `proposals/2026-11_keywords_stage*_google-ads-editor.csv` |
+| 1b | **Approve or reject stage 4** (21 Nov): APM, Business Owner, Architects, with 9 keywords and 3 ads. Innovation certifications are drafted but held until they can be booked on agile-agilist.com | `proposals/2026-11_keyword-proposal.md`, `proposals/2026-11_rsa-drafts.md` |
 | 2 | **Approved:** apply the Black Friday kit (25 validated strings, 19-30 Nov; checklist inside; Microsoft by hand to protect the tracking suffixes) + decide the promo budget | `proposals/2026-11_black-friday-kit.md` |
 | 3 | **Website-only tracking:** web team ships section 2 (mark website payments with `origin=agile-agilist.com`, verified purchase event, remove Eventbrite/Corsizio tags); you then switch goals in one go (section 4) | `proposals/2026-11_website-conversion-tracking.md` |
 | 4 | Upload the 2 career-progression photos + logo (Google only) | `proposals/2026-11_image-assets.md` |

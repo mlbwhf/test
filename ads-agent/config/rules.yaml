@@ -162,6 +162,11 @@ owner_directives:
       launching_arts: https://agile-agilist.com/training/ai-native/launching-ai-native-arts/
       safe_fundamentals: https://agile-agilist.com/training/ai-native/ai-native-ready-certification/
       leading_org: https://agile-agilist.com/training/ai-native/ai-native-ready-certification-2/
+    innovation_framework:             # added 2026-11-21 (owner request); not bookable yet
+      hub: https://agile-agilist.com/training/innovation-framework/
+      creator: https://agile-agilist.com/training/innovation-framework/innovation-creator/
+      facilitator: https://agile-agilist.com/training/innovation-framework/innovation-facilitator/
+      leader: https://agile-agilist.com/training/innovation-framework/innovation-leader/
     safe_prefixes:                    # stable course pages live under these
     - https://agile-agilist.com/training/safe/
     - https://agile-agilist.com/training/adv-safe/

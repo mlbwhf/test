@@ -16,7 +16,8 @@ sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 import config  # noqa: E402
 from asset_generator import validate_asset, validate_final_url  # noqa: E402
-from build_keyword_proposal import CAMPAIGN_NAME, HOLD_KW, ON_HOLD, PLAN, STAGES, stage_of  # noqa: E402
+from build_keyword_proposal import (CAMPAIGN_NAME, HOLD_KW, LAUNCH_HOLD, LAUNCH_HOLD_REASON, ON_HOLD,  # noqa: E402
+                                    PLAN, PROPOSED, STAGES, stage_of)
 
 CHECK_DATES = [datetime.date(2026, 11, 20), datetime.date(2026, 12, 15)]  # during + after the promo
 PP, EPS, EXAM = "SAFe Platinum Partner", "Exam Prep and Support", "Exam Included"
@@ -163,6 +164,77 @@ ADS = {
          "Grow from leading one Scrum team to coaching across multiple teams in SAFe.",
          "SAFe Advanced Scrum Master certification. Two days, live virtual, 16 PDUs.",
          "Exam included, with exam prep and support. Taught at a SAFe Platinum Partner."]),
+    # --- Proposed 2026-11-21 (owner asked for drafts; need approval). Facts: full English pages.
+    "Agile Product Management": ("SAFe", "APM",
+        "3 days, no prerequisites, exam included; Design Thinking, continuous exploration, Lean Startup, "
+        "MVPs, hypothesis-driven epics, vision/roadmap/OKRs, WSJF. Format and PDUs left out: the page "
+        "contradicts itself on delivery, and its 16 PDUs look templated.",
+        ["SAFe APM Certification", "Agile Product Management", "SAFe Agile Product Manager",
+         "Product Manager Certification", "Design Products Customers Love", "Design Thinking at Scale",
+         "Lean Startup & MVPs", "Vision, Roadmaps & OKRs", "Hypothesis-Driven Epics", "3-Day APM Course",
+         "No Prerequisites", "For Product Managers & Leads", EXAM, EPS, PP],
+        ["Design and deliver products customers love with Design Thinking and Lean Startup.",
+         "Vision, roadmaps, OKRs and WSJF that connect product decisions to portfolio outcomes.",
+         "Three days, no prerequisites. Exam included, with exam prep and support.",
+         "For Product Managers and Directors of Product. Taught at a SAFe Platinum Partner."]),
+    "Business Owner": ("SAFe", "Business-Owner",
+        "2 days, no prerequisites, exam included; connect strategy to execution, business value for PI "
+        "Objectives, PI Planning, Inspect & Adapt, System Demos. Format and PDUs left out (as APM).",
+        ["SAFe Business Owner", "Business Owner Certification", "SAFe Business Owner Workshop",
+         "Connect Strategy to Execution", "Set Business Value for PIs", "Your Role in PI Planning",
+         "Lead Inspect & Adapt", "For Executives & Sponsors", "2-Day Business Owner Course",
+         "No Prerequisites", EXAM, EPS, PP],
+        ["Connect strategy to execution and assign business value to PI Objectives every PI.",
+         "Take part in PI Planning, lead Inspect & Adapt and stay engaged through System Demos.",
+         "Two days, no prerequisites. Exam included, with exam prep and support.",
+         "For business owners, VPs of strategy and executive sponsors. See class dates."]),
+    "SAFe for Architects": ("SAFe", "Architects",
+        "3 days, no prerequisites, exam included; Lean-Agile technical strategy, architecture aligned to "
+        "value, DevOps and Release on Demand, solution vision and roadmaps, architecture for PI Planning. "
+        "Format and PDUs left out (as APM).",
+        ["SAFe for Architects", "SAFe Architect Certification", "SAFe ARCH Certification",
+         "Lead Lean-Agile Tech Strategy", "Architect for DevOps", "Release on Demand",
+         "Solution Vision & Roadmaps", "Architecture for PI Planning", "For Enterprise Architects",
+         "3-Day SAFe Architect Course", "No Prerequisites", EXAM, EPS, PP],
+        ["Lead the technical strategy of a Lean-Agile enterprise and align architecture to value.",
+         "Architect for DevOps and Release on Demand, and prepare architecture for PI Planning.",
+         "Three days, no prerequisites. Exam included, with exam prep and support.",
+         "For system, solution and enterprise architects. Taught at a SAFe Platinum Partner."]),
+    # --- Innovation Framework certifications: drafted, HELD until bookable. Not SAFe courses, so no
+    # SAFe claims; badge issued by Agile Agilist. Workshop counts left out (pages say 7 and 14).
+    "Innovation Creator": ("Innovation", "Creator",
+        "Level 1, 2 days, no prerequisite, live and instructor-led; run the Innovation Framework with "
+        "your team, facilitate the Innovation Matrix, leave with 3 artifacts. Works alongside SAFe.",
+        ["Innovation Creator Cert", "Innovation Certification", "Run Innovation With Your Team",
+         "Learn the Innovation Matrix", "Leave With 3 Team Artifacts", "Built on Two Chasms Framework",
+         "2 Days, No Prerequisite", "For Scrum Masters & POs", "Live, Instructor-Led",
+         "Innovation on Cadence", "Join the Launch List"],
+        ["Run the Innovation Framework with your own team and facilitate the Innovation Matrix.",
+         "Leave with three artifacts your team keeps: a charter, a Candor Contract and a matrix.",
+         "Two days, live and instructor-led, no prerequisite. Works alongside SAFe.",
+         "Certifications are launching soon. Join the launch list for first dates and prices."]),
+    "Innovation Facilitator": ("Innovation", "Facilitator",
+        "Level 2, 3 days, Creator recommended; capstone simulation; licence to facilitate the workshops "
+        "in your organization; 30-60-90 day plan; for agile coaches, RTEs, SPCs, innovation leads.",
+        ["Innovation Facilitator Cert", "Innovation Facilitator Course", "Licensed to Run the Workshops",
+         "Facilitate Innovation In-House", "Capstone-Based Certification", "Build a 30-60-90 Day Plan",
+         "For Agile Coaches, RTEs, SPCs", "3 Days, Live & Instructor-Led", "Innovation on Cadence",
+         "Built on Two Chasms Framework", "Join the Launch List"],
+        ["Get licensed to facilitate the Innovation Framework workshops inside your organization.",
+         "Pass a capstone simulation and turn the results into a 30-60-90 day plan.",
+         "For agile coaches, RTEs, SPCs and innovation leads. Innovation Creator recommended.",
+         "Certifications are launching soon. Join the launch list for first dates and prices."]),
+    "Innovation Leader": ("Innovation", "Leader",
+        "Executive level, 1 day, no prerequisite; protect the explore budget with governance, the "
+        "two-out-of-sixteen choice, the Rebrand Test.",
+        ["Innovation Leader Cert", "Innovation for Executives", "Innovation Leadership Day",
+         "Protect the Explore Budget", "Governance, Not Goodwill", "Run the Rebrand Test",
+         "1-Day Executive Session", "No Prerequisite", "Innovation on Cadence",
+         "Built on Two Chasms Framework", "Join the Launch List"],
+        ["Protect the explore budget with governance instead of goodwill. One executive day.",
+         "Make the two-out-of-sixteen choice and run the Rebrand Test on your transformation.",
+         "No prerequisite. Live and instructor-led, built on the Two Chasms Framework.",
+         "Certifications are launching soon. Join the launch list for first dates and prices."]),
 }
 
 
@@ -181,7 +253,7 @@ def main() -> int:
                 continue
             p1, p2, note, heads, descs = ADS[ag]
             live = [(kw, pri) for kw, _m, _e, pri in kws if kw not in HOLD_KW]
-            stage = min(stage_of(campaign, pri) for _kw, pri in live)
+            stage = min(stage_of(campaign, pri, ag) for _kw, pri in live)
             if not 10 <= len(heads) <= 15 or len(descs) != 4:
                 bad.append(f"{ag}: {len(heads)} headlines / {len(descs)} descriptions")
             for group in (heads, descs):
@@ -199,14 +271,18 @@ def main() -> int:
                         ok, why = validate_asset(text, kind, rules, audience=aud, on_date=day)
                         if not ok:
                             bad.append(f"{ag} {kind} {text!r} [{aud} {day}]: {why}")
-            per_stage[stage].append([camp, ag, "Responsive search ad",
-                                     *(heads + [""] * (15 - len(heads))), *descs, p1, p2, url, "Enabled"])
+            if stage != "hold":
+                per_stage[stage].append([camp, ag, "Responsive search ad",
+                                         *(heads + [""] * (15 - len(heads))), *descs, p1, p2, url, "Enabled"])
+            badge = ("held: not bookable yet" if stage == "hold" else
+                     "stage 4, proposed: needs your approval" if ag in PROPOSED else f"stage {stage[-1]}")
             sections.append(
-                f"### {ag} · stage {stage[-1]}\n"
+                f"### {ag} · {badge}\n"
                 f"Campaign **{camp}** · Final URL {url} · Display path `/{p1}/{p2}`  \n"
                 f"*Facts used:* {note}\n\n"
                 + (f"⚠️ **Owner-confirmed, not on the course page yet:** {OWNER_CONFIRMED[ag]}\n\n"
                    if ag in OWNER_CONFIRMED else "")
+                + (f"⏸️ **Held:** {LAUNCH_HOLD_REASON}\n\n" if ag in LAUNCH_HOLD else "")
                 + "| # | Headline | Chars |\n|---|---|---|\n"
                 + "\n".join(f"| {i} | {h} | {len(h)} |" for i, h in enumerate(heads, 1))
                 + "\n\n| # | Description | Chars |\n|---|---|---|\n"
@@ -225,12 +301,14 @@ def main() -> int:
             w.writerow(header)
             w.writerows(per_stage[key])
         rows.append(f"| {key[-1]} | {when} | {len(per_stage[key])} | `proposals/{f.name}` |")
-    n_ads = sum(len(v) for v in per_stage.values())
+    n_ads = len(sections)
 
     md = f"""# Responsive search ads for the new ad groups (DRAFT for your approval)
 
 {n_ads} ads, one per new ad group: {n_strings} strings in total. **Nothing is uploaded.** Phase 1:
-you import them.
+you import them. Stages 1-3 are approved. **Stage 4** (APM, Business Owner, Architects) is
+proposed and needs your OK. The 3 **Innovation** ads are drafted but held until those courses
+can be booked and paid for on agile-agilist.com, so they have no import file yet.
 
 **Validated:** every string passes `src/asset_generator.py` for **US and Canada** audiences, both
 during Black Friday and after it ends (15 Dec). That covers character limits, "SAFe Platinum

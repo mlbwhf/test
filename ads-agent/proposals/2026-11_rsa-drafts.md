@@ -1,7 +1,9 @@
 # Responsive search ads for the new ad groups (DRAFT for your approval)
 
-12 ads, one per new ad group: 227 strings in total. **Nothing is uploaded.** Phase 1:
-you import them.
+18 ads, one per new ad group: 338 strings in total. **Nothing is uploaded.** Phase 1:
+you import them. Stages 1-3 are approved. **Stage 4** (APM, Business Owner, Architects) is
+proposed and needs your OK. The 3 **Innovation** ads are drafted but held until those courses
+can be booked and paid for on agile-agilist.com, so they have no import file yet.
 
 **Validated:** every string passes `src/asset_generator.py` for **US and Canada** audiences, both
 during Black Friday and after it ends (15 Dec). That covers character limits, "SAFe Platinum
@@ -28,6 +30,7 @@ serve. If an ad group already has an ad you like, delete its row from the CSV be
 | 1 | Now (20 Nov, Black Friday) | 4 | `proposals/2026-11_rsa_stage1_google-ads-editor.csv` |
 | 2 | 1 Dec (February ramp) | 5 | `proposals/2026-11_rsa_stage2_google-ads-editor.csv` |
 | 3 | Not before 4 Dec, after stage 1 has run 14 days | 3 | `proposals/2026-11_rsa_stage3_google-ads-editor.csv` |
+| 4 | Proposed 21 Nov: needs your approval (earliest 1 Dec) | 3 | `proposals/2026-11_rsa_stage4_google-ads-editor.csv` |
 
 **No pinning.** Google needs freedom to mix headlines for good Ad Strength; the course name already
 appears in several headlines. **Google only:** add any Microsoft versions by hand, because an
@@ -361,3 +364,168 @@ Campaign **Certifications - English** · Final URL https://agile-agilist.com/tra
 | 2 | Grow from leading one Scrum team to coaching across multiple teams in SAFe. | 75 |
 | 3 | SAFe Advanced Scrum Master certification. Two days, live virtual, 16 PDUs. | 74 |
 | 4 | Exam included, with exam prep and support. Taught at a SAFe Platinum Partner. | 77 |
+
+### Agile Product Management · stage 4, proposed: needs your approval
+Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/adv-safe/apm/ · Display path `/SAFe/APM`  
+*Facts used:* 3 days, no prerequisites, exam included; Design Thinking, continuous exploration, Lean Startup, MVPs, hypothesis-driven epics, vision/roadmap/OKRs, WSJF. Format and PDUs left out: the page contradicts itself on delivery, and its 16 PDUs look templated.
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | SAFe APM Certification | 22 |
+| 2 | Agile Product Management | 24 |
+| 3 | SAFe Agile Product Manager | 26 |
+| 4 | Product Manager Certification | 29 |
+| 5 | Design Products Customers Love | 30 |
+| 6 | Design Thinking at Scale | 24 |
+| 7 | Lean Startup & MVPs | 19 |
+| 8 | Vision, Roadmaps & OKRs | 23 |
+| 9 | Hypothesis-Driven Epics | 23 |
+| 10 | 3-Day APM Course | 16 |
+| 11 | No Prerequisites | 16 |
+| 12 | For Product Managers & Leads | 28 |
+| 13 | Exam Included | 13 |
+| 14 | Exam Prep and Support | 21 |
+| 15 | SAFe Platinum Partner | 21 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Design and deliver products customers love with Design Thinking and Lean Startup. | 81 |
+| 2 | Vision, roadmaps, OKRs and WSJF that connect product decisions to portfolio outcomes. | 85 |
+| 3 | Three days, no prerequisites. Exam included, with exam prep and support. | 72 |
+| 4 | For Product Managers and Directors of Product. Taught at a SAFe Platinum Partner. | 81 |
+
+### Business Owner · stage 4, proposed: needs your approval
+Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/safe/bo/ · Display path `/SAFe/Business-Owner`  
+*Facts used:* 2 days, no prerequisites, exam included; connect strategy to execution, business value for PI Objectives, PI Planning, Inspect & Adapt, System Demos. Format and PDUs left out (as APM).
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | SAFe Business Owner | 19 |
+| 2 | Business Owner Certification | 28 |
+| 3 | SAFe Business Owner Workshop | 28 |
+| 4 | Connect Strategy to Execution | 29 |
+| 5 | Set Business Value for PIs | 26 |
+| 6 | Your Role in PI Planning | 24 |
+| 7 | Lead Inspect & Adapt | 20 |
+| 8 | For Executives & Sponsors | 25 |
+| 9 | 2-Day Business Owner Course | 27 |
+| 10 | No Prerequisites | 16 |
+| 11 | Exam Included | 13 |
+| 12 | Exam Prep and Support | 21 |
+| 13 | SAFe Platinum Partner | 21 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Connect strategy to execution and assign business value to PI Objectives every PI. | 82 |
+| 2 | Take part in PI Planning, lead Inspect & Adapt and stay engaged through System Demos. | 85 |
+| 3 | Two days, no prerequisites. Exam included, with exam prep and support. | 70 |
+| 4 | For business owners, VPs of strategy and executive sponsors. See class dates. | 77 |
+
+### SAFe for Architects · stage 4, proposed: needs your approval
+Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/safe/arch/ · Display path `/SAFe/Architects`  
+*Facts used:* 3 days, no prerequisites, exam included; Lean-Agile technical strategy, architecture aligned to value, DevOps and Release on Demand, solution vision and roadmaps, architecture for PI Planning. Format and PDUs left out (as APM).
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | SAFe for Architects | 19 |
+| 2 | SAFe Architect Certification | 28 |
+| 3 | SAFe ARCH Certification | 23 |
+| 4 | Lead Lean-Agile Tech Strategy | 29 |
+| 5 | Architect for DevOps | 20 |
+| 6 | Release on Demand | 17 |
+| 7 | Solution Vision & Roadmaps | 26 |
+| 8 | Architecture for PI Planning | 28 |
+| 9 | For Enterprise Architects | 25 |
+| 10 | 3-Day SAFe Architect Course | 27 |
+| 11 | No Prerequisites | 16 |
+| 12 | Exam Included | 13 |
+| 13 | Exam Prep and Support | 21 |
+| 14 | SAFe Platinum Partner | 21 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Lead the technical strategy of a Lean-Agile enterprise and align architecture to value. | 87 |
+| 2 | Architect for DevOps and Release on Demand, and prepare architecture for PI Planning. | 85 |
+| 3 | Three days, no prerequisites. Exam included, with exam prep and support. | 72 |
+| 4 | For system, solution and enterprise architects. Taught at a SAFe Platinum Partner. | 82 |
+
+### Innovation Creator · held: not bookable yet
+Campaign **Innovation - English** · Final URL https://agile-agilist.com/training/innovation-framework/innovation-creator/ · Display path `/Innovation/Creator`  
+*Facts used:* Level 1, 2 days, no prerequisite, live and instructor-led; run the Innovation Framework with your team, facilitate the Innovation Matrix, leave with 3 artifacts. Works alongside SAFe.
+
+⏸️ **Held:** Not bookable yet: no dates or prices, and the button goes to a launch list on twochasms.com, so no website Stripe payment is possible. Release when dates and checkout are live on agile-agilist.com.
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | Innovation Creator Cert | 23 |
+| 2 | Innovation Certification | 24 |
+| 3 | Run Innovation With Your Team | 29 |
+| 4 | Learn the Innovation Matrix | 27 |
+| 5 | Leave With 3 Team Artifacts | 27 |
+| 6 | Built on Two Chasms Framework | 29 |
+| 7 | 2 Days, No Prerequisite | 23 |
+| 8 | For Scrum Masters & POs | 23 |
+| 9 | Live, Instructor-Led | 20 |
+| 10 | Innovation on Cadence | 21 |
+| 11 | Join the Launch List | 20 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Run the Innovation Framework with your own team and facilitate the Innovation Matrix. | 85 |
+| 2 | Leave with three artifacts your team keeps: a charter, a Candor Contract and a matrix. | 86 |
+| 3 | Two days, live and instructor-led, no prerequisite. Works alongside SAFe. | 73 |
+| 4 | Certifications are launching soon. Join the launch list for first dates and prices. | 83 |
+
+### Innovation Facilitator · held: not bookable yet
+Campaign **Innovation - English** · Final URL https://agile-agilist.com/training/innovation-framework/innovation-facilitator/ · Display path `/Innovation/Facilitator`  
+*Facts used:* Level 2, 3 days, Creator recommended; capstone simulation; licence to facilitate the workshops in your organization; 30-60-90 day plan; for agile coaches, RTEs, SPCs, innovation leads.
+
+⏸️ **Held:** Not bookable yet: no dates or prices, and the button goes to a launch list on twochasms.com, so no website Stripe payment is possible. Release when dates and checkout are live on agile-agilist.com.
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | Innovation Facilitator Cert | 27 |
+| 2 | Innovation Facilitator Course | 29 |
+| 3 | Licensed to Run the Workshops | 29 |
+| 4 | Facilitate Innovation In-House | 30 |
+| 5 | Capstone-Based Certification | 28 |
+| 6 | Build a 30-60-90 Day Plan | 25 |
+| 7 | For Agile Coaches, RTEs, SPCs | 29 |
+| 8 | 3 Days, Live & Instructor-Led | 29 |
+| 9 | Innovation on Cadence | 21 |
+| 10 | Built on Two Chasms Framework | 29 |
+| 11 | Join the Launch List | 20 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Get licensed to facilitate the Innovation Framework workshops inside your organization. | 87 |
+| 2 | Pass a capstone simulation and turn the results into a 30-60-90 day plan. | 73 |
+| 3 | For agile coaches, RTEs, SPCs and innovation leads. Innovation Creator recommended. | 83 |
+| 4 | Certifications are launching soon. Join the launch list for first dates and prices. | 83 |
+
+### Innovation Leader · held: not bookable yet
+Campaign **Innovation - English** · Final URL https://agile-agilist.com/training/innovation-framework/innovation-leader/ · Display path `/Innovation/Leader`  
+*Facts used:* Executive level, 1 day, no prerequisite; protect the explore budget with governance, the two-out-of-sixteen choice, the Rebrand Test.
+
+⏸️ **Held:** Not bookable yet: no dates or prices, and the button goes to a launch list on twochasms.com, so no website Stripe payment is possible. Release when dates and checkout are live on agile-agilist.com.
+
+| # | Headline | Chars |
+|---|---|---|
+| 1 | Innovation Leader Cert | 22 |
+| 2 | Innovation for Executives | 25 |
+| 3 | Innovation Leadership Day | 25 |
+| 4 | Protect the Explore Budget | 26 |
+| 5 | Governance, Not Goodwill | 24 |
+| 6 | Run the Rebrand Test | 20 |
+| 7 | 1-Day Executive Session | 23 |
+| 8 | No Prerequisite | 15 |
+| 9 | Innovation on Cadence | 21 |
+| 10 | Built on Two Chasms Framework | 29 |
+| 11 | Join the Launch List | 20 |
+
+| # | Description | Chars |
+|---|---|---|
+| 1 | Protect the explore budget with governance instead of goodwill. One executive day. | 82 |
+| 2 | Make the two-out-of-sixteen choice and run the Rebrand Test on your transformation. | 83 |
+| 3 | No prerequisite. Live and instructor-led, built on the Two Chasms Framework. | 76 |
+| 4 | Certifications are launching soon. Join the launch list for first dates and prices. | 83 |

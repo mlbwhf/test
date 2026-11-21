@@ -33,3 +33,19 @@ Google reviews landing pages against the ads.
 - **Blank list price** ("$ $X") on 12 course cards: ARCH, ASE, SASM, BO, SDP, SP, SA-Gov, SHWA, SHWP, AINF, AINCA, AINORG.
 - Cert Recommender says "7 AI-Native tracks"; there are 5 AI-Native course pages.
 - URL slugs don't match course names (…/ai-native-ready-certification/ is Fundamentals, …-2/ is Leading the AI-Native Org, …/ai-native-change-agent/ is Value Architect). Don't change them while ads point at them; it would break the ads. Just noting it.
+
+## 4. Added 21 Nov (APM, Business Owner, Architects, Innovation pages)
+- **APM and Business Owner also carry the refund wording** (add them to 1.1): "money-back pass guarantee … full refund. No questions." It also contradicts /refund/ (full refund only for cancellations 7+ days before the class). Architects is clean: "exam prep and instructor support until you pass" is the model wording.
+- **Delivery format**: APM, BO and ARCH headers say live-virtual, but their FAQs say "in-person or live-virtual". Pick one.
+- **Unsourced statistics** on all three (salaries, "2.8x higher product success", "40% higher PI value delivery", job counts), sourced only as "Scaled Agile & public job-market data". **Templated testimonials** on all three. **Copied SPC curriculum subhead** on APM and BO.
+- **Placeholders**: an empty crossed-out "$" price on BO (top bar, intro, final button) and ARCH; the cohort widget has two different lengths on BO (2 and 4 days) and ARCH (3 and 4).
+- **16 PDUs** on both 2-day and 3-day courses looks templated. Confirm the real numbers.
+- **APM FR/ES** show $2,000 struck through above $2,150; English shows $2,150 struck through above $1,799.
+- **ARCH** uses a different calendar shortcode (`easy_events_calendar`). Check that the calendar renders.
+- **Innovation Framework**:
+  - The pages can't be booked yet: no dates, no prices, and the button goes to twochasms.com.
+  - **For ads**: add dates, prices and the website checkout (Stripe, marked `origin=agile-agilist.com`), so a paid registration happens on agile-agilist.com.
+  - The hub and Facilitator say "seven workshops"; the course pages link to "all fourteen".
+  - The assessment credits *Mutation Readiness* for the Principles; the hub credits *The Innovation Playground*.
+  - /training/ says 22 certifications, but its meta and footer say 19.
+  - /services/innovation-culture/ has the typo "The the Six Practices", with only five listed.

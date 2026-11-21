@@ -17,6 +17,7 @@ from asset_generator import validate_final_url  # noqa: E402
 A = "https://agile-agilist.com/training/ai-native/"
 GSC = "GSC"
 GADS = "Google suggestion 2026-11-19"
+COMP = "Competitor gap (proposals/2026-11_competitor-comparison.md)"
 
 # (ad group, final URL, confirmed_url, [(keyword, match, evidence, priority)])
 PLAN = [
@@ -79,6 +80,36 @@ PLAN = [
             ("asm certification", "phrase", f"{GSC}: 1,300 impressions, pos 10 (biggest single query)", "P1"),
             ("safe advanced scrum master", "phrase", f"{GSC}: 667 impressions, pos 36", "P2"),
         ]),
+        # Proposed 2026-11-21 (owner asked for drafts). No GSC history; evidence = competitor gaps.
+        ("Agile Product Management", "https://agile-agilist.com/training/adv-safe/apm/", True, [
+            ("safe apm certification", "phrase", f"{COMP}: KnowledgeHut 1 batch, Skillbook US$2,095 vs your US$1,799", "P2"),
+            ("agile product management certification", "phrase", "Course name + certification intent", "P2"),
+            ("safe agile product manager", "phrase", "Role-based search", "P2"),
+        ]),
+        ("Business Owner", "https://agile-agilist.com/training/safe/bo/", True, [
+            ("safe business owner certification", "phrase", f"{COMP}: neither competitor offers it", "P2"),
+            ("safe business owner training", "phrase", "Same intent", "P2"),
+            ("safe business owner workshop", "phrase", "Scaled Agile's own name for the course", "P2"),
+        ]),
+        ("SAFe for Architects", "https://agile-agilist.com/training/safe/arch/", True, [
+            ("safe architect certification", "phrase", f"{COMP}: KnowledgeHut 'Announcing Soon', Skillbook none", "P2"),
+            ("safe for architects", "phrase", "Course name", "P2"),
+            ("safe system architect training", "phrase", "Role-based search", "P2"),
+        ]),
+    ]),
+    ("Innovation - English (new campaign)", [
+        ("Innovation Creator", "https://agile-agilist.com/training/innovation-framework/innovation-creator/", True, [
+            ("innovation certification", "phrase", "Generic; watch search terms closely", "P3"),
+            ("innovation training for teams", "phrase", "Audience: team members, Scrum Masters, POs", "P3"),
+        ]),
+        ("Innovation Facilitator", "https://agile-agilist.com/training/innovation-framework/innovation-facilitator/", True, [
+            ("innovation facilitator certification", "phrase", "Course name", "P3"),
+            ("innovation workshop facilitator training", "phrase", "Licence to run the workshops", "P3"),
+        ]),
+        ("Innovation Leader", "https://agile-agilist.com/training/innovation-framework/innovation-leader/", True, [
+            ("innovation leadership training", "phrase", "Executive day", "P3"),
+            ("innovation leadership program for executives", "phrase", "Executive day", "P3"),
+        ]),
     ]),
 ]
 NEGATIVES = ["free", "pdf", "jobs", "job", "salary", "practice test", "dumps", "exam answers", "login",
@@ -89,20 +120,33 @@ NEGATIVES = ["free", "pdf", "jobs", "job", "salary", "practice test", "dumps", "
 # is not confirmed stay on hold (never shipped to a guessed URL).
 APPROVED_ON = "2026-11-20"
 ON_HOLD: dict = {}  # ad group -> reason (ASM released 2026-11-20: owner sent /training/safe/asm/)
+# Ad groups drafted 2026-11-21 at the owner's request: NOT approved yet (new ad groups need approval).
+PROPOSED = {"Agile Product Management", "Business Owner", "SAFe for Architects"}
+# Not bookable yet (no dates/prices; CTA is a launch list), so no website Stripe payment is possible.
+LAUNCH_HOLD = {"Innovation Creator", "Innovation Facilitator", "Innovation Leader"}
+LAUNCH_HOLD_REASON = ("Not bookable yet: no dates or prices, and the button goes to a launch list on "
+                      "twochasms.com, so no website Stripe payment is possible. Release when dates and "
+                      "checkout are live on agile-agilist.com.")
 # Single keywords held back: landing page contradicts the keyword's promise.
 HOLD_KW = {"ai training toronto": "The English AI-Native Foundations page says *live online*, while this keyword "
                                   "(and the Face-to-Face campaign) promise an in-person Toronto class. Confirm the "
                                   "format and I'll release it."}
 # Campaign names exactly as in Google Ads (heading text before any parenthesis).
-CAMPAIGN_NAME = {"Certifications - English (February-peak SAFe)": "Certifications - English"}
+CAMPAIGN_NAME = {"Certifications - English (February-peak SAFe)": "Certifications - English",
+                 "Innovation - English (new campaign)": "Innovation - English"}
 STAGES = [
     ("stage1", "Now (20 Nov, Black Friday)", lambda camp, pri: camp.startswith("AI-Native") and pri == "P1"),
     ("stage2", "1 Dec (February ramp)", lambda camp, pri: not camp.startswith("AI-Native") and pri == "P1"),
     ("stage3", "Not before 4 Dec, after stage 1 has run 14 days", lambda camp, pri: pri in ("P2", "P3")),
+    ("stage4", "Proposed 21 Nov: needs your approval (earliest 1 Dec)", lambda camp, pri: False),
 ]
 
 
-def stage_of(campaign: str, pri: str) -> str:
+def stage_of(campaign: str, pri: str, ad_group: str = "") -> str:
+    if ad_group in LAUNCH_HOLD:
+        return "hold"
+    if ad_group in PROPOSED:
+        return "stage4"
     return next(key for key, _, test in STAGES if test(campaign, pri))
 
 
@@ -111,7 +155,7 @@ def main() -> int:
     rules = config.load_rules()
     bad, rows, n = [], [], 0
     csv_rows = {key: [] for key, _, _ in STAGES}
-    held = 0
+    held = proposed = 0
     for campaign, groups in PLAN:
         camp_name = CAMPAIGN_NAME.get(campaign, campaign)
         rows.append(f"\n## {campaign}\n")
@@ -119,7 +163,11 @@ def main() -> int:
             ok, why = validate_final_url(url, rules)
             if not ok and ag not in ON_HOLD:
                 bad.append(f"{ag}: {url} - {why}")
-            if ag in ON_HOLD:
+            if ag in LAUNCH_HOLD:
+                flag = f"  \n⏸️ **On hold:** {LAUNCH_HOLD_REASON}"
+            elif ag in PROPOSED:
+                flag = "  \n🆕 **Proposed 21 Nov: tick to approve** (no Search Console history; check volume in Keyword Planner)"
+            elif ag in ON_HOLD:
                 flag = f"  \n⏸️ **On hold:** {ON_HOLD[ag]}"
             elif not confirmed:
                 bad.append(f"{ag}: landing page not confirmed")
@@ -132,7 +180,11 @@ def main() -> int:
                 if match not in ("exact", "phrase"):
                     bad.append(f"{kw}: match type {match} not allowed")
                 shown = f"[{kw}]" if match == "exact" else f'"{kw}"'
-                if ag in ON_HOLD or kw in HOLD_KW:
+                if ag in PROPOSED:
+                    mark, stage = "☐", "stage4"
+                    proposed += 1
+                    csv_rows["stage4"].append([camp_name, ag, kw, match.capitalize(), url, "Enabled"])
+                elif ag in ON_HOLD or ag in LAUNCH_HOLD or kw in HOLD_KW:
                     mark, stage = "⏸️", "hold"
                     held += 1
                     if kw in HOLD_KW:
@@ -148,7 +200,7 @@ def main() -> int:
         return 1
 
     # Account-wide negatives ride along with stage 1, once per campaign.
-    for camp_name in dict.fromkeys(CAMPAIGN_NAME.get(c, c) for c, _ in PLAN):
+    for camp_name in dict.fromkeys(CAMPAIGN_NAME.get(c, c) for c, _ in PLAN if "new campaign" not in c):
         for w in NEGATIVES:
             csv_rows["stage1"].append([camp_name, "", w, "Campaign negative phrase", "", "Enabled"])
 
@@ -164,12 +216,13 @@ def main() -> int:
             w.writerows(csv_rows[key])
         kw_count = sum(1 for r in csv_rows[key] if "negative" not in r[3].lower())
         files.append(f"| {key[-1]} | {when} | {kw_count} | `proposals/{f.name}` |")
-    approved = n - held
+    approved = n - held - proposed
 
     md = f"""# Keyword plan, November 2026: APPROVED
 
 **Approved by Mark Saymen on {APPROVED_ON}.** {approved} keywords approved and ready to import;
-{held} on hold until their English landing page is confirmed. Phase 1: **you** import them. I
+{proposed} **proposed on 21 Nov and waiting for your approval** (APM, Business Owner, Architects:
+stage 4); {held} on hold (see each one's reason). Phase 1: **you** import them. I
 haven't touched the ad accounts.
 
 **Rules applied:** phrase and exact match only (no broad match, ever). Every final URL is a
@@ -215,7 +268,7 @@ These are free, instant-result lead magnets, so link them under the matching ads
 - SAFe ads → **Agile Career Selector**: https://agile-agilist.com/assessments/cert-recommender/
 - All campaigns → **Career Compass**: https://agile-agilist.com/career-compass/
 
-Total: {n} keywords across {sum(len(g) for _, g in PLAN)} ad groups ({approved} approved, {held} on hold).
+Total: {n} keywords across {sum(len(g) for _, g in PLAN)} ad groups ({approved} approved, {proposed} proposed, {held} on hold).
 """
     out = out_dir / "2026-11_keyword-proposal.md"
     out.write_text(md)
