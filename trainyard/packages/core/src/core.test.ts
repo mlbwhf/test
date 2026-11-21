@@ -431,6 +431,10 @@ describe("launch readiness", () => {
     expect(readinessTally(st)).toMatchObject({ F: 44, P: 2, N: 2, gaps: 4, covered: 1, ready: 94 });
     expect(readinessFactorScore(st, READINESS_FACTORS[11]!)).toBe(25);
     expect(readinessAdvice(st).map((c) => c.name)).toEqual(["Achieving Responsible AI with SAFe", "Leading the AI-Native Organization"]);
+    // A course that is launching soon is always last, after one people can register for.
+    const soon = readinessAdvice({ "r:SF1:0": "N", "r:SF11:0": "N", "r:SF11:1": "N" });
+    expect(soon.map((c) => c.id)).toEqual(["devops", "fundamentals", "arch", "popm", "apm", "inno-facilitator", "inno-creator"]);
+    expect(soon.filter((c) => c.kind === "soon").every((c) => c.why && !/\d{4}|\$/.test(c.why))).toBe(true);
     const csv = readinessCsv(st).split("\n");
     expect(csv).toHaveLength(50);
     expect(csv[45]).toContain('"Not in place","addressed","Set a token budget per team","Ahead of first PI Outcome Planning"');

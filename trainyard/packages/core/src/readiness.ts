@@ -78,44 +78,78 @@ export function readinessVerdict(ready: number): "ready" | "plan" | "not-yet" {
 }
 
 export interface ReadinessCourse {
+  id: string;
   name: string;
   /** Path on agile-agilist.com. */
   path: string;
-  /** The success factors it helps close; the first is its main one. */
-  factors: string[];
+  /** A course people can register for, one that is launching soon (no date or price yet), or a free assessment. */
+  kind: "course" | "soon" | "free";
   why: string;
 }
 
 export const READINESS_TRAINING_SITE = "https://agile-agilist.com";
 export const READINESS_COURSES: ReadinessCourse[] = [
-  { name: "Launching AI-Native ARTs", path: "/training/ai-native/launching-ai-native-arts/", factors: ["SF4", "SF8"], why: "Launch the ART on outcomes: staffing, leadership alignment and the first PI Outcome Planning." },
-  { name: "AI-Native Foundations", path: "/training/ai-native/ai-native-foundations/", factors: ["SF3", "SF5"], why: "AI fluency for everyone on the ART, and why curated data comes first." },
-  { name: "AI-Native SAFe Fundamentals", path: "/training/ai-native/ai-native-ready-certification/", factors: ["SF5", "SF11"], why: "The shared language, the operating model and the AI Innovation Pipeline in one day." },
-  { name: "AI-Native Value Architect", path: "/training/ai-native/ai-native-change-agent/", factors: ["SF6", "SF10"], why: "The people who bridge business goals and AI workflows, and keep intent, specifications and context connected." },
-  { name: "Leading the AI-Native Organization", path: "/training/ai-native/ai-native-ready-certification-2/", factors: ["SF4", "SF12"], why: "For the leaders who set the guardrails and sponsor the launch." },
-  { name: "Achieving Responsible AI with SAFe", path: "/training/safe-found/responsible-ai-safe/", factors: ["SF12", "SF3"], why: "Responsible AI practice, ethics and monitoring that everyone on the ART follows." },
-  { name: "SAFe Lean Portfolio Management (LPM)", path: "/training/adv-safe/lpm/", factors: ["SF2"], why: "Portfolio outcomes, investment guardrails and funding that reach the ART." },
-  { name: "SAFe Product Owner/Product Manager (POPM)", path: "/training/safe/popm/", factors: ["SF1", "SF7"], why: "Outcomes, OKRs and prioritisation for the people who own the backlog." },
-  { name: "Agile Product Management (APM)", path: "/training/adv-safe/apm/", factors: ["SF7", "SF1"], why: "Product vision, outcome-driven roadmaps and learning milestones." },
-  { name: "SAFe Release Train Engineer (RTE)", path: "/training/adv-safe/rte/", factors: ["SF8", "SF9"], why: "Facilitating planning on cadence, managing risks and running the ART's events." },
-  { name: "SAFe DevOps", path: "/training/safe/devops/", factors: ["SF11"], why: "The pipeline, its embedded policies and the evidence it captures." },
-  { name: "SAFe for Architects", path: "/training/safe/arch/", factors: ["SF10", "SF11"], why: "Specifications, architecture and the platform teams build from." },
-  { name: "Advanced Scrum Master", path: "/training/safe/asm/", factors: ["SF9", "SF5"], why: "Coaching teams through an Align, Sense and Respond cadence." },
+  { id: "aart", kind: "course", name: "Launching AI-Native ARTs", path: "/training/ai-native/launching-ai-native-arts/", why: "Launch the ART on outcomes: staffing, leadership alignment and the first PI Outcome Planning." },
+  { id: "foundations", kind: "course", name: "AI-Native Foundations", path: "/training/ai-native/ai-native-foundations/", why: "AI fluency for everyone on the ART, and why curated data comes first. The prerequisite for AI-Native Value Architect." },
+  { id: "fundamentals", kind: "course", name: "AI-Native SAFe Fundamentals", path: "/training/ai-native/ai-native-ready-certification/", why: "The shared language, the operating model and the AI Innovation Pipeline in one day." },
+  { id: "aiva", kind: "course", name: "AI-Native Value Architect", path: "/training/ai-native/ai-native-change-agent/", why: "The people who bridge business goals and AI workflows, and keep intent, specifications and context connected." },
+  { id: "leading", kind: "course", name: "Leading the AI-Native Organization", path: "/training/ai-native/ai-native-ready-certification-2/", why: "For the leaders who set the guardrails and sponsor the launch." },
+  { id: "responsible", kind: "course", name: "Achieving Responsible AI with SAFe", path: "/training/safe-found/responsible-ai-safe/", why: "Responsible AI practice, data stewardship, ethics and monitoring that everyone on the ART follows." },
+  { id: "lpm", kind: "course", name: "SAFe Lean Portfolio Management (LPM)", path: "/training/adv-safe/lpm/", why: "Portfolio outcomes, investment guardrails and funding that reach the ART." },
+  { id: "bo", kind: "course", name: "SAFe Business Owner", path: "/training/safe/bo/", why: "For the business owners who steer the investment and assign business value in planning." },
+  { id: "popm", kind: "course", name: "SAFe Product Owner/Product Manager (POPM)", path: "/training/safe/popm/", why: "Outcomes, OKRs and prioritisation for the people who own the backlog." },
+  { id: "apm", kind: "course", name: "Agile Product Management (APM)", path: "/training/adv-safe/apm/", why: "Product vision, outcome-driven roadmaps and learning milestones." },
+  { id: "rte", kind: "course", name: "SAFe Release Train Engineer (RTE)", path: "/training/adv-safe/rte/", why: "Facilitating planning on cadence, managing risks and running the ART's events." },
+  { id: "devops", kind: "course", name: "SAFe DevOps", path: "/training/safe/devops/", why: "The pipeline, its embedded policies and the evidence it captures." },
+  { id: "arch", kind: "course", name: "SAFe for Architects", path: "/training/safe/arch/", why: "Specifications, architecture and the platform teams build from." },
+  { id: "asm", kind: "course", name: "Advanced Scrum Master", path: "/training/safe/asm/", why: "Coaching teams through an Align, Sense and Respond cadence." },
+  { id: "ai-assessment", kind: "free", name: "AI Maturity & Readiness Assessment, with an advisory call", path: "/assessments/", why: "Free: get your Data Readiness score, then talk it through with an advisor." },
+  { id: "mutation", kind: "free", name: "Mutation Readiness assessment", path: "/assessments/mutation-readiness/", why: "Free: 18 questions on how well the organization senses and responds at AI-age speed." },
+  { id: "inno-creator", kind: "soon", name: "Innovation Creator", path: "/training/innovation-framework/innovation-creator/", why: "Small experiments with a written hypothesis and a blameless debrief." },
+  { id: "inno-leader", kind: "soon", name: "Innovation Leader", path: "/training/innovation-framework/innovation-leader/", why: "Protect the explore budget with governance; choose two of sixteen." },
+  { id: "inno-facilitator", kind: "soon", name: "Innovation Facilitator", path: "/training/innovation-framework/innovation-facilitator/", why: "Run the Innovation Matrix to choose which AI ideas get tested." },
 ];
 
 /**
- * The trainings that close the most open gaps, best first. A statement not in place weighs 2 and
- * one partially in place 1; a course's main factor counts in full and its others at 60%.
+ * The results matrix: for each success factor with gaps, the main suggestion(s) and what else
+ * helps, in the order shown. Courses that are launching soon come last in their row, so a gap
+ * is never answered only by a course nobody can register for yet.
  */
-export function readinessAdvice(state: Record<string, unknown>, limit = 5): (ReadinessCourse & { weight: number; closes: string[] })[] {
-  const w = (code: string) => {
-    const f = READINESS_FACTORS.find((x) => x.code === code);
-    return f ? f.statements.reduce((n, _, i) => n + ({ N: 2, P: 1, F: 0 }[ratingOf(state, readinessKey(code, i)) ?? "F"] ?? 0), 0) : 0;
-  };
-  return READINESS_COURSES.map((c) => ({ ...c, closes: c.factors.filter((f) => w(f) > 0), weight: c.factors.reduce((n, f, i) => n + w(f) * (i ? 0.6 : 1), 0) }))
-    .filter((c) => c.weight > 0)
-    .sort((a, b) => b.weight - a.weight)
-    .slice(0, limit);
+export const READINESS_MATRIX: Record<string, { main: string[]; also: string[] }> = {
+  SF1: { main: ["popm"], also: ["apm", "inno-creator"] },
+  SF2: { main: ["lpm"], also: ["bo", "leading", "inno-leader"] },
+  SF3: { main: ["responsible"], also: ["foundations", "ai-assessment"] },
+  SF4: { main: ["aart", "leading"], also: [] },
+  SF5: { main: ["fundamentals"], also: ["foundations", "asm"] },
+  SF6: { main: ["aiva"], also: ["foundations"] },
+  SF7: { main: ["apm"], also: ["popm"] },
+  SF8: { main: ["aart"], also: ["rte"] },
+  SF9: { main: ["rte"], also: ["asm", "mutation"] },
+  SF10: { main: ["arch"], also: ["aiva"] },
+  SF11: { main: ["devops"], also: ["fundamentals", "arch", "inno-facilitator"] },
+  SF12: { main: ["responsible"], also: ["leading"] },
+};
+
+export type ReadinessSuggestion = ReadinessCourse & { weight: number; closes: string[] };
+
+/**
+ * What the results suggest, best first. A statement not in place weighs 2 and one partially in
+ * place 1; a factor's main suggestion counts its gaps in full and the others at 60%. The five
+ * strongest come first, then any course that is launching soon.
+ */
+export function readinessAdvice(state: Record<string, unknown>, limit = 5): ReadinessSuggestion[] {
+  const all = READINESS_COURSES.map((c): ReadinessSuggestion => ({ ...c, weight: 0, closes: [] }));
+  for (const f of READINESS_FACTORS) {
+    const gap = f.statements.reduce((n, _, i) => n + ({ N: 2, P: 1, F: 0 }[ratingOf(state, readinessKey(f.code, i)) ?? "F"] ?? 0), 0);
+    const row = READINESS_MATRIX[f.code];
+    if (!gap || !row) continue;
+    for (const [ids, share] of [[row.main, 1], [row.also, 0.6]] as const) for (const id of ids) {
+      const c = all.find((x) => x.id === id);
+      if (c) (c.weight += gap * share), c.closes.push(f.code);
+    }
+  }
+  const ranked = all.filter((c) => c.weight > 0).sort((a, b) => b.weight - a.weight);
+  return [...ranked.filter((c) => c.kind !== "soon").slice(0, limit), ...ranked.filter((c) => c.kind === "soon")];
 }
 
 /** The assessment as the CSV of the companion app: a row per statement. */

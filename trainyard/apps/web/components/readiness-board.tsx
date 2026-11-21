@@ -140,20 +140,20 @@ function Results({ st, open }: { st: St; open: (code: string) => void }) {
           <a href={`${READINESS_TRAINING_SITE}/about/contact/`} target="_blank" rel="noopener noreferrer">Talk to an advisor at Agile Agilist ↗</a>
         </div>
         {weakest.length && advice.length ? (
-          <p>Your weakest success factors are {weakest.map((x, i) => (<span key={x.f.code}>{i ? (i === weakest.length - 1 ? " and " : ", ") : ""}<b>{x.f.name} ({x.s}%)</b></span>))}. The trainings below are ranked by how many of your open gaps each one addresses.</p>
+          <p>Your weakest success factors are {weakest.map((x, i) => (<span key={x.f.code}>{i ? (i === weakest.length - 1 ? " and " : ", ") : ""}<b>{x.f.name} ({x.s}%)</b></span>))}. The suggestions below are ranked by how many of your open gaps each one addresses; courses that are launching soon come last.</p>
         ) : (
           <p className="kb-note" style={{ padding: 0 }}>{t.rated ? "No gaps: every rated statement is fully in place." : "Rate some statements and the advice appears here."}</p>
         )}
         {advice.map((c, i) => (
-          <div key={c.name} className="rd-rec" style={{ animationDelay: `${i * 90}ms` }}>
-            <span className="rd-n">{i + 1}</span>
+          <div key={c.id} className="rd-rec" style={{ animationDelay: `${i * 90}ms` }}>
+            <span className="rd-n">{c.kind === "soon" ? "+" : i + 1}</span>
             <div className="rd-recbody">
-              <b>{c.name}</b>
+              <b>{c.name}{c.kind === "soon" ? <span className="rd-soon">Launching soon</span> : c.kind === "free" ? <span className="rd-soon free">Free</span> : null}</b>
               <span className="kb-note" style={{ padding: 0 }}>{c.why}</span>
               <div className="rd-tags">{c.closes.map((code) => (<span key={code}>{code} · {READINESS_FACTORS.find((f) => f.code === code)!.name}</span>))}</div>
               <div className="rd-impact" role="img" aria-label={`Relative impact ${Math.round((c.weight / top) * 100)}%`}><i style={{ width: `${(c.weight / top) * 100}%` }} /></div>
             </div>
-            <a className="rd-go" href={READINESS_TRAINING_SITE + c.path} target="_blank" rel="noopener noreferrer">See the course ↗</a>
+            <a className="rd-go" href={READINESS_TRAINING_SITE + c.path} target="_blank" rel="noopener noreferrer">{c.kind === "free" ? "Take the assessment ↗" : c.kind === "soon" ? "Learn more ↗" : "See the course ↗"}</a>
           </div>
         ))}
         {t.gaps >= 12 ? <p className="kb-note" style={{ padding: 0 }}>With this many gaps across the ART, a private cohort is usually the faster route: <a href={`${READINESS_TRAINING_SITE}/team-training/`} target="_blank" rel="noopener noreferrer">Team &amp; Corporate Training ↗</a></p> : null}

@@ -837,3 +837,5 @@ span.studio-team { cursor: default; }
 .rd-line .rd-pip { flex: none; width: 12px; margin-top: 3px; }
 @media (max-width: 720px) { .rd-shift { grid-template-columns: 1fr; } .rd-shift > header { flex-direction: row; align-items: center; justify-content: space-between; flex-wrap: wrap; } .rd-rec { grid-template-columns: 44px minmax(0, 1fr); } .rd-go { grid-column: 1 / -1; justify-content: center; } }
 @media (prefers-reduced-motion: reduce) { .rd-rec { animation: none; } .rd-track i, .rd-impact i, .rd-cell, .rd-pip { transition: none; } }
+.rd-soon { display: inline-block; margin-left: 8px; padding: 2px 9px; border-radius: 99px; font: 600 11px var(--font-mono, monospace); letter-spacing: 0.04em; text-transform: uppercase; background: rgba(217, 148, 0, 0.2); color: #6b4a00; vertical-align: middle; }
+.rd-soon.free { background: rgba(47, 158, 122, 0.2); color: #1c5e48; }
