@@ -6,6 +6,7 @@
 
 import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
+import { INTEGRATION_GROUPS, INTEGRATION_LIST } from "@/lib/integrations";
 import { REPO_URL } from "@/lib/site";
 
 export function SiteLogo({ size = 58 }: { size?: number }) {
@@ -38,7 +39,7 @@ export function SiteLogo({ size = 58 }: { size?: number }) {
 const MODULES = [
   { tag: "CLASSES · TRAINER", t: "Classes", href: "/classes", bg: "#ffe27a", fg: "#14123a", d: "Class boards for SAFe trainers, one per cohort.", items: [["Leading SAFe", "/classes/leading-safe"], ["SPC", "/classes/spc"], ["Advanced SPC", "/classes/aspc"], ["POPM", "/classes/popm"], ["ART Leader", "/classes/aart"], ["Value Architect", "/classes/aiva"], ["LPM", "/classes/lpm"], ["LPM workshop", "/classes/lpm-ws"], ["RTE", "/classes/rte"]] },
   { tag: "TEMPLATES · ANY METHOD", t: "Templates", href: "/methods", bg: "#4a5fe8", fg: "#fff", d: "Pick a method and the whole board changes shape.", items: [["SAFe", "/methods#safe"], ["Scrum", "/methods#scrum"], ["Kanban", "/methods#kanban"], ["Lean", "/methods#lean"], ["Six Sigma", "/methods#six-sigma"], ["Manufacturing", "/methods#manufacturing"], ["General", "/methods#general"]] },
-  { tag: "OKRs · INSIGHTS", t: "OKRs", href: "/insights", bg: "#ff9fc6", fg: "#14123a", d: "Outcomes, KPIs and funding for executives.", items: [["Dashboard", "/insights#dashboard"], ["Alignment", "/insights#alignment"], ["Check-in", "/insights#checkin"], ["One-pagers", "/insights#onepager"], ["Live example", "/examples/okrs-kpis"]] },
+  { tag: "DASHBOARDS · REPORTING", t: "Dashboards", href: "/insights", bg: "#ff9fc6", fg: "#14123a", d: "OKRs, KPIs and reports for executives.", items: [["OKRs", "/insights#dashboard"], ["Alignment", "/insights#alignment"], ["Check-in", "/insights#checkin"], ["Executive reports", "/insights#onepager"], ["Live example", "/examples/okrs-kpis"]] },
 ] as const;
 
 export const INTEGRATIONS = [
@@ -60,11 +61,20 @@ export function SiteNav() {
     window.addEventListener("pointerdown", click);
     return () => (window.removeEventListener("keydown", key), window.removeEventListener("pointerdown", click));
   }, []);
-  // Hover opens a menu only with a real pointer; touch taps toggle it.
-  const hover = (m: "mod" | "int" | null) => () => window.matchMedia("(hover: hover)").matches && setOpen(m);
+  // Hover opens a menu only with a real pointer; touch taps toggle it. Leaving waits a moment
+  // before closing, so a pointer crossing the gap to the panel, or cutting a corner, keeps it open.
+  const timer = useRef<number | undefined>(undefined);
+  const hover = (m: "mod" | "int" | null) => () => {
+    if (!window.matchMedia("(hover: hover)").matches) return;
+    window.clearTimeout(timer.current);
+    if (m) setOpen(m);
+    else timer.current = window.setTimeout(() => setOpen(null), 350);
+  };
+  const stay = () => window.clearTimeout(timer.current);
+  useEffect(() => () => window.clearTimeout(timer.current), []);
   return (
-    <nav className="ly-nav sl-nav" aria-label="Site" ref={ref} onMouseLeave={hover(null)}>
-      <Link href="/" className="brand" onMouseEnter={hover(null)}>
+    <nav className="ly-nav sl-nav" aria-label="Site" ref={ref} onMouseLeave={hover(null)} onMouseEnter={stay}>
+      <Link href="/" className="brand">
         <SiteLogo />
         <span className="word">
           Train<b>yard</b>
@@ -75,20 +85,14 @@ export function SiteNav() {
       </button>
       <div id="sl-links" className={`links${menu ? " open" : ""}`} onClick={(e) => (e.target as HTMLElement).closest("a") && setMenu(false)}>
         <button className="sl-menu" aria-expanded={open === "mod"} aria-controls="sl-mod" onClick={() => setOpen(open === "mod" ? null : "mod")} onMouseEnter={hover("mod")}>
-          Modules <span aria-hidden="true">▾</span>
+          Product <span aria-hidden="true">▾</span>
         </button>
         <button className="sl-menu" aria-expanded={open === "int"} aria-controls="sl-int" onClick={() => setOpen(open === "int" ? null : "int")} onMouseEnter={hover("int")}>
           Integrations <span aria-hidden="true">▾</span>
         </button>
-        <Link href="/pricing" onMouseEnter={hover(null)}>
-          Pricing
-        </Link>
-        <Link href="/#faq" onMouseEnter={hover(null)}>
-          FAQ
-        </Link>
-        <Link href="/support" onMouseEnter={hover(null)}>
-          Support
-        </Link>
+        <Link href="/pricing">Pricing</Link>
+        <Link href="/compare">Compare</Link>
+        <Link href="/support">Support</Link>
         <Link href="/login" className="pill">
           Sign in
         </Link>
@@ -118,17 +122,28 @@ export function SiteNav() {
       ) : null}
       {open === "int" ? (
         <div id="sl-int" className="sl-panel sl-ints">
-          {INTEGRATIONS.map((g) => (
-            <div key={g.t} className="sl-group">
-              <div className="tag">{g.t}</div>
-              {g.items.map(([n, d]) => (
-                <Link key={n} href="/#integrations" onClick={() => setOpen(null)}>
-                  <b>{n}</b>
-                  <span>{d}</span>
+          {INTEGRATION_GROUPS.map((g) => (
+            <div key={g} className="sl-group">
+              <div className="tag">{g.toUpperCase()}</div>
+              {INTEGRATION_LIST.filter((i) => i.group === g).map((i) => (
+                <Link key={i.slug} href={`/integrations/${i.slug}`} onClick={() => setOpen(null)}>
+                  <b>{i.name}</b>
+                  <span>{i.line}</span>
                 </Link>
               ))}
             </div>
           ))}
+          <div className="sl-group">
+            <div className="tag">EVERYTHING</div>
+            <Link href="/integrations" onClick={() => setOpen(null)}>
+              <b>All integrations →</b>
+              <span>What syncs both ways and what imports.</span>
+            </Link>
+            <Link href="/coverage" onClick={() => setOpen(null)}>
+              <b>Framework coverage →</b>
+              <span>SAFe, Scrum, Kanban, Lean and more.</span>
+            </Link>
+          </div>
         </div>
       ) : null}
     </nav>
@@ -156,7 +171,7 @@ export function SiteFooter({ giant = true }: { giant?: boolean }) {
       <div className="meta">
         <span>Trainyard · Apache-2.0 · built by Agile Agilist</span>
         <span>
-          <Link href="/classes">Classes</Link> · <Link href="/methods">Templates</Link> · <Link href="/coverage">Coverage</Link> · <Link href="/insights">OKRs</Link> · <Link href="/pricing">Pricing</Link> · <Link href="/guides">Guides</Link> · <Link href="/support">Support</Link> · <Link href="/book">Book a session</Link> · <Link href="/compare">Compare</Link> · <Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
+          <Link href="/classes">Classes</Link> · <Link href="/methods">Templates</Link> · <Link href="/coverage">Coverage</Link> · <Link href="/insights">Dashboards</Link> · <Link href="/integrations">Integrations</Link> · <Link href="/#faq">FAQ</Link> · <Link href="/pricing">Pricing</Link> · <Link href="/guides">Guides</Link> · <Link href="/support">Support</Link> · <Link href="/book">Book a session</Link> · <Link href="/compare">Compare</Link> · <Link href="/privacy">Privacy</Link> · <Link href="/terms">Terms</Link> · <a href="/llms.txt">llms.txt</a> · <Link href="/login">Sign in</Link> ·{" "}
           <a href={REPO_URL} rel="noopener">
             Source
           </a>

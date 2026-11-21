@@ -4,6 +4,7 @@
 
 import { CLASSES, SUCCESS_FACTORS, MILESTONE_KINDS, REVIEW_KINDS, WORK_KINDS, defaultAgenda, demoCanvases, demoIdentification, PIPELINE, CAPABILITIES, DATA_QUALITIES, type ClassSpec, type Exercise } from "@trainyard/core";
 import { COMPARISON, FAQ, PLANS } from "./pricing";
+import { INTEGRATION_LIST } from "./integrations";
 
 export const slugify = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 
@@ -176,6 +177,8 @@ export function llmsText(base: string): string {
   lines.push(`- PI planning tools compared: ${base}/compare` + COMPETITORS.map((c) => `, ${base}/compare/${c.slug}`).join(""));
   lines.push(`- Class boards for trainers: ${base}/classes` + CLASSES.map((c) => `, ${base}/classes/${c.id}`).join(""));
   lines.push(`- Board templates by method (SAFe, Scrum, Kanban, Lean, Six Sigma, manufacturing): ${base}/methods`, `- OKR and KPI dashboard for executives and boards (Insights): ${base}/insights`);
+  lines.push(`- Framework coverage (SAFe, Scrum, Kanban, Lean, Six Sigma, manufacturing): ${base}/coverage`);
+  lines.push(`- Integrations: ${base}/integrations` + INTEGRATION_LIST.map((i) => `, ${i.name} (${i.kind.toLowerCase()}): ${base}/integrations/${i.slug}`).join(""));
   lines.push(`- Support, help and how to use every page: ${base}/support`);
   lines.push(`- Guides: ` + GUIDES.map((g) => `${base}/guides/${g.slug}`).join(", "));
   lines.push(`- Every public page as one text file: ${base}/llms-full.txt`, `- Sign in: ${base}/login`, "");
@@ -242,6 +245,8 @@ export function publicPaths(): { path: string; priority: number; updated: string
     { path: "/classes", priority: 0.9, updated: SITE_UPDATED },
     { path: "/methods", priority: 0.9, updated: SITE_UPDATED },
     { path: "/coverage", priority: 0.9, updated: SITE_UPDATED },
+    { path: "/integrations", priority: 0.9, updated: SITE_UPDATED },
+    ...INTEGRATION_LIST.map((i) => ({ path: `/integrations/${i.slug}`, priority: 0.8, updated: SITE_UPDATED })),
     { path: "/insights", priority: 0.9, updated: SITE_UPDATED },
     { path: "/support", priority: 0.6, updated: SITE_UPDATED },
     { path: "/book", priority: 0.6, updated: SITE_UPDATED },
