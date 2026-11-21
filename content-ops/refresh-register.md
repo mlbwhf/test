@@ -1418,3 +1418,17 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
   - 394 is thin: no FAQ or methodology, and `hasPart` lists 4 of 9.
   - 964 "Next review: October 2026" is overdue.
 
+
+## 21 Nov 2026: Indexes hub AI-spend tile superseded
+- **39 (`/indexes/`):** the stat tile changed from "$2.52T worldwide AI spend, 2026" (Gartner, 15 Jan 2026) to "$2.67T worldwide
+  AI spending forecast for 2026 (Gartner, 16 Sep 2026)". The tile now links to State of AI Spending.
+  - Change: +$0.15T (+6.0%), MEDIUM. A "What changed" block was added under the strip, with inline styles because the hub's
+    stylesheet has no table classes.
+  - The figure appeared only in the tile: not in prose, FAQ or JSON-LD.
+  - Backups: `backups/39-20261121.html` and `backups/3229-20261121.html`, both rebuilt from earlier backups plus logged edits.
+- **3229 corrections log:** row added to "Major updates after a source or the facts changed" with type Superseded, because the
+  $2.52T was right when published. "Last entry" and `dateModified` now 21 Nov.
+- **Still carrying superseded Gartner editions:**
+  - 376 (AI Spending by Industry 2026) shows $2.59T and "2025 ~$1.5T". Gartner restated 2025 to about $1.79T.
+  - 967 shows $2.59T or $2.5T.
+  - Both need the same update, with What-changed blocks and their CSVs.
