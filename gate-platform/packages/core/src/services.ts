@@ -925,7 +925,7 @@ export class Core {
       related.push({ slug: other.slug, name: other.name, language: other.language ?? null, dates });
     }
     return {
-      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id, sale: saleAt(org.sale, now) },
+      organization: { id: org.id, name: org.name, country: org.country, currency: org.currency, currencies: [org.currency, ...pricing.currencies], ratesUpdatedAt: pricing.ratesUpdatedAt ?? null, paymentMode: org.paymentMode ?? "protected", flexibleTickets: org.flexibleTickets === true, logoUrl: org.logoUrl ?? null, accentColor: org.accentColor ?? null, profileHandle: org.slug ?? org.id, sale: saleAt(org.sale, now), stripeAccount: org.paymentMode === "direct" ? org.directAccountRef ?? null : null },
       course, cohorts: out, related,
       sections: coursePageSections(course, { logo: Boolean(org.logoUrl), instructors: out.some((c) => c.instructors.length > 0) }),
     };

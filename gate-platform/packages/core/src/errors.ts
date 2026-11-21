@@ -6,7 +6,8 @@ export type DomainErrorCode =
   | "INVALID_STATE"
   | "UNAUTHORIZED"
   | "FORBIDDEN"
-  | "PAYMENTS_UPSTREAM";
+  | "PAYMENTS_UPSTREAM"
+  | "EMAIL_UPSTREAM";
 
 const STATUS: Record<DomainErrorCode, number> = {
   NOT_FOUND: 404,
@@ -17,6 +18,7 @@ const STATUS: Record<DomainErrorCode, number> = {
   UNAUTHORIZED: 401,
   FORBIDDEN: 403,
   PAYMENTS_UPSTREAM: 502,
+  EMAIL_UPSTREAM: 502,
 };
 
 export class DomainError extends Error {

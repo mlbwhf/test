@@ -128,11 +128,17 @@ export async function registerAuth(app: FastifyInstance, d: AuthDeps) {
       const returnTo = safeReturnTo(req.body.returnTo);
       const token = await d.identities.issueToken("email_link", { email, ...(returnTo ? { returnTo } : {}) });
       const link = `${d.publicUrl}/auth/email/verify?${new URLSearchParams({ token })}`;
-      await d.mailer.send({
-        key: `signin:${token.slice(-12)}`, to: email, subject: "Your EnrollClass sign-in link",
-        text: `Sign in to EnrollClass:\n\n${link}\n\nThe link works once and expires in 20 minutes. If you did not ask for it, ignore this email.`,
-        html: shell("Sign in to EnrollClass", "Use the button below to sign in. It works once and expires in 20 minutes.", { href: link, label: "Sign in" }, "If you did not ask for this, you can ignore it; nobody can sign in without the link."),
-      });
+      try {
+        await d.mailer.send({
+          key: `signin:${token.slice(-12)}`, to: email, subject: "Your EnrollClass sign-in link",
+          text: `Sign in to EnrollClass:\n\n${link}\n\nThe link works once and expires in 20 minutes. If you did not ask for it, ignore this email.`,
+          html: shell("Sign in to EnrollClass", "Use the button below to sign in. It works once and expires in 20 minutes.", { href: link, label: "Sign in" }, "If you did not ask for this, you can ignore it; nobody can sign in without the link."),
+        });
+      } catch (err) {
+        // The email service refused or failed (key, sending domain, outage): say so, and log why for the operator.
+        req.log.error({ reason: err instanceof Error ? err.message : String(err) }, "sign-in email not sent");
+        throw new DomainError("EMAIL_UPSTREAM", "We couldn't send the sign-in email just now. Try again in a minute, or sign in with Google, Microsoft or LinkedIn.", "if it keeps happening, write to support@enrollclass.com");
+      }
       return reply.code(202).send({ sent: true });
     });
 

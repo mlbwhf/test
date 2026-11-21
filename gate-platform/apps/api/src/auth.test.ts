@@ -107,6 +107,18 @@ describe("sign-in", () => {
     expect(seen).toEqual([undefined, "forged", "good"]);
   });
 
+  it("says the sign-in email couldn't be sent when the email service fails (no bare internal error)", async () => {
+    const { app, mailer } = await setup();
+    mailer.send = async () => {
+      throw new Error("resend returned 403: The domain is not verified");
+    };
+    const res = await app.inject({ method: "POST", url: "/auth/email", payload: { email: "ada@example.com" } });
+    expect(res.statusCode).toBe(502);
+    expect(res.json().error).toMatchObject({ code: "EMAIL_UPSTREAM" });
+    expect(res.json().error.message).toMatch(/couldn't send the sign-in email/);
+    expect(res.body).not.toMatch(/resend|verified/);
+  });
+
   it("email link: one-time, and the same answer whether or not the account exists", async () => {
     const { app, mailer } = await setup();
     const sent = await app.inject({ method: "POST", url: "/auth/email", payload: { email: "New@Person.com", returnTo: "/courses" } });

@@ -41,13 +41,16 @@ type Props = {
   homeUrl: string;
   /** The organizer's sale running now (ticket prices already include it). */
   sale: { label: string; percentOff: number } | null;
+  /** Direct payments: the organizer's own Stripe account, where the card form and charge live. */
+  stripeAccount: string | null;
 };
 
-type StripePaymentElement = { mount(el: HTMLElement): void; unmount(): void };
-type StripeElements = { create(type: "payment"): StripePaymentElement };
+type StripePaymentElement = { mount(el: HTMLElement): void; unmount(): void; on(event: "ready", cb: () => void): void };
+type StripeElements = { create(type: "payment"): StripePaymentElement; submit(): Promise<{ error?: { message?: string } }>; update(o: { amount: number }): void };
 type StripeLike = {
-  elements(o: { clientSecret: string; appearance?: Record<string, unknown> }): StripeElements;
-  confirmPayment(o: { elements: StripeElements; redirect: "if_required"; confirmParams: { return_url: string } }): Promise<{ error?: { message?: string } }>;
+  // The card form shows before the order exists (Stripe's deferred-intent flow); the order's PaymentIntent confirms it.
+  elements(o: { mode: "payment"; amount: number; currency: string; appearance?: Record<string, unknown> }): StripeElements;
+  confirmPayment(o: { elements: StripeElements; clientSecret: string; redirect: "if_required"; confirmParams: { return_url: string } }): Promise<{ error?: { message?: string } }>;
 };
 type StripeFactory = (pk: string, o?: { stripeAccount?: string }) => StripeLike;
 
@@ -206,63 +209,68 @@ export function Checkout(p: Props) {
     return true;
   };
 
-  // Card (or free): create the order, then show Stripe's secure form.
-  const placeOrder = async () => {
-    setError(null);
-    if (!attendeesOk()) return;
+  type Placed = { orderId: string; buyerEmail: string; clientSecret: string | null; stripeAccount: string | null; paymentRef: string | null };
+  /** Creates the order (once per attempt). Free seats are confirmed straight away and leave the page. */
+  const createOrder = async (): Promise<Placed | null> => {
     const buyer = (receipt || people[0]!.email).trim();
-    if (!EMAIL_RE.test(buyer)) return setError({ message: "Enter the email the receipt goes to." });
-    if (p.turnstileSiteKey && !challenge) return setError({ message: "Please wait for the browser check to finish, then try again." });
-    setBusy(true);
+    if (!EMAIL_RE.test(buyer)) {
+      setError({ message: "Enter the email the receipt goes to." });
+      return null;
+    }
+    if (p.turnstileSiteKey && !challenge) {
+      setError({ message: "Please wait for the browser check to finish, then try again." });
+      return null;
+    }
     idem.current ||= attemptId();
     const r = await call<{ order: { id: string; status: string; paymentRef: string | null }; clientSecret: string | null; stripeAccount: string | null }>(`${p.api}/public/v1/organizations/${encodeURIComponent(p.orgId)}/orders`, {
       method: "POST",
       headers: { "idempotency-key": idem.current },
       body: JSON.stringify({ ticketTypeId: ticket!.id, quantity: n, currency: p.currency, buyerEmail: buyer, attendees: attendees(), ...(flexible ? { flexible: true } : {}), ...(fromFinder ? { source: "marketplace" } : {}), ...(challenge ? { turnstileToken: challenge } : {}) }),
     });
-    setBusy(false);
     freshChallenge();
-    if (!r.ok) return setError(r.error);
+    if (!r.ok) {
+      setError(r.error);
+      return null;
+    }
     const o = r.data;
-    // Free seats are confirmed straight away.
-    if (o.order.status === "paid") return window.location.assign(registeredHref(o.order.id, buyer));
-    setPlaced({ orderId: o.order.id, buyerEmail: buyer, clientSecret: o.clientSecret, stripeAccount: o.stripeAccount, paymentRef: o.order.paymentRef });
+    if (o.order.status === "paid") {
+      window.location.assign(registeredHref(o.order.id, buyer));
+      return null;
+    }
+    const next = { orderId: o.order.id, buyerEmail: buyer, clientSecret: o.clientSecret, stripeAccount: o.stripeAccount, paymentRef: o.order.paymentRef };
+    setPlaced(next);
+    return next;
   };
 
-  // Mount the Payment Element once the order exists.
-  useEffect(() => {
-    if (!placed?.clientSecret || !p.stripePk || !payBox.current) return;
-    let el: StripePaymentElement | null = null;
-    loadStripe()
-      .then((factory) => {
-        const stripe = placed.stripeAccount ? factory(p.stripePk!, { stripeAccount: placed.stripeAccount }) : factory(p.stripePk!);
-        const elements = stripe.elements({ clientSecret: placed.clientSecret!, appearance: { theme: "stripe", variables: { borderRadius: "10px", fontFamily: "Inter, system-ui, sans-serif" } } });
-        el = elements.create("payment");
-        el.mount(payBox.current!);
-        stripeRef.current = { stripe, elements };
-        setPayReady(true);
-      })
-      .catch(() => setError({ message: "The secure payment form didn't load. Reload the page and try again." }));
-    return () => el?.unmount();
-  }, [placed, p.stripePk]);
-
-  const pay = async () => {
-    if (!placed || !stripeRef.current) return;
+  /** One click: check attendees and card, create the order, charge the card (or, in test mode, simulate it). */
+  const payNow = async () => {
     setError(null);
+    if (!attendeesOk()) return;
     setBusy(true);
-    const back = new URL(registeredHref(placed.orderId, placed.buyerEmail), window.location.href).toString();
-    const res = await stripeRef.current.stripe.confirmPayment({ elements: stripeRef.current.elements, redirect: "if_required", confirmParams: { return_url: back } });
-    setBusy(false);
-    if (res.error) return setError({ message: res.error.message ?? "The payment didn't go through. Check the card details and try again." });
-    window.location.assign(back);
-  };
-
-  // Development only: no Stripe key, so the API's test endpoint stands in for the card.
-  const simulate = async () => {
-    if (!placed?.paymentRef) return;
-    setBusy(true);
-    await call(`${p.api}/public/v1/dev/payments/${encodeURIComponent(placed.paymentRef)}/succeed`, { method: "POST", body: "{}" });
-    window.location.assign(registeredHref(placed.orderId, placed.buyerEmail));
+    try {
+      const sx = stripeRef.current;
+      if (p.stripePk && !free) {
+        if (!sx) return setError({ message: "The secure card form is still loading. Give it a second and try again." });
+        const checked = await sx.elements.submit();
+        if (checked.error) return setError({ message: checked.error.message ?? "Check the card details." });
+      }
+      const o = placed ?? (await createOrder());
+      if (!o) return;
+      if (free) return;
+      if (!p.stripePk) {
+        // Development only: no Stripe key, so the API's test endpoint stands in for the card.
+        if (!o.paymentRef) return setError({ message: "No payment was created for this order." });
+        await call(`${p.api}/public/v1/dev/payments/${encodeURIComponent(o.paymentRef)}/succeed`, { method: "POST", body: "{}" });
+        return window.location.assign(registeredHref(o.orderId, o.buyerEmail));
+      }
+      if (!o.clientSecret) return setError({ message: "The payment couldn't be started. Reload the page and try again." });
+      const back = new URL(registeredHref(o.orderId, o.buyerEmail), window.location.href).toString();
+      const res = await sx!.stripe.confirmPayment({ elements: sx!.elements, clientSecret: o.clientSecret, redirect: "if_required", confirmParams: { return_url: back } });
+      if (res.error) return setError({ message: res.error.message ?? "The payment didn't go through. Check the card details and try again." });
+      window.location.assign(back);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const requestInvoice = async () => {
@@ -286,6 +294,36 @@ export function Checkout(p: Props) {
 
   const total = pricing && pricing.quantity === n ? pricing.totalMinor : unit * n;
   const totalText = free ? "Free" : `${rxMoney(total, p.currency)} ${p.currency}`;
+  const cardOnPage = !free && method === "card" && Boolean(p.stripePk);
+
+  // Stripe's card form shows as soon as the page loads (no order yet); Pay creates the order and confirms it.
+  useEffect(() => {
+    if (!cardOnPage || !payBox.current || stripeRef.current) return;
+    let el: StripePaymentElement | null = null;
+    let gone = false;
+    loadStripe()
+      .then((factory) => {
+        if (gone || !payBox.current) return;
+        const stripe = p.stripeAccount ? factory(p.stripePk!, { stripeAccount: p.stripeAccount }) : factory(p.stripePk!);
+        const elements = stripe.elements({ mode: "payment", amount: Math.max(total, 50), currency: p.currency.toLowerCase(), appearance: { theme: "stripe", variables: { borderRadius: "10px", fontFamily: "Instrument Sans, system-ui, sans-serif", colorPrimary: "#14213d" } } });
+        el = elements.create("payment");
+        el.on("ready", () => setPayReady(true));
+        el.mount(payBox.current);
+        stripeRef.current = { stripe, elements };
+      })
+      .catch(() => setError({ message: "The secure card form didn't load. Reload the page and try again." }));
+    return () => {
+      gone = true;
+      el?.unmount();
+      stripeRef.current = null;
+      setPayReady(false);
+    };
+    // The amount follows the total through update() below; re-creating the form would wipe the card details.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [cardOnPage, p.stripePk, p.stripeAccount, p.currency]);
+  useEffect(() => {
+    if (stripeRef.current && total > 0) stripeRef.current.elements.update({ amount: total });
+  }, [total, payReady]);
   return (
     <>
       <header className="rx-card" style={{ borderRadius: 0, borderWidth: "0 0 1px" }}>
@@ -406,8 +444,8 @@ export function Checkout(p: Props) {
                       )}
                     </div>
                   )}
-                  {placed && p.stripePk && <div ref={payBox} className="rx-payel" aria-label="Card details" />}
-                  {placed && !p.stripePk && placed.clientSecret && <p className="rx-note">Test mode: no payment key is set up, so no real card is charged.</p>}
+                  {cardOnPage && <div ref={payBox} className="rx-payel" aria-label="Card details" />}
+                  {!free && !p.stripePk && <p className="rx-note">Test mode: no payment key is set up, so no real card is charged.</p>}
                 </>
               )}
 
@@ -457,17 +495,9 @@ export function Checkout(p: Props) {
               <button type="button" className="rx-btn" onClick={requestInvoice} disabled={busy}>
                 {busy ? "Holding your seats…" : `Hold ${n === 1 ? "my seat" : `${n} seats`} and send invoice`}
               </button>
-            ) : !placed ? (
-              <button type="button" className="rx-btn" onClick={placeOrder} disabled={busy}>
-                {busy ? "One moment…" : free ? `Register ${n === 1 ? "" : `${n} seats`}`.trim() : "Continue to secure payment"}
-              </button>
-            ) : p.stripePk ? (
-              <button type="button" className="rx-btn" onClick={pay} disabled={busy || !payReady}>
-                {busy ? "Paying…" : `Pay ${totalText} and reserve`}
-              </button>
             ) : (
-              <button type="button" className="rx-btn" onClick={simulate} disabled={busy}>
-                Simulate payment (test mode)
+              <button type="button" className="rx-btn" onClick={payNow} disabled={busy || (cardOnPage && !payReady)}>
+                {busy ? (free ? "One moment…" : "Paying…") : free ? `Register ${n === 1 ? "" : `${n} seats`}`.trim() : p.stripePk ? `Pay ${totalText} and register` : `Pay ${totalText} (test mode)`}
               </button>
             )}
           </div>

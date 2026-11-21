@@ -141,7 +141,7 @@ export const toPublicSale = (s: { label: string; bps: number; until: Date; endsA
   s ? { label: s.label, percentOff: s.bps / 100, until: s.until.toISOString(), endsAt: s.endsAt.toISOString(), next: s.next ? { percentOff: s.next.bps / 100, until: s.next.until.toISOString() } : null } : null;
 
 export const PublicCourseSchema = z.object({
-  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), profileHandle: z.string(), sale: PublicSale }),
+  organization: z.object({ id: z.string(), name: z.string(), country: z.string(), currency: Currency, currencies: z.array(Currency), ratesUpdatedAt: z.string().nullable(), paymentMode: z.enum(["protected", "direct"]), flexibleTickets: z.boolean(), logoUrl: z.string().nullable(), accentColor: z.string().nullable(), profileHandle: z.string(), sale: PublicSale, stripeAccount: z.string().nullable() }),
   course: CourseSchema,
   /** Which optional class page sections to show (the organizer's switches, else "has content"). */
   sections: z.object({ banner: z.boolean(), logo: z.boolean(), badge: z.boolean(), video: z.boolean(), agenda: z.boolean(), included: z.boolean(), instructor: z.boolean(), seats: z.boolean() }),

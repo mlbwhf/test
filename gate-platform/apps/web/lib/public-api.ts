@@ -176,7 +176,7 @@ export type PublicInstructor = { id: string; name: string; title: string | null;
 /** An organizer sale running now: prices already include it; `until` ends this rate, `next` is the following step. */
 export type PublicSale = { label: string; percentOff: number; until: string; endsAt: string; next: { percentOff: number; until: string } | null };
 export type PublicCoursePage = {
-  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null; profileHandle?: string; sale?: PublicSale | null };
+  organization: { id: string; name: string; country: string; currency: string; currencies: string[]; ratesUpdatedAt: string | null; paymentMode?: "protected" | "direct"; flexibleTickets?: boolean; logoUrl?: string | null; accentColor?: string | null; profileHandle?: string; sale?: PublicSale | null; stripeAccount?: string | null };
   course: Course;
   /** Optional class page sections to show. */
   sections: Record<"banner" | "logo" | "badge" | "video" | "agenda" | "included" | "instructor" | "seats", boolean>;

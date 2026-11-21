@@ -63,6 +63,7 @@ export default async function RegisterPage({ params, searchParams }: { params: P
         classHref={classHref}
         viaKey={`ec-via:${org}/${slug}`}
         homeUrl={siteUrl()}
+        stripeAccount={data.organization.stripeAccount ?? null}
         registeredBase={`/c/${encodeURIComponent(org)}/${encodeURIComponent(slug)}/registered`}
         course={{ name: data.course.name, durationDays: data.course.durationDays }}
         orgName={data.organization.name}
