@@ -2,7 +2,7 @@
 /**
  * Plugin Name: AA — Site fixes
  * Description: Course-page badges, team training quote page and form, Training-menu NEW tags, contact-form spam gate and HubSpot relay, checkout guard, Pay gate, Gold-to-Platinum partner tier, footer newsletter sign-up and the monthly newsletter. Installed as a plugin because WPCode runs snippets from a preload copy that only its own editor refreshes.
- * Version:     2026.11.21.1
+ * Version:     2026.11.21.2
  * Author:      Agile Agilist
  * Requires PHP: 7.4
  *
@@ -14,7 +14,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) { exit; }
 
-define( 'AA_SF_VERSION', '2026.11.21.1' );
+define( 'AA_SF_VERSION', '2026.11.21.2' );
 
 require_once __DIR__ . '/inc/course-bar.php';
 require_once __DIR__ . '/inc/menu-new.php';
@@ -32,3 +32,4 @@ require_once __DIR__ . '/inc/career-lssp.php';
 require_once __DIR__ . '/inc/black-friday.php';
 require_once __DIR__ . '/inc/assess-training.php';
 require_once __DIR__ . '/inc/menu-innovation.php';
+require_once __DIR__ . '/inc/art-ready.php';
