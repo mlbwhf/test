@@ -20,7 +20,7 @@ against its primary source in this workstream.
 | `/indexes/ai-economics/llm-token-price-index/` | ~280× drop, ~10×/yr rate, per-model $/M tokens | Provider price lists — change without notice | 2026-08-05 | ⏳ |
 | `/reports/ai-data-center-cost/` | ~~$250B~~ **$105B** guarantee (phase one only), ~$350B chip financing, $30–40B phase one | **Deal terms under active negotiation** — page states they may change | **2026-08-24 — UPDATED** | ✅ |
 | `/reports/meta-blackrock-off-balance-sheet-ai-financing/` | 80/20 split, $14.3B, $12.5B notes, lease terms | Transaction documents may be amended; watch for deal #3 | 2026-08-24 (Nvidia comparison figure updated; Meta terms unchanged) | ✅ |
-| `/indexes/ai-economics/ai-bubble-tracker/` | Valuation and capex markers | Market-sensitive by definition | unknown | ⚠️ |
+| `/indexes/ai-economics/ai-bubble-tracker/` (967) | Valuation and capex markers; Gartner $2.67T and IDC $521B forecasts | Market-sensitive by definition | **2026-11-21 — PARTIALLY UPDATED** (forecasts only; revenue run-rates dated Apr 2026) | 🟡 |
 | Homepage "Figure of the week" (page 6) | Featured figure + 4-year series | Weekly by design — swap the WEEKLY-EDIT lines | 2026-08-22 | ✅ |
 
 ## STANDARD — quarterly (1 Jan / 1 Apr / 1 Jul / 1 Oct)
@@ -1428,7 +1428,16 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
   - Backups: `backups/39-20261121.html` and `backups/3229-20261121.html`, both rebuilt from earlier backups plus logged edits.
 - **3229 corrections log:** row added to "Major updates after a source or the facts changed" with type Superseded, because the
   $2.52T was right when published. "Last entry" and `dateModified` now 21 Nov.
-- **Still carrying superseded Gartner editions:**
-  - 376 (AI Spending by Industry 2026) shows $2.59T and "2025 ~$1.5T". Gartner restated 2025 to about $1.79T.
-  - 967 shows $2.59T or $2.5T.
-  - Both need the same update, with What-changed blocks and their CSVs.
+- **376 and 967 (same day):**
+  - 376 had already been corrected to $2.67T on 11 Nov; the note in the data file was out of date. Its FAQ and FAQPage
+    schema still gave IDC's July $497B, which is now IDC's 6 Nov $521B. A What-changed row was added, and the stamp and both
+    `dateModified` now read 21 Nov. The CSV holds only the industry tables, so it was unaffected.
+  - 967 AI Bubble Tracker: Gartner $2.59T (May) → $2.67T (16 Sep) in the tile, body text and sources; IDC $487B (Apr) →
+    $521B (6 Nov). A What-changed block was added. The page has no CSV.
+  - Corrections log: two Superseded rows. Revert recipe: `backups/376-967-20261121-edits.md`.
+- **Still open on 967 (thin page, CRITICAL cadence):**
+  - No byline stamp, no tables, and no Article schema with `dateModified`.
+  - The AIOSEO description is the auto breadcrumb text.
+  - Revenue figures are dated April 2026: OpenAI "~$25B" run rate, against ~$50B in Sept 2026; Anthropic ~$30B.
+  - Needs a full content-depth rebuild.
+- **IDC $487B/$497B still shown on pages 93, 73, 320, 354 and 318** (per `content-ops/state-of-ai/data/spending.json`).
