@@ -560,3 +560,20 @@
 @keyframes nf-drift { 0%, 100% { transform: translateY(0) rotate(var(--r)); } 50% { transform: translateY(-12px) rotate(var(--r)); } }
 @keyframes nf-dots { 0%, 100% { opacity: 0.3; } 50% { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { .nf-drift, .nf-dot { animation: none; } }
+
+/* Framework coverage page. */
+.cv-jump { display: flex; flex-wrap: wrap; gap: 8px; }
+.ly .cv-jump a { font: 700 15px var(--body); padding: 8px 16px; border-radius: 99px; border: 2px solid var(--ink); background: #fff; color: var(--ink); text-decoration: none; }
+.ly .cv-jump a:hover { background: var(--yellow); }
+.cv-h { font: 800 clamp(34px, 4.6vw, 60px) / 1 var(--display); letter-spacing: -0.04em; margin: 12px 0 10px; }
+.cv-lede { font-size: 19px; line-height: 1.45; max-width: 60ch; margin: 0 0 22px; }
+.cv-levels { display: grid; gap: 24px; margin-top: 22px; }
+.cv-level { background: #fff; border: 2px solid var(--ink); border-radius: 28px; padding: 26px; box-shadow: 6px 6px 0 var(--ink); scroll-margin-top: 24px; overflow-x: auto; }
+.cv-level h3 { font: 700 30px / 1.05 Georgia, "Newsreader", serif; margin: 0 0 6px; }
+.cv-level > p { margin: 0 0 14px; font-size: 16px; }
+.cv-table { width: 100%; border-collapse: collapse; font-size: 15.5px; line-height: 1.4; min-width: 520px; }
+.cv-table thead th { text-align: left; font: 700 12px var(--body); letter-spacing: 0.08em; text-transform: uppercase; padding: 0 12px 8px 0; }
+.cv-table tbody th { text-align: left; font-weight: 600; width: 42%; }
+.cv-table tbody th, .cv-table tbody td { padding: 10px 12px 10px 0; border-top: 1.5px solid color-mix(in srgb, var(--ink) 18%, transparent); vertical-align: top; }
+.ly .cv-level .mp-tpls a { font: 700 13px var(--body); padding: 4px 11px; border-radius: 99px; border: 1.5px solid var(--ink); background: var(--yellow); color: var(--ink); text-decoration: none; }
+.cv-fine { font-size: 13.5px; line-height: 1.5; max-width: 80ch; margin: 28px 0 0; opacity: 0.75; }

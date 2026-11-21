@@ -9,6 +9,7 @@ import { useState } from "react";
 import { KANBAN_LEVELS, type Board, type KanbanItem } from "@trainyard/core";
 import { useFrameState } from "@/components/exercise-boards";
 import { KanbanBoard } from "@/components/kanban-board";
+import { AdoBar } from "@/components/ado-bar";
 
 type Story = KanbanItem & { iter?: number };
 type Objective = { id: string; name: string; plan: number; actual?: number; committed: boolean };
@@ -75,7 +76,7 @@ function Planning({ board, readOnly, onChanged, onError, switcher }: { board: Bo
       <button key={s.id} className="kb-card story" style={{ background: t.bg, color: t.fg }} aria-pressed={s.id === cur?.id} onClick={() => setSel(s.id)}>
         <b>{s.name}</b>
         <span className="tb-meta">
-          <span>{t.name}</span>
+          <span>{typeof s.adoId === "number" ? `#${s.adoId} · ` : ""}{t.name}</span>
           <span>{s.size ? `${s.size} pts` : "not sized"}</span>
         </span>
       </button>
@@ -99,6 +100,8 @@ function Planning({ board, readOnly, onChanged, onError, switcher }: { board: Bo
           {switcher}
         </div>
       </header>
+
+      <AdoBar board={board} level="team" readOnly={readOnly} onChanged={onChanged} />
 
       {!readOnly ? (
         <form className="kb-glass kb-add" onSubmit={(e) => (e.preventDefault(), add())}>

@@ -37,6 +37,9 @@ export default function MethodsPage() {
           <Link href="/#join" className="pill navy">
             Start the 30-day trial
           </Link>
+          <Link href="/coverage" className="pill">
+            See framework coverage
+          </Link>
         </div>
       </header>
       <section style={{ paddingTop: 70 }}>

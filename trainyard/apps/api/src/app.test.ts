@@ -1160,20 +1160,20 @@ describe("workspaces", () => {
     await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
     const ada = await call("POST", "/v1/signups", { name: "Ada", email: "ada@example.io", plan: "practice" });
     const key = ada.body.apiKey;
-    // One board of their own on Practice.
-    expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "One" }, key)).status).toBe(201);
+    // Five boards of their own on Practice.
+    for (const n of ["One", "B2", "B3", "B4", "B5"]) expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: n }, key)).status).toBe(201);
     const two = await call("POST", "/v1/templates/boards/tpl-builtin-class-leading-safe/create", { name: "Two" }, key);
     expect(two.status).toBe(402);
-    expect(two.body.error).toMatchObject({ code: "PLAN_LIMIT", details: { kind: "boards", limit: 1, current: 2, upgrade: "/billing" } });
+    expect(two.body.error).toMatchObject({ code: "PLAN_LIMIT", details: { kind: "boards", limit: 5, current: 6, upgrade: "/billing" } });
     // The refused board is not kept.
     expect((await call("GET", "/v1/boards", undefined, key)).body.boards.filter((b: { name: string }) => b.name === "Two")).toHaveLength(0);
-    // Five people, then 402.
-    for (const n of [2, 3, 4, 5]) expect((await call("POST", "/v1/users", { name: `P${n}`, email: `p${n}@example.io`, role: "viewer" }, key)).status).toBe(201);
-    const sixth = await call("POST", "/v1/users", { name: "P6", email: "p6@example.io", role: "viewer" }, key);
+    // Ten people, then 402.
+    for (const n of [2, 3, 4, 5, 6, 7, 8, 9, 10]) expect((await call("POST", "/v1/users", { name: `P${n}`, email: `p${n}@example.io`, role: "viewer" }, key)).status).toBe(201);
+    const sixth = await call("POST", "/v1/users", { name: "P11", email: "p11@example.io", role: "viewer" }, key);
     expect(sixth.status).toBe(402);
-    expect(sixth.body.error.details).toMatchObject({ kind: "members", limit: 5, current: 5 });
+    expect(sixth.body.error.details).toMatchObject({ kind: "members", limit: 10, current: 10 });
     const billing = await call("GET", "/v1/billing/workspace", undefined, key);
-    expect(billing.body).toMatchObject({ workspace: { plan: "practice" }, limits: { members: 5, boards: 1 }, usage: { members: 5, boards: 1 }, canManage: true });
+    expect(billing.body).toMatchObject({ workspace: { plan: "practice" }, limits: { members: 10, boards: 5 }, usage: { members: 10, boards: 5 }, canManage: true });
   });
 
   it("lets the owner upgrade in page and buy more seats, and a Trainer plan counts trainers not participants", async () => {
@@ -1763,6 +1763,133 @@ describe("kanban boards", () => {
       expect((await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(f)}/state`, { key: "items", op: "update", id: item.id, value: { state: 1 } })).status).toBe(200);
       expect((await call("GET", `/v1/boards/${id}`)).body.board.frames[0].state.items[0].state).toBe(1);
     }
+  });
+});
+
+describe("azure devops on the kanban boards", () => {
+  // A small Azure DevOps: one project, the Agile process's states, three features.
+  function fakeAdo() {
+    const calls: { method: string; url: string; body?: unknown }[] = [];
+    const items = new Map<number, { id: number; rev: number; fields: Record<string, unknown> }>();
+    const add = (id: number, fields: Record<string, unknown>) => items.set(id, { id, rev: 1, fields: { "System.Id": id, "System.WorkItemType": "Feature", "System.State": "New", "System.Tags": "", ...fields } });
+    add(101, { "System.Title": "Shopping cart", "System.State": "Active", "Microsoft.VSTS.Scheduling.Effort": 8, "Microsoft.VSTS.Common.BusinessValue": 13 });
+    add(102, { "System.Title": "Checkout latency budget", "Microsoft.VSTS.Common.ValueArea": "Architectural", "System.Tags": "perf" });
+    add(103, { "System.Title": "Old search", "System.State": "Closed" });
+    const res = (status: number, body?: unknown) => ({ ok: status < 300, status, headers: { get: () => null }, text: async () => (body === undefined ? "" : JSON.stringify(body)) });
+    const fetch = async (url: string, init: { method: string; headers: Record<string, string>; body?: string }) => {
+      const body = init.body ? JSON.parse(init.body) : undefined;
+      calls.push({ method: init.method, url, ...(body !== undefined ? { body } : {}) });
+      if (!init.headers.Authorization || !url.startsWith("https://dev.azure.com/acme/")) return res(401, { message: "no" });
+      if (url.includes("/_apis/projects/")) return res(200, { id: "p1", name: "Shop" });
+      if (url.includes("/workitemtypes?")) return res(200, { value: [{ name: "Epic" }, { name: "Feature" }, { name: "User Story" }, { name: "Old", isDisabled: true }] });
+      if (url.includes("/states?")) return res(200, { value: [{ name: "New", category: "Proposed" }, { name: "Active", category: "InProgress" }, { name: "Resolved", category: "Resolved" }, { name: "Closed", category: "Completed" }, { name: "Removed", category: "Removed" }] });
+      if (url.includes("/classificationnodes/")) return res(200, { name: "Shop", children: [{ name: "PI 1", children: [{ name: "Iteration 1" }, { name: "Iteration 2" }] }] });
+      if (url.includes("/wiql?")) return res(200, { workItems: [...items.keys()].map((id) => ({ id })) });
+      if (url.includes("/workitemsbatch?")) return res(200, { value: (body as { ids: number[] }).ids.map((id) => items.get(id)) });
+      const ops = body as { op: string; path: string; value?: unknown }[];
+      const apply = (w: { rev: number; fields: Record<string, unknown> }) => {
+        for (const o of ops) o.op === "remove" ? delete w.fields[o.path.replace("/fields/", "")] : (w.fields[o.path.replace("/fields/", "")] = o.value);
+        w.rev++;
+        return w;
+      };
+      if (init.method === "POST" && url.includes("/workitems/%24")) {
+        const id = 200 + items.size;
+        add(id, {});
+        return res(200, apply(items.get(id)!));
+      }
+      const m = /\/workitems\/(\d+)\?/.exec(url);
+      if (init.method === "PATCH" && m) {
+        const w = items.get(Number(m[1]));
+        if (!w) return res(404, { message: "gone" });
+        if (ops.some((o) => o.path === "/fields/System.State" && o.value === "Blocked")) return res(400, { message: "The field 'State' contains the value 'Blocked' that is not in the list of supported values" });
+        return res(200, apply(w));
+      }
+      return res(404, { message: "unknown" });
+    };
+    return { fetch, calls, items };
+  }
+
+  it("connects a project, links the ART Kanban to features, and keeps cards and work items the same", async () => {
+    const ado = fakeAdo();
+    const { call, store } = await setup({ importFetch: ado.fetch as never });
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-art-kanban/create", { name: "ART Kanban" })).body.board.id as string;
+    const frame = encodeURIComponent(`${id}:kanban`);
+    const put = (body: unknown) => call("PUT", `/v1/boards/${id}/frames/${frame}/state`, body);
+    const items = async () => (await call("GET", `/v1/boards/${id}`)).body.board.frames[0].state.items as { id: string; name: string; type: string; state: number; size?: number; bv?: number; adoId?: number; hypothesis?: string }[];
+    // Not connected yet: linking says so; a bad name never reaches Azure DevOps.
+    expect((await call("GET", "/v1/ado/meta")).status).toBe(409);
+    expect((await call("PUT", "/v1/ado", { organization: "acme/evil", project: "Shop", pat: "x".repeat(30) })).status).toBe(400);
+    const conn = await call("PUT", "/v1/ado", { organization: "acme", project: "Shop", pat: "p".repeat(40) });
+    expect(conn.body.connection).toEqual(expect.objectContaining({ organization: "acme", project: "Shop", account: "Shop" }));
+    // The token is sealed and never returned.
+    expect(JSON.stringify(conn.body)).not.toContain("pppp");
+    expect(JSON.stringify(store.state)).not.toContain("p".repeat(40));
+    const meta = (await call("GET", "/v1/ado/meta?type=Feature&level=art")).body;
+    expect(meta.types).toEqual(["Epic", "Feature", "User Story"]);
+    expect(meta.iterations.map((i: { path: string }) => i.path)).toEqual(["Shop\\PI 1", "Shop\\PI 1\\Iteration 1", "Shop\\PI 1\\Iteration 2"]);
+    // Funnel, Analyzing, Ready stay New; the four build states spread over Active and Resolved; Done is Closed.
+    expect(meta.suggested).toEqual(["New", "New", "New", "Active", "Resolved", "Resolved", "Resolved", "Closed"]);
+    const linked = await call("PUT", `/v1/boards/${id}/ado`, { type: "Feature", states: meta.suggested });
+    expect(linked.body).toMatchObject({ added: 3, total: 3 });
+    expect((await items()).map((i) => [i.adoId, i.name, i.type, i.state, i.size ?? null, i.bv ?? null])).toEqual([[101, "Shopping cart", "business", 3, 8, 13], [102, "Checkout latency budget", "enabler", 0, null, null], [103, "Old search", "business", 7, null, null]]);
+    const cart = (await items())[0]!;
+    // Moving a card writes the state; a move between board states that share a tracker state writes nothing.
+    ado.calls.length = 0;
+    expect((await put({ key: "items", op: "update", id: cart.id, value: { state: 4 } })).status).toBe(200);
+    expect(ado.items.get(101)!.fields["System.State"]).toBe("Resolved");
+    expect((await put({ key: "items", op: "update", id: cart.id, value: { state: 5 } })).status).toBe(200);
+    expect(ado.calls.filter((c) => c.method === "PATCH")).toHaveLength(1);
+    // Title, size and value go across; what only the board knows stays here.
+    await put({ key: "items", op: "update", id: cart.id, value: { name: "Shopping cart v2", size: 13, bv: 20, hypothesis: "Fewer abandoned carts" } });
+    expect(ado.items.get(101)!.fields).toMatchObject({ "System.Title": "Shopping cart v2", "Microsoft.VSTS.Scheduling.Effort": 13, "Microsoft.VSTS.Common.BusinessValue": 20 });
+    // Making it an enabler sets the value area and keeps the work item's own tags.
+    const perf = (await items())[1]!;
+    await put({ key: "items", op: "update", id: perf.id, value: { type: "business" } });
+    expect(ado.items.get(102)!.fields).toMatchObject({ "Microsoft.VSTS.Common.ValueArea": "Business", "System.Tags": "perf" });
+    // A new card becomes a work item.
+    await put({ key: "items", op: "push", value: { name: "Saved carts", type: "enabler", state: 0 } });
+    const made = (await items()).find((i) => i.name === "Saved carts")!;
+    expect(made.adoId).toBeGreaterThan(200);
+    expect(ado.items.get(made.adoId!)!.fields).toMatchObject({ "System.Title": "Saved carts", "Microsoft.VSTS.Common.ValueArea": "Architectural" });
+    // A change made in Azure DevOps arrives on the next pull; the card keeps its place and its own fields.
+    ado.items.get(101)!.fields["System.Title"] = "Cart, renamed there";
+    ado.items.get(101)!.rev++;
+    ado.items.delete(103);
+    const pulled = await call("POST", `/v1/boards/${id}/ado/pull`, {});
+    expect(pulled.body).toMatchObject({ updated: 1, removed: 1 });
+    const after = (await items()).find((i) => i.adoId === 101)!;
+    expect(after).toMatchObject({ name: "Cart, renamed there", state: 5, hypothesis: "Fewer abandoned carts" });
+    expect((await items()).some((i) => i.adoId === 103)).toBe(false);
+    // When Azure DevOps refuses, nothing is kept here and the reason is said.
+    await call("PUT", `/v1/boards/${id}/ado`, { type: "Feature", states: ["New", "New", "New", "Blocked", "Resolved", "Resolved", "Resolved", "Closed"] });
+    const fresh = (await items()).find((i) => i.adoId === 102)!;
+    const refused = await put({ key: "items", op: "update", id: fresh.id, value: { state: 3 } });
+    expect(refused.status).toBe(502);
+    expect(refused.body.error.message).toContain("not in the list of supported values");
+    expect((await items()).find((i) => i.adoId === 102)!.state).toBe(fresh.state);
+    // Unlinked, the cards stay and changes stop going across.
+    expect((await call("DELETE", `/v1/boards/${id}/ado`)).status).toBe(204);
+    ado.calls.length = 0;
+    expect((await put({ key: "items", op: "update", id: fresh.id, value: { state: 3 } })).status).toBe(200);
+    expect(ado.calls).toHaveLength(0);
+    expect((await call("DELETE", "/v1/ado")).status).toBe(204);
+    expect((await call("GET", "/v1/ado")).body.connection).toBeNull();
+  });
+
+  it("puts a team board's stories in the iteration Azure DevOps has them in, with story points", async () => {
+    const ado = fakeAdo();
+    ado.items.clear();
+    ado.items.set(301, { id: 301, rev: 1, fields: { "System.Id": 301, "System.WorkItemType": "User Story", "System.Title": "Reach my cart from any page", "System.State": "New", "System.IterationPath": "Shop\\PI 1\\Iteration 2", "Microsoft.VSTS.Scheduling.StoryPoints": 3, "System.Tags": "Spike" } });
+    const { call } = await setup({ importFetch: ado.fetch as never });
+    await call("PUT", "/v1/ado", { organization: "acme", project: "Shop", pat: "p".repeat(40) });
+    const id = (await call("POST", "/v1/templates/boards/tpl-builtin-team-breakout/create", { name: "Team" })).body.board.id as string;
+    const states = (await call("GET", "/v1/ado/meta?type=User%20Story&level=team")).body.suggested as string[];
+    expect(states).toEqual(["New", "New", "Active", "Resolved", "Resolved", "Closed"]);
+    await call("PUT", `/v1/boards/${id}/ado`, { type: "User Story", states, iterations: ["Shop\\PI 1\\Iteration 1", "Shop\\PI 1\\Iteration 2"] });
+    const story = (await call("GET", `/v1/boards/${id}`)).body.board.frames[0].state.items[0];
+    expect(story).toMatchObject({ adoId: 301, type: "spike", size: 3, iter: 2 });
+    await call("PUT", `/v1/boards/${id}/frames/${encodeURIComponent(`${id}:team`)}/state`, { key: "items", op: "update", id: story.id, value: { iter: 1, size: 5 } });
+    expect(ado.items.get(301)!.fields).toMatchObject({ "System.IterationPath": "Shop\\PI 1\\Iteration 1", "Microsoft.VSTS.Scheduling.StoryPoints": 5 });
   });
 });
 
@@ -2579,25 +2706,26 @@ describe("company accounts", () => {
 });
 
 describe("the free plan for a company", () => {
-  it("runs one class at a time, with every instructor it needs; archiving the class frees the slot", async () => {
+  it("runs five classes at a time, with every instructor it needs; archiving a class frees a slot", async () => {
     const { call } = await setup();
     await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
     const owner = (await call("POST", "/v1/signups", { name: "Ana", email: "ana@acme.io", plan: "practice", account: "company", company: "Acme" })).body.apiKey as string;
-    // Far more than the free plan's five people: a company adds every instructor it needs.
-    for (const n of [1, 2, 3, 4, 5, 6, 7]) expect((await call("POST", "/v1/instructors", { name: `I${n}`, email: `i${n}@acme.io`, kind: n % 2 ? "trainer" : "co-instructor" }, owner)).status).toBe(201);
+    // Far more than the free plan's ten people: a company adds every instructor it needs.
+    for (const n of [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]) expect((await call("POST", "/v1/instructors", { name: `I${n}`, email: `i${n}@acme.io`, kind: n % 2 ? "trainer" : "co-instructor" }, owner)).status).toBe(201);
     const first = (await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: "LPM · March" }, owner)).body.board.id as string;
+    for (const n of [2, 3, 4, 5]) expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-lpm/create", { name: `LPM ${n}` }, owner)).status).toBe(201);
     const second = await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner);
     expect(second.status).toBe(402);
-    expect(second.body.error.message).toContain("one class or board at a time");
+    expect(second.body.error.message).toContain("five boards or classes at a time");
     // Archive the finished class: the next one starts.
     expect((await call("POST", `/v1/boards/${first}/archive`, { archived: true }, owner)).status).toBeLessThan(300);
     expect((await call("POST", "/v1/templates/boards/tpl-builtin-class-rte/create", { name: "RTE · April" }, owner)).status).toBe(201);
   });
-  it("keeps the five-person limit for an individual on the free plan", async () => {
+  it("keeps the ten-person limit for an individual on the free plan", async () => {
     const { call } = await setup();
     await call("POST", "/v1/users", { name: "Root", email: "root@example.io", role: "admin" });
     const solo = (await call("POST", "/v1/signups", { name: "Sol", email: "sol@solo.io", plan: "practice" })).body.apiKey as string;
-    for (const n of [1, 2, 3, 4]) expect((await call("POST", "/v1/instructors", { name: `P${n}`, email: `p${n}@solo.io` }, solo)).status).toBe(201);
-    expect((await call("POST", "/v1/instructors", { name: "P5", email: "p5@solo.io" }, solo)).status).toBe(402);
+    for (const n of [1, 2, 3, 4, 5, 6, 7, 8, 9]) expect((await call("POST", "/v1/instructors", { name: `P${n}`, email: `p${n}@solo.io` }, solo)).status).toBe(201);
+    expect((await call("POST", "/v1/instructors", { name: "P10", email: "p10@solo.io" }, solo)).status).toBe(402);
   });
 });

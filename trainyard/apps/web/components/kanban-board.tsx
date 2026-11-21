@@ -8,6 +8,7 @@
 import { useMemo, useState } from "react";
 import { KANBAN_LEVELS, kanbanNext, kanbanWsjf, type Board, type KanbanItem, type KanbanLevel } from "@trainyard/core";
 import { useFrameState } from "@/components/exercise-boards";
+import { AdoBar } from "@/components/ado-bar";
 
 const SCALE = [1, 2, 3, 5, 8, 13, 20];
 
@@ -72,6 +73,8 @@ export function KanbanBoard({ board, level, readOnly, onChanged, onError, header
         </div>
       </header>
 
+      <AdoBar board={board} level={level} readOnly={readOnly} onChanged={onChanged} />
+
       {!readOnly ? (
         <form className="kb-glass kb-add" onSubmit={(e) => (e.preventDefault(), add())}>
           <label className="sr-only" htmlFor="kb-new">New {spec.unit[0]}</label>
@@ -112,7 +115,7 @@ export function KanbanBoard({ board, level, readOnly, onChanged, onError, header
                         return (
                           <button key={x.id} className="kb-card" style={{ background: t.bg, color: t.fg }} aria-pressed={x.id === cur?.id} onClick={() => (setSel(x.id), setNotice(null))}>
                             <b>{x.name}</b>
-                            <span>{points ? (x.size ? `${x.size} pts` : "not sized") : `WSJF ${w ?? "–"}`} · {t.name.replace(/ (epic|capability|feature|story|or expedite)$/i, "")}</span>
+                            <span>{typeof x.adoId === "number" ? `#${x.adoId} · ` : ""}{points ? (x.size ? `${x.size} pts` : "not sized") : `WSJF ${w ?? "–"}`} · {t.name.replace(/ (epic|capability|feature|story|or expedite)$/i, "")}</span>
                           </button>
                         );
                       })}
@@ -128,6 +131,7 @@ export function KanbanBoard({ board, level, readOnly, onChanged, onError, header
           {cur ? (
             <>
               <span className="kb-eyebrow">{spec.panel} · {spec.states[cur.state]?.name}</span>
+              {typeof cur.url === "string" && /^https:\/\/dev\.azure\.com\//.test(cur.url) ? <a className="ado-open" href={cur.url} target="_blank" rel="noopener noreferrer">Work item #{String(cur.adoId)} in Azure DevOps ↗</a> : null}
               {readOnly ? <h3 className="kb-name">{cur.name}</h3> : <input key={cur.id + cur.name} className="kb-name-in" defaultValue={cur.name} aria-label="Name" maxLength={160} onBlur={(e) => e.target.value.trim() && e.target.value !== cur.name && update(cur.id, { name: e.target.value.trim() })} />}
               {!readOnly ? (
                 <select value={cur.type} aria-label="Kind" onChange={(e) => update(cur.id, { type: e.target.value })}>
