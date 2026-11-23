@@ -482,7 +482,12 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 1100,    /* early bird; 1500 is the strike figure, which lives on the page */
+			/* 1500 LIST, 1250 CHARGED, set on 23 Nov 2026 "across all". price_was is
+			   the crossed-out figure; because it is set here, the sale code leaves
+			   this course alone (see aa_reg_sale_apply()), so 1250 is the price in
+			   and out of a sale. Was 1100 with the 1500 written on the page. */
+			'price'    => 1250,
+			'price_was' => 1500,
 			/* WAS 1. The page calls it a two-day executive cohort in its own
 			   lede and its chip, and the note at the top of this block says the
 			   same. */
@@ -2102,6 +2107,7 @@ function aa_reg_price_overrides() {
 		'ase'                      => 1799,
 		'bo'                       => 850,
 		'sa-gov'                   => 999,    /* Leading SAFe for Government */
+		'ai-native-ready-certification-2' => 1250,   /* AINORG, every language: a mirror reads 1,500 off its own page, and 1,500 is the crossed-out figure */
 
 		/* BOTH HARDWARE COURSES ARE 999, CONFIRMED, AND THAT IS DELIBERATELY
 		   NOT THE PRICE OF THE COURSE THEY ARE AN EDITION OF.
@@ -2782,12 +2788,30 @@ function aa_reg_money( $amount, $currency ) {
 	return $sym . number_format_i18n( (float) $amount );
 }
 
+/**
+ * A CLASS STOPS BEING SOLD AT 3 PM EASTERN ON THE DAY IT STARTS.
+ *
+ * Asked for on 23 Nov 2026. Until then a class was offered until midnight of
+ * its first day. Checked in the two places that sell -- the list of dates a
+ * page offers and the checkout itself -- and deliberately NOT in
+ * aa_reg_generate(): the invoice, the confirmation and the webhook still have
+ * to find a class somebody paid for at 2:55.
+ */
+function aa_reg_closed_for_sale( $start ) {
+	$now   = new DateTime( 'now', new DateTimeZone( 'America/New_York' ) );
+	$today = $now->format( 'Y-m-d' );
+	$start = substr( (string) $start, 0, 10 );
+	if ( $start < $today ) { return true; }
+	return $start === $today && (int) $now->format( 'G' ) >= (int) apply_filters( 'aa_reg_same_day_close_hour', 15 );
+}
+
 /** Upcoming cohorts only, grouped by month index, in date order. */
 function aa_reg_upcoming( $slug, $course ) {
 	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
 	$out   = array();
 	foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 		if ( $c['end'] < $today ) { continue; }          // finished classes are not offers
+		if ( aa_reg_closed_for_sale( $c['start'] ) ) { continue; }   // started, or past 3 PM on its first day
 		if ( aa_reg_seats_left( $course, $c ) < 1 ) { continue; }   // sold out
 		$out[] = $c;
 	}
@@ -4864,6 +4888,9 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 			? 'There is no batch of this course on that date. Pick one from the schedule.'
 			: 'That batch is not available. Please pick another date.';
 		return new WP_Error( 'aa_cohort', $msg, array( 'status' => 400 ) );
+	}
+	if ( aa_reg_closed_for_sale( $found['cohort']['start'] ) ) {
+		return new WP_Error( 'aa_cohort', 'Registration for that class has closed. Please pick another date.', array( 'status' => 400 ) );
 	}
 	$course = $found['course'];
 	$cohort = $found['cohort'];

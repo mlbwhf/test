@@ -57,7 +57,9 @@ function aa_sf_bf_rows() {
 			'slug' => $slug, 'code' => isset( $c['code'] ) ? $c['code'] : '', 'name' => $c['name'],
 			'days' => (int) $c['days'], 'track' => ! empty( $c['crumb'] ) ? $c['crumb'] : 'Training',
 			'url' => home_url( $c['url'] ), 'cur' => isset( $c['currency'] ) ? $c['currency'] : 'usd',
-			'list' => $list, 'sale' => aa_sf_bf_amount( $list ), 'dates' => array_slice( $up, 0, 3 ),
+			/* A class with its own lower price (Leading the AI-Native Organization,
+			   1500 to 1250) shows what the checkout charges, not 15% off its list. */
+			'list' => $list, 'sale' => min( aa_sf_bf_amount( $list ), (int) $c['price'] ), 'dates' => array_slice( $up, 0, 3 ),
 		);
 	}
 	$order = array( 'AI-Native' => 0, 'Core SAFe Roles' => 1, 'SAFe by Role' => 1, 'Advanced SAFe' => 2 );
@@ -163,7 +165,7 @@ function aa_sf_bf_shortcode() {
 		$h .= '<article class="aabf-card">' . ( $r['code'] !== '' ? '<span class="aabf-code">' . esc_html( $r['code'] ) . '</span>' : '' )
 		    . '<h3><a href="' . esc_url( $r['url'] ) . '">' . esc_html( $r['name'] ) . '</a></h3>'
 		    . '<p class="aabf-meta">' . (int) $r['days'] . ' ' . ( $r['days'] === 1 ? 'day' : 'days' ) . ' · live online · exam included</p>'
-		    . '<p class="aabf-price"><s>' . esc_html( aa_sf_bf_money( $r['list'], $r['cur'] ) ) . '</s>' . esc_html( aa_sf_bf_money( $r['sale'], $r['cur'] ) ) . '<span class="aabf-off">−' . $pct . '%</span></p>'
+		    . '<p class="aabf-price"><s>' . esc_html( aa_sf_bf_money( $r['list'], $r['cur'] ) ) . '</s>' . esc_html( aa_sf_bf_money( $r['sale'], $r['cur'] ) ) . '<span class="aabf-off">−' . ( $r['list'] > 0 ? max( (int) $pct, (int) round( ( $r['list'] - $r['sale'] ) * 100 / $r['list'] ) ) : (int) $pct ) . '%</span></p>'
 		    . '<p class="aabf-dates"><strong>Next:</strong> ' . esc_html( $dates ) . '</p>'
 		    . '<a class="aabf-btn" href="' . esc_url( $r['url'] . '#enroll' ) . '">' . ( $ph === 'live' ? 'Book at ' . esc_html( aa_sf_bf_money( $r['sale'], $r['cur'] ) ) : 'See the dates' ) . ' &#10230;</a></article>';
 	}
