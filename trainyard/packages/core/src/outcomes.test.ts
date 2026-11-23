@@ -101,7 +101,7 @@ describe("class boards", () => {
     expect(popm.frames.filter((f) => /^(Unicorns|Lions|Bears) .* board$/.test(f.title))).toHaveLength(3);
     expect(popm.nodes.some((n) => n.text.startsWith("Trustworthy:"))).toBe(true);
     // POPM and Advanced SPC chapters are built from the tools' own definitions too.
-    expect(popm.frames.some((f) => f.title.startsWith("Feature canvas"))).toBe(true);
+    expect(popm.frames.filter((f) => f.activity?.board).map((f) => f.activity!.board)).toEqual(["agenda", "po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-ai", "po-feat", "po-refine", "po-cap", "wsjf", "quad"]);
     expect(popm.frames.some((f) => f.title.startsWith("Coach Sync"))).toBe(true);
     expect(popm.frames.some((f) => f.title === "Processes")).toBe(true);
     const aspc = classBoard(CLASSES[2]!);

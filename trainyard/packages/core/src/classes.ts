@@ -651,19 +651,7 @@ const RAW_CLASSES: ClassSpec[] = [
       },
       {
         title: "Preparing for PI Planning",
-        exercises: [
-          { kind: "slide", title: "Lesson 2 activity: consider market rhythms for optimum release timing", body: "Place each release on the grid where demand is highest for its market. Markers: Local retail market (grey), Medical specimen market (teal), Hardware release (red). Then discuss: which rhythms are fixed, which are ours to choose, and what that means for the PI calendar.", minutes: 15 },
-          { kind: "table", title: "Market rhythms: demand by quarter", columns: ["Demand", "Q1", "Q2", "Q3", "Q4"], rows: [["High demand", "", "", "", ""], ["Median demand", "", "", "", ""], ["Low demand", "", "", "", ""]] },
-          { kind: "zones", title: "Lesson 2 discussion: just enough pre-planning", zones: ["More pre-planning · positive", "More pre-planning · negative", "Less pre-planning · positive", "Less pre-planning · negative"], color: COLORS.pink },
-          { kind: "stickies", title: "What is the problem? Who has the problem? Why is it important?", lanes: ["The problem", "Who has it", "Why it matters"], rows: 2, color: COLORS.blue },
-          { kind: "table", title: "Lesson 2 discussion: exploring customer needs with AI-supported research", columns: ["What assumptions does this research appear to make?", "What insights would require direct customer validation?", "How could this research inform (but not replace) customer discovery?"], rows: [], blankRows: 3 },
-          { kind: "slide", title: "Lesson 2 activity: writing features · example", body: "Description: allow purchase of supplemental insurance via the TTC mobile app. Benefit hypothesis: mobile access to insurance options improves convenience, increasing engagement and revenue. Acceptance criteria: customers can access insurance options through the mobile app's package booking flow; the app supports secure payment for insurance purchases; customers receive a push notification confirming their purchase." },
-          { kind: "stickies", title: "Feature storming", lanes: ["Feature 1", "Feature 2", "Feature 3", "Feature 4"], hint: "Epic: develop a solution to allow TTC customers to purchase supplemental insurance for packages. Example feature: mobile app insurance purchase.", rows: 1, color: COLORS.blue },
-          { kind: "canvas", title: "Feature refinement", sections: ["Feature description", "Benefit hypothesis", "Acceptance criteria"], cols: 3 },
-          FEATURE_CANVAS,
-          WSJF_TABLE,
-          { kind: "link", title: "Feature and enabler canvases, live", body: "Feature canvas with benefit hypothesis, acceptance criteria and WSJF; enabler canvas with the architectural runway.", href: "/canvases" },
-        ],
+        exercises: POPM_COURSE[2]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
       },
       {
         title: "Leading PI Planning",

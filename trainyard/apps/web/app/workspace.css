@@ -986,3 +986,62 @@ span.studio-team { cursor: default; }
 @media (max-width: 820px) { .po-two, .po-cols { grid-template-columns: minmax(0, 1fr); } .po-part { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 820px) { .po-make { grid-template-columns: minmax(0, 1fr); } }
 @media (prefers-reduced-motion: reduce) { .po-two, .po-person, .po-col, .po-sticky, .po-kite { animation: none; } }
+/* POPM lesson 2: market rhythms, features, refine, capacity allocation. */
+.po-legend.left { justify-content: flex-start; gap: 14px; font-size: 13.5px; font-weight: 600; }
+.po-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.po-legend span i { width: 22px; height: 5px; border-radius: 99px; background: var(--c); }
+.po-legend span i.sq { width: 14px; height: 14px; border-radius: 3px; opacity: 0.35; }
+.po-chartwrap { overflow-x: auto; }
+.po-chart { width: 100%; min-width: 620px; height: auto; display: block; }
+.po-curve { transition: d 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); stroke-dasharray: 1400; animation: po-draw 1.2s ease-out both; }
+.po-win { transition: opacity 0.35s; }
+.po-evt { animation: po-pop 0.4s both; }
+.po-evt-t { font: 600 11.5px "Helvetica Neue", Arial, sans-serif; fill: #0d1815; paint-order: stroke; stroke: #fffaf0; stroke-width: 3px; }
+.po-bars { display: grid; grid-template-columns: 150px repeat(12, minmax(0, 1fr)); gap: 4px; align-items: end; min-width: 620px; }
+.po-bars > b { font-size: 12.5px; line-height: 1.2; align-self: center; }
+.po-bars button { position: relative; height: 44px; border: 1.5px solid #0d181840; border-radius: 6px; background: #fff; cursor: pointer; padding: 0; overflow: hidden; }
+.po-bars button:disabled { cursor: default; }
+.po-bars button i { position: absolute; left: 0; right: 0; bottom: 0; transition: height 0.4s cubic-bezier(0.2, 0.7, 0.2, 1); opacity: 0.85; }
+.po-bars button.po-pick { height: 34px; font: 600 11px "JetBrains Mono", var(--font-mono); text-transform: uppercase; color: #0d1815; }
+.po-bars button.po-pick[aria-pressed="true"] { background: #2e8b57; color: #fff; border-color: #0d1815; }
+.po-evform { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr) 90px auto; gap: 6px; align-items: center; }
+.po-evform.two { grid-template-columns: minmax(0, 1fr) auto auto; }
+.po-big { margin: 0; font-size: 24px; font-weight: 800; line-height: 1.2; }
+.po-material { background: #fff; border: 2px solid var(--po-ink); border-radius: 12px; padding: 10px 14px; }
+.po-material summary { font-weight: 700; cursor: pointer; }
+.po-epic { background: #c3dfe8; border: 2px solid var(--po-ink); border-radius: 4px 4px 22px 4px; box-shadow: 3px 3px 0 var(--po-ink); padding: 12px 16px; }
+.po-epic p { margin: 4px 0 0; font-size: 17px; font-weight: 600; line-height: 1.4; }
+.po-count { flex: none; min-width: 64px; height: 64px; border-radius: 50%; border: 3px solid #d98a1c; display: grid; place-items: center; font-weight: 800; font-size: 19px; background: #fff; transition: border-color 0.3s, background 0.3s; }
+.po-count[data-ok="true"] { border-color: #2e8b57; background: #cfe8d4; }
+.po-feats { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; align-items: start; }
+.po-feat { background: #d3e36b33; border: 2px solid var(--po-ink); border-top: 8px solid #b9cf3f; border-radius: 4px 4px 14px 14px; box-shadow: 3px 3px 0 var(--po-ink); padding: 12px; display: flex; flex-direction: column; gap: 8px; background-color: #fff; animation: po-rise 0.45s both; transition: border-top-color 0.4s; }
+.po-feat.done { border-top-color: #2e8b57; }
+.po-feat header { display: flex; align-items: center; gap: 8px; }
+.po-feat header b { flex: 1; font-size: 17px; line-height: 1.2; }
+.po-feat.example { background-color: #d3e36b; border-top-color: #0d1815; }
+.po-feat.example summary { cursor: pointer; display: flex; flex-direction: column; gap: 2px; font-size: 16px; }
+.po-feat.example p { margin: 0; font-size: 14px; line-height: 1.4; }
+.po-feat.example p span, .po-flabel span { display: block; font: 700 11px "JetBrains Mono", var(--font-mono); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 2px; }
+.po-feat.new { border-style: dashed; border-top-width: 2px; box-shadow: none; background-color: transparent; }
+.po-feat.wide { animation: none; }
+.po-fdots { display: inline-flex; gap: 3px; }
+.po-fdots i { width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid var(--po-ink); background: #fff; transition: background 0.3s; }
+.po-fdots i.on { background: #2e8b57; }
+.po-flabel { display: block; }
+.po-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.po-chips button { font: inherit; font-weight: 700; font-size: 14.5px; min-height: 40px; padding: 4px 16px; border-radius: 99px; border: 2px solid var(--po-ink); background: #fff; color: var(--po-ink); cursor: pointer; transition: transform 0.2s, background 0.2s; }
+.po-chips button[aria-pressed="true"] { background: #d3e36b; transform: translateY(-2px); box-shadow: 3px 3px 0 var(--po-ink); }
+.po-piebox { align-items: center; }
+.po-piebox > .ex-mono { align-self: flex-start; }
+.po-pie { width: min(100%, 300px); height: auto; overflow: visible; }
+.po-slice { cursor: pointer; transition: stroke-dasharray 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), stroke-dashoffset 0.6s cubic-bezier(0.2, 0.7, 0.2, 1), stroke-width 0.25s; }
+.po-pie-n { font: 800 34px "Helvetica Neue", Arial, sans-serif; fill: #0d1815; }
+.po-caprow { display: grid; grid-template-columns: 16px minmax(90px, 1fr) minmax(0, 2fr) 52px 22px; gap: 10px; align-items: center; padding: 8px 10px; border: 2px solid transparent; border-radius: 10px; cursor: pointer; transition: background 0.2s, border-color 0.2s; }
+.po-caprow.on { background: #fffaf0; border-color: var(--po-ink); box-shadow: 3px 3px 0 var(--po-ink); }
+.po-caprow > i { width: 16px; height: 16px; border-radius: 4px; background: var(--c); border: 1.5px solid var(--po-ink); }
+.po-caprow input { width: 100%; accent-color: var(--c); min-height: 28px; }
+.po-cappct { font-weight: 800; font-size: 18px; text-align: right; font-variant-numeric: tabular-nums; }
+.po-btn.plain { background: #fff; box-shadow: none; }
+.po-policy { margin: 4px 0 0; font-size: 16px; font-weight: 600; line-height: 1.45; background: #ffd37a; border: 2px solid var(--po-ink); border-radius: 10px; padding: 10px 14px; }
+@keyframes po-draw { from { stroke-dashoffset: 1400; } to { stroke-dashoffset: 0; } }
+@media (max-width: 820px) { .po-evform { grid-template-columns: minmax(0, 1fr); } .po-caprow { grid-template-columns: 16px minmax(0, 1fr) 52px 22px; } .po-caprow input { grid-column: 1 / -1; grid-row: 2; } }

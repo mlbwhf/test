@@ -72,11 +72,120 @@ const lesson1: ActivitySpec[] = [
   },
 ];
 
-/** Lesson 1 runs on its own boards; the later chapters keep the class's canvas exercises until theirs are built. */
+const TTC_EPIC = "Develop a solution to allow TTC customers to purchase supplemental insurance for packages.";
+
+const lesson2: ActivitySpec[] = [
+  {
+    title: "Consider market rhythms for optimum release timing",
+    kind: "Discussion",
+    prepare: 10,
+    steps:
+      "Step 1: Individually, consider the following scenario:\nThe Van Maintenance Advisor requires new hardware. The System Architect has informed the Product Management team that customers will have to take their vans out of service for approximately one day to install the new hardware. Approximately 30% of your van customers serve the local retail market, while another 30% serve the medical specimen market.\nStep 2: As a class, identify the potential market rhythms and events that impact each market. Use that information to determine the key times to release the new hardware in order to minimize disruptions to customers.",
+    board: "po-rhythm",
+    config: {
+      classWide: true,
+      scenario:
+        "The Van Maintenance Advisor requires new hardware. The System Architect has informed the Product Management team that customers will have to take their vans out of service for approximately one day to install the new hardware. Approximately 30% of your van customers serve the local retail market, while another 30% serve the medical specimen market.",
+      markets: [["Local retail market", "#1f3a8a"], ["Medical specimen market", "#1fb89a"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Exploring customer needs with AI-supported research",
+    kind: "Discussion",
+    prepare: 7,
+    steps:
+      "Step 1: Individually, review the provided AI-generated customer research report\nStep 2: With your group, discuss the following:\n- What assumptions does this research appear to make?\n- What insights would require direct customer validation?\n- How could this research inform (but not replace) customer discovery?\nStep 3: Be prepared to share with the class",
+    board: "po-ai",
+    config: {
+      prompt: "Review the provided AI-generated customer research report, then discuss it with your group.",
+      kinds: [],
+      add: "+ add, Enter",
+      shareLabel: "Step 3 · What we share with the class",
+      lenses: [
+        ["Assumptions", "What assumptions does this research appear to make?"],
+        ["Needs validation", "What insights would require direct customer validation?"],
+        ["Inform, not replace", "How could this research inform (but not replace) customer discovery?"],
+      ],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Writing features",
+    kind: "Activity",
+    prepare: 10,
+    share: 10,
+    steps:
+      "Step 1: With your group, break down, or decompose, the example epic by identifying at least three potential features for an MVP.\nStep 2: Further refine each feature with a description, feature intent, benefit hypothesis, and acceptance criteria. In the benefit hypothesis, be sure to identify the primary customer.\nStep 3: Be prepared to share with the class.",
+    board: "po-feat",
+    config: {
+      shared: "popm-features",
+      epic: TTC_EPIC,
+      example: {
+        name: "Mobile app insurance purchase",
+        desc: "Allow purchase of supplemental insurance via TTC mobile app.",
+        hyp: "Mobile access to insurance options improves convenience, increasing engagement and revenue.",
+        intent: "Enable convenient, value-driven insurance decisions within the app, increasing engagement and revenue by guiding users to the most suitable coverage.",
+        ac: "Customers can access insurance options through the mobile app’s package booking flow. The mobile app supports secure payment for insurance purchases. Customers receive a push notification confirming their insurance purchase.",
+      },
+    },
+    ...BOARD,
+  },
+  {
+    title: "Prompt, refine, and edit",
+    kind: "Activity",
+    prepare: 15,
+    share: 10,
+    steps:
+      "Step 1: Individually, select one of the features you brainstormed in the previous activity\nStep 2: Using a GenAI tool, write a prompt to help clarify the feature intent, strengthen the benefit hypothesis, and improve the acceptance criteria\nStep 3: Review the AI-generated output and decide:\n- What to keep\n- What to change\n- What to remove\nStep 4: Refine the story and be prepared to share with the class",
+    board: "po-refine",
+    config: { shared: "popm-features" },
+    ...BOARD,
+  },
+  {
+    title: "Draft your capacity allocation policy",
+    kind: "Activity",
+    prepare: 5,
+    share: 10,
+    steps:
+      "Step 1: Individually, consider how you would use capacity allocation in your organization\nStep 2: Draft a capacity allocation policy for your ART that you will discuss with your key stakeholders\nStep 3: Be prepared to share with the class",
+    board: "po-cap",
+    ...BOARD,
+  },
+  {
+    title: "WSJF prioritization",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps:
+      "Step 1: With your groups, prioritize three of the features you identified earlier using WSJF\nStep 2: Be prepared to share with the class",
+    side: [
+      {
+        title: "Scale and note",
+        text: "Scale for each parameter: 1, 2, 3, 5, 8, 13, 20. Note: Do one column at a time. Start by picking the smallest item and giving it a 1. There must be at least one 1 in each column.",
+      },
+    ],
+    board: "wsjf",
+    config: { prompt: "Which feature goes first when you divide cost of delay by job size?", shared: "popm-features" },
+    ...BOARD,
+  },
+  {
+    title: "Just enough pre-planning",
+    kind: "Discussion",
+    prepare: 5,
+    steps:
+      "Step 1: As a class, discuss how the amount of pre-planning that you do can have positive outcomes and negative outcomes\nStep 2: Consider how the Lean-Agile mindset and SAFe practices influence and enable PI Planning preparedness",
+    board: "quad",
+    config: { classWide: true },
+    ...BOARD,
+  },
+];
+
+/** Lessons 1 and 2 run on their own boards; the later chapters keep the class's canvas exercises until theirs are built. */
 export const POPM_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Welcome", activities: welcome },
   { title: "Becoming a Product Owner / Product Manager", activities: lesson1 },
-  { title: "Preparing for PI Planning", activities: [], keep: true },
+  { title: "Preparing for PI Planning", activities: lesson2 },
   { title: "Leading PI Planning", activities: [], keep: true },
   { title: "Executing Iterations", activities: [], keep: true },
   { title: "Executing the PI", activities: [], keep: true },
