@@ -29,82 +29,106 @@ function AddLine({ placeholder, onAdd, label }: { placeholder: string; onAdd: (t
 }
 
 // ---- 1. Product role experience ----------------------------------------------------------------
+// Each person shapes a "kite" on four axes of experience; the group's kites overlap into one
+// picture of who is in the room, and what each came to learn hangs on the wall below.
 
-const EXPERIENCE = [["agile", "Working in an Agile environment"], ["other", "Working outside of an Agile environment"], ["po", "Product Owner role"], ["pm", "Product Manager role"]] as const;
+const EXPERIENCE = [["agile", "Working in an Agile environment", "Agile"], ["po", "Product Owner role", "PO"], ["other", "Working outside of an Agile environment", "Non-Agile"], ["pm", "Product Manager role", "PM"]] as const;
 const LEVELS = ["None", "A little", "Some", "A lot"];
+const HUES = ["#2f6fbd", "#c2412d", "#2e8b57", "#8c6bc8", "#d98a1c", "#1f8a9e", "#b0457a", "#5a6b2f"];
+/** A playful name for the shape of someone's experience. */
+function shapeName(lv: Record<string, number>): string {
+  const v = EXPERIENCE.map(([k]) => lv[k] ?? 0), max = Math.max(...v), min = Math.min(...v);
+  if (max === 0) return "Fresh eyes";
+  if (min >= 2) return "All-rounder";
+  const top = EXPERIENCE[v.indexOf(max)]![0];
+  if (v.filter((x) => x === max).length > 1 && max - min <= 1) return "Bridge builder";
+  return { agile: "Agile native", po: "Backlog owner", other: "Seasoned traveller", pm: "Market mind" }[top];
+}
+const R = 96, CX = 130, CY = 130;
+const point = (axis: number, level: number) => {
+  const a = -Math.PI / 2 + (axis * Math.PI) / 2, r = 14 + (level / 3) * (R - 14);
+  return [CX + Math.cos(a) * r, CY + Math.sin(a) * r] as const;
+};
+const kite = (lv: Record<string, unknown>) => EXPERIENCE.map(([k], i) => point(i, num(lv[k])).map((n) => n.toFixed(1)).join(",")).join(" ");
+
+function Radar({ shapes, focus, size = 260 }: { shapes: { id: string; color: string; lv: Record<string, unknown>; name: string }[]; focus?: string | null; size?: number }) {
+  return (
+    <svg className="po-radar" width={size} height={size} viewBox="0 0 260 260" role="img" aria-label={shapes.length ? `Experience of ${shapes.map((s) => s.name).join(", ")}` : "Experience chart"}>
+      {[3, 2, 1].map((l) => (<polygon key={l} points={[0, 1, 2, 3].map((i) => point(i, l).join(",")).join(" ")} fill={l === 3 ? "#fff" : "none"} stroke="#0d181833" strokeWidth="1.5" strokeDasharray={l === 3 ? undefined : "3 4"} />))}
+      {[0, 1, 2, 3].map((i) => { const [x, y] = point(i, 3); return <line key={i} x1={CX} y1={CY} x2={x} y2={y} stroke="#0d181833" strokeWidth="1.5" />; })}
+      {shapes.map((s) => (
+        <polygon key={s.id} className="po-kite" points={kite(s.lv)} fill={s.color} fillOpacity={focus ? (focus === s.id ? 0.5 : 0.06) : 0.22} stroke={s.color} strokeOpacity={focus && focus !== s.id ? 0.25 : 1} strokeWidth="3" strokeLinejoin="round" />
+      ))}
+      {EXPERIENCE.map(([k, , short], i) => { const [x, y] = point(i, 3); return <text key={k} x={x + (i === 1 ? 8 : i === 3 ? -8 : 0)} y={y + (i === 0 ? -9 : i === 2 ? 18 : 4)} textAnchor={i === 1 ? "start" : i === 3 ? "end" : "middle"} className="po-axis">{short}</text>; })}
+    </svg>
+  );
+}
 
 export function PoIntroBoard({ st, op, readOnly }: BoardProps) {
   const people = list(st, "people");
   const [draft, setDraft] = useState<{ name: string; learn: string; lv: Record<string, number> }>({ name: "", learn: "", lv: {} });
+  const [focus, setFocus] = useState<string | null>(null);
+  const color = (i: number) => HUES[i % HUES.length]!;
   const add = () => {
     if (!draft.name.trim()) return;
-    op({ key: "people", op: "push", value: { name: draft.name.trim(), learn: draft.learn.trim(), ...draft.lv } });
+    op({ key: "people", op: "push", value: { name: draft.name.trim(), learn: draft.learn.trim(), ...Object.fromEntries(EXPERIENCE.map(([k]) => [k, draft.lv[k] ?? 0])) } });
     setDraft({ name: "", learn: "", lv: {} });
   };
+  const mine = color(people.length);
   return (
     <div className="ex-board po">
       <div className="po-two">
-        <section className="po-panel">
-          <span className="ex-mono">Step 1 · Introduce yourself</span>
-          {!readOnly ? (
-            <>
-              <input className="po-input" value={draft.name} placeholder="Your name" aria-label="Your name" onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              {EXPERIENCE.map(([k, label]) => (
-                <div key={k} className="po-meter-row">
-                  <span>{label}</span>
-                  <div className="po-seg" role="group" aria-label={label}>
-                    {LEVELS.map((l, i) => (
-                      <button key={l} aria-pressed={(draft.lv[k] ?? -1) === i} onClick={() => setDraft({ ...draft, lv: { ...draft.lv, [k]: i } })}>{l}</button>
-                    ))}
-                  </div>
-                </div>
-              ))}
-              <span className="ex-mono" style={{ marginTop: 6 }}>Step 2 · The most important thing I want to learn</span>
-              <textarea className="po-text" rows={2} value={draft.learn} placeholder="From this course, I most want to learn…" aria-label="The most important thing I want to learn" onChange={(e) => setDraft({ ...draft, learn: e.target.value })} />
-              <button className="po-btn" disabled={!draft.name.trim()} onClick={add}>Add me to the group</button>
-            </>
-          ) : (
-            <p className="po-note">Each person adds their name, their experience and what they want to learn.</p>
-          )}
-        </section>
-        <section className="po-panel po-profile">
-          <span className="ex-mono">Our group · {people.length} {people.length === 1 ? "person" : "people"}</span>
-          {EXPERIENCE.map(([k, label]) => {
-            const avg = people.length ? people.reduce((n, p) => n + num(p[k]), 0) / people.length : 0;
-            return (
-              <div key={k} className="po-bar-row">
-                <span>{label}</span>
-                <div className="po-bar" role="img" aria-label={`${label}: ${people.length ? LEVELS[Math.round(avg)] : "nobody yet"}`}>
-                  <i style={{ width: `${(avg / 3) * 100}%` }} />
-                  {people.map((p) => (<b key={p.id} title={`${str(p.name)}: ${LEVELS[num(p[k])]}`} style={{ left: `${(num(p[k]) / 3) * 100}%` }} />))}
-                </div>
-                <small>{people.length ? LEVELS[Math.round(avg)] : "–"}</small>
+        {!readOnly ? (
+          <section className="po-panel">
+            <span className="ex-mono">Step 1 · Shape your experience</span>
+            <div className="po-make">
+              <div className="po-mykite">
+                <Radar size={190} shapes={[{ id: "me", color: mine, lv: draft.lv, name: draft.name || "you" }]} />
+                <b style={{ color: mine }}>{shapeName(draft.lv)}</b>
               </div>
-            );
-          })}
-          <p className="po-note">The bar is the group&apos;s average; each dot is one person.</p>
+              <div className="po-sliders">
+                <input className="po-input" value={draft.name} placeholder="Your name" aria-label="Your name" onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+                {EXPERIENCE.map(([k, label]) => (
+                  <label key={k} className="po-slide">
+                    <span>{label}<em>{LEVELS[draft.lv[k] ?? 0]}</em></span>
+                    <input type="range" min={0} max={3} step={1} value={draft.lv[k] ?? 0} style={{ accentColor: mine }} onChange={(e) => setDraft({ ...draft, lv: { ...draft.lv, [k]: Number(e.target.value) } })} />
+                  </label>
+                ))}
+              </div>
+            </div>
+            <span className="ex-mono">Step 2 · The most important thing I want to learn</span>
+            <textarea className="po-text" rows={2} value={draft.learn} placeholder="From this course, I most want to learn…" aria-label="The most important thing I want to learn" onChange={(e) => setDraft({ ...draft, learn: e.target.value })} />
+            <button className="po-btn" disabled={!draft.name.trim()} onClick={add}>Fly my kite with the group</button>
+          </section>
+        ) : null}
+        <section className="po-panel po-sky">
+          <span className="ex-mono">Our group · {people.length} {people.length === 1 ? "kite" : "kites"} in the sky</span>
+          <Radar size={330} focus={focus} shapes={people.map((p, i) => ({ id: p.id, color: color(i), lv: p, name: str(p.name) }))} />
+          <div className="po-legend">
+            {people.map((p, i) => (
+              <button key={p.id} aria-pressed={focus === p.id} style={{ ["--c" as string]: color(i) }} onMouseEnter={() => setFocus(p.id)} onMouseLeave={() => setFocus(null)} onFocus={() => setFocus(p.id)} onBlur={() => setFocus(null)} onClick={() => setFocus(focus === p.id ? null : p.id)}>
+                <i />{str(p.name)}
+              </button>
+            ))}
+          </div>
+          <p className="po-note">{people.length ? "Point at a name to see that person's shape. Where the kites overlap is what the group shares; where one sticks out is what that person brings." : "Nobody yet. Shape your experience and fly your kite."}</p>
         </section>
       </div>
+      {people.length ? <span className="ex-mono">What we came to learn</span> : null}
       <div className="po-people">
         {people.map((p, i) => (
-          <article key={p.id} className="po-person" style={{ animationDelay: `${Math.min(i, 8) * 60}ms` }}>
+          <article key={p.id} className={`po-person${focus === p.id ? " on" : ""}`} style={{ animationDelay: `${Math.min(i, 8) * 70}ms`, ["--c" as string]: color(i), ["--tilt" as string]: `${((i * 37) % 5) - 2}deg` }} onMouseEnter={() => setFocus(p.id)} onMouseLeave={() => setFocus(null)}>
             <header>
-              <span className="po-avatar" aria-hidden>{str(p.name).slice(0, 1).toUpperCase()}</span>
-              <b>{str(p.name)}</b>
+              <span className="po-avatar" aria-hidden style={{ background: color(i), color: "#fff" }}>{str(p.name).slice(0, 1).toUpperCase()}</span>
+              <div>
+                <b>{str(p.name)}</b>
+                <small>{shapeName(Object.fromEntries(EXPERIENCE.map(([k]) => [k, num(p[k])])))}</small>
+              </div>
               {!readOnly ? <button className="ex-x" aria-label={`Remove ${str(p.name)}`} onClick={() => op({ key: "people", op: "remove", id: p.id })}>×</button> : null}
             </header>
-            <div className="po-pips">
-              {EXPERIENCE.map(([k, label]) => (
-                <span key={k} title={`${label}: ${LEVELS[num(p[k])]}`}>
-                  <small>{k === "agile" ? "Agile" : k === "other" ? "Non-Agile" : k.toUpperCase()}</small>
-                  {[1, 2, 3].map((n) => (<i key={n} className={num(p[k]) >= n ? "on" : ""} />))}
-                </span>
-              ))}
-            </div>
-            {str(p.learn) ? <p><span className="ex-mono">Wants to learn</span>{str(p.learn)}</p> : null}
+            <p>{str(p.learn) ? `“${str(p.learn)}”` : "Still thinking about what to learn."}</p>
           </article>
         ))}
-        {!people.length ? <p className="po-empty">Nobody yet. Add yourself on the left, then introduce yourself to your group.</p> : null}
       </div>
     </div>
   );

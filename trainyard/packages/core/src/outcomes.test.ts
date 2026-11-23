@@ -69,7 +69,7 @@ describe("PI outcome planning", () => {
 describe("class boards", () => {
   it("builds every class with a start strip, one frame per lesson, and the shared exercises", async () => {
     const { CLASSES, classBoard, classTemplates } = await import("./classes.js");
-    expect(CLASSES.map((c) => c.id)).toEqual(["leading-safe", "spc", "aspc", "popm", "ai-popm", "aart", "aiva", "lpm", "lpm-ws", "rte"]);
+    expect(CLASSES.map((c) => c.id)).toEqual(["leading-safe", "spc", "aspc", "popm", "aart", "aiva", "lpm", "lpm-ws", "rte"]);
     const spc = classBoard(CLASSES[1]!);
     const top = spc.frames.filter((f) => !f.parentId);
     expect(top[0]!.title).toBe("Welcome");
@@ -109,7 +109,7 @@ describe("class boards", () => {
     expect(aspc.frames.some((f) => f.title.startsWith("Lean business case"))).toBe(true);
     expect(aspc.nodes.some((n) => n.text === "AI-Native SAFe")).toBe(true);
     expect(aspc.frames.some((f) => f.title === "Implementing")).toBe(true);
-    expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-ai-popm", "class-aart", "class-aiva", "class-lpm", "class-lpm-ws", "class-rte"]);
+    expect(classTemplates().map((t) => t.info.id)).toEqual(["class-leading-safe", "class-spc", "class-aspc", "class-popm", "class-aart", "class-aiva", "class-lpm", "class-lpm-ws", "class-rte"]);
   });
 });
 

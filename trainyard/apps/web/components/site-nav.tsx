@@ -37,7 +37,7 @@ export function SiteLogo({ size = 58 }: { size?: number }) {
 }
 
 const MODULES = [
-  { tag: "CLASSES · TRAINER", t: "Classes", href: "/classes", bg: "#ffe27a", fg: "#14123a", d: "Class boards for SAFe trainers, one per cohort.", items: [["Leading SAFe", "/classes/leading-safe"], ["SPC", "/classes/spc"], ["Advanced SPC", "/classes/aspc"], ["AI-Empowered POPM", "/classes/ai-popm"], ["POPM", "/classes/popm"], ["ART Leader", "/classes/aart"], ["Value Architect", "/classes/aiva"], ["LPM", "/classes/lpm"], ["LPM workshop", "/classes/lpm-ws"], ["RTE", "/classes/rte"]] },
+  { tag: "CLASSES · TRAINER", t: "Classes", href: "/classes", bg: "#ffe27a", fg: "#14123a", d: "Class boards for SAFe trainers, one per cohort.", items: [["Leading SAFe", "/classes/leading-safe"], ["SPC", "/classes/spc"], ["Advanced SPC", "/classes/aspc"], ["POPM", "/classes/popm"], ["ART Leader", "/classes/aart"], ["Value Architect", "/classes/aiva"], ["LPM", "/classes/lpm"], ["LPM workshop", "/classes/lpm-ws"], ["RTE", "/classes/rte"]] },
   { tag: "TEMPLATES · ANY METHOD", t: "Templates", href: "/methods", bg: "#4a5fe8", fg: "#fff", d: "Pick a method and the whole board changes shape.", items: [["SAFe", "/methods#safe"], ["Scrum", "/methods#scrum"], ["Kanban", "/methods#kanban"], ["Lean", "/methods#lean"], ["Six Sigma", "/methods#six-sigma"], ["Manufacturing", "/methods#manufacturing"], ["General", "/methods#general"]] },
   { tag: "DASHBOARDS · REPORTING", t: "Dashboards", href: "/insights", bg: "#ff9fc6", fg: "#14123a", d: "OKRs, KPIs and reports for executives.", items: [["OKRs", "/insights#dashboard"], ["Alignment", "/insights#alignment"], ["Check-in", "/insights#checkin"], ["Executive reports", "/insights#onepager"], ["Live example", "/examples/okrs-kpis"]] },
 ] as const;

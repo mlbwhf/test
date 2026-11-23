@@ -64,7 +64,7 @@ export interface ClassSpec {
   /** Only these parts of the Welcome area, by title start (e.g. ["Icebreaker"]); all when absent. */
   welcome?: string[];
   /** Lessons built from activities (timed exercises with steps and references) instead of `lessons`' exercises. */
-  course?: { title: string; activities: ActivitySpec[] }[];
+  course?: { title: string; activities: ActivitySpec[]; keep?: boolean }[];
 }
 
 // ---- layout ------------------------------------------------------------------------------
@@ -344,25 +344,35 @@ export function classBoard(spec0: ClassSpec, now = "2026-01-01T00:00:00.000Z"): 
  * Puts a course's activities into its lessons: each lesson holds exactly its exercises (not the
  * notes exercise an empty lesson gets), stacked under the Welcome area and grown to fit.
  */
-function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[] }[]) {
+function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[]; keep?: boolean }[]) {
   const lessons = b.frames.filter((f) => !f.parentId && /^Lesson\s+\d+/i.test(f.title)).sort((x, y) => x.y - y.y);
-  const drop = new Set(b.frames.filter((f) => lessons.some((l) => isInside(b, f, l.id))).map((f) => f.id));
+  const welcome = b.frames.filter((f) => !f.parentId && !lessons.includes(f));
+  const strip = welcome.find((f) => f.title === "Welcome");
+  const rest = course[0] && isWelcomeLesson(course[0]) && strip ? course.slice(1) : course;
+  // A lesson the course marks `keep` stays as its canvas exercises; the others are rebuilt from the course.
+  const kept = new Set(lessons.filter((_, i) => rest[i]?.keep).map((l) => l.id));
+  const inside = (l: Frame) => b.frames.filter((f) => isInside(b, f, l.id)).map((f) => f.id);
+  const drop = new Set(lessons.filter((l) => !kept.has(l.id)).flatMap(inside));
   b.frames = b.frames.filter((f) => !drop.has(f.id));
   b.nodes = b.nodes.filter((n) => !n.frameId || !drop.has(n.frameId));
-  const welcome = b.frames.filter((f) => !f.parentId && !lessons.includes(f));
+  const move = (l: Frame, to: number) => {
+    const dy = to - l.y, ids = new Set([l.id, ...inside(l)]);
+    for (const f of b.frames) if (ids.has(f.id)) f.y += dy;
+    for (const n of b.nodes) if (n.frameId && ids.has(n.frameId)) n.y += dy;
+  };
   let y = Math.max(0, ...welcome.map((f) => f.y + f.height)) + 80;
   for (const l of lessons) {
-    l.y = y;
-    l.height = 160;
+    if (kept.has(l.id)) move(l, y);
+    else {
+      l.y = y;
+      l.height = 160;
+    }
     y += l.height + 80;
   }
   // The course's own Welcome chapter joins the Welcome strip, under the start-here exercises.
-  const strip = welcome.find((f) => f.title === "Welcome");
-  let rest = course;
-  if (course[0] && isWelcomeLesson(course[0]) && strip) {
-    rest = course.slice(1);
+  if (rest !== course && strip) {
     const nf = b.frames.length, nn = b.nodes.length, top = strip.height;
-    addActivities(b, strip.id, course[0].activities, `${strip.id}-x`);
+    addActivities(b, strip.id, course[0]!.activities, `${strip.id}-x`);
     const added = b.frames.slice(nf), addedNodes = b.nodes.slice(nn);
     const first = Math.min(...added.map((f) => f.y));
     const dy = strip.y + top - first + 40;
@@ -370,9 +380,9 @@ function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[
     for (const n of addedNodes) n.y += dy;
     strip.height = Math.max(top, Math.max(...added.map((f) => f.y + f.height)) - strip.y + 40);
     const shift = strip.height - top;
-    if (shift > 0) for (const l of lessons) l.y += shift;
+    if (shift > 0) for (const l of lessons) move(l, l.y + shift);
   }
-  lessons.forEach((l, i) => addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
+  lessons.forEach((l, i) => kept.has(l.id) || addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
 }
 
 function isInside(b: Board, f: Frame, ancestor: string): boolean {
@@ -627,20 +637,17 @@ const RAW_CLASSES: ClassSpec[] = [
   },
   {
     id: "popm",
-    name: "Product Owner / Product Manager (POPM)",
+    name: "AI-Empowered SAFe® Product Owner/Product Manager",
     short: "POPM",
-    blurb: "Two days for POs and PMs, from the trainer's own POPM board: the roles and AI's disruption of product work, preparing for PI Planning (market rhythms, just-enough pre-planning, AI-supported customer research, writing features), leading PI Planning (dependencies, AI-empowered planning, the vision, the simulation), executing iterations (continuous delivery pipeline, story map, AI-assisted iteration planning) and executing the PI (sync events, responsible AI).",
+    blurb: "Two days for POs and PMs. It opens with the group's product experience drawn as kites. Lesson 1 runs on boards of its own: the Lean-Agile mindset scenario, AI's disruption of product work and a prompt builder for your SAFe message. Then preparing for PI Planning, leading PI Planning with the simulation, executing iterations and executing the PI.",
     days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    course: POPM_COURSE,
     lessons: [
       {
         title: "Becoming a Product Owner / Product Manager",
-        exercises: [
-          { kind: "table", title: "Lesson 1 activity: product role experience", columns: ["Name", "Experience working in an Agile environment", "Experience working outside of an Agile environment", "Product Owner role experience", "Product Manager role experience", "What I want to learn most in this course"], rows: [], blankRows: 8 },
-          { kind: "slide", title: "L1 discussion: AI disruption in Product Management", body: "In your group, explore how the widespread adoption of AI may disrupt how Product Owners and Product Managers operate and deliver value. For example, consider:", steps: ["Story writing: how might AI-assisted story writing and acceptance criteria generation change your daily priorities and how you budget your time?", "Customer insights: how might AI analysing large amounts of customer feedback change how you identify needs and define value?", "Feature writing: how might AI change how you write features and benefit hypotheses?"], minutes: 20 },
-          { kind: "stickies", title: "AI disruption: what we think", lanes: ["Story writing", "Customer insights", "Feature writing"], rows: 2, color: COLORS.blue },
-          { kind: "zones", title: "AI opportunities: sort them", zones: ["Look for opportunities to use", "Keep on the radar", "Consider later", "Do not consider"], color: COLORS.green },
-          { kind: "table", title: "AI prompting template (use in AI activities)", columns: ["Part", "Your response"], rows: [["Goal: what are you trying to accomplish?", ""], ["Role: what persona or expertise should the AI assume?", ""], ["Task: what exactly do you want the AI to do?", ""], ["Context (optional): is there background info the AI needs?", ""], ["Details (optional): are there any specific requirements?", ""], ["Intermediate: examples, data, interaction, steps, reasoning?", ""], ["Advanced: interview, challenge, break down, analysis, chain-of-thought?", ""], ["PROMPT", "Combine responses 1 to 7 into one prompt and paste it into your AI tool"]] },
-        ],
+        // Built from `course` (the Class Studio boards); listed here for the class's summary.
+        exercises: POPM_COURSE[1]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
       },
       {
         title: "Preparing for PI Planning",
@@ -690,17 +697,6 @@ const RAW_CLASSES: ClassSpec[] = [
         ],
       },
     ],
-  },
-  {
-    id: "ai-popm",
-    name: "AI-Empowered SAFe® Product Owner/Product Manager",
-    short: "POPM",
-    blurb: "The AI-Empowered POPM class chapter by chapter: each exercise on its own board with its timing and steps, the class timer, and exercises the trainer marks complete. Lesson 1 is ready: the group's product experience, the Lean-Agile mindset scenario, AI's disruption of product work and a prompt builder for your SAFe message.",
-    days: 2,
-    welcome: ["Quick agenda", "Icebreaker"],
-    // The course's exercises, listed (the board itself is built from `course`).
-    lessons: POPM_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
-    course: POPM_COURSE,
   },
   {
     id: "aart",

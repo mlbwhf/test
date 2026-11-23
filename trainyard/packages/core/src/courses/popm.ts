@@ -10,7 +10,8 @@ import type { ActivitySpec } from "../activities.js";
 /** Every exercise has a board of its own; its frame only needs room for it on the canvas. */
 const BOARD = { width: 1200, height: 600 };
 
-const lesson1: ActivitySpec[] = [
+/** Worked in the Welcome area, as the class opens. */
+const welcome: ActivitySpec[] = [
   {
     title: "Product role experience",
     kind: "Discussion",
@@ -20,6 +21,9 @@ const lesson1: ActivitySpec[] = [
     board: "po-intro",
     ...BOARD,
   },
+];
+
+const lesson1: ActivitySpec[] = [
   {
     title: "Applying a Lean-Agile mindset",
     kind: "Discussion",
@@ -68,11 +72,12 @@ const lesson1: ActivitySpec[] = [
   },
 ];
 
-/** Lesson 1 is built; the later chapters are listed and get their exercises as they are added. */
-export const POPM_COURSE: { title: string; activities: ActivitySpec[] }[] = [
+/** Lesson 1 runs on its own boards; the later chapters keep the class's canvas exercises until theirs are built. */
+export const POPM_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
+  { title: "Welcome", activities: welcome },
   { title: "Becoming a Product Owner / Product Manager", activities: lesson1 },
-  { title: "Preparing for PI Planning", activities: [] },
-  { title: "Leading PI Planning", activities: [] },
-  { title: "Executing Iterations", activities: [] },
-  { title: "Executing the PI", activities: [] },
+  { title: "Preparing for PI Planning", activities: [], keep: true },
+  { title: "Leading PI Planning", activities: [], keep: true },
+  { title: "Executing Iterations", activities: [], keep: true },
+  { title: "Executing the PI", activities: [], keep: true },
 ];
