@@ -8,6 +8,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { STUDIO_KINDS } from "@/components/studio-model";
 import { LSA_KINDS } from "@/components/studio-model-lsa";
 import { RTE_KINDS } from "@/components/studio-model-rte";
+import { POPM_KINDS, PopmBoard } from "@/components/popm-boards";
 import type React from "react";
 import { applyStateOp, type Board, type Frame, type StateOp } from "@trainyard/core";
 import { api, type ApiFailure } from "@/lib/api";
@@ -334,6 +335,7 @@ const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: fa
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} lang={typeof props.board.fields?.lang === "string" ? props.board.fields.lang : undefined} />;
   if (props.kind === "matrix") return <MatrixBoard {...props} />;
+  if (POPM_KINDS.has(props.kind)) return <PopmBoard {...props} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || RTE_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
 

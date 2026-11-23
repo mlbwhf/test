@@ -15,6 +15,7 @@ import { emptyBoard, instantiate, type Board, type BoardNode, type Frame } from 
 import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from "./activities.js";
 import { RTE_COURSE } from "./courses/rte.js";
 import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
+import { POPM_COURSE } from "./courses/popm.js";
 import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
 import { AI_NATIVE_VALUE_ARCHITECT_COURSE } from "./courses/ai-native-value-architect.js";
 import { LPM_COURSE, LPM_WORKSHOP_COURSE } from "./courses/lpm.js";
@@ -689,6 +690,17 @@ const RAW_CLASSES: ClassSpec[] = [
         ],
       },
     ],
+  },
+  {
+    id: "ai-popm",
+    name: "AI-Empowered SAFe® Product Owner/Product Manager",
+    short: "POPM",
+    blurb: "The AI-Empowered POPM class chapter by chapter: each exercise on its own board with its timing and steps, the class timer, and exercises the trainer marks complete. Lesson 1 is ready: the group's product experience, the Lean-Agile mindset scenario, AI's disruption of product work and a prompt builder for your SAFe message.",
+    days: 2,
+    welcome: ["Quick agenda", "Icebreaker"],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: POPM_COURSE.map((l) => ({ title: l.title, exercises: l.activities.map((a): Exercise => ({ kind: "slide", title: `${a.kind}: ${a.title}`, body: "", minutes: (a.prepare ?? 0) + (a.share ?? 0) })) })),
+    course: POPM_COURSE,
   },
   {
     id: "aart",

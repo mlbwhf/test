@@ -7,6 +7,7 @@ export const CLASS_META: { id: string; name: string; short: string }[] = [
   { id: "spc", name: "SAFe Practice Consultant (SPC)", short: "SPC" },
   { id: "aspc", name: "Advanced SPC", short: "ASPC" },
   { id: "popm", name: "Product Owner / Product Manager (POPM)", short: "POPM" },
+  { id: "ai-popm", name: "AI-Empowered SAFe® Product Owner/Product Manager", short: "POPM" },
   { id: "aart", name: "Launching AI-Native ARTs", short: "ART Leader" },
   { id: "aiva", name: "The AI-Native Value Architect", short: "Value Architect" },
   { id: "lpm", name: "Lean Portfolio Management (LPM)", short: "LPM" },
