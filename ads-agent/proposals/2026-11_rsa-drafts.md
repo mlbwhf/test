@@ -1,6 +1,6 @@
 # Responsive search ads for the new ad groups (DRAFT for your approval)
 
-18 ads, one per new ad group: 338 strings in total. **Nothing is uploaded.** Phase 1:
+18 ads, one per new ad group: 337 strings in total. **Nothing is uploaded.** Phase 1:
 you import them. Stages 1-3 are approved. **Stage 4** (APM, Business Owner, Architects) is
 proposed and needs your OK. The 3 **Innovation** ads are drafted but held until those courses
 can be booked and paid for on agile-agilist.com, so they have no import file yet.
@@ -126,9 +126,9 @@ Campaign **AI-Native - Virtual** · Final URL https://agile-agilist.com/training
 
 ### Launching AI-Native ARTs · stage 1
 Campaign **AI-Native - Virtual** · Final URL https://agile-agilist.com/training/ai-native/launching-ai-native-arts/ · Display path `/AI-Native/ART-Leader`  
-*Facts used:* Page: 2 days live online, authorized SAFe instructor, SAFe ART Leader exam, 15 PDUs, no required prerequisites, 12 critical success factors, live launch-readiness assessment, launch plan, evolving roles; audience RTEs, PMs, System Architects. Owner-confirmed: PI Outcome Planning.
+*Facts used:* Page: 2 days live online, authorized SAFe instructor, SAFe ART Leader exam, 15 PDUs, no required prerequisites, 12 critical success factors, live launch-readiness assessment, launch plan, evolving roles; audience RTEs, PMs, System Architects. Owner-confirmed: PI Outcome Planning; classes every Monday and Thursday plus weekends twice a month.
 
-⚠️ **Owner-confirmed, not on the course page yet:** PI Planning in one day / PI Outcome Planning (Mark, 2026-11-20). Only in the blog today; add it to the course page so the ad matches it.
+⚠️ **Owner-confirmed, not on the course page yet:** PI Planning in one day / PI Outcome Planning (Mark, 2026-11-20). Only in the blog today; add it to the course page so the ad matches it. Schedule (Mark, 2026-11-24): classes start every Monday and Thursday, plus weekend classes twice a month. Keep the course calendar showing that, or remove the schedule lines from the ad.
 
 | # | Headline | Chars |
 |---|---|---|
@@ -141,19 +141,18 @@ Campaign **AI-Native - Virtual** · Final URL https://agile-agilist.com/training
 | 7 | ART Launch Readiness Check | 26 |
 | 8 | Leave With an ART Launch Plan | 29 |
 | 9 | For RTEs, PMs & Architects | 26 |
-| 10 | Lead an AI-Native ART | 21 |
-| 11 | 2 Days Live Online, 15 PDUs | 27 |
-| 12 | No Required Prerequisites | 25 |
-| 13 | Authorized SAFe Instructor | 26 |
-| 14 | Exam Prep and Support | 21 |
-| 15 | SAFe Platinum Partner | 21 |
+| 10 | Starts Every Monday & Thursday | 30 |
+| 11 | Weekend Classes Twice a Month | 29 |
+| 12 | 2 Days Live Online, 15 PDUs | 27 |
+| 13 | Exam Prep and Support | 21 |
+| 14 | SAFe Platinum Partner | 21 |
 
 | # | Description | Chars |
 |---|---|---|
 | 1 | PI Planning becomes one-day PI Outcome Planning. Learn to run it for an AI-Native ART. | 86 |
 | 2 | Assess your ART's launch readiness live in class and leave with a plan for Monday. | 82 |
-| 3 | Two days live online with an authorized SAFe instructor. ART Leader exam included. | 82 |
-| 4 | For RTEs, Product Managers and System Architects whose roles are changing with AI. | 82 |
+| 3 | Two days live online, exam included. New classes start every Monday and Thursday. | 81 |
+| 4 | For RTEs, PMs and System Architects. Weekend classes twice a month, no prerequisites. | 85 |
 
 ### Leading the AI-Native Organization · stage 3
 Campaign **AI-Native - Virtual** · Final URL https://agile-agilist.com/training/ai-native/ai-native-ready-certification-2/ · Display path `/AI-Native/Leaders`  

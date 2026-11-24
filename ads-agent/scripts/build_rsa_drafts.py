@@ -24,7 +24,10 @@ PP, EPS, EXAM = "SAFe Platinum Partner", "Exam Prep and Support", "Exam Included
 # Claims the OWNER confirmed in chat that the course page does not state yet (web team to add).
 OWNER_CONFIRMED = {
     "Launching AI-Native ARTs": "PI Planning in one day / PI Outcome Planning (Mark, 2026-11-20). "
-                                "Only in the blog today; add it to the course page so the ad matches it.",
+                                "Only in the blog today; add it to the course page so the ad matches it. "
+                                "Schedule (Mark, 2026-11-24): classes start every Monday and Thursday, plus "
+                                "weekend classes twice a month. Keep the course calendar showing that, or "
+                                "remove the schedule lines from the ad.",
 }
 
 # ad group -> (path1, path2, facts used + source, headlines, descriptions)
@@ -68,16 +71,17 @@ ADS = {
     "Launching AI-Native ARTs": ("AI-Native", "ART-Leader",
         "Page: 2 days live online, authorized SAFe instructor, SAFe ART Leader exam, 15 PDUs, no required "
         "prerequisites, 12 critical success factors, live launch-readiness assessment, launch plan, "
-        "evolving roles; audience RTEs, PMs, System Architects. Owner-confirmed: PI Outcome Planning.",
+        "evolving roles; audience RTEs, PMs, System Architects. Owner-confirmed: PI Outcome Planning; "
+        "classes every Monday and Thursday plus weekends twice a month.",
         ["Launching AI-Native ARTs", "SAFe ART Leader Certification", "PI Planning in One Day",
          "Learn PI Outcome Planning", "From PI Objectives to Outcomes", "12 AI-Native Success Factors",
          "ART Launch Readiness Check", "Leave With an ART Launch Plan", "For RTEs, PMs & Architects",
-         "Lead an AI-Native ART", "2 Days Live Online, 15 PDUs", "No Required Prerequisites",
-         "Authorized SAFe Instructor", EPS, PP],
+         "Starts Every Monday & Thursday", "Weekend Classes Twice a Month", "2 Days Live Online, 15 PDUs",
+         EPS, PP],
         ["PI Planning becomes one-day PI Outcome Planning. Learn to run it for an AI-Native ART.",
          "Assess your ART's launch readiness live in class and leave with a plan for Monday.",
-         "Two days live online with an authorized SAFe instructor. ART Leader exam included.",
-         "For RTEs, Product Managers and System Architects whose roles are changing with AI."]),
+         "Two days live online, exam included. New classes start every Monday and Thursday.",
+         "For RTEs, PMs and System Architects. Weekend classes twice a month, no prerequisites."]),
     "Leading the AI-Native Organization": ("AI-Native", "Leaders",
         "2-day executive cohort capped at 12 (CEOs, COOs, CTOs, CAIOs), 6 months follow-up coaching, capital "
         "allocation, board oversight, talent, vision; 16 PDUs, no prerequisites, capstone. Format left "
