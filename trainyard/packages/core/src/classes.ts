@@ -903,7 +903,8 @@ export function seatStudents(board: Board, students: { id: string; name: string 
 }
 
 /** Which version of its template a class board was built from (kept in `fields.templateRev`). */
-export const templateRevision = (template: Board): string => boardRevision(template);
+// The suffix changes when the way a class is carried over changes, so every class is carried over once more.
+export const templateRevision = (template: Board): string => `${boardRevision(template)}.2`;
 
 /** True when a class board was made from an older version of its template. */
 export function needsTemplateUpgrade(board: Board, template: Board): boolean {
@@ -970,6 +971,9 @@ export function upgradeFromTemplate(old: Board, template: Board, now: string): B
     if (fromTemplate && (n.fields.locked || (!freshIds.has(n.id) && !n.text.trim()))) continue;
     const of = n.frameId ? oldFrames.get(n.frameId) : undefined;
     const to = n.frameId ? map.get(n.frameId) : undefined;
+    // An exercise that left the class takes its own cards with it; so do cards an earlier
+    // carry-over left behind without a frame. Only what someone added themselves stays.
+    if (fromTemplate && !freshIds.has(n.id) && ((of && !to) || !n.frameId)) continue;
     if (of && !to) {
       // Its frame is gone: keep what someone wrote, where it was.
       if (n.text.trim()) {
