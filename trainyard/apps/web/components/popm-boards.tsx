@@ -692,6 +692,15 @@ export function PoRefineBoard({ st, op, readOnly }: BoardProps) {
   const featureText = picked ? [`Feature: ${str(picked.name)}`, ...FEATURE_PARTS.map(([k, label]) => (str(picked[k]) ? `${label}: ${str(picked[k])}` : ""))].filter(Boolean).join("\n") : "";
   const prompt = [promptOf(st, "rf"), featureText ? `The feature as written:\n${featureText}` : ""].filter(Boolean).join("\n\n");
   const copy = () => void navigator.clipboard?.writeText(prompt).then(() => (setCopied(true), window.setTimeout(() => setCopied(false), 1600)));
+  // A feature named here joins the group's features and becomes the one being refined once it is saved.
+  const [newName, setNewName] = useState("");
+  const [pending, setPending] = useState<string | null>(null);
+  const addFeature = () => newName.trim() && (op({ key: "feats", op: "push", value: { name: newName.trim() } }), setPending(newName.trim()), setNewName(""));
+  useEffect(() => {
+    const made = pending ? feats.find((f) => str(f.name) === pending && !f.id.startsWith("tmp")) : undefined;
+    if (made) (op({ key: "rf:pick", op: "set", value: made.id }), setPending(null));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pending, feats]);
   return (
     <div className="ex-board po">
       <section className="po-panel">
@@ -700,11 +709,16 @@ export function PoRefineBoard({ st, op, readOnly }: BoardProps) {
           <div className="po-chips">
             {feats.map((f) => (<button key={f.id} disabled={readOnly} aria-pressed={picked?.id === f.id} onClick={() => op({ key: "rf:pick", op: "set", value: f.id })}>{str(f.name)}</button>))}
           </div>
-        ) : (
-          <p className="po-note">No features yet. Write them in the Writing features activity and they appear here.</p>
-        )}
+        ) : null}
+        {!readOnly ? (
+          <div className="po-evform two" style={{ gridTemplateColumns: "minmax(0, 1fr) auto" }}>
+            <input className="po-input" value={newName} placeholder={feats.length ? "Or name another feature to work on" : "Name the feature you will work on"} aria-label="Feature name" onChange={(e) => setNewName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addFeature()} />
+            <button className="po-btn" disabled={!newName.trim()} onClick={addFeature}>Use this feature</button>
+          </div>
+        ) : null}
+        {!picked && feats.length ? <p className="po-note">Choose the feature you will refine. Steps 2 to 4 below are ready when you are.</p> : null}
       </section>
-      {picked ? (
+      {(
         <>
           <div className="po-two wide">
             <section className="po-panel">
@@ -730,7 +744,7 @@ export function PoRefineBoard({ st, op, readOnly }: BoardProps) {
             </section>
             <section className="po-panel">
               <span className="ex-mono">The prompt to paste into your GenAI tool</span>
-              <pre className="po-prompt">{prompt}</pre>
+              <pre className="po-prompt">{prompt || "Fill in the elements and the prompt is assembled here."}</pre>
               <button className="po-btn" disabled={!filled} onClick={copy}>{copied ? "Copied" : "Copy the prompt"}</button>
               <span className="ex-mono" style={{ marginTop: 8 }}>The AI-generated output</span>
               <Field k="rf:out" st={st} op={op} readOnly={readOnly} rows={7} placeholder="Paste the output here to review it." label="The AI-generated output" />
@@ -752,15 +766,19 @@ export function PoRefineBoard({ st, op, readOnly }: BoardProps) {
             ))}
           </div>
           <span className="ex-mono">Step 4 · Refine, and be prepared to share with the class</span>
-          <article className={`po-feat wide${featureDone(picked) ? " done" : ""}`}>
-            <header><span className="po-n">✎</span><b>{str(picked.name)}</b></header>
-            <div className="po-two wide">
-              {FEATURE_PARTS.map(([k, label, hint]) => (<FeatureText key={`${picked.id}:${k}`} f={picked} k={k} label={label} hint={hint} op={op} readOnly={readOnly} />))}
-            </div>
-            <p className="po-note">Editing here changes the feature on the Writing features board too.</p>
-          </article>
+          {picked ? (
+            <article className={`po-feat wide${featureDone(picked) ? " done" : ""}`}>
+              <header><span className="po-n">✎</span><b>{str(picked.name)}</b></header>
+              <div className="po-two wide">
+                {FEATURE_PARTS.map(([k, label, hint]) => (<FeatureText key={`${picked.id}:${k}`} f={picked} k={k} label={label} hint={hint} op={op} readOnly={readOnly} />))}
+              </div>
+              <p className="po-note">Editing here changes the feature on the Writing features board too.</p>
+            </article>
+          ) : (
+            <p className="po-empty">Select a feature in Step 1 and it opens here to refine.</p>
+          )}
         </>
-      ) : null}
+      )}
     </div>
   );
 }
@@ -929,9 +947,9 @@ const DEP_CARDS: [number, number, "f" | "d" | "m"][] = [
 ];
 // Strings between cards, by index in DEP_CARDS.
 const DEP_LINKS: [number, number][] = [[0, 1], [1, 4], [4, 9], [4, 15], [4, 24], [5, 6], [6, 25], [6, 17], [11, 28], [11, 2], [16, 21], [16, 27], [7, 26], [7, 3], [18, 29], [18, 13], [13, 3]];
-const DW = 150, DH = 44, DL = 150, DT = 34;
+const DW = 150, DH = 44, DL = 190, DT = 34;
 const depXY = (i: number) => { const [r, x] = DEP_CARDS[i]!; return [DL + x * DW + 14, DT + r * DH + DH / 2] as const; };
-const DEP_FILL = { f: "#8fc1f0", d: "#e5231b", m: "#f5a85a" };
+const DEP_FILL = { f: "#a8d4f5", d: "#f2a0c0", m: "#f5a85a" };
 const DEP_WORD = { f: "Feature", d: "Significant dependency", m: "Milestone or event" };
 
 export function PoDepsBoard({ config, st, op, readOnly }: BoardProps) {
@@ -945,45 +963,57 @@ export function PoDepsBoard({ config, st, op, readOnly }: BoardProps) {
   return (
     <div className="ex-board po">
       <section className="po-panel">
+        <div>
+          <span className="ex-mono">ART planning board</span>
+          <h3 className="po-h3">Feature delivery, dependencies and milestones</h3>
+        </div>
         <div className="po-legend left">
           {(["f", "d", "m"] as const).map((k) => (<span key={k}><i className="card" style={{ background: DEP_FILL[k] }} />{DEP_WORD[k]}</span>))}
-          <span><i style={{ background: "#e5231b" }} />String: one waits on the other</span>
+          <span><i style={{ background: "#d81b60" }} />String: must land before the feature completes</span>
           <span style={{ ["--c" as string]: "#d98a1c" }}><i className="ring" />Flagged as an issue</span>
         </div>
         <div className="po-chartwrap">
           <svg className="po-deps" viewBox={`0 0 ${W} ${H}`} style={{ minWidth: 860 }} role="img" aria-label="ART planning board with features, significant dependencies, a milestone and the strings between them">
-            <rect x="0" y="0" width={W} height={H} fill="#fff" stroke="#0d1815" strokeWidth="2" />
+            <rect x="0" y="0" width={W} height={H} fill="#fff" />
             {DEP_COLS.map((c, i) => (
               <g key={c}>
-                <rect x={DL + i * DW} y="0" width={DW} height={DT} fill="#e9ecef" stroke="#0d181855" />
+                {i >= 4 ? <rect x={DL + i * DW} y={DT} width={DW} height={H - DT} fill={i === 4 ? "#fff8d6" : "#efece6"} /> : null}
+                <rect x={DL + i * DW} y="0" width={DW} height={DT} fill={i === 4 ? "#ffe04a" : i === 5 ? "#ddd6c8" : "#eef0f6"} stroke="#14123a" />
                 <text x={DL + i * DW + DW / 2} y="22" textAnchor="middle" className="po-deps-h">{c}</text>
-                <line x1={DL + i * DW} y1={DT} x2={DL + i * DW} y2={H} stroke="#0d181833" />
+                <line x1={DL + i * DW} y1={DT} x2={DL + i * DW} y2={H} stroke="#14123a" strokeWidth="1.2" />
               </g>
             ))}
+            <rect x="0" y="0" width={DL} height={DT} fill="#14123a" />
+            <text x={DL / 2} y="22" textAnchor="middle" className="po-deps-h" fill="#fff" style={{ fill: "#fff" }}>Team · Iteration →</text>
+            <rect x="0" y="0" width={W} height={H} fill="none" stroke="#14123a" strokeWidth="2.5" rx="4" />
             {DEP_ROWS.map((r, i) => (
               <g key={r}>
-                <rect x="0" y={DT + i * DH} width={DL} height={DH} fill="#e9ecef" stroke="#0d181855" />
-                <rect x="0" y={DT + i * DH} width={(load[i]! / max) * DL} height={DH} fill="#e5231b" opacity={0.08 + (load[i]! / max) * 0.22} />
-                <text x={DL / 2} y={DT + i * DH + DH / 2 + 4} textAnchor="middle" className="po-deps-h">{r}</text>
+                <rect x="0" y={DT + i * DH} width={DL} height={DH} fill="#fff" stroke="#14123a" strokeWidth="0.8" />
+                <circle cx="14" cy={DT + i * DH + DH / 2} r="4.5" fill={i === 0 ? "#f5a85a" : i >= 8 ? "#9aa0ad" : WHEEL[(i - 1) % WHEEL.length]} stroke="#14123a" />
+                <rect x="0" y={DT + i * DH + DH - 5} width={(load[i]! / max) * DL} height="5" fill="#d81b60" opacity={0.25 + (load[i]! / max) * 0.6} />
+                <text x="26" y={DT + i * DH + DH / 2 + 4} className="po-deps-h">{r}</text>
                 <line x1="0" y1={DT + i * DH} x2={W} y2={DT + i * DH} stroke={i === 8 ? "#0d1815" : "#0d181833"} strokeWidth={i === 8 ? 2 : 1} />
               </g>
             ))}
             {DEP_LINKS.map(([a, b], i) => {
               const [x1, y1] = depXY(a), [x2, y2] = depXY(b), on = lit ? lit.has(a) && lit.has(b) && (a === hover || b === hover) : true;
-              return <path key={i} className="po-string" d={`M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2 + 26}, ${x2} ${(y1 + y2) / 2 - 26}, ${x2} ${y2}`} fill="none" stroke="#e5231b" strokeWidth={lit && on ? 3.5 : 2} opacity={on ? 0.9 : 0.12} style={{ animationDelay: `${i * 50}ms` }} />;
+              return <path key={i} className="po-string" d={`M ${x1} ${y1} C ${x1} ${(y1 + y2) / 2 + 26}, ${x2} ${(y1 + y2) / 2 - 26}, ${x2} ${y2}`} fill="none" stroke="#d81b60" strokeWidth={lit && on ? 3.5 : 1.8} opacity={on ? 0.9 : 0.12} style={{ animationDelay: `${i * 50}ms` }} />;
             })}
             {DEP_CARDS.map(([, , k], i) => {
               const [x, y] = depXY(i), dim = lit ? !lit.has(i) : false;
               return (
                 <g key={i} className="po-depcard" opacity={dim ? 0.3 : 1} tabIndex={readOnly ? -1 : 0} role="button" aria-pressed={!!flags[i]} aria-label={`${DEP_WORD[k]}, ${DEP_ROWS[DEP_CARDS[i]![0]]}${flags[i] ? ", flagged" : ""}`} onMouseEnter={() => setHover(i)} onMouseLeave={() => setHover(null)} onFocus={() => setHover(i)} onBlur={() => setHover(null)} onClick={() => !readOnly && op({ key: "flags", op: "set", value: { ...flags, [i]: !flags[i] } })} onKeyDown={(e) => e.key === "Enter" && !readOnly && op({ key: "flags", op: "set", value: { ...flags, [i]: !flags[i] } })}>
                   {flags[i] ? <circle className="po-flag" cx={x} cy={y} r="22" fill="none" stroke="#d98a1c" strokeWidth="4" /> : null}
-                  <rect x={x - 13} y={y - 13} width="26" height="26" rx="2" fill={DEP_FILL[k]} stroke="#0d1815" strokeWidth="1.5" />
+                  <rect x={x - 19} y={y - 13} width="38" height="26" rx="3" fill={DEP_FILL[k]} stroke="#14123a" strokeWidth="1.5" />
+                  <rect x={x - 15} y={y - 8} width={k === "f" ? 20 : 26} height="3" rx="1.5" fill="#14123a" opacity="0.55" />
+                  <rect x={x - 15} y={y - 2} width="12" height="5" rx="2.5" fill="#fff" stroke="#14123a" strokeWidth="0.8" />
+                  <rect x={x - 1} y={y - 2} width="12" height="5" rx="2.5" fill="#fff" stroke="#14123a" strokeWidth="0.8" />
                 </g>
               );
             })}
           </svg>
         </div>
-        <p className="po-note">Point at a card to follow its strings. Click a card to flag it as an issue. The red tint on a team&apos;s name grows with the number of strings that touch it: {DEP_ROWS.filter((_, i) => load[i] === max).join(" and ")} carry the most.</p>
+        <p className="po-note">Point at a card to follow its strings. Click a card to flag it as an issue. The bar under a team&apos;s name grows with the number of strings that touch it: {DEP_ROWS.filter((_, i) => load[i] === max).join(" and ")} carry the most.</p>
       </section>
       <div className="po-cols" style={{ ["--n" as string]: qs.length }}>
         {qs.map((q, qi) => (

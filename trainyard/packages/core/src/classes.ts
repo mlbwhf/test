@@ -639,36 +639,13 @@ const RAW_CLASSES: ClassSpec[] = [
     id: "popm",
     name: "AI-Empowered SAFe® Product Owner/Product Manager",
     short: "POPM",
-    blurb: "Two days for POs and PMs. It opens with the group's product experience drawn as kites. Lesson 1 runs on boards of its own: the Lean-Agile mindset scenario, AI's disruption of product work and a prompt builder for your SAFe message. Then preparing for PI Planning, leading PI Planning with the simulation, executing iterations and executing the PI.",
+    blurb: "Two days for POs and PMs. Exploring product roles and responsibilities, preparing for PI Planning, leading PI Planning, executing iterations and executing the PI, each exercise on a board of its own: market rhythms, writing and refining features with AI, capacity allocation, WSJF, the ART planning board, story mapping and more.",
     days: 2,
-    welcome: ["Quick agenda", "Icebreaker"],
+    // No open canvas in this class: introductions happen on the Product role experience board.
+    welcome: ["Quick agenda"],
     course: POPM_COURSE,
-    lessons: [
-      {
-        title: "Becoming a Product Owner / Product Manager",
-        // Built from `course` (the Class Studio boards); listed here for the class's summary.
-        exercises: POPM_COURSE[1]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
-      },
-      {
-        title: "Preparing for PI Planning",
-        exercises: POPM_COURSE[2]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
-      },
-      {
-        title: "Leading PI Planning",
-        exercises: [
-          { kind: "pi-planning", title: "PI Planning simulation · autonomous delivery vehicle", teams: ["Unicorns · Vehicle control", "Lions · Mobile app", "Bears · Sensor management"], backlog: VEHICLE_BACKLOG },
-          { kind: "link", title: "PI Outcome Planning (AI-Native SAFe)", body: "The one-day alternative the class discusses: outcome tree, PI Outcome Planning Board, team boards and the vote.", href: "/outcome-planning" },
-        ],
-      },
-      {
-        title: "Executing Iterations",
-        exercises: POPM_COURSE[4]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
-      },
-      {
-        title: "Executing the PI",
-        exercises: POPM_COURSE[5]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
-      },
-    ],
+    // The course's exercises, listed (the board itself is built from `course`).
+    lessons: POPM_COURSE.slice(1).map((l) => ({ title: l.title, exercises: l.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) })),
   },
   {
     id: "aart",

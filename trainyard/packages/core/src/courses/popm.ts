@@ -416,12 +416,13 @@ const lesson5: ActivitySpec[] = [
   },
 ];
 
-/** Every lesson runs on its own boards. Lesson 3 is marked `keep`: it still shows the PI Planning simulation from the canvas class, with its new boards after it. */
+/** The class, lesson by lesson; every exercise runs on a board of its own. */
 export const POPM_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Welcome", activities: welcome },
-  { title: "Becoming a Product Owner / Product Manager", activities: lesson1 },
+  { title: "Exploring Product Roles and Responsibilities", activities: lesson1 },
   { title: "Preparing for PI Planning", activities: lesson2 },
-  { title: "Leading PI Planning", activities: lesson3, keep: true },
+  { title: "Leading PI Planning", activities: lesson3 },
   { title: "Executing Iterations", activities: lesson4 },
   { title: "Executing the PI", activities: lesson5 },
+  { title: "Get Certified", activities: [] },
 ];

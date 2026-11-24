@@ -97,12 +97,12 @@ describe("class boards", () => {
     expect(spc.nodes.every((n) => n.frameId && ids.has(n.frameId))).toBe(true);
     // POPM follows the trainer's exported board: five lessons, the animal-named teams in the simulation.
     const popm = classBoard(CLASSES[3]!);
-    expect(popm.frames.filter((f) => !f.parentId).slice(1).map((f) => f.title.replace(/^Lesson \d+: /, ""))).toEqual(["Becoming a Product Owner / Product Manager", "Preparing for PI Planning", "Leading PI Planning", "Executing Iterations", "Executing the PI"]);
-    expect(popm.frames.filter((f) => /^(Unicorns|Lions|Bears) .* board$/.test(f.title))).toHaveLength(3);
+    expect(popm.frames.filter((f) => !f.parentId).slice(1).map((f) => f.title.replace(/^Lesson \d+: /, ""))).toEqual(["Exploring Product Roles and Responsibilities", "Preparing for PI Planning", "Leading PI Planning", "Executing Iterations", "Executing the PI", "Get Certified"]);
+    // Every POPM exercise is a board of its own: no open canvas, no simulation tickets.
+    expect(popm.frames.filter((f) => f.parentId && /^Lesson/.test(popm.frames.find((x) => x.id === f.parentId)?.title ?? "")).every((f) => f.activity?.board)).toBe(true);
     expect(popm.frames.some((f) => f.activity?.config && JSON.stringify(f.activity.config).includes("Trustworthy"))).toBe(true);
     // POPM and Advanced SPC chapters are built from the tools' own definitions too.
     expect(popm.frames.filter((f) => f.activity?.board).map((f) => f.activity!.board)).toEqual(["agenda", "po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-ai", "po-feat", "po-refine", "po-cap", "wsjf", "quad", "po-vision", "po-ai", "po-deps", "po-ai", "po-map", "rse", "po-iter", "po-ai", "po-ai", "po-ai", "po-check"]);
-    expect(popm.frames.some((f) => f.title.startsWith("Coach Sync"))).toBe(true);
     const aspc = classBoard(CLASSES[2]!);
     expect(aspc.nodes.some((n) => n.text === "Curated data")).toBe(true);
     expect(aspc.frames.some((f) => f.title.startsWith("Lean business case"))).toBe(true);
