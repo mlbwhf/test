@@ -1037,28 +1037,29 @@ export function PoDepsBoard({ config, st, op, readOnly }: BoardProps) {
 // The user's activities across the top; under each, the stories it needs. The dark stories are the
 // minimum to complete the feature and flow into the team backlog; the light ones wait.
 
-export function PoStoryMapBoard({ config, st, op, readOnly }: BoardProps) {
+export function PoStoryMapBoard({ config, st, op: save, readOnly }: BoardProps) {
   const feature = config.feature as Record<string, string> | undefined;
-  const tasks = list(st, "tasks"), stories = list(st, "stories");
+  // The map starts with the slide's own example: its activities, and the stories under the first
+  // one. It lives in the board's setup until someone changes the map; then it is saved as theirs.
+  const seed = config.seed as { tasks: string[]; must: string[]; later: string[] } | undefined;
+  const started = Array.isArray(st.tasks) || Array.isArray(st.stories) || !seed;
+  const seedTasks: Row[] = (seed?.tasks ?? []).map((name, i) => ({ id: `seed-t${i}`, name }));
+  const seedStories: Row[] = [...(seed?.must ?? []).map((text, i) => ({ id: `seed-m${i}`, task: "seed-t0", text, must: true })), ...(seed?.later ?? []).map((text, i) => ({ id: `seed-l${i}`, task: "seed-t0", text, must: false }))];
+  const tasks = started ? list(st, "tasks") : seedTasks, stories = started ? list(st, "stories") : seedStories;
+  const op: BoardProps["op"] = (change) => {
+    if (started) return save(change);
+    // The first change: the example with that change applied is saved whole, so nothing can arrive out of order.
+    const next: Record<string, Row[]> = { tasks: seedTasks, stories: seedStories };
+    const cur = next[change.key] ?? [];
+    if (change.op === "push") next[change.key] = [...cur, { ...change.value, id: `n${Date.now().toString(36)}` }];
+    else if (change.op === "update") next[change.key] = cur.map((x) => (x.id === change.id ? { ...x, ...change.value, id: x.id } : x));
+    else if (change.op === "remove") next[change.key] = cur.filter((x) => x.id !== change.id);
+    save({ key: "tasks", op: "set", value: next.tasks });
+    save({ key: "stories", op: "set", value: next.stories });
+  };
   const [task, setTask] = useState("");
   const must = tasks.flatMap((t) => stories.filter((s) => s.task === t.id && s.must === true));
   const addTask = () => task.trim() && tasks.length < 7 && (op({ key: "tasks", op: "push", value: { name: task.trim() } }), setTask(""));
-  // The slide's own example: its activities, and the stories under the first one.
-  const seed = config.seed as { tasks: string[]; must: string[]; later: string[] } | undefined;
-  const [seeding, setSeeding] = useState(false);
-  useEffect(() => {
-    // Once the example's activities are saved (they have real ids), hang its stories under the first.
-    if (!seeding || !seed || tasks.length < seed.tasks.length || tasks.some((t) => t.id.startsWith("tmp"))) return;
-    setSeeding(false);
-    for (const text of seed.must) op({ key: "stories", op: "push", value: { task: tasks[0]!.id, text, must: true } });
-    for (const text of seed.later) op({ key: "stories", op: "push", value: { task: tasks[0]!.id, text, must: false } });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [seeding, tasks]);
-  const loadExample = () => {
-    if (!seed) return;
-    for (const name of seed.tasks) op({ key: "tasks", op: "push", value: { name } });
-    setSeeding(true);
-  };
   return (
     <div className="ex-board po">
       {feature ? (
@@ -1069,7 +1070,7 @@ export function PoStoryMapBoard({ config, st, op, readOnly }: BoardProps) {
           <p className="small"><b>Acceptance criteria:</b> {feature.ac}</p>
         </details>
       ) : null}
-      {seed && !readOnly && !tasks.length ? <button className="po-btn" onClick={loadExample}>Start from the example on the slide</button> : null}
+      {seed && !readOnly && started ? <button className="po-reset" style={{ marginLeft: 0, justifySelf: "start" }} onClick={() => window.confirm("Put the slide's example back? This replaces the map as it is now.") && (save({ key: "tasks", op: "set", value: null }), save({ key: "stories", op: "set", value: null }))}>Back to the slide&apos;s example</button> : null}
       <div className="po-map">
         <div className="po-mapmain">
           <div className="po-arrow">These are the activities or tasks the user must perform in order to accomplish their goal.</div>
