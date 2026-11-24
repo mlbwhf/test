@@ -4,7 +4,7 @@
 // they want to learn, the Lean-Agile mindset scenario, AI's disruption of product work, and the
 // prompt builder for the SAFe message. Each keeps what people add in the frame's state.
 
-import { useEffect, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import type { BoardProps } from "@/components/exercise-boards";
 
 type St = Record<string, unknown>;
@@ -495,15 +495,26 @@ function curve(v: number[]) {
 }
 
 export function PoRhythmBoard({ config, st, op, readOnly }: BoardProps) {
-  const markets = (config.markets as [string, string][] | undefined) ?? [];
-  const demand = (mi: number): number[] => (Array.isArray(st[`d:${mi}`]) && (st[`d:${mi}`] as unknown[]).length === 12 ? (st[`d:${mi}`] as number[]) : Array(12).fill(5));
+  // Each market: its name, colour, the slide's baseline curve, and whether the line is dashed.
+  const markets = (config.markets as [string, string, number[]?, boolean?][] | undefined) ?? [];
+  const base = (mi: number): number[] => (markets[mi]?.[2]?.length === 12 ? markets[mi]![2]! : Array(12).fill(5));
+  const saved = (mi: number): number[] => (Array.isArray(st[`d:${mi}`]) && (st[`d:${mi}`] as unknown[]).length === 12 ? (st[`d:${mi}`] as number[]) : base(mi));
+  // While a point is dragged the curve follows the pointer; the value is saved when it is let go.
+  const [drag, setDrag] = useState<{ mi: number; i: number; v: number } | null>(null);
+  const demand = (mi: number) => (drag && drag.mi === mi ? saved(mi).map((v, j) => (j === drag.i ? drag.v : v)) : saved(mi));
+  const svg = useRef<SVGSVGElement>(null);
+  const valueAt = (clientY: number) => {
+    const r = svg.current!.getBoundingClientRect(), y = ((clientY - r.top) / r.height) * 300;
+    return Math.max(0, Math.min(10, Math.round(((250 - y) / 20) * 2) / 2));
+  };
+  const setPoint = (mi: number, i: number, v: number) => op({ key: `d:${mi}`, op: "set", value: saved(mi).map((x, j) => (j === i ? Math.max(0, Math.min(10, v)) : x)) });
   const events = list(st, "events"), win = (st.win && typeof st.win === "object" ? st.win : {}) as Record<string, boolean>;
   const [ev, setEv] = useState({ name: "", market: 0, month: 0 });
-  const bump = (mi: number, i: number) => op({ key: `d:${mi}`, op: "set", value: demand(mi).map((v, j) => (j === i ? (v >= 10 ? 0 : v + 2.5) : v)) });
-  const shaped = markets.some((_, mi) => Array.isArray(st[`d:${mi}`]));
   const total = MONTHS.map((_, i) => markets.reduce((n, _m, mi) => n + demand(mi)[i]!, 0));
-  const low = Math.min(...total), quiet = shaped ? MONTHS.filter((_, i) => total[i] === low) : [];
+  const low = Math.min(...total), quiet = MONTHS.filter((_, i) => total[i]! <= low + 0.5);
   const chosen = MONTHS.filter((_, i) => win[i]);
+  const changed = markets.some((_, mi) => Array.isArray(st[`d:${mi}`]));
+  const flat = typeof config.reference === "number" ? config.reference : null;
   return (
     <div className="ex-board po">
       <div className="po-scenario">
@@ -512,51 +523,58 @@ export function PoRhythmBoard({ config, st, op, readOnly }: BoardProps) {
       </div>
       <section className="po-panel">
         <div className="po-legend left">
-          {markets.map(([name, color]) => (<span key={name} style={{ ["--c" as string]: color }}><i />{name}</span>))}
-          <span style={{ ["--c" as string]: "#2e8b57" }}><i className="sq" />Release window</span>
+          {markets.map(([name, color, , dashed]) => (<span key={name}><i style={{ background: dashed ? `repeating-linear-gradient(90deg, ${color} 0 7px, transparent 7px 11px)` : color }} />{name}</span>))}
+          {flat !== null ? <span><i style={{ background: "#a9c43c" }} />Steady value, for comparison</span> : null}
+          <span><i className="sq" style={{ background: "#2e8b57" }} />Release window</span>
+          {!readOnly && changed ? <button className="po-reset" onClick={() => markets.forEach((_, mi) => op({ key: `d:${mi}`, op: "set", value: null }))}>Back to the slide&apos;s curves</button> : null}
         </div>
         <div className="po-chartwrap">
-          <svg className="po-chart" viewBox="0 0 760 300" role="img" aria-label={`Demand through the year for ${markets.map((m) => m[0]).join(" and ")}`}>
+          <svg ref={svg} className={`po-chart${drag ? " dragging" : ""}`} viewBox="0 0 760 300" role="img" aria-label={`Value through the year for ${markets.map((m) => m[0]).join(" and ")}`}
+            onPointerMove={(e) => drag && setDrag({ ...drag, v: valueAt(e.clientY) })}
+            onPointerUp={() => drag && (setPoint(drag.mi, drag.i, drag.v), setDrag(null))}
+            onPointerLeave={() => drag && (setPoint(drag.mi, drag.i, drag.v), setDrag(null))}>
             {MONTHS.map((m, i) => (
               <g key={m}>
                 <rect className="po-win" x={MX(i) - 28} y={30} width={56} height={228} fill="#2e8b57" opacity={win[i] ? 0.18 : 0} />
-                {shaped && total[i] === low ? <rect x={MX(i) - 28} y={254} width={56} height={5} fill="#d98a1c" /> : null}
-                <text x={MX(i)} y={278} textAnchor="middle" className="po-axis">{m}</text>
+                {total[i]! <= low + 0.5 ? <rect x={MX(i) - 28} y={254} width={56} height={5} fill="#d98a1c" /> : null}
+                <text x={MX(i)} y={276} textAnchor="middle" className="po-axis mo">{m}</text>
                 {i % 3 === 0 ? <line x1={MX(i) - 28} y1={30} x2={MX(i) - 28} y2={258} stroke="#0d181826" strokeDasharray="3 5" /> : null}
+                {i % 3 === 1 ? <text x={MX(i)} y={294} textAnchor="middle" className="po-axis q">Q{Math.floor(i / 3) + 1}</text> : null}
               </g>
             ))}
-            <text x={20} y={56} className="po-axis">High</text>
-            <text x={20} y={254} className="po-axis">Low</text>
-            {markets.map(([name, color], mi) => (<path key={name} className="po-curve" d={curve(demand(mi))} fill="none" stroke={color} strokeWidth="4" strokeLinecap="round" />))}
+            <line x1="56" y1="26" x2="56" y2="258" stroke="#0d1815" strokeWidth="2" />
+            <line x1="56" y1="258" x2="736" y2="258" stroke="#0d1815" strokeWidth="2" />
+            <text x="14" y="52" className="po-axis" transform="rotate(-90 14 52)" textAnchor="end">High value</text>
+            <text x="14" y="252" className="po-axis" transform="rotate(-90 14 252)">Low value</text>
+            {flat !== null ? <line x1={MX(0)} y1={MY(flat)} x2={MX(11)} y2={MY(flat)} stroke="#a9c43c" strokeWidth="4" /> : null}
+            {markets.map(([name, color, , dashed], mi) => (<path key={name} className={dashed ? "po-curve dashed" : "po-curve"} d={curve(demand(mi))} fill="none" stroke={color} strokeWidth="4" strokeLinecap="round" />))}
             {events.map((e, j) => {
               const x = MX(num(e.month)), y = 44 + (j % 3) * 22, c = markets[num(e.market)]?.[1] ?? "#0d1815";
               return (
                 <g key={e.id} className="po-evt">
-                  <line x1={x} y1={y} x2={x} y2={258} stroke={c} strokeDasharray="2 4" />
                   <polygon points={`${x},${y - 9} ${x + 9},${y} ${x},${y + 9} ${x - 9},${y}`} fill={c} stroke="#0d1815" strokeWidth="1.5" />
                   <text x={x + 13} y={y + 4} className="po-evt-t">{str(e.name)}</text>
                 </g>
               );
             })}
+            {!readOnly ? markets.map(([name, color], mi) => demand(mi).map((v, i) => (
+              <g key={`${mi}-${i}`} className={`po-handle${drag && drag.mi === mi && drag.i === i ? " on" : ""}`} tabIndex={0} role="slider" aria-label={`${name}, ${MONTHS[i]}`} aria-valuemin={0} aria-valuemax={10} aria-valuenow={v}
+                onPointerDown={(e) => ((e.target as Element).setPointerCapture?.(e.pointerId), setDrag({ mi, i, v }))}
+                onKeyDown={(e) => (e.key === "ArrowUp" || e.key === "ArrowDown") && (e.preventDefault(), setPoint(mi, i, v + (e.key === "ArrowUp" ? 0.5 : -0.5)))}>
+                <circle cx={MX(i)} cy={MY(v)} r="16" fill="transparent" />
+                <circle cx={MX(i)} cy={MY(v)} r="7" fill="#fff" stroke={color} strokeWidth="3.5" />
+                {drag && drag.mi === mi && drag.i === i ? <text x={MX(i)} y={MY(v) - 16} textAnchor="middle" className="po-evt-t">{v >= 7.5 ? "High" : v >= 4 ? "Medium" : "Low"}</text> : null}
+              </g>
+            ))) : null}
           </svg>
         </div>
-        {markets.map(([name, color], mi) => (
-          <div key={name} className="po-bars" role="group" aria-label={`Demand per month, ${name}`}>
-            <b style={{ color }}>{name}</b>
-            {demand(mi).map((v, i) => (
-              <button key={i} disabled={readOnly} aria-label={`${name}, ${MONTHS[i]}: ${v} of 10. Click to raise.`} onClick={() => bump(mi, i)}>
-                <i style={{ height: `${v * 10}%`, background: color }} />
-              </button>
-            ))}
-          </div>
-        ))}
         <div className="po-bars" role="group" aria-label="Release windows">
           <b style={{ color: "#2e8b57" }}>Release window</b>
           {MONTHS.map((m, i) => (
             <button key={m} className="po-pick" disabled={readOnly} aria-pressed={!!win[i]} onClick={() => op({ key: "win", op: "set", value: { ...win, [i]: !win[i] } })}>{m}</button>
           ))}
         </div>
-        <p className="po-note">Click a month&apos;s bar to raise that market&apos;s demand (it starts over after the top). Click a month in the last row to mark it as a release window.</p>
+        <p className="po-note">The curves start as on the slide. Drag any point up or down to reshape a market&apos;s rhythm (or focus a point and use the arrow keys). Click a month in the row below the chart to mark a release window.</p>
       </section>
       <div className="po-two">
         <section className="po-panel">
@@ -580,7 +598,7 @@ export function PoRhythmBoard({ config, st, op, readOnly }: BoardProps) {
         <section className="po-panel">
           <span className="ex-mono">Key times to release the new hardware</span>
           <p className="po-big">{chosen.length ? chosen.join(", ") : "No release window marked yet."}</p>
-          <p className="po-note">{quiet.length ? <>Quietest for both markets together: <b>{quiet.join(", ")}</b> (the orange marks under the chart).{chosen.length && !chosen.some((m) => quiet.includes(m)) ? " None of your windows is in a quietest month; is there a reason?" : ""}</> : "Shape the two demand curves and the quietest months are pointed out here."}</p>
+          <p className="po-note">Lowest value at stake for both markets together: <b>{quiet.join(", ")}</b> (the orange marks under the chart).{chosen.length && !chosen.some((m) => quiet.includes(m)) ? " None of your windows is in one of those months; is there a reason?" : ""}</p>
           <Field k="why" st={st} op={op} readOnly={readOnly} rows={3} placeholder="Why these times minimize disruption to customers…" label="Why these times" />
         </section>
       </div>
@@ -590,7 +608,7 @@ export function PoRhythmBoard({ config, st, op, readOnly }: BoardProps) {
 
 // ---- Lesson 2 · writing features ---------------------------------------------------------------
 
-const FEATURE_PARTS = [["desc", "Description", "What the feature does"], ["intent", "Intent", "What it is meant to achieve"], ["hyp", "Benefit hypothesis", "Name the primary customer and the benefit"], ["ac", "Acceptance criteria", "One per line"]] as const;
+const FEATURE_PARTS = [["desc", "Description", "What the feature does"], ["hyp", "Benefit hypothesis", "Name the primary customer and the benefit"], ["intent", "Intent", "What it is meant to achieve"], ["ac", "Acceptance criteria", "One per line"]] as const;
 const featureDone = (f: Row) => FEATURE_PARTS.every(([k]) => str(f[k]));
 
 function FeatureText({ f, k, label, hint, op, readOnly, listKey = "feats" }: { f: Row; k: string; label: string; hint: string; op: BoardProps["op"]; readOnly: boolean; listKey?: string }) {
@@ -618,21 +636,28 @@ export function PoFeatureBoard({ config, st, op, readOnly }: BoardProps) {
   }, [names, mirrored, readOnly]);
   return (
     <div className="ex-board po">
-      <div className="po-epic">
-        <span className="ex-mono">Epic</span>
-        <p>{str(config.epic)}</p>
+      <div className="po-epicrow">
+        <div className="po-epic">
+          <span className="ex-mono">Epic</span>
+          <p>{str(config.epic)}</p>
+          <span className="po-epicarrow" aria-hidden>↓ decompose into features</span>
+        </div>
+        {example ? (
+          <div className="po-feat example">
+            <span className="ex-mono">Feature · example</span>
+            {FEATURE_PARTS.map(([k, label]) => (k === "ac" ? (
+              <div key={k}><span className="lab">{label}:</span><ul>{example[k]!.split(/(?<=\.)\s+|\n/).filter(Boolean).map((x) => (<li key={x}>{x.replace(/\.$/, "")}</li>))}</ul></div>
+            ) : (
+              <p key={k}><span className="lab">{label}:</span> {example[k]}</p>
+            )))}
+          </div>
+        ) : null}
       </div>
       <div className="po-build">
         <span className="po-count" data-ok={feats.length >= 3 && done === feats.length}>{done}/{Math.max(3, feats.length)}</span>
         <p className="po-note">Step 1: at least three potential features for an MVP. Step 2: give each a description, its intent, a benefit hypothesis that names the primary customer, and acceptance criteria.</p>
       </div>
       <div className="po-feats">
-        {example ? (
-          <details className="po-feat example">
-            <summary><span className="ex-mono">Example feature</span><b>{example.name}</b></summary>
-            {FEATURE_PARTS.map(([k, label]) => (<p key={k}><span>{label}</span>{example[k]}</p>))}
-          </details>
-        ) : null}
         {feats.map((f, i) => (
           <article key={f.id} className={`po-feat${featureDone(f) ? " done" : ""}`} style={{ animationDelay: `${Math.min(i, 6) * 80}ms` }}>
             <header>

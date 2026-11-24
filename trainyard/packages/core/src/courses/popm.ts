@@ -91,7 +91,12 @@ const lesson2: ActivitySpec[] = [
       classWide: true,
       scenario:
         "The Van Maintenance Advisor requires new hardware. The System Architect has informed the Product Management team that customers will have to take their vans out of service for approximately one day to install the new hardware. Approximately 30% of your van customers serve the local retail market, while another 30% serve the medical specimen market.",
-      markets: [["Local retail market", "#1f3a8a"], ["Medical specimen market", "#1fb89a"]],
+      // The curves of the "Market dynamics influence roadmaps" slide (2-20), month by month, as the starting point.
+      markets: [
+        ["Local retail market", "#c9a24a", [2.6, 2.6, 2.7, 2.7, 2.6, 2.6, 2.7, 3, 3.6, 5.4, 9.6, 1.2], true],
+        ["Medical specimen market", "#06384a", [0.8, 0.4, 3.6, 4.2, 4.4, 4.2, 4.6, 6.6, 8.8, 4.6, 0.6, 0.5]],
+      ],
+      reference: 5.5,
     },
     ...BOARD,
   },
