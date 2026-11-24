@@ -382,7 +382,7 @@ function fillCourse(b: Board, course: { title: string; activities: ActivitySpec[
     const shift = strip.height - top;
     if (shift > 0) for (const l of lessons) move(l, l.y + shift);
   }
-  lessons.forEach((l, i) => kept.has(l.id) || addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
+  lessons.forEach((l, i) => addActivities(b, l.id, rest[i]?.activities ?? [], `${l.id}-x`));
 }
 
 function isInside(b: Board, f: Frame, ancestor: string): boolean {
@@ -656,33 +656,17 @@ const RAW_CLASSES: ClassSpec[] = [
       {
         title: "Leading PI Planning",
         exercises: [
-          { kind: "slide", title: "Lesson 3 activity: identify dependency issues and resolve them", body: "On the ART planning board below, features (blue) are strung to the significant dependencies (red) they wait on; milestones and events are orange. Red strings connect a feature or milestone to one or more dependencies; sometimes a dependency has its own dependencies. Mark each issue with a warning triangle, then resolve it: re-sequence, split, or negotiate.", steps: ["Find dependencies that land after the feature that needs them", "Find chains three deep or longer", "Find anything in the IP iteration", "Propose a resolution per issue"], minutes: 20 },
-          { kind: "table", title: "ART planning board", columns: ["Team", "Iteration 1.1", "Iteration 1.2", "Iteration 1.3", "Iteration 1.4", "Iteration 1.5 (IP)", "PI 2 >>>"], rows: [["Milestones and events", "", "", "", "", "", ""], ["Unicorns", "", "", "", "", "", ""], ["Lions", "", "", "", "", "", ""], ["Bears", "", "", "", "", "", ""], ["Eagles", "", "", "", "", "", ""], ["Tigers", "", "", "", "", "", ""], ["Antelopes", "", "", "", "", "", ""], ["Bulls", "", "", "", "", "", ""], ["UX help", "", "", "", "", "", ""], ["System Architect help", "", "", "", "", "", ""]] },
-          { kind: "slide", title: "L3 discussion: AI-empowered PI Planning", body: "As a class, brainstorm ways AI can reduce overhead or friction in PI Planning. Consider:", steps: ["Where does planning seem the hardest or most time-consuming?", "How could AI reduce effort, improve clarity, or surface risks earlier?", "What should always remain a human responsibility?", "What's one AI-enabled improvement you'd consider trying next PI?"], minutes: 15 },
-          { kind: "stickies", title: "Lesson 3 activity: communicate the vision", lanes: ["Capture your group's vision here"], hint: "One or two stickies: the vision as you would present it in the first hour of PI Planning.", rows: 2, color: COLORS.green },
           { kind: "pi-planning", title: "PI Planning simulation · autonomous delivery vehicle", teams: ["Unicorns · Vehicle control", "Lions · Mobile app", "Bears · Sensor management"], backlog: VEHICLE_BACKLOG },
           { kind: "link", title: "PI Outcome Planning (AI-Native SAFe)", body: "The one-day alternative the class discusses: outcome tree, PI Outcome Planning Board, team boards and the vote.", href: "/outcome-planning" },
         ],
       },
       {
         title: "Executing Iterations",
-        exercises: [
-          { kind: "table", title: "Lesson 4 discussion: building the Continuous Delivery Pipeline", columns: ["How can product roles support Continuous Exploration?", "How can product roles support Continuous Integration?", "How can product roles support Continuous Deployment?", "How can product roles support Release on Demand?"], rows: [], blankRows: 3 },
-          { kind: "slide", title: "Lesson 4 activity: develop a story map · example feature", body: "Delivery order insurance. Benefit hypothesis: allows users to purchase extra insurance for an existing delivery order. Acceptance criteria: access insurance catalog from account profile; display available insurance options; integrate with shopping cart; process payment. Map the activities or tasks across the top, then the stories under each, essential ones for this release above the line, future releases below." },
-          { kind: "table", title: "Story map", columns: ["", "Browse catalog", "Go to website", "Select policy", "Purchase"], rows: [["Essential stories for this release", "Login", "View my account", "Access the catalog", ""], ["", "", "", "", ""], ["Stories for future releases", "Accessible from any device", "Chatbot directs user to catalog", "", ""], ["", "", "", "", ""]] },
-          { kind: "table", title: "Story writing: INVEST", columns: ["Story", "Independent", "Negotiable", "Valuable", "Estimable", "Small", "Testable"], rows: [], blankRows: 4 },
-          { kind: "stickies", title: "Lesson 4 activity: AI-assisted iteration planning", lanes: ["Human-written iteration goals", "AI-generated iteration goals", "Hybrid iteration goals"], hint: "Use the AI prompting template from Lesson 1. Compare: which goals are clearer, which are measurable, which would the team sign up for?", rows: 2 },
-        ],
+        exercises: POPM_COURSE[4]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
       },
       {
         title: "Executing the PI",
-        exercises: [
-          { kind: "slide", title: "Lesson 5 discussion: enabling alignment across the ART with sync events", body: "Discuss the following:", steps: ["How can you leverage sync events as a PO or Product Manager to ensure alignment across the ART?", "What issues and opportunities might you bring up?", "What potential solutions might you offer to resolve the issues and follow through with opportunities?"], minutes: 15 },
-          { kind: "stickies", title: "Sync events: what I bring", lanes: ["PO sync", "Coach sync", "ART sync"], rows: 2, color: COLORS.green },
-          { kind: "slide", title: "Lesson 5 discussion: responsible AI and product decisions", body: "An AI tool analyses onboarding data and finds that many new users abandon the product before completing setup. It recommends simplifying onboarding by removing steps and introducing a guided 'quick start' experience to help users reach value faster." },
-          { kind: "table", title: "Responsible AI: trustworthy, explainable, human-centric", columns: ["Trustworthy: does this reflect the full customer experience?", "Explainable: what evidence supports this recommendation?", "Human-centric: what are the risks or unintended impacts for users?"], rows: [], blankRows: 3 },
-          { kind: "stickies", title: "Iteration review and system demo", lanes: ["What we showed", "What we heard", "What changes in the backlog"], rows: 2, color: COLORS.green },
-        ],
+        exercises: POPM_COURSE[5]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })),
       },
     ],
   },
