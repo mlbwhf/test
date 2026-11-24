@@ -67,20 +67,20 @@
   "where": "packages/core/src/courses/rte.ts:285"
  },
  "- An AI tool analyzes onboarding data and finds that many new users abandon the product before completing setup. It recommends simplifying onboarding by removing steps and introducing a guided “quick start” experience to help users reach value faster.": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Un outil d’IA analyse les données d’intégration et constate que de nombreux nouveaux utilisateurs abandonnent le produit avant d’avoir terminé la configuration. Il recommande de simplifier l’intégration en supprimant des étapes et en proposant une expérience guidée de « démarrage rapide » pour aider les utilisateurs à obtenir de la valeur plus rapidement.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
  "- Any Product Manager role experience": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Toute expérience dans un rôle de Product Manager",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
  "- Any Product Owner role experience": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Toute expérience dans un rôle de Product Owner",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
@@ -127,14 +127,14 @@
   "where": "apps/web/lib/public.ts:190"
  },
  "- Collaborate with the team.": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Collaborez avec l’équipe.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
  "- Customer insights: How might AI analyzing large amounts of customer feedback change how you identify needs and define value?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Connaissance des clients : comment l’analyse par l’IA de grands volumes de commentaires de clients pourrait-elle changer votre façon de cerner les besoins et de définir la valeur ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:50"
  },
@@ -169,20 +169,20 @@
   "where": "apps/web/lib/public.ts:184"
  },
  "- Explainable: What evidence supports this recommendation?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Explicable : quelles données probantes appuient cette recommandation ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
  "- Feature writing: How might AI change how you write features and benefit hypotheses?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Rédaction des fonctionnalités : comment l’IA pourrait-elle changer votre façon de rédiger les fonctionnalités et les hypothèses de bénéfice ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:50"
  },
  "- Focus on customer value.": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Concentrez-vous sur la valeur pour le client.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
@@ -218,26 +218,26 @@
   "note": "\"anti-patterns\" rendered \"antipatrons\" (OQLF); not in the glossary. \"anti-modèles\" is the alternative."
  },
  "- How can product roles support Continuous Deployment?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment les rôles produit peuvent-ils soutenir le déploiement continu ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:328"
  },
  "- How can product roles support Continuous Exploration?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment les rôles produit peuvent-ils soutenir l’exploration continue ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:328"
  },
  "- How can product roles support Continuous Integration?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment les rôles produit peuvent-ils soutenir l’intégration continue ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:328"
  },
  "- How can product roles support Release on Demand?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment les rôles produit peuvent-ils soutenir la mise en service à la demande ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:328"
  },
@@ -248,8 +248,8 @@
   "where": "packages/core/src/courses/rte.ts:181"
  },
  "- How can you leverage these sync events as a PO or Product Manager to ensure alignment across the ART?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment pouvez-vous tirer parti de ces événements de synchronisation, comme PO ou Product Manager, pour assurer l’alignement dans l’ensemble de l’ART ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:354"
  },
@@ -260,8 +260,8 @@
   "where": "packages/core/src/courses/popm.ts:255 packages/core/src/courses/rte.ts:199"
  },
  "- How could this research inform (but not replace) customer discovery?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Comment cette recherche pourrait-elle éclairer (sans la remplacer) la découverte client ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:108"
  },
@@ -296,14 +296,14 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:17"
  },
  "- Human-centric: What are the risks or unintended impacts for users?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Centré sur l’humain : quels sont les risques ou les effets imprévus pour les utilisateurs ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
  "- If you’d only looked at the AI draft, what issues would you have overlooked?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Si vous n’aviez regardé que l’ébauche de l’IA, quels problèmes vous auraient échappé ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
@@ -416,8 +416,8 @@
   "where": "packages/core/src/courses/rte.ts:285"
  },
  "- Regularly engage with stakeholders.": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Échangez régulièrement avec les parties prenantes.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
@@ -446,8 +446,8 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:15"
  },
  "- Story writing: How might AI-assisted story writing and acceptance criteria generation change your daily priorities and how you budget your time?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Rédaction des récits : comment la rédaction de récits et la génération de critères d’acceptation assistées par l’IA pourraient-elles changer vos priorités quotidiennes et la façon dont vous répartissez votre temps ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:50"
  },
@@ -488,8 +488,8 @@
   "where": "packages/core/src/courses/rte.ts:227"
  },
  "- The Senior Developer on your new Agile Team is skeptical about SAFe. They have sent you a message asking how having a Product Owner will make their jobs easier. They are worried it’s going to be more meetings and processes, and nothing will get better.": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Le développeur principal de votre nouvelle équipe Agile est sceptique à l’égard de SAFe. Il vous a envoyé un message pour demander en quoi la présence d’un Product Owner facilitera le travail de l’équipe. Il craint que cela n’entraîne plus de réunions et de processus, sans que rien ne s’améliore.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:69"
  },
@@ -506,8 +506,8 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:17"
  },
  "- Trustworthy: Does this reflect the full customer experience?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Digne de confiance : cela reflète-t-il l’ensemble de l’expérience client ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
@@ -530,14 +530,14 @@
   "where": "packages/core/src/courses/rte.ts:181"
  },
  "- What are the main tasks?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quelles sont les tâches principales ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:282"
  },
  "- What assumptions does this research appear to make?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quelles hypothèses cette recherche semble-t-elle poser ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:108"
  },
@@ -560,32 +560,32 @@
   "where": "packages/core/src/courses/rte.ts:144"
  },
  "- What did the AI miss that you included? What did AI add that you hadn’t considered?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Qu’est-ce que l’IA a omis et que vous aviez inclus ? Qu’est-ce que l’IA a ajouté et que vous n’aviez pas envisagé ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
  "- What does this mean for what we're building this PI?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Qu’est-ce que cela signifie pour ce que nous construisons durant ce PI ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:205"
  },
  "- What insights would require direct customer validation?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quels constats exigeraient une validation directe auprès des clients ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:108"
  },
  "- What is the minimum number of stories required to complete the feature?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quel est le nombre minimal de récits requis pour terminer la fonctionnalité ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:282"
  },
  "- What issues and opportunities might you bring up?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quels problèmes et quelles occasions pourriez-vous soulever ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:354"
  },
@@ -602,14 +602,14 @@
   "where": "packages/core/src/courses/rte.ts:104"
  },
  "- What potential issues do you see?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quels problèmes potentiels voyez-vous ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:241"
  },
  "- What potential solutions might you offer to resolve the issues and follow through with opportunities?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Quelles solutions pourriez-vous proposer pour résoudre les problèmes et donner suite aux occasions ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:354"
  },
@@ -644,20 +644,20 @@
   "where": "packages/core/src/courses/popm.ts:255 packages/core/src/courses/rte.ts:199"
  },
  "- What to change": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Ce qu’il faut changer",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
  "- What to keep": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Ce qu’il faut garder",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
  "- What to remove": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Ce qu’il faut retirer",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
@@ -680,8 +680,8 @@
   "where": "apps/web/lib/public.ts:208"
  },
  "- Where are we going, and why does it matter?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Où allons-nous, et pourquoi est-ce important ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:205"
  },
@@ -692,8 +692,8 @@
   "where": "packages/core/src/courses/rte.ts:199"
  },
  "- Where does planning seem the hardest or most time-consuming?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Où la planification semble-t-elle la plus difficile ou la plus longue ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:255"
  },
@@ -710,32 +710,32 @@
   "where": "packages/core/src/courses/rte.ts:334"
  },
  "- Who should POs and Product Management collaborate with to help minimize dependencies and address the issues identified?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Avec qui les PO et la gestion de produit devraient-ils collaborer pour réduire les dépendances et régler les problèmes relevés ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:241"
  },
  "- Why should the team care?": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Pourquoi l’équipe devrait-elle s’y intéresser ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:205"
  },
  "- You will start by filling out your profile. Tell us about yourself!": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Vous commencerez par remplir votre profil. Parlez-nous de vous !",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402"
  },
  "- Your experience working in an Agile environment": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Votre expérience de travail dans un environnement Agile",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
  "- Your experience working outside of an Agile environment": {
-  "fr": "",
-  "status": "course",
+  "fr": "- Votre expérience de travail hors d’un environnement Agile",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
@@ -813,8 +813,8 @@
   "where": "apps/web/components/team-board.tsx:91"
  },
  ", flagged": {
-  "fr": "",
-  "status": "new",
+  "fr": ", signalé",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1005"
  },
@@ -1194,8 +1194,8 @@
   "where": "apps/web/components/studio-views.tsx:276"
  },
  ". The green band is 2 to 3 minutes at": {
-  "fr": "",
-  "status": "new",
+  "fr": ". La bande verte correspond à 2 à 3 minutes à",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:903"
  },
@@ -1774,14 +1774,14 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:1364"
  },
  "(optional) Are there any specific requirements?": {
-  "fr": "",
-  "status": "new",
+  "fr": "(facultatif) Y a-t-il des exigences particulières ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:399"
  },
  "(optional) Is there background info the AI needs?": {
-  "fr": "",
-  "status": "new",
+  "fr": "(facultatif) L’IA a-t-elle besoin d’information contextuelle ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:398"
  },
@@ -1804,8 +1804,8 @@
   "where": "apps/web/components/planning-views.tsx:699"
  },
  "(the orange marks under the chart).": {
-  "fr": "",
-  "status": "new",
+  "fr": "(les marques orange sous le graphique).",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:601"
  },
@@ -2171,8 +2171,8 @@
   "where": "packages/core/src/insights.ts:360"
  },
  "{0} ideas for AI, {1} things that stay human": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} idées pour l’IA, {1} choses qui restent humaines",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:295"
  },
@@ -2290,8 +2290,8 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:1432"
  },
  "{0} of {1} steps done": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} étapes sur {1} terminées",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1205"
  },
@@ -2309,14 +2309,14 @@
   "note": "Railway metaphor (siding = voie de garage)."
  },
  "{0} of 4 parts written": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} parties sur 4 rédigées",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:666"
  },
  "{0} of 5 elements in the prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} éléments sur 5 dans la requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:430 apps/web/components/popm-boards.tsx:727"
  },
@@ -2333,14 +2333,14 @@
   "where": "apps/web/components/readiness-board.tsx:166"
  },
  "{0} on Lean thinking, {1} on Agile values": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} sur la pensée Lean, {1} sur les valeurs Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:163"
  },
  "{0} on the issue, {1} solutions": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} sur le problème, {1} solutions",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:275"
  },
@@ -2418,8 +2418,8 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:1110"
  },
  "{0} words, about {1} minutes spoken": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0} mots, environ {1} minutes à l’oral",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:899"
  },
@@ -2492,8 +2492,8 @@
   "where": "apps/web/components/class-students.tsx:386"
  },
  "{0}{1}% of its capacity to {2}": {
-  "fr": "",
-  "status": "new",
+  "fr": "{0}{1} % de sa capacité à {2}",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:846"
  },
@@ -3008,8 +3008,8 @@
   "where": "apps/web/components/planning-pages.tsx:791"
  },
  "↓ decompose into features": {
-  "fr": "",
-  "status": "new",
+  "fr": "↓ décomposer en fonctionnalités",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:643"
  },
@@ -3056,8 +3056,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:314"
  },
  "+ a post, event or tool worth sharing, Enter": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ une publication, un événement ou un outil à partager, Entrée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1231"
  },
@@ -3068,8 +3068,8 @@
   "where": "apps/web/components/activity-editor.tsx:35"
  },
  "+ activity or task": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ activité ou tâche",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1087"
  },
@@ -3147,14 +3147,14 @@
   "where": "apps/web/components/studio-model.ts:690"
  },
  "+ add, Enter": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ ajouter, Entrée",
+  "status": "draft",
   "phase": "1",
   "where": "apps/web/components/exercise-boards.tsx:298 apps/web/components/popm-boards.tsx:764 apps/web/components/popm-boards.tsx:1028"
  },
  "+ an iteration goal, Enter": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ un objectif d’itération, Entrée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1146"
  },
@@ -3243,8 +3243,8 @@
   "where": "apps/web/app/(app)/outcomes/page.tsx:490"
  },
  "+ how it aligns, Enter": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ en quoi c’est aligné, Entrée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:179"
  },
@@ -3423,8 +3423,8 @@
   "where": "apps/web/components/exercise-boards.tsx:62 apps/web/components/studio-views-lpm.tsx:19 apps/web/components/studio-views-lpm.tsx:167"
  },
  "+ story": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ récit",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1107"
  },
@@ -3483,8 +3483,8 @@
   "where": "apps/web/components/activity-editor.tsx:184"
  },
  "+ what changes, Enter": {
-  "fr": "",
-  "status": "new",
+  "fr": "+ ce qui change, Entrée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:371"
  },
@@ -5182,8 +5182,8 @@
   "where": "packages/core/src/ainative.ts:140"
  },
  "A little": {
-  "fr": "",
-  "status": "new",
+  "fr": "Un peu",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:36"
  },
@@ -5200,8 +5200,8 @@
   "where": "apps/web/components/ainative.tsx:845"
  },
  "A lot": {
-  "fr": "",
-  "status": "new",
+  "fr": "Beaucoup",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:36"
  },
@@ -5659,8 +5659,8 @@
   "where": "packages/core/src/valuestreams.ts:595"
  },
  "Acceptance criteria:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Critères d’acceptation :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1070"
  },
@@ -5708,8 +5708,8 @@
   "where": "packages/core/src/courses/popm.ts:291"
  },
  "Access the insurance catalog from account profile. Display available insurance options. Integrate with shopping cart. Process payment.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Accéder au catalogue d’assurances à partir du profil du compte. Afficher les options d’assurance offertes. Intégrer au panier d’achat. Traiter le paiement.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:289"
  },
@@ -5842,8 +5842,8 @@
   "where": "packages/core/src/templates.ts:118 packages/core/src/templates.ts:420"
  },
  "Act as Product Management: develop a short vision message (2–3 minutes, spoken) that you would deliver to your ART at the start of PI Planning.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Jouez le rôle de la gestion de produit : préparez un court message de vision (2 à 3 minutes, à l’oral) que vous livreriez à votre ART au début du PI Planning.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:209"
  },
@@ -5995,8 +5995,8 @@
   "where": "packages/core/src/templates.ts:284"
  },
  "Activity or task": {
-  "fr": "",
-  "status": "new",
+  "fr": "Activité ou tâche",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1087"
  },
@@ -6723,8 +6723,8 @@
   "where": "apps/web/components/studio-views-rte.tsx:68"
  },
  "Add the feature": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ajouter la fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:676"
  },
@@ -6905,8 +6905,8 @@
   "where": "packages/core/src/courses/rte.ts:169"
  },
  "Addressing issues during management review and problem-solving": {
-  "fr": "",
-  "status": "course",
+  "fr": "Régler les problèmes durant la revue de la direction et la résolution de problèmes",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:215"
  },
@@ -7069,8 +7069,8 @@
   "where": "packages/core/src/courses/rte.ts:170"
  },
  "After refining": {
-  "fr": "",
-  "status": "new",
+  "fr": "Après le raffinement",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:468"
  },
@@ -7213,8 +7213,8 @@
   "where": "apps/web/app/(app)/outcomes/page.tsx:770"
  },
  "Agile": {
-  "fr": "",
-  "status": "new",
+  "fr": "Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -7256,8 +7256,8 @@
   "where": "packages/core/src/classes.ts:532"
  },
  "Agile native": {
-  "fr": "",
-  "status": "new",
+  "fr": "Natif Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:45"
  },
@@ -7384,14 +7384,14 @@
   "where": "packages/core/src/canvases.ts:601"
  },
  "Agile values": {
-  "fr": "",
-  "status": "new",
+  "fr": "Valeurs Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:139"
  },
  "Agile values. The bar on each action shows the split of the class&apos;s notes.": {
-  "fr": "",
-  "status": "new",
+  "fr": "valeurs Agile. La barre de chaque action montre la répartition des notes de la formation.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:186"
  },
@@ -7541,8 +7541,8 @@
   "where": "packages/core/src/courses/rte.ts:63"
  },
  "AI disruption in Product Management": {
-  "fr": "",
-  "status": "course",
+  "fr": "Les bouleversements de l’IA en gestion de produit",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:45"
  },
@@ -7553,8 +7553,8 @@
   "where": "packages/core/src/classes.ts:639"
  },
  "AI draft": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ébauche de l’IA",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1152"
  },
@@ -7691,8 +7691,8 @@
   "where": "apps/web/lib/public.ts:31"
  },
  "AI prompting template (spreadsheet)": {
-  "fr": "",
-  "status": "course",
+  "fr": "Modèle de requête IA (feuille de calcul)",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:13"
  },
@@ -7715,8 +7715,8 @@
   "where": "apps/web/components/studio-model.ts:433"
  },
  "AI takes the load ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "L’IA prend la charge ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:296"
  },
@@ -7787,8 +7787,8 @@
   "where": "packages/core/src/demo.ts:136 packages/core/src/demo.ts:282"
  },
  "AI-assisted Iteration Planning": {
-  "fr": "",
-  "status": "course",
+  "fr": "Planification d’itération assistée par l’IA",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:306"
  },
@@ -8035,8 +8035,8 @@
   "where": "apps/web/app/compare/[tool]/page.tsx:60"
  },
  "All done. Welcome to the community.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Tout est fait. Bienvenue dans la communauté.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1212"
  },
@@ -8047,8 +8047,8 @@
   "where": "apps/web/components/planning-pages.tsx:894"
  },
  "All five elements are in.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les cinq éléments y sont.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:438"
  },
@@ -8149,14 +8149,14 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:142"
  },
  "All the way": {
-  "fr": "",
-  "status": "course",
+  "fr": "Jusqu’au bout",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:114"
  },
  "All three aspects have been looked at.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les trois aspects ont été examinés.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:239"
  },
@@ -8179,8 +8179,8 @@
   "where": "packages/core/src/classes.ts:742"
  },
  "Allow purchase of supplemental insurance via TTC mobile app.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Permettre l’achat d’une assurance complémentaire dans l’application mobile de TTC.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:139"
  },
@@ -8203,8 +8203,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:90"
  },
  "Allows user to purchase extra insurance for an existing delivery order": {
-  "fr": "",
-  "status": "course",
+  "fr": "Permet à l’utilisateur d’acheter une assurance supplémentaire pour une commande de livraison existante",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:287"
  },
@@ -8317,8 +8317,8 @@
   "where": "packages/core/src/classes.ts:686"
  },
  "An AI tool analyzes onboarding data and finds that many new users abandon the product before completing setup. It recommends simplifying onboarding by removing steps and introducing a guided “quick start” experience to help users reach value faster.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Un outil d’IA analyse les données d’intégration et constate que de nombreux nouveaux utilisateurs abandonnent le produit avant d’avoir terminé la configuration. Il recommande de simplifier l’intégration en supprimant des étapes et en proposant une expérience guidée de « démarrage rapide » pour aider les utilisateurs à obtenir de la valeur plus rapidement.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:381"
  },
@@ -8637,20 +8637,20 @@
   "where": "apps/web/components/studio-model-lpm.ts:43"
  },
  "Another category": {
-  "fr": "",
-  "status": "new",
+  "fr": "Autre catégorie",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:841"
  },
  "Another category, e.g. Tech debt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Autre catégorie, p. ex. dette technique",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:841"
  },
  "Another feature": {
-  "fr": "",
-  "status": "new",
+  "fr": "Autre fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:674"
  },
@@ -8685,8 +8685,8 @@
   "where": "apps/web/components/studio-model-rte.ts:110"
  },
  "Answer the three questions, or write the message out here.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Répondez aux trois questions ou rédigez le message ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:898"
  },
@@ -8884,8 +8884,8 @@
   "where": "apps/web/app/(app)/boards/[id]/page.tsx:536"
  },
  "Applying a Lean-Agile mindset": {
-  "fr": "",
-  "status": "course",
+  "fr": "Appliquer un état d’esprit Lean-Agile",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:30"
  },
@@ -8939,8 +8939,8 @@
   "note": "Second line of \"Needs Sys / Arch Help\"; see previous item."
  },
  "Architect Sync": {
-  "fr": "",
-  "status": "course",
+  "fr": "Synchro des architectes",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:359"
  },
@@ -9425,14 +9425,14 @@
   "where": "apps/web/components/planning-views.tsx:340"
  },
  "ART Planning Board legend": {
-  "fr": "",
-  "status": "course",
+  "fr": "Légende du tableau de planification de l’ART",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:242"
  },
  "ART planning board with features, significant dependencies, a milestone and the strings between them": {
-  "fr": "",
-  "status": "new",
+  "fr": "Tableau de planification de l’ART avec des fonctionnalités, des dépendances importantes, un jalon et les fils qui les relient",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:976"
  },
@@ -9989,14 +9989,14 @@
   "where": "packages/core/src/courses/events.ts:58"
  },
  "As a class, discuss how Product Owners and Product Managers support or drive the various aspects and activities of the Continuous Delivery Pipeline.": {
-  "fr": "",
-  "status": "course",
+  "fr": "En plénière, discutez de la façon dont les Product Owners et les Product Managers soutiennent ou pilotent les divers aspects et activités du pipeline de livraison continue.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:332"
  },
  "As a class, discuss how Product Owners and Product Managers support or drive the various aspects and activities of the Continuous Delivery Pipeline. Consider the following:": {
-  "fr": "",
-  "status": "course",
+  "fr": "En plénière, discutez de la façon dont les Product Owners et les Product Managers soutiennent ou pilotent les divers aspects et activités du pipeline de livraison continue. Tenez compte des points suivants :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:328"
  },
@@ -10062,8 +10062,8 @@
   "where": "packages/core/src/courses/rte.ts:181"
  },
  "As a class, review the ART Planning Board and consider the following:": {
-  "fr": "",
-  "status": "course",
+  "fr": "En plénière, examinez le tableau de planification de l’ART et tenez compte des points suivants :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:241"
  },
@@ -10324,14 +10324,14 @@
   "where": "apps/web/components/studio-model-lsa.ts:50"
  },
  "As a returns processor, I want damaged item photos captured at scan so that claims are documented without a separate step.": {
-  "fr": "",
-  "status": "course",
+  "fr": "En tant que préposé aux retours, je veux que les photos des articles endommagés soient prises au moment de la numérisation afin que les réclamations soient documentées sans étape distincte.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:317"
  },
  "As a shipping coordinator, I want carrier pickup times synced to our packing queue so that shipments are staged before the truck arrives.": {
-  "fr": "",
-  "status": "course",
+  "fr": "En tant que coordonnateur des expéditions, je veux que les heures de ramassage des transporteurs soient synchronisées avec notre file d’emballage afin que les envois soient prêts avant l’arrivée du camion.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:315"
  },
@@ -10360,8 +10360,8 @@
   "where": "packages/core/src/classes.ts:466"
  },
  "As an inventory manager, I want automatic reorder triggers when stock drops below threshold so that I don't discover shortages during fulfillment.": {
-  "fr": "",
-  "status": "course",
+  "fr": "En tant que gestionnaire des stocks, je veux des déclencheurs de réapprovisionnement automatiques lorsque le stock passe sous le seuil afin de ne pas découvrir de ruptures de stock pendant l’exécution des commandes.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:316"
  },
@@ -10733,8 +10733,8 @@
   "where": "packages/core/src/classes.ts:427"
  },
  "Ask the GenAI tool to clarify the feature intent, strengthen the benefit hypothesis and improve the acceptance criteria. The feature is added to the prompt for you.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Demandez à l’outil de GenAI de clarifier l’intention de la fonctionnalité, de renforcer l’hypothèse de bénéfice et d’améliorer les critères d’acceptation. La fonctionnalité est ajoutée à la requête pour vous.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:735"
  },
@@ -10917,8 +10917,8 @@
   "where": "apps/web/components/studio-model.ts:438"
  },
  "Assumptions": {
-  "fr": "",
-  "status": "course",
+  "fr": "Hypothèses",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:119"
  },
@@ -11002,8 +11002,8 @@
   "where": "apps/web/components/planning-pages.tsx:893"
  },
  "at the minimum ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "au minimum ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1121"
  },
@@ -11383,8 +11383,8 @@
   "where": "apps/web/components/kanban-board.tsx:181"
  },
  "Back to 70 / 10 / 20": {
-  "fr": "",
-  "status": "new",
+  "fr": "Revenir à 70 / 10 / 20",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:843"
  },
@@ -11437,14 +11437,14 @@
   "where": "apps/web/app/(app)/login/page.tsx:106"
  },
  "Back to the slide&apos;s curves": {
-  "fr": "",
-  "status": "new",
+  "fr": "Revenir aux courbes de la diapositive",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:529"
  },
  "Back to the slide&apos;s example": {
-  "fr": "",
-  "status": "new",
+  "fr": "Revenir à l’exemple de la diapositive",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1073"
  },
@@ -11480,8 +11480,8 @@
   "where": "packages/core/src/frameworks.ts:311 packages/core/src/frameworks.ts:392"
  },
  "Backlog owner": {
-  "fr": "",
-  "status": "new",
+  "fr": "Responsable du carnet",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:45"
  },
@@ -11536,8 +11536,8 @@
   "note": "agrees with « stratégie »; check: may be a value"
  },
  "Balanced: the solutions answer the issue.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Équilibré : les solutions répondent au problème.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:288"
  },
@@ -11584,8 +11584,8 @@
   "where": "apps/web/lib/examples.ts:51"
  },
  "Barely": {
-  "fr": "",
-  "status": "course",
+  "fr": "À peine",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:55"
  },
@@ -11834,8 +11834,8 @@
   "where": "apps/web/components/planning-pages.tsx:508 apps/web/components/planning-pages.tsx:510"
  },
  "Benefit hypothesis:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Hypothèse de bénéfice :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1068"
  },
@@ -12343,8 +12343,8 @@
   "where": "packages/core/src/templates.ts:121"
  },
  "Bridge builder": {
-  "fr": "",
-  "status": "new",
+  "fr": "Bâtisseur de ponts",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:44"
  },
@@ -12681,8 +12681,8 @@
   "note": "Official fr-ca « livraison Agile de produits » for Agile Product Delivery (not in glossary)."
  },
  "Building the Continuous Delivery Pipeline": {
-  "fr": "",
-  "status": "course",
+  "fr": "Bâtir le pipeline de livraison continue",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:324"
  },
@@ -12994,8 +12994,8 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:84"
  },
  "Business Owners, System Architect, RTE…": {
-  "fr": "",
-  "status": "new",
+  "fr": "Business Owners, architecte système, RTE…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:856"
  },
@@ -13685,8 +13685,8 @@
   "where": "packages/core/src/canvases.ts:659"
  },
  "carry the most.": {
-  "fr": "",
-  "status": "new",
+  "fr": "en portent le plus.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1016"
  },
@@ -14270,8 +14270,8 @@
   "where": "apps/web/components/studio-views-lsa.tsx:214"
  },
  "Choose a slice, or a row on the right, and move its share. The others adjust so the total stays 100%.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Choisissez une pointe, ou une ligne à droite, et déplacez sa part. Les autres s’ajustent pour que le total reste à 100 %.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:826"
  },
@@ -14336,8 +14336,8 @@
   "where": "apps/web/lib/help.ts:73"
  },
  "Choose the feature you will refine. Steps 2 to 4 below are ready when you are.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Choisissez la fonctionnalité que vous allez raffiner. Les étapes 2 à 4 ci-dessous sont prêtes quand vous l’êtes.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:719"
  },
@@ -14746,8 +14746,8 @@
   "where": "apps/web/components/okr-explorer.tsx:139"
  },
  "Click a month&apos;s bar to raise that market&apos;s demand (it starts over after the top). Click a month in the last row to mark it as a release window.": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Cliquez sur la barre d’un mois pour augmenter la demande de ce marché (elle repart à zéro après le maximum). Cliquez sur un mois dans la dernière ligne pour le marquer comme fenêtre de mise en production.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:559"
  },
@@ -14806,8 +14806,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:270"
  },
  "Click on the Toolsday tile to explore some interesting AI tools that our community is using.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Cliquez sur la tuile Toolsday pour explorer des outils d’IA intéressants qu’utilise notre communauté.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:412"
  },
@@ -15108,8 +15108,8 @@
   "where": "apps/web/app/(app)/login/page.tsx:86"
  },
  "Collaborate with the team.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Collaborez avec l’équipe.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:40"
  },
@@ -15389,8 +15389,8 @@
   "where": "apps/web/app/(app)/outcome-planning/page.tsx:303"
  },
  "Communicate the vision": {
-  "fr": "",
-  "status": "course",
+  "fr": "Communiquer la vision",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:200"
  },
@@ -15474,8 +15474,8 @@
   "where": "packages/core/src/courses/lpm.ts:57"
  },
  "Compare the results": {
-  "fr": "",
-  "status": "new",
+  "fr": "Comparer les résultats",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:464"
  },
@@ -15573,8 +15573,8 @@
   "where": "apps/web/components/studio-model-aart.ts:24"
  },
  "Completely": {
-  "fr": "",
-  "status": "course",
+  "fr": "Complètement",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:55"
  },
@@ -15978,8 +15978,8 @@
   "where": "packages/core/src/classes.ts:640"
  },
  "Consider market rhythms for optimum release timing": {
-  "fr": "",
-  "status": "course",
+  "fr": "Tenir compte des rythmes du marché pour choisir le meilleur moment de mise en production",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:84"
  },
@@ -16086,8 +16086,8 @@
   "where": "packages/core/src/outcomes.ts:323"
  },
  "Content tab.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Onglet Content.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:412"
  },
@@ -16183,20 +16183,20 @@
   "where": "apps/web/components/studio-model-lpm.ts:102"
  },
  "Continuous Deployment": {
-  "fr": "",
-  "status": "course",
+  "fr": "Déploiement continu",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:340"
  },
  "Continuous Exploration": {
-  "fr": "",
-  "status": "course",
+  "fr": "Exploration continue",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:338"
  },
  "Continuous Integration": {
-  "fr": "",
-  "status": "course",
+  "fr": "Intégration continue",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:339"
  },
@@ -16399,8 +16399,8 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:35"
  },
  "Copy the prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Copier la requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:451 apps/web/components/popm-boards.tsx:748 apps/web/components/popm-boards.tsx:920"
  },
@@ -17431,8 +17431,8 @@
   "where": "packages/core/src/canvases.ts:188"
  },
  "Customers can access insurance options through the mobile app’s package booking flow. The mobile app supports secure payment for insurance purchases. Customers receive a push notification confirming their insurance purchase.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Les clients peuvent accéder aux options d’assurance dans le parcours de réservation de colis de l’application mobile. L’application mobile prend en charge le paiement sécurisé des achats d’assurance. Les clients reçoivent une notification poussée confirmant leur achat d’assurance.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:142"
  },
@@ -18365,8 +18365,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:102"
  },
  "Delivery order insurance": {
-  "fr": "",
-  "status": "course",
+  "fr": "Assurance de commande de livraison",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:286"
  },
@@ -18431,14 +18431,14 @@
   "where": "packages/core/src/templates.ts:399"
  },
  "Demand per month, {0}": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Demande par mois, {0}",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:544"
  },
  "Demand through the year for {0}": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Demande au fil de l’année pour {0}",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:519"
  },
@@ -18711,8 +18711,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:291"
  },
  "Details": {
-  "fr": "",
-  "status": "new",
+  "fr": "Détails",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/app/(app)/users/page.tsx:180 apps/web/components/popm-boards.tsx:399"
  },
@@ -18814,20 +18814,20 @@
   "where": "apps/web/components/studio-model.ts:433"
  },
  "Develop a solution to allow TTC customers to purchase supplemental insurance for packages.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Concevoir une solution permettant aux clients de TTC d’acheter une assurance complémentaire pour leurs colis.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:80"
  },
  "Develop a story map": {
-  "fr": "",
-  "status": "course",
+  "fr": "Élaborer une cartographie des récits",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:278"
  },
  "Develop your SAFe message": {
-  "fr": "",
-  "status": "course",
+  "fr": "Préparer votre message SAFe",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:65"
  },
@@ -19285,8 +19285,8 @@
   "where": "packages/core/src/courses/rte.ts:499"
  },
  "Discuss tab.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Onglet Discuss.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:410"
  },
@@ -19458,8 +19458,8 @@
   "where": "packages/core/src/classes.ts:640"
  },
  "Do not share this one": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ne pas partager ceci",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:358"
  },
@@ -19573,8 +19573,8 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:316"
  },
  "Does this reflect the full customer experience?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Cela reflète-t-il l’ensemble de l’expérience client ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:389"
  },
@@ -19864,8 +19864,8 @@
   "where": "packages/core/src/courses/rte.ts:461"
  },
  "Draft your capacity allocation policy": {
-  "fr": "",
-  "status": "course",
+  "fr": "Ébaucher votre politique d’allocation de capacité",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:160"
  },
@@ -20131,8 +20131,8 @@
   "where": "packages/core/src/courses/lpm.ts:67"
  },
  "During PI Planning, the team that is spiking enabler stories for sensor impact on manufacturing realizes they are also the best equipped team to work on the feature to install sensors in lab vehicles. However, they do not believe they have capacity for both features.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Durant le PI Planning, l’équipe qui réalise des récits enablers de type spike sur l’incidence des capteurs sur la fabrication constate qu’elle est aussi la mieux outillée pour travailler sur la fonctionnalité d’installation de capteurs dans les véhicules de laboratoire. Toutefois, elle ne croit pas avoir la capacité pour les deux fonctionnalités.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:219 packages/core/src/courses/popm.ts:224"
  },
@@ -20360,8 +20360,8 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:121"
  },
  "each PI.": {
-  "fr": "",
-  "status": "new",
+  "fr": "chaque PI.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:846"
  },
@@ -20524,8 +20524,8 @@
   "where": "apps/web/components/canvas-editor.tsx:639 apps/web/components/canvas-editor.tsx:1163"
  },
  "Editing here changes the feature on the Writing features board too.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Une modification ici change aussi la fonctionnalité sur le tableau Rédaction des fonctionnalités.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:775"
  },
@@ -20825,8 +20825,8 @@
   "where": "apps/web/app/(app)/users/page.tsx:125"
  },
  "Enable convenient, value-driven insurance decisions within the app, increasing engagement and revenue by guiding users to the most suitable coverage.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Permettre des décisions d’assurance pratiques et axées sur la valeur dans l’application, ce qui augmente l’engagement et les revenus en guidant les utilisateurs vers la couverture la mieux adaptée.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:141"
  },
@@ -20843,8 +20843,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:91"
  },
  "Enable TTC customers to complete the purchase of supplemental insurance directly within the mobile app,": {
-  "fr": "",
-  "status": "course",
+  "fr": "Permettre aux clients de TTC d’effectuer l’achat d’une assurance complémentaire directement dans l’application mobile,",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:288"
  },
@@ -20976,14 +20976,14 @@
   "where": "apps/web/components/planning-pages.tsx:724 packages/core/src/kanban.ts:82 packages/core/src/templates.ts:91"
  },
  "Enablers": {
-  "fr": "",
-  "status": "new",
+  "fr": "Enablers",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:790"
  },
  "Enabling alignment across the ART with sync events": {
-  "fr": "",
-  "status": "course",
+  "fr": "Favoriser l’alignement dans l’ART grâce aux événements de synchronisation",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:350"
  },
@@ -21615,8 +21615,8 @@
   "where": "packages/core/src/classes.ts:676"
  },
  "Essential stories for this release · high priority": {
-  "fr": "",
-  "status": "new",
+  "fr": "Récits essentiels pour cette mise en production · priorité élevée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1092"
  },
@@ -21747,8 +21747,8 @@
   "where": "apps/web/app/(app)/ai/[id]/page.tsx:412"
  },
  "Event": {
-  "fr": "",
-  "status": "new",
+  "fr": "Événement",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/app/(app)/canvases/[id]/page.tsx:373 apps/web/components/popm-boards.tsx:591 packages/core/src/cards.ts:44"
  },
@@ -21783,8 +21783,8 @@
   "where": "packages/core/src/kanban.ts:67"
  },
  "Event, e.g. holiday shopping peak": {
-  "fr": "",
-  "status": "new",
+  "fr": "Événement, p. ex. pointe du magasinage des Fêtes",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:591"
  },
@@ -21801,8 +21801,8 @@
   "where": "packages/core/src/outcomes.ts:130"
  },
  "Events tab.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Onglet Events.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:411"
  },
@@ -22232,8 +22232,8 @@
   "where": "apps/web/app/(app)/outcomes/page.tsx:1058"
  },
  "Example feature": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Exemple de fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:632"
  },
@@ -22485,8 +22485,8 @@
   "where": "packages/core/src/templates.ts:393"
  },
  "Experience chart": {
-  "fr": "",
-  "status": "new",
+  "fr": "Graphique d’expérience",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:56"
  },
@@ -22553,8 +22553,8 @@
   "note": "Release = mise en production (aligned)."
  },
  "Explainable": {
-  "fr": "",
-  "status": "course",
+  "fr": "Explicable",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:390"
  },
@@ -22644,8 +22644,8 @@
   "where": "apps/web/app/(app)/portfolio/vision/page.tsx:81 apps/web/app/(app)/portfolio/vision/page.tsx:148"
  },
  "Exploring customer needs with AI-supported research": {
-  "fr": "",
-  "status": "course",
+  "fr": "Explorer les besoins des clients grâce à la recherche assistée par l’IA",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:104"
  },
@@ -22662,8 +22662,8 @@
   "where": "packages/core/src/classes.ts:550 packages/core/src/courses/leading-safe.ts:692"
  },
  "Exploring Product Roles and Responsibilities": {
-  "fr": "",
-  "status": "course",
+  "fr": "Explorer les rôles et responsabilités liés au produit",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:422"
  },
@@ -22963,8 +22963,8 @@
   "where": "apps/web/components/planning-pages.tsx:600 apps/web/components/planning-pages.tsx:699 apps/web/components/planning-pages.tsx:732"
  },
  "Feature · example": {
-  "fr": "",
-  "status": "new",
+  "fr": "Fonctionnalité · exemple",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:647"
  },
@@ -22975,8 +22975,8 @@
   "where": "apps/web/components/planning-pages.tsx:698"
  },
  "Feature {0} of at least three": {
-  "fr": "",
-  "status": "new",
+  "fr": "Fonctionnalité {0} sur au moins trois",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:674"
  },
@@ -23235,8 +23235,8 @@
   "where": "packages/core/src/classes.ts:488"
  },
  "Features: blue. Significant dependency: red or pink. Milestone or event: orange. Red strings (or lines for digital boards) are used to connect a feature or milestone to one or more dependencies. Sometimes a dependency has its own dependencies (see Lions in iteration 1.2).": {
-  "fr": "",
-  "status": "course",
+  "fr": "Fonctionnalités : bleu. Dépendance importante : rouge ou rose. Jalon ou événement : orange. Des fils rouges (ou des lignes sur les tableaux numériques) relient une fonctionnalité ou un jalon à une ou plusieurs dépendances. Il arrive qu’une dépendance ait ses propres dépendances (voir Lions à l’itération 1.2).",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:242"
  },
@@ -23345,20 +23345,20 @@
   "note": "\"For … our Solution\" refers to vision template field labels; must match their French labels."
  },
  "Fill in the elements and the prompt is assembled here, with your answers to the three questions added.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Remplissez les éléments et la requête s’assemble ici, avec vos réponses aux trois questions.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:919"
  },
  "Fill in the elements and the prompt is assembled here.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Remplissez les éléments et la requête s’assemble ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:747"
  },
  "Fill in the five elements and the prompt is assembled here.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Remplissez les cinq éléments et la requête s’assemble ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:450"
  },
@@ -23580,8 +23580,8 @@
   "where": "apps/web/app/pricing/page.tsx:59 apps/web/app/pricing/page.tsx:59 apps/web/app/pricing/page.tsx:59"
  },
  "First prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Première requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:468"
  },
@@ -23786,8 +23786,8 @@
   "where": "packages/core/src/courses/events.ts:135"
  },
  "Flagged as an issue": {
-  "fr": "",
-  "status": "new",
+  "fr": "Signalé comme problème",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:973"
  },
@@ -24010,8 +24010,8 @@
   "note": "Brand name."
  },
  "Fly my kite with the group": {
-  "fr": "",
-  "status": "new",
+  "fr": "Faire voler mon cerf-volant avec le groupe",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:101"
  },
@@ -24047,8 +24047,8 @@
   "where": "apps/web/components/readiness-board.tsx:136"
  },
  "Focus on customer value.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Concentrez-vous sur la valeur pour le client.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:40"
  },
@@ -24595,8 +24595,8 @@
   "note": "Y/N changed to O/N."
  },
  "Fresh eyes": {
-  "fr": "",
-  "status": "new",
+  "fr": "Regard neuf",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:41"
  },
@@ -24698,8 +24698,8 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:76"
  },
  "From this course, I most want to learn…": {
-  "fr": "",
-  "status": "new",
+  "fr": "De cette formation, je veux surtout apprendre…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:100"
  },
@@ -25321,8 +25321,8 @@
   "where": "packages/core/src/templates.ts:136"
  },
  "Go to the AI in Practice forum. Explore some posts or create your own.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Allez au forum AI in Practice. Explorez quelques publications ou créez la vôtre.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:410"
  },
@@ -25345,8 +25345,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:101"
  },
  "Goal": {
-  "fr": "",
-  "status": "new",
+  "fr": "Objectif",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:395 apps/web/components/popm-boards.tsx:1141"
  },
@@ -25733,8 +25733,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:139"
  },
  "Hardest part": {
-  "fr": "",
-  "status": "course",
+  "fr": "Partie la plus difficile",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:266"
  },
@@ -25987,8 +25987,8 @@
   "where": "packages/core/src/classes.ts:648"
  },
  "High value": {
-  "fr": "",
-  "status": "new",
+  "fr": "Valeur élevée",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:547"
  },
@@ -26383,8 +26383,8 @@
   "where": "packages/core/src/classes.ts:684"
  },
  "How can you leverage these sync events as a PO or Product Manager to ensure alignment across the ART?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Comment pouvez-vous tirer parti de ces événements de synchronisation, comme PO ou Product Manager, pour assurer l’alignement dans l’ensemble de l’ART ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:364"
  },
@@ -26473,8 +26473,8 @@
   "where": "packages/core/src/courses/lpm.ts:75"
  },
  "How does each proposed action by the Product Owner align with the Lean-Agile mindset?": {
-  "fr": "",
-  "status": "new",
+  "fr": "En quoi chaque action proposée par le Product Owner s’aligne-t-elle sur l’état d’esprit Lean-Agile ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:151"
  },
@@ -26485,8 +26485,8 @@
   "where": "apps/web/lib/examples.ts:79"
  },
  "How far would you act on this report before talking to customers?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Jusqu’où agiriez-vous sur la foi de ce rapport avant de parler aux clients ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:114"
  },
@@ -26539,20 +26539,20 @@
   "where": "apps/web/components/class-students.tsx:264"
  },
  "How might AI analyzing large amounts of customer feedback change how you identify needs and define value?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Comment l’analyse par l’IA de grands volumes de commentaires de clients pourrait-elle changer votre façon de cerner les besoins et de définir la valeur ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:58"
  },
  "How might AI change how you write features and benefit hypotheses?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Comment l’IA pourrait-elle changer votre façon de rédiger les fonctionnalités et les hypothèses de bénéfice ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:59"
  },
  "How might AI-assisted story writing and acceptance criteria generation change your daily priorities and how you budget your time?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Comment la rédaction de récits et la génération de critères d’acceptation assistées par l’IA pourraient-elles changer vos priorités quotidiennes et la façon dont vous répartissez votre temps ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:57"
  },
@@ -26581,8 +26581,8 @@
   "where": "packages/core/src/canvases.ts:308"
  },
  "How much will AI change your day as a Product Owner or Product Manager?": {
-  "fr": "",
-  "status": "course",
+  "fr": "À quel point l’IA changera-t-elle votre quotidien de Product Owner ou de Product Manager ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:55"
  },
@@ -26671,8 +26671,8 @@
   "where": "packages/core/src/classes.ts:285"
  },
  "How we would use capacity allocation": {
-  "fr": "",
-  "status": "new",
+  "fr": "Comment nous utiliserions l’allocation de capacité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:852"
  },
@@ -26942,8 +26942,8 @@
   "where": "apps/web/lib/examples.ts:57"
  },
  "Identify dependency issues and resolve them": {
-  "fr": "",
-  "status": "course",
+  "fr": "Repérer les problèmes de dépendances et les résoudre",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:237"
  },
@@ -27155,8 +27155,8 @@
   "where": "apps/web/app/terms/page.tsx:30"
  },
  "If you’d only looked at the AI draft, what issues would you have overlooked?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Si vous n’aviez regardé que l’ébauche de l’IA, quels problèmes vous auraient échappé ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1177"
  },
@@ -27743,8 +27743,8 @@
   "where": "packages/core/src/templates.ts:91"
  },
  "In SAFe Studio, navigate to SAFe Connect and fill out your profile. Tell us about yourself!": {
-  "fr": "",
-  "status": "course",
+  "fr": "Dans SAFe Studio, allez à SAFe Connect et remplissez votre profil. Parlez-nous de vous !",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:409"
  },
@@ -27816,8 +27816,8 @@
   "where": "apps/web/components/studio-views.tsx:145"
  },
  "in the sky": {
-  "fr": "",
-  "status": "new",
+  "fr": "dans le ciel",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:105"
  },
@@ -27870,8 +27870,8 @@
   "where": "packages/core/src/courses/rte.ts:73"
  },
  "In your group, explore how the widespread adoption of AI may disrupt how Product Owners and Product Managers operate and deliver value.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Dans votre groupe, explorez comment l’adoption généralisée de l’IA pourrait bouleverser la façon dont les Product Owners et les Product Managers travaillent et livrent de la valeur.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:53"
  },
@@ -27966,14 +27966,14 @@
   "where": "packages/core/src/templates.ts:84 packages/core/src/templates.ts:212"
  },
  "Include in every prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "À inclure dans chaque requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:437"
  },
  "Include the five prompting elements": {
-  "fr": "",
-  "status": "new",
+  "fr": "Inclure les cinq éléments de la requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:909"
  },
@@ -28159,8 +28159,8 @@
   "where": "packages/core/src/courses/lpm.ts:94"
  },
  "Inform, not replace": {
-  "fr": "",
-  "status": "course",
+  "fr": "Éclairer, sans remplacer",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:121"
  },
@@ -28625,8 +28625,8 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:177"
  },
  "Intent:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Intention :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1069"
  },
@@ -29026,14 +29026,14 @@
   "where": "apps/web/components/studio-model-lsa.ts:50"
  },
  "Issues and opportunities": {
-  "fr": "",
-  "status": "course",
+  "fr": "Problèmes et occasions",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:365"
  },
  "it fit ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "la faire tenir ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:284"
  },
@@ -29484,8 +29484,8 @@
   "where": "apps/web/app/(app)/readiness/page.tsx:41"
  },
  "Join AI and PO/PM professionals in SAFe Connect": {
-  "fr": "",
-  "status": "course",
+  "fr": "Joignez-vous aux professionnels de l’IA et aux PO/PM dans SAFe Connect",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:397"
  },
@@ -29571,8 +29571,8 @@
   "where": "apps/web/components/planning-pages.tsx:328 apps/web/components/popm-boards.tsx:485 apps/web/components/studio-model-lpm.ts:19"
  },
  "Just enough pre-planning": {
-  "fr": "",
-  "status": "course",
+  "fr": "Juste assez de préplanification",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:187"
  },
@@ -29909,14 +29909,14 @@
   "where": "apps/web/components/studio-model-lpm.ts:73"
  },
  "Key stakeholders to discuss it with": {
-  "fr": "",
-  "status": "new",
+  "fr": "Principales parties prenantes avec qui en discuter",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:855"
  },
  "Key times to release the new hardware": {
-  "fr": "",
-  "status": "new",
+  "fr": "Moments clés pour lancer le nouveau matériel",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:599"
  },
@@ -30732,8 +30732,8 @@
   "where": "apps/web/components/studio-model.ts:406"
  },
  "Lean thinking": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pensée Lean",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:139 apps/web/components/popm-boards.tsx:186"
  },
@@ -30870,8 +30870,8 @@
   "where": "apps/web/components/workspace-shell.tsx:84"
  },
  "Leave this empty to speak from your three answers, or write the message out here.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Laissez ce champ vide pour parler à partir de vos trois réponses, ou rédigez le message ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:898"
  },
@@ -31184,8 +31184,8 @@
   "where": "packages/core/src/frameworks.ts:476"
  },
  "Leverage the syncs": {
-  "fr": "",
-  "status": "course",
+  "fr": "Tirer parti des synchros",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:364"
  },
@@ -31455,8 +31455,8 @@
   "where": "apps/web/lib/public.ts:54"
  },
  "LLM Iteration Goals Prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Requête LLM pour les objectifs d’itération",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1168"
  },
@@ -31632,8 +31632,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:82"
  },
  "Local retail market": {
-  "fr": "",
-  "status": "course",
+  "fr": "Marché du détail local",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:96"
  },
@@ -31741,8 +31741,8 @@
   "where": "packages/core/src/classes.ts:566"
  },
  "Longer than three minutes": {
-  "fr": "",
-  "status": "new",
+  "fr": "Plus de trois minutes",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:875"
  },
@@ -31784,8 +31784,8 @@
   "where": "packages/core/src/insights.ts:382 packages/core/src/insights.ts:397 packages/core/src/insights.ts:405"
  },
  "Low value": {
-  "fr": "",
-  "status": "new",
+  "fr": "Faible valeur",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:548"
  },
@@ -31826,8 +31826,8 @@
   "where": "apps/web/components/studio-model.ts:425"
  },
  "Lowest value at stake for both markets together:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Valeur en jeu la plus faible pour les deux marchés réunis :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:601"
  },
@@ -32338,8 +32338,8 @@
   "where": "packages/core/src/ainative.ts:680 packages/core/src/ainative.ts:684"
  },
  "Mark a note with ★ and it lines up here for the share-out.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Marquez une note d’une ★ et elle s’aligne ici pour le partage.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:385"
  },
@@ -32380,14 +32380,14 @@
   "where": "apps/web/components/studio-model-rte.ts:123"
  },
  "Market": {
-  "fr": "",
-  "status": "new",
+  "fr": "Marché",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/ainative.tsx:449 apps/web/components/popm-boards.tsx:592"
  },
  "Market mind": {
-  "fr": "",
-  "status": "new",
+  "fr": "Esprit marché",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:45"
  },
@@ -32404,8 +32404,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:123"
  },
  "Market rhythms and events": {
-  "fr": "",
-  "status": "new",
+  "fr": "Rythmes et événements du marché",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:581"
  },
@@ -32628,8 +32628,8 @@
   "where": "packages/core/src/demo.ts:321"
  },
  "Medical specimen market": {
-  "fr": "",
-  "status": "course",
+  "fr": "Marché des échantillons médicaux",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:97"
  },
@@ -32726,8 +32726,8 @@
   "where": "apps/web/components/studio-model.ts:282"
  },
  "Message from the Senior Developer": {
-  "fr": "",
-  "status": "new",
+  "fr": "Message du développeur principal",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:418"
  },
@@ -32828,8 +32828,8 @@
   "where": "apps/web/components/planning-views.tsx:373 apps/web/components/studio-views.tsx:548"
  },
  "Milestone or event": {
-  "fr": "",
-  "status": "new",
+  "fr": "Jalon ou événement",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/app/(app)/board/page.tsx:217 apps/web/components/popm-boards.tsx:953 packages/core/src/cards.ts:44"
  },
@@ -32914,8 +32914,8 @@
   "note": "Fragment (likely \"Milestones/Events\" split across lines)."
  },
  "min spoken.": {
-  "fr": "",
-  "status": "new",
+  "fr": "min à l’oral.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:903"
  },
@@ -33051,14 +33051,14 @@
   "where": "apps/web/components/studio-views-lab.tsx:79"
  },
  "Mobile access to insurance options improves convenience, increasing engagement and revenue.": {
-  "fr": "",
-  "status": "course",
+  "fr": "L’accès mobile aux options d’assurance est plus pratique, ce qui augmente l’engagement et les revenus.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:140"
  },
  "Mobile app insurance purchase": {
-  "fr": "",
-  "status": "course",
+  "fr": "Achat d’assurance dans l’application mobile",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:138"
  },
@@ -33179,8 +33179,8 @@
   "where": "packages/core/src/valuestreams.ts:605"
  },
  "Month": {
-  "fr": "",
-  "status": "new",
+  "fr": "Mois",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:593"
  },
@@ -33456,8 +33456,8 @@
   "where": "apps/web/app/(app)/canvases/[id]/page.tsx:511"
  },
  "Move to later": {
-  "fr": "",
-  "status": "new",
+  "fr": "Reporter",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1101 apps/web/components/popm-boards.tsx:1101"
  },
@@ -33643,8 +33643,8 @@
   "where": "apps/web/lib/integrations.ts:139"
  },
  "Name the core issue and the beam tips; each solution Product Management can present brings it back to level.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nommez le problème central et la balance penche ; chaque solution que la gestion de produit peut présenter la ramène à l’équilibre.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:288"
  },
@@ -33655,14 +33655,14 @@
   "where": "apps/web/components/studio-views-lpm.tsx:109"
  },
  "Name the feature": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nommer la fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:675"
  },
  "Name the feature you will work on": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nommez la fonctionnalité sur laquelle vous travaillerez",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:715"
  },
@@ -33679,8 +33679,8 @@
   "where": "apps/web/components/readiness-board.tsx:398"
  },
  "Name the primary customer and the benefit": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nommez le client principal et le bénéfice",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:611"
  },
@@ -33860,8 +33860,8 @@
   "where": "packages/core/src/cards.ts:42 packages/core/src/cards.ts:47"
  },
  "Needed for the feature": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nécessaire à la fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1101 apps/web/components/popm-boards.tsx:1101"
  },
@@ -33946,8 +33946,8 @@
   "where": "apps/web/components/studio-model.ts:176"
  },
  "Needs validation": {
-  "fr": "",
-  "status": "course",
+  "fr": "À valider",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:120"
  },
@@ -34704,8 +34704,8 @@
   "where": "apps/web/components/planning-views.tsx:397"
  },
  "No features yet. Write them in the Writing features activity and they appear here.": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Aucune fonctionnalité pour l’instant. Rédigez-les dans l’activité Rédiger des fonctionnalités et elles apparaîtront ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:679"
  },
@@ -34927,14 +34927,14 @@
   "where": "packages/core/src/ainative.ts:663"
  },
  "No release window marked yet.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Aucune fenêtre de mise en production marquée pour l’instant.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:600"
  },
  "No response pasted yet.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Aucune réponse collée pour l’instant.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:469"
  },
@@ -35197,8 +35197,8 @@
   "where": "apps/web/components/class-board.tsx:479 apps/web/components/class-students.tsx:246"
  },
  "Nobody yet. Shape your experience and fly your kite.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Personne pour l’instant. Façonnez votre expérience et faites voler votre cerf-volant.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:114"
  },
@@ -35221,14 +35221,14 @@
   "where": "apps/web/lib/pricing.ts:105"
  },
  "None of your windows is in a quietest month; is there a reason?": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Aucune de vos fenêtres ne tombe dans un des mois les plus calmes ; y a-t-il une raison ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:583"
  },
  "None of your windows is in one of those months; is there a reason?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Aucune de vos fenêtres ne tombe dans l’un de ces mois ; y a-t-il une raison ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:601"
  },
@@ -35336,8 +35336,8 @@
   "where": "apps/web/components/studio-model-lsa.ts:34"
  },
  "Not at all": {
-  "fr": "",
-  "status": "course",
+  "fr": "Pas du tout",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:114"
  },
@@ -35420,8 +35420,8 @@
   "where": "apps/web/components/planning-pages.tsx:605"
  },
  "Not looked at yet: {0}. The middle fills in when all three have.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pas encore examiné : {0}. Le centre se remplit lorsque les trois l’ont été.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:239"
  },
@@ -35584,8 +35584,8 @@
   "where": "packages/core/src/outcomes.ts:186"
  },
  "Not used yet: {0}.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pas encore utilisé : {0}.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:264"
  },
@@ -35918,8 +35918,8 @@
   "where": "apps/web/app/(app)/card-types/page.tsx:74"
  },
  "Nothing to say yet": {
-  "fr": "",
-  "status": "new",
+  "fr": "Rien à dire pour l’instant",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:875"
  },
@@ -37315,8 +37315,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:218"
  },
  "Open SAFe Connect.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Ouvrez SAFe Connect.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:409"
  },
@@ -37683,8 +37683,8 @@
   "where": "packages/core/src/canvases.ts:79"
  },
  "Opportunity": {
-  "fr": "",
-  "status": "new",
+  "fr": "Occasion",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:193"
  },
@@ -37821,8 +37821,8 @@
   "where": "apps/web/app/(app)/rooms/[id]/page.tsx:133"
  },
  "Or name another feature to work on": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ou nommez une autre fonctionnalité à travailler",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:715"
  },
@@ -38044,14 +38044,14 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:83"
  },
  "Our answer…": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre réponse…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:892"
  },
  "Our ART gives": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre ART consacre",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:846"
  },
@@ -38062,8 +38062,8 @@
   "where": "packages/core/src/classes.ts:630"
  },
  "Our capacity allocation": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre allocation de capacité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:816"
  },
@@ -38080,14 +38080,14 @@
   "where": "apps/web/components/studio-views-lpm.tsx:180"
  },
  "Our goals": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nos objectifs",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1152"
  },
  "Our group ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre groupe ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:105"
  },
@@ -38099,14 +38099,14 @@
   "note": "Agile Manifesto principle: used the common official French translation of the manifesto."
  },
  "Our iteration goal": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre objectif d’itération",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1163"
  },
  "Our iteration goals, written by hand (two to three)": {
-  "fr": "",
-  "status": "new",
+  "fr": "Nos objectifs d’itération, rédigés à la main (deux ou trois)",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1162"
  },
@@ -38329,8 +38329,8 @@
   "note": "IT note; Postmark brand kept"
  },
  "Our vision message": {
-  "fr": "",
-  "status": "new",
+  "fr": "Notre message de vision",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:882"
  },
@@ -39114,8 +39114,8 @@
   "where": "apps/web/app/(app)/imports/page.tsx:427"
  },
  "Paste the iteration goals the LLM wrote.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Collez les objectifs d’itération rédigés par le LLM.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1172"
  },
@@ -39126,20 +39126,20 @@
   "where": "apps/web/components/studio-views-lpm-budget.tsx:206"
  },
  "Paste the output here to review it.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Collez le résultat ici pour l’examiner.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:750"
  },
  "Paste the response here, so the group can evaluate it.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Collez la réponse ici pour que le groupe puisse l’évaluer.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:453"
  },
  "Paste what it gives you into the message on the first tab, then make it yours.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Collez ce qu’il vous donne dans le message du premier onglet, puis appropriez-vous-le.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:921"
  },
@@ -40957,8 +40957,8 @@
   "where": "apps/web/components/landing.tsx:431"
  },
  "PM": {
-  "fr": "",
-  "status": "new",
+  "fr": "PM",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -40969,8 +40969,8 @@
   "where": "packages/core/src/valuestreams.ts:601"
  },
  "PO": {
-  "fr": "",
-  "status": "new",
+  "fr": "PO",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -40995,20 +40995,20 @@
   "note": "SAFe event 'PO Sync'; could stay in English."
  },
  "Point at a card to follow its strings. Click a card to flag it as an issue. The bar under a team&apos;s name grows with the number of strings that touch it:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pointez une carte pour suivre ses fils. Cliquez sur une carte pour la signaler comme problème. La barre sous le nom d’une équipe s’allonge avec le nombre de fils qui la touchent :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1016"
  },
  "Point at a card to follow its strings. Click a card to flag it as an issue. The red tint on a team&apos;s name grows with the number of strings that touch it:": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Pointez une carte pour suivre ses fils. Cliquez sur une carte pour la signaler comme problème. La teinte rouge sur le nom d’une équipe s’intensifie avec le nombre de fils qui la touchent :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:961"
  },
  "Point at a name to see that person's shape. Where the kites overlap is what the group shares; where one sticks out is what that person brings.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pointez un nom pour voir la forme de cette personne. Là où les cerfs-volants se chevauchent, c’est ce que le groupe partage ; là où l’un dépasse, c’est ce que cette personne apporte.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:114"
  },
@@ -42461,8 +42461,8 @@
   "note": "Role name kept in English (like Product Owner); alt: Responsable produit"
  },
  "Product Manager role": {
-  "fr": "",
-  "status": "new",
+  "fr": "Rôle de Product Manager",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -42505,8 +42505,8 @@
   "where": "apps/web/components/studio-views-lsa.tsx:188"
  },
  "Product Owner role": {
-  "fr": "",
-  "status": "new",
+  "fr": "Rôle de Product Owner",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -42523,8 +42523,8 @@
   "where": "packages/core/src/valuestreams.ts:213"
  },
  "Product role experience": {
-  "fr": "",
-  "status": "course",
+  "fr": "Expérience d’un rôle produit",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:18"
  },
@@ -42814,8 +42814,8 @@
   "where": "packages/core/src/demo.ts:43"
  },
  "Prompt, refine, and edit": {
-  "fr": "",
-  "status": "course",
+  "fr": "Rédiger la requête, raffiner et réviser",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:148"
  },
@@ -43149,8 +43149,8 @@
   "where": "apps/web/components/studio-model-lsa.ts:30"
  },
  "Put the slide's example back? This replaces the map as it is now.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Remettre l’exemple de la diapositive ? Cela remplace la carte dans son état actuel.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1073"
  },
@@ -43342,8 +43342,8 @@
   "where": "packages/core/src/valuestreams.ts:74 packages/core/src/valuestreams.ts:85 packages/core/src/valuestreams.ts:541"
  },
  "Quietest for both markets together:": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Les plus calmes pour les deux marchés réunis :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:583"
  },
@@ -44103,8 +44103,8 @@
   "where": "apps/web/app/examples/okrs-kpis/page.tsx:31"
  },
  "Refine": {
-  "fr": "",
-  "status": "new",
+  "fr": "Raffiner",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1152"
  },
@@ -44121,8 +44121,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:101"
  },
  "Refined iteration goal": {
-  "fr": "",
-  "status": "new",
+  "fr": "Objectif d’itération raffiné",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1186"
  },
@@ -44212,8 +44212,8 @@
   "where": "apps/web/lib/help.ts:221"
  },
  "Register for an upcoming Community Welcome Webinar or roundtable event.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Inscrivez-vous à un prochain Community Welcome Webinar ou à une table ronde.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:411"
  },
@@ -44236,8 +44236,8 @@
   "where": "apps/web/components/landing.tsx:538"
  },
  "Regularly engage with stakeholders.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Échanger régulièrement avec les parties prenantes.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:40"
  },
@@ -44347,8 +44347,8 @@
   "where": "packages/core/src/ainative.ts:153"
  },
  "Release on Demand": {
-  "fr": "",
-  "status": "course",
+  "fr": "Mise en service à la demande",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:341"
  },
@@ -44392,8 +44392,8 @@
   "where": "packages/core/src/courses/rte.ts:39"
  },
  "Release window": {
-  "fr": "",
-  "status": "new",
+  "fr": "Fenêtre de mise en production",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:528 apps/web/components/popm-boards.tsx:572"
  },
@@ -44404,8 +44404,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:135"
  },
  "Release windows": {
-  "fr": "",
-  "status": "new",
+  "fr": "Fenêtres de mise en production",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:571"
  },
@@ -45108,8 +45108,8 @@
   "where": "apps/web/components/studio-model.ts:339"
  },
  "Responsible": {
-  "fr": "",
-  "status": "new",
+  "fr": "Responsable",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:232"
  },
@@ -45127,8 +45127,8 @@
   "note": "\"Portfolio Leadership\" is not in the glossary; rendered « direction du portefeuille ». Review."
  },
  "Responsible AI and product decisions": {
-  "fr": "",
-  "status": "course",
+  "fr": "IA responsable et décisions produit",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:372"
  },
@@ -45362,8 +45362,8 @@
   "where": "packages/core/src/valuestreams.ts:233"
  },
  "Review the provided AI-generated customer research report, then discuss it with your group.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Examinez le rapport de recherche client généré par l’IA qui vous est fourni, puis discutez-en avec votre groupe.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:112"
  },
@@ -45423,8 +45423,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:108"
  },
  "Right in the 2 to 3 minute window": {
-  "fr": "",
-  "status": "new",
+  "fr": "En plein dans la fenêtre de 2 à 3 minutes",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:875"
  },
@@ -45842,8 +45842,8 @@
   "where": "apps/web/components/classroom.tsx:301"
  },
  "Round": {
-  "fr": "",
-  "status": "new",
+  "fr": "Tour",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:422"
  },
@@ -46232,8 +46232,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:218"
  },
  "SAFe Connect": {
-  "fr": "",
-  "status": "course",
+  "fr": "SAFe Connect",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:403"
  },
@@ -46461,8 +46461,8 @@
   "where": "apps/web/components/studio-model-lsa.ts:34"
  },
  "Sample Deep Research Report: Digital Product Experience Friction (PDF)": {
-  "fr": "",
-  "status": "course",
+  "fr": "Exemple de rapport Deep Research : frictions dans l’expérience des produits numériques (PDF)",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:109"
  },
@@ -46690,8 +46690,8 @@
   "where": "packages/core/src/demo.ts:326"
  },
  "Scale and note": {
-  "fr": "",
-  "status": "course",
+  "fr": "Échelle et remarque",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:178"
  },
@@ -46703,8 +46703,8 @@
   "note": "\"CoD\" kept as in the table header, with the French long form added in brackets."
  },
  "Scale for each parameter: 1, 2, 3, 5, 8, 13, 20. Note: Do one column at a time. Start by picking the smallest item and giving it a 1. There must be at least one 1 in each column.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Échelle pour chaque paramètre : 1, 2, 3, 5, 8, 13, 20. Remarque : Faites une colonne à la fois. Commencez par choisir le plus petit élément et donnez-lui un 1. Il doit y avoir au moins un 1 dans chaque colonne.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:179"
  },
@@ -46745,8 +46745,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:329"
  },
  "Scenario: Team Codebusters' work impacts multiple high-priority features being implemented this PI. The Product Owner struggles with managing the competing priorities from different stakeholders, and the team isn’t always sure what to focus on first.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Scénario : Le travail de l’équipe Codebusters touche plusieurs fonctionnalités hautement prioritaires mises en œuvre durant ce PI. Le Product Owner peine à gérer les priorités concurrentes de différentes parties prenantes, et l’équipe ne sait pas toujours sur quoi se concentrer en premier.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
@@ -46914,8 +46914,8 @@
   "where": "packages/core/src/frameworks.ts:301 packages/core/src/frameworks.ts:302"
  },
  "SD": {
-  "fr": "",
-  "status": "new",
+  "fr": "DP",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:416"
  },
@@ -47010,8 +47010,8 @@
   "where": "apps/web/components/global-search.tsx:29"
  },
  "Seasoned traveller": {
-  "fr": "",
-  "status": "new",
+  "fr": "Voyageur aguerri",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:45"
  },
@@ -47245,8 +47245,8 @@
   "where": "apps/web/components/planning-views.tsx:162"
  },
  "Select a feature in Step 1 and it opens here to refine.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Sélectionnez une fonctionnalité à l’étape 1 et elle s’ouvre ici pour être raffinée.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:778"
  },
@@ -47935,8 +47935,8 @@
   "note": "« AI-native », « Mini Lab », « HR Navigator », « P&L » kept in English."
  },
  "Shape the two demand curves and the quietest months are pointed out here.": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Façonnez les deux courbes de demande et les mois les plus calmes seront indiqués ici.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:583"
  },
@@ -48007,14 +48007,14 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:76"
  },
  "Share this one with the class": {
-  "fr": "",
-  "status": "new",
+  "fr": "Partager celui-ci en plénière",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:358"
  },
  "Share with the class": {
-  "fr": "",
-  "status": "new",
+  "fr": "Partager en plénière",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:358"
  },
@@ -48249,8 +48249,8 @@
   "where": "apps/web/components/studio-views-lsa.tsx:53"
  },
  "Shorter than two minutes": {
-  "fr": "",
-  "status": "new",
+  "fr": "Moins de deux minutes",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:875"
  },
@@ -48541,8 +48541,8 @@
   "note": "status; check: may be a value"
  },
  "Significant dependency": {
-  "fr": "",
-  "status": "new",
+  "fr": "Dépendance importante",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:953 packages/core/src/cards.ts:42"
  },
@@ -49125,8 +49125,8 @@
   "where": "apps/web/app/(app)/value-streams/page.tsx:537"
  },
  "Some": {
-  "fr": "",
-  "status": "new",
+  "fr": "Assez",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:36"
  },
@@ -49923,8 +49923,8 @@
   "where": "packages/core/src/canvases.ts:178"
  },
  "Start from the example on the slide": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Partir de l’exemple de la diapositive",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1017"
  },
@@ -50205,14 +50205,14 @@
   "where": "apps/web/components/studio-model-lpm.ts:94"
  },
  "Stays human": {
-  "fr": "",
-  "status": "course",
+  "fr": "Reste humain",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:268"
  },
  "Stays human ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "Reste humain ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:298"
  },
@@ -50229,8 +50229,8 @@
   "where": "apps/web/app/(app)/billing/page.tsx:250"
  },
  "Steady value, for comparison": {
-  "fr": "",
-  "status": "new",
+  "fr": "Valeur constante, à titre de comparaison",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:527"
  },
@@ -50259,26 +50259,26 @@
   "where": "apps/web/components/studio-views-rte.tsx:86"
  },
  "Step 1 · How we would use capacity allocation in our organization": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 1 · Comment nous utiliserions l’allocation de capacité dans notre organisation",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:851"
  },
  "Step 1 · Select one of the features from the previous activity": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 1 · Sélectionnez l’une des fonctionnalités de l’activité précédente",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:707"
  },
  "Step 1 · Shape your experience": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 1 · Façonnez votre expérience",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:83"
  },
  "Step 1 · The user stories of the upcoming iteration": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 1 · Les récits utilisateur de la prochaine itération",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1155"
  },
@@ -50332,8 +50332,8 @@
   "where": "packages/core/src/courses/rte.ts:498"
  },
  "Step 1: As a class, discuss how the amount of pre-planning that you do can have positive outcomes and negative outcomes": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En plénière, discutez de la façon dont l’ampleur de votre préplanification peut avoir des effets positifs et des effets négatifs",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:191"
  },
@@ -50350,14 +50350,14 @@
   "where": "packages/core/src/courses/rte.ts:166"
  },
  "Step 1: As a class, review the following scenario and how the proposed actions align with the Lean-Agile mindset:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En plénière, examinez le scénario suivant et la façon dont les actions proposées s’alignent sur l’état d’esprit Lean-Agile :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
  "Step 1: As a class, review the following scenario:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En plénière, examinez le scénario suivant :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:219"
  },
@@ -50368,8 +50368,8 @@
   "where": "packages/core/src/courses/rte.ts:519"
  },
  "Step 1: at least three potential features for an MVP. Step 2: give each a description, its intent, a benefit hypothesis that names the primary customer, and acceptance criteria.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 1 : au moins trois fonctionnalités potentielles pour un MVP. Étape 2 : donnez à chacune une description, son intention, une hypothèse de bénéfice qui nomme le client principal et des critères d’acceptation.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:658"
  },
@@ -50554,14 +50554,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:55"
  },
  "Step 1: In SAFe Studio, navigate to SAFe Connect, via https://connect.scaledagile.com/.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Dans SAFe Studio, accédez à SAFe Connect, à l’adresse https://connect.scaledagile.com/.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402"
  },
  "Step 1: In your group, act as Product Management. Review the TTC Van solution vision, PI roadmap, and top 10 features on the following slides.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, jouez le rôle de la gestion de produit. Examinez la vision de la solution TTC Van, la feuille de route du PI et les 10 principales fonctionnalités dans les diapositives suivantes.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:205"
  },
@@ -50657,14 +50657,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:82"
  },
  "Step 1: In your group, explore how the widespread adoption of AI may disrupt how Product Owners and Product Managers operate and deliver value. For example, consider:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, explorez comment l’adoption généralisée de l’IA pourrait bouleverser la façon dont les Product Owners et les Product Managers travaillent et livrent de la valeur. Par exemple, pensez à ce qui suit :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:50"
  },
  "Step 1: In your group, identify the smallest animal and mark it as 1": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, trouvez le plus petit animal et donnez-lui la valeur 1",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:300"
  },
@@ -50693,8 +50693,8 @@
   "where": "packages/core/src/courses/rte.ts:305"
  },
  "Step 1: In your group, review these user stories the upcoming iteration and manually write two to three iteration goals.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, examinez ces récits utilisateur de la prochaine itération et rédigez à la main deux ou trois objectifs d’itération.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
@@ -50741,14 +50741,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:368"
  },
  "Step 1: Individually, consider how you would use capacity allocation in your organization": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, réfléchissez à la façon dont vous utiliseriez l’allocation de capacité dans votre organisation",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:165"
  },
  "Step 1: Individually, consider the following scenario:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, réfléchissez au scénario suivant :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:88"
  },
@@ -50867,8 +50867,8 @@
   "where": "packages/core/src/courses/rte.ts:422"
  },
  "Step 1: Individually, read the following scenario:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, lisez le scénario suivant :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
@@ -50909,8 +50909,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:618"
  },
  "Step 1: Individually, review the provided AI-generated customer research report": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, examinez le rapport de recherche client généré par l’IA qui vous est fourni",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:108"
  },
@@ -50927,8 +50927,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:167"
  },
  "Step 1: Individually, select one of the features you brainstormed in the previous activity": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, sélectionnez l’une des fonctionnalités que vous avez imaginées dans l’activité précédente",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
@@ -50946,14 +50946,14 @@
   "where": "packages/core/src/courses/rte.ts:285"
  },
  "Step 1: Individually, think about the various sync events that are part of SAFe (Team Sync, Coach Sync, PO Sync, ART Sync, Architect Sync)": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Individuellement, pensez aux divers événements de synchronisation qui font partie de SAFe (Synchro d’équipe, Synchro des coachs, Synchro PO, Synchro ART, Synchro des architectes)",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:354"
  },
  "Step 1: Introduce yourself to your group and share the following details:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : Présentez-vous à votre groupe et partagez les renseignements suivants :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
@@ -51079,8 +51079,8 @@
   "note": "Source has newlines between steps (\\n) in code; extractor flattened them"
  },
  "Step 1: With your group, break down, or decompose, the example epic by identifying at least three potential features for an MVP.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, décomposez l’épopée donnée en exemple en cernant au moins trois fonctionnalités potentielles pour un MVP.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:132"
  },
@@ -51097,8 +51097,8 @@
   "where": "packages/core/src/courses/rte.ts:36"
  },
  "Step 1: With your group, create a story map for the feature. Think about:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, créez une story map pour la fonctionnalité. Pensez à ce qui suit :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:282"
  },
@@ -51115,8 +51115,8 @@
   "where": "packages/core/src/courses/rte.ts:144"
  },
  "Step 1: With your groups, prioritize three of the features you identified earlier using WSJF": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 1 : En groupe, priorisez à l’aide du WSJF trois des fonctionnalités que vous avez cernées plus tôt",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:175"
  },
@@ -51200,14 +51200,14 @@
   "where": "packages/core/src/templates.ts:300 packages/core/src/templates.ts:481"
  },
  "Step 2 · Draft the policy for your ART": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · Rédigez la politique de votre ART",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:829"
  },
  "Step 2 · First prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · Première requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:423"
  },
@@ -51218,26 +51218,26 @@
   "where": "apps/web/components/studio-views-rte.tsx:88"
  },
  "Step 2 · The AI draft": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · L’ébauche de l’IA",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1166"
  },
  "Step 2 · The most important thing I want to learn": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · La chose la plus importante que je veux apprendre",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:99"
  },
  "Step 2 · What we share with the class": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · Ce que nous partageons en plénière",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:379"
  },
  "Step 2 · Write the prompt": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 2 · Rédigez la requête",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:734"
  },
@@ -51260,14 +51260,14 @@
   "where": "packages/core/src/courses/rte.ts:401"
  },
  "Step 2: As a class, discuss the following:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : En plénière, discutez de ce qui suit :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:354"
  },
  "Step 2: As a class, identify the potential market rhythms and events that impact each market. Use that information to determine the key times to release the new hardware in order to minimize disruptions to customers.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : En plénière, cernez les rythmes et les événements potentiels qui touchent chaque marché. Servez-vous de cette information pour déterminer les moments clés où mettre en production le nouveau matériel afin de perturber le moins possible les clients.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:88"
  },
@@ -51353,14 +51353,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:483"
  },
  "Step 2: Click the Discuss tab and go to the AI in Practice forum. Explore some posts or create your own.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Cliquez sur l’onglet Discuss et allez au forum AI in Practice. Explorez quelques publications ou créez la vôtre.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402"
  },
  "Step 2: Consider how the Lean-Agile mindset and SAFe practices influence and enable PI Planning preparedness": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Réfléchissez à la façon dont l’état d’esprit Lean-Agile et les pratiques SAFe influencent et favorisent la préparation au PI Planning",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:191"
  },
@@ -51395,8 +51395,8 @@
   "where": "packages/core/src/courses/rte.ts:166"
  },
  "Step 2: Develop a short vision message (2–3 minutes, spoken) that you would deliver to your ART at the start of PI Planning. Your message should answer three questions your ART needs:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Élaborez un court message de vision (2 à 3 minutes, à l’oral) que vous livreriez à votre ART au début du PI Planning. Votre message doit répondre à trois questions que se pose votre ART :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:205"
  },
@@ -51407,8 +51407,8 @@
   "where": "packages/core/src/courses/rte.ts:317"
  },
  "Step 2: Discuss how the following proposed actions by the Product Owner align with the Lean-Agile mindset:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Discutez de la façon dont les actions suivantes proposées par le Product Owner s’alignent sur l’état d’esprit Lean-Agile :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:34"
  },
@@ -51419,8 +51419,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:408"
  },
  "Step 2: Draft a capacity allocation policy for your ART that you will discuss with your key stakeholders": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Rédigez pour votre ART une politique d’allocation de capacité dont vous discuterez avec vos principales parties prenantes",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:165"
  },
@@ -51431,8 +51431,8 @@
   "where": "packages/core/src/courses/events.ts:180"
  },
  "Step 2: Estimate the remaining animals using the values 2, 3, 5, 8, 13, 20, 40, and 100": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Estimez les autres animaux à l’aide des valeurs 2, 3, 5, 8, 13, 20, 40 et 100",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:300"
  },
@@ -51461,14 +51461,14 @@
   "where": "packages/core/src/courses/events.ts:30"
  },
  "Step 2: From the class page, copy the LLM Iteration Goals Prompt and paste it into an LLM tool.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : À partir de la page de la formation, copiez la requête LLM pour les objectifs d’itération et collez-la dans un outil LLM.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
  "Step 2: Further refine each feature with a description, feature intent, benefit hypothesis, and acceptance criteria. In the benefit hypothesis, be sure to identify the primary customer.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Raffinez chaque fonctionnalité avec une description, l’intention de la fonctionnalité, une hypothèse de bénéfice et des critères d’acceptation. Dans l’hypothèse de bénéfice, veillez à nommer le client principal.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:132"
  },
@@ -51485,8 +51485,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:618"
  },
  "Step 2: Identify the core issue the team is raising and discuss solutions that Product Management can present to resolve those issues": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Cernez le problème de fond que soulève l’équipe et discutez des solutions que la gestion de produit peut présenter pour le résoudre",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:219"
  },
@@ -51503,8 +51503,8 @@
   "where": "packages/core/src/courses/rte.ts:432"
  },
  "Step 2: Identify the most important thing you want to learn from this course and share it with your group": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Déterminez la chose la plus importante que vous voulez apprendre dans ce cours et partagez-la avec votre groupe",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:22"
  },
@@ -51533,8 +51533,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:635"
  },
  "Step 2: In your group, evaluate this recommendation using the three aspects of Responsible AI:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : En groupe, évaluez cette recommandation selon les trois aspects de l’IA responsable :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:377"
  },
@@ -51606,8 +51606,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:37"
  },
  "Step 2: Open an LLM of your choice (ChatGPT, Claude, SAFe CoPilot) and ask it to help you compose a response to this developer. Be sure to include the five key elements in your prompt.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : Ouvrez le LLM de votre choix (ChatGPT, Claude, SAFe CoPilot) et demandez-lui de vous aider à rédiger une réponse à ce développeur. Veillez à inclure les cinq éléments clés dans votre requête.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:69"
  },
@@ -51709,8 +51709,8 @@
   "where": "packages/core/src/courses/rte.ts:385"
  },
  "Step 2: Using a GenAI tool, write a prompt to help clarify the feature intent, strengthen the benefit hypothesis, and improve the acceptance criteria": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : À l’aide d’un outil de GenAI, rédigez une requête pour clarifier l’intention de la fonctionnalité, renforcer l’hypothèse de bénéfice et améliorer les critères d’acceptation",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
@@ -51727,8 +51727,8 @@
   "where": "packages/core/src/courses/rte.ts:498"
  },
  "Step 2: With your group, discuss the following:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 2 : En groupe, discutez de ce qui suit :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:108"
  },
@@ -51763,26 +51763,26 @@
   "where": "apps/web/components/studio-views-rte.tsx:95"
  },
  "Step 3 · Compare side by side": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 3 · Comparez côte à côte",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1175"
  },
  "Step 3 · Refine and compare": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 3 · Raffinez et comparez",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:424"
  },
  "Step 3 · Review the output and decide": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 3 · Examinez le résultat et décidez",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:753"
  },
  "Step 3 · What we share with the class": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 3 · Ce que nous partageons en plénière",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:117 packages/core/src/courses/popm.ts:384"
  },
@@ -51859,14 +51859,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:37"
  },
  "Step 3: Click the Events tab. Register for an upcoming Community Welcome Webinar or roundtable event.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 3 : Cliquez sur l’onglet Events. Inscrivez-vous à un prochain Community Welcome Webinar ou à une table ronde.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402"
  },
  "Step 3: Compare side by side:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 3 : Comparez côte à côte :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
@@ -51949,8 +51949,8 @@
   "where": "packages/core/src/courses/rte.ts:385"
  },
  "Step 3: Review the AI-generated output and decide:": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 3 : Examinez le résultat généré par l’IA et décidez :",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
@@ -51998,8 +51998,8 @@
   "where": "packages/core/src/courses/rte.ts:82"
  },
  "Step 3: With your group, evaluate the responses and refine your original prompt based on what’s missing. Resubmit and compare the results.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 3 : En groupe, évaluez les réponses et raffinez votre requête initiale selon ce qui manque. Soumettez-la de nouveau et comparez les résultats.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:69"
  },
@@ -52010,14 +52010,14 @@
   "where": "packages/core/src/templates.ts:300 packages/core/src/templates.ts:481"
  },
  "Step 4 · Refine, and be prepared to share with the class": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 4 · Raffinez et préparez-vous à partager en plénière",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:768"
  },
  "Step 4 · The refined goals: the best of both versions": {
-  "fr": "",
-  "status": "new",
+  "fr": "Étape 4 · Les objectifs raffinés : le meilleur des deux versions",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1185"
  },
@@ -52047,8 +52047,8 @@
   "where": "packages/core/src/courses/rte.ts:489"
  },
  "Step 4: Click the Content tab and then click on the Toolsday tile to explore some interesting AI tools that our community is using.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 4 : Cliquez sur l’onglet Content, puis sur la tuile Toolsday pour explorer quelques outils d’IA intéressants qu’utilise notre communauté.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402"
  },
@@ -52090,14 +52090,14 @@
   "where": "packages/core/src/courses/leading-safe.ts:534"
  },
  "Step 4: Refine the AI draft by combining the best of both versions.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 4 : Raffinez l’ébauche de l’IA en combinant le meilleur des deux versions.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311"
  },
  "Step 4: Refine the story and be prepared to share with the class": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 4 : Raffinez le récit et préparez-vous à partager en plénière",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:153"
  },
@@ -52120,8 +52120,8 @@
   "where": "packages/core/src/templates.ts:300 packages/core/src/templates.ts:481"
  },
  "Step 5: Be prepared to share with the class.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Étape 5 : Préparez-vous à partager en plénière.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:311 packages/core/src/courses/popm.ts:402"
  },
@@ -52230,14 +52230,14 @@
   "where": "apps/web/lib/public.ts:54"
  },
  "Still missing: {0}.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Il manque encore : {0}.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:438"
  },
  "Still thinking about what to learn.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Réfléchit encore à ce qu’il faut apprendre.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:129"
  },
@@ -52315,8 +52315,8 @@
   "where": "packages/core/src/classes.ts:676"
  },
  "Stories for future releases · low priority": {
-  "fr": "",
-  "status": "new",
+  "fr": "Récits des mises en production futures · priorité basse",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1092"
  },
@@ -52400,8 +52400,8 @@
   "where": "packages/core/src/classes.ts:223"
  },
  "Story for {0}": {
-  "fr": "",
-  "status": "new",
+  "fr": "Récit pour {0}",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1107"
  },
@@ -52677,8 +52677,8 @@
   "note": "'String' (dependency line on the board) rendered as « fil »"
  },
  "String: one waits on the other": {
-  "fr": "",
-  "status": "stale",
+  "fr": "Fil : l’un attend l’autre",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:925"
  },
@@ -53212,8 +53212,8 @@
   "where": "packages/core/src/classes.ts:664"
  },
  "System Architect Help": {
-  "fr": "",
-  "status": "new",
+  "fr": "Aide de l’architecte système",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:933"
  },
@@ -53381,8 +53381,8 @@
   "where": "apps/web/components/landing.tsx:90"
  },
  "Tag each note with the sync event it belongs to.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Associez chaque note à l’événement de synchronisation auquel elle appartient.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:264"
  },
@@ -53578,8 +53578,8 @@
   "where": "apps/web/components/classroom.tsx:299"
  },
  "Task": {
-  "fr": "",
-  "status": "new",
+  "fr": "Tâche",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:397 packages/core/src/frameworks.ts:366 packages/core/src/templates.ts:97"
  },
@@ -53656,8 +53656,8 @@
   "where": "apps/web/components/planning-pages.tsx:706 apps/web/components/planning-pages.tsx:732 apps/web/components/studio-views-lsa.tsx:214"
  },
  "Team · Iteration →": {
-  "fr": "",
-  "status": "new",
+  "fr": "Équipe · Itération →",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:987"
  },
@@ -53926,8 +53926,8 @@
   "where": "packages/core/src/classes.ts:741"
  },
  "Team Codebusters' work impacts multiple high-priority features being implemented this PI. The Product Owner struggles with managing the competing priorities from different stakeholders, and the team isn’t always sure what to focus on first.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Le travail de l’équipe Codebusters touche plusieurs fonctionnalités hautement prioritaires mises en œuvre durant ce PI. Le Product Owner peine à gérer les priorités concurrentes de différentes parties prenantes, et l’équipe ne sait pas toujours sur quoi se concentrer en premier.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:39"
  },
@@ -54113,8 +54113,8 @@
   "where": "apps/web/components/planning-views.tsx:446"
  },
  "Team Sync": {
-  "fr": "",
-  "status": "new",
+  "fr": "Synchro d’équipe",
+  "status": "draft",
   "phase": "2",
   "where": "packages/core/src/courses/popm.ts:359 packages/core/src/frameworks.ts:100"
  },
@@ -54695,14 +54695,14 @@
   "where": "apps/web/components/studio-model-lsa.ts:28"
  },
  "The AI draft": {
-  "fr": "",
-  "status": "new",
+  "fr": "L’ébauche de l’IA",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1172"
  },
  "The AI-generated output": {
-  "fr": "",
-  "status": "new",
+  "fr": "Le résultat généré par l’IA",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:749 apps/web/components/popm-boards.tsx:750"
  },
@@ -54992,8 +54992,8 @@
   "where": "apps/web/app/(app)/classroom/company/page.tsx:53"
  },
  "The core issue": {
-  "fr": "",
-  "status": "course",
+  "fr": "Le problème de fond",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:230"
  },
@@ -55004,8 +55004,8 @@
   "where": "apps/web/lib/site.ts:38"
  },
  "The curves start as on the slide. Drag any point up or down to reshape a market&apos;s rhythm (or focus a point and use the arrow keys). Click a month in the row below the chart to mark a release window.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les courbes partent de celles de la diapositive. Faites glisser un point vers le haut ou vers le bas pour remodeler le rythme d’un marché (ou sélectionnez un point et utilisez les touches fléchées). Cliquez sur un mois dans la rangée sous le graphique pour marquer une fenêtre de mise en production.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:577"
  },
@@ -55022,8 +55022,8 @@
   "where": "packages/core/src/valuestreams.ts:69"
  },
  "The dark stories line up here, activity by activity.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les récits foncés s’alignent ici, activité par activité.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1120"
  },
@@ -55046,8 +55046,8 @@
   "where": "apps/web/components/classroom.tsx:242"
  },
  "The demand still outweighs the capacity: what else could Product Management offer?": {
-  "fr": "",
-  "status": "new",
+  "fr": "La demande dépasse encore la capacité : que pourrait offrir d’autre la gestion de produit ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:288"
  },
@@ -55137,8 +55137,8 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:109"
  },
  "The forums in SAFe Connect will help you continue learning about AI and Product Management after your class.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Les forums de SAFe Connect vous aideront à continuer d’apprendre sur l’IA et la gestion de produit après votre formation.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:402 packages/core/src/courses/popm.ts:406"
  },
@@ -55330,8 +55330,8 @@
   "where": "packages/core/src/classes.ts:563"
  },
  "The marker moves with the class&apos;s notes: what AI could take on against what should always remain a human responsibility.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Le curseur se déplace avec les notes des participants : ce que l’IA pourrait prendre en charge par rapport à ce qui devrait toujours rester une responsabilité humaine.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:300"
  },
@@ -55348,8 +55348,8 @@
   "where": "packages/core/src/canvases.ts:166"
  },
  "The message, as you would say it (2 to 3 minutes)": {
-  "fr": "",
-  "status": "new",
+  "fr": "Le message, tel que vous le diriez (2 à 3 minutes)",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:897"
  },
@@ -55367,8 +55367,8 @@
   "note": "Agile Manifesto principle (official French wording)."
  },
  "The most important thing I want to learn": {
-  "fr": "",
-  "status": "new",
+  "fr": "La chose la plus importante que je veux apprendre",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:100"
  },
@@ -55598,14 +55598,14 @@
   "where": "apps/web/components/studio-model-lpm.ts:77"
  },
  "The prompt to paste into your GenAI tool": {
-  "fr": "",
-  "status": "new",
+  "fr": "La requête à coller dans votre outil de GenAI",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:746"
  },
  "The prompt to paste into your LLM": {
-  "fr": "",
-  "status": "new",
+  "fr": "La requête à coller dans votre LLM",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:449 apps/web/components/popm-boards.tsx:918"
  },
@@ -55646,14 +55646,14 @@
   "where": "apps/web/components/canvas-editor.tsx:1068"
  },
  "The response": {
-  "fr": "",
-  "status": "new",
+  "fr": "La réponse",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:453"
  },
  "The response it gave": {
-  "fr": "",
-  "status": "new",
+  "fr": "La réponse obtenue",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:452"
  },
@@ -55808,8 +55808,8 @@
   "where": "apps/web/lib/help.ts:29"
  },
  "The Senior Developer on your new Agile Team is skeptical about SAFe. They have sent you a message asking how having a Product Owner will make their jobs easier. They are worried it’s going to be more meetings and processes, and nothing will get better.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Le développeur principal de votre nouvelle équipe Agile est sceptique à l’égard de SAFe. Il vous a envoyé un message pour demander en quoi la présence d’un Product Owner facilitera le travail de l’équipe. Il craint que cela se traduise par plus de réunions et de processus, sans que rien ne s’améliore.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:74"
  },
@@ -55931,8 +55931,8 @@
   "where": "apps/web/app/terms/page.tsx:8"
  },
  "The three questions your ART needs answered": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les trois questions auxquelles votre ART a besoin de réponses",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:888"
  },
@@ -55997,8 +55997,8 @@
   "where": "apps/web/lib/examples.ts:63"
  },
  "The Van Maintenance Advisor requires new hardware. The System Architect has informed the Product Management team that customers will have to take their vans out of service for approximately one day to install the new hardware. Approximately 30% of your van customers serve the local retail market, while another 30% serve the medical specimen market.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Le Van Maintenance Advisor nécessite du nouveau matériel. L’architecte système a informé l’équipe de gestion de produit que les clients devront retirer leurs fourgonnettes du service pendant environ une journée pour installer le nouveau matériel. Environ 30 % de vos clients de fourgonnettes desservent le marché du commerce de détail local, tandis qu’un autre 30 % dessert le marché des échantillons médicaux.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:88 packages/core/src/courses/popm.ts:93"
  },
@@ -56021,8 +56021,8 @@
   "where": "packages/core/src/valuestreams.ts:142"
  },
  "The vision message": {
-  "fr": "",
-  "status": "new",
+  "fr": "Le message de vision",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:898"
  },
@@ -56153,8 +56153,8 @@
   "where": "apps/web/components/kanban-board.tsx:91"
  },
  "These are the activities or tasks the user must perform in order to accomplish their goal.": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce sont les activités ou les tâches que l’utilisateur doit accomplir pour atteindre son but.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1076"
  },
@@ -56196,8 +56196,8 @@
   "where": "apps/web/components/studio-model-lsa.ts:35"
  },
  "Think about the various sync events that are part of SAFe, then discuss as a class.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Pensez aux divers événements de synchronisation qui font partie de SAFe, puis discutez-en en plénière.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:358"
  },
@@ -56263,8 +56263,8 @@
   "where": "apps/web/app/(app)/ai/[id]/page.tsx:133"
  },
  "This is": {
-  "fr": "",
-  "status": "new",
+  "fr": "C’est",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:367"
  },
@@ -56312,8 +56312,8 @@
   "where": "apps/web/app/join/[token]/page.tsx:23"
  },
  "This note is about": {
-  "fr": "",
-  "status": "new",
+  "fr": "Cette note porte sur",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:176"
  },
@@ -56528,8 +56528,8 @@
   "where": "apps/web/lib/help.ts:196"
  },
  "Tick each step as your group completes it": {
-  "fr": "",
-  "status": "new",
+  "fr": "Cochez chaque étape à mesure que votre groupe la termine",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1212"
  },
@@ -56663,14 +56663,14 @@
   "where": "packages/core/src/courses/lpm.ts:79"
  },
  "Tip": {
-  "fr": "",
-  "status": "course",
+  "fr": "Conseil",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:206"
  },
  "Tip · draft it with an LLM (": {
-  "fr": "",
-  "status": "new",
+  "fr": "Conseil · rédigez-le avec un LLM (",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:883"
  },
@@ -56926,8 +56926,8 @@
   "where": "apps/web/components/planning-pages.tsx:898"
  },
  "Too long, wrong tone, does not answer the worry about meetings…": {
-  "fr": "",
-  "status": "new",
+  "fr": "Trop long, mauvais ton, ne répond pas à la crainte des réunions…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:457"
  },
@@ -57543,8 +57543,8 @@
   "where": "packages/core/src/canvases.ts:647"
  },
  "Trustworthy": {
-  "fr": "",
-  "status": "course",
+  "fr": "Fiable",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:389"
  },
@@ -57699,8 +57699,8 @@
   "note": "« Class Studio » treated as a product name."
  },
  "Two features": {
-  "fr": "",
-  "status": "new",
+  "fr": "Deux fonctionnalités",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:280"
  },
@@ -58419,8 +58419,8 @@
   "where": "packages/core/src/courses/rte.ts:92"
  },
  "Use an LLM of your choice to help you draft or refine your message. Include the five prompting elements for best results: Goal, Role, Task, Context, Details.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Utilisez le LLM de votre choix pour vous aider à rédiger ou à raffiner votre message. Incluez les cinq éléments d’une requête pour de meilleurs résultats : but, rôle, tâche, contexte, détails.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:206"
  },
@@ -58443,8 +58443,8 @@
   "where": "apps/web/app/(app)/admin/page.tsx:1 apps/web/app/(app)/agents/page.tsx:1 apps/web/app/(app)/ai/[id]/page.tsx:1"
  },
  "Use estimating poker to relatively estimate the mass of a set of animals.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Utilisez le poker d’estimation pour estimer de façon relative la masse d’un ensemble d’animaux.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:300"
  },
@@ -58516,8 +58516,8 @@
   "where": "apps/web/components/outcome-roadmap.tsx:132"
  },
  "Use this feature": {
-  "fr": "",
-  "status": "new",
+  "fr": "Utiliser cette fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:716"
  },
@@ -58703,8 +58703,8 @@
   "where": "packages/core/src/classes.ts:664"
  },
  "UX Help": {
-  "fr": "",
-  "status": "new",
+  "fr": "Aide UX",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:933"
  },
@@ -58851,8 +58851,8 @@
   "where": "apps/web/components/studio-views-lsa.tsx:53"
  },
  "Value flows left to right. A stage turns green and grows as the class adds how product roles support it; an empty stage is where the pipeline has no product voice yet.": {
-  "fr": "",
-  "status": "new",
+  "fr": "La valeur circule de gauche à droite. Une étape devient verte et grandit à mesure que les participants ajoutent la façon dont les rôles produit la soutiennent ; une étape vide indique que le pipeline n’a pas encore de voix produit.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:215"
  },
@@ -59109,8 +59109,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:25"
  },
  "Value through the year for {0}": {
-  "fr": "",
-  "status": "new",
+  "fr": "Valeur au fil de l’année pour {0}",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:532"
  },
@@ -59537,8 +59537,8 @@
   "where": "apps/web/app/compare/page.tsx:33"
  },
  "wanted ·": {
-  "fr": "",
-  "status": "new",
+  "fr": "voulues ·",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:281"
  },
@@ -59592,8 +59592,8 @@
   "note": "Railway metaphor (waybill); \"lettre de voiture\" is the freight term."
  },
  "Ways to make": {
-  "fr": "",
-  "status": "new",
+  "fr": "Façons de",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:283"
  },
@@ -60166,8 +60166,8 @@
   "where": "packages/core/src/courses/lpm.ts:75"
  },
  "What are the risks or unintended impacts for users?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Quels sont les risques ou les effets imprévus pour les utilisateurs ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:391"
  },
@@ -60196,8 +60196,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:50"
  },
  "What are you trying to accomplish?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Que cherchez-vous à accomplir ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:395"
  },
@@ -60298,8 +60298,8 @@
   "where": "packages/core/src/templates.ts:110 packages/core/src/templates.ts:386"
  },
  "What did AI add that you hadn’t considered?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Qu’est-ce que l’IA a ajouté que vous n’aviez pas envisagé ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1177"
  },
@@ -60310,8 +60310,8 @@
   "where": "apps/web/app/(app)/billing/page.tsx:300"
  },
  "What did the AI miss that you included?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Qu’est-ce que l’IA a manqué et que vous aviez inclus ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1177"
  },
@@ -60370,8 +60370,8 @@
   "where": "packages/core/src/canvases.ts:310"
  },
  "What does this mean for what we're building this PI?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Qu’est-ce que cela signifie pour ce que nous construisons durant ce PI ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:210"
  },
@@ -60394,14 +60394,14 @@
   "where": "apps/web/components/studio-model-lpm.ts:115"
  },
  "What evidence supports this recommendation?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Quelles preuves appuient cette recommandation ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:390"
  },
  "What exactly do you want the AI to do?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Que voulez-vous exactement que l’IA fasse ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:397"
  },
@@ -60502,14 +60502,14 @@
   "where": "packages/core/src/templates.ts:129"
  },
  "What is missing": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce qui manque",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:457"
  },
  "What is missing from it?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Qu’est-ce qui y manque ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:456"
  },
@@ -60562,8 +60562,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:53"
  },
  "What is the core issue the team is raising?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Quel est le problème de fond que soulève l’équipe ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:230"
  },
@@ -60670,8 +60670,8 @@
   "where": "apps/web/app/(app)/card-types/page.tsx:84"
  },
  "What it is meant to achieve": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce qu’elle vise à accomplir",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:611"
  },
@@ -60742,8 +60742,8 @@
   "where": "packages/core/src/courses/lpm.ts:75"
  },
  "What persona or area of expertise should the AI assume in formulating its response?": {
-  "fr": "",
-  "status": "new",
+  "fr": "Quel persona ou quel domaine d’expertise l’IA devrait-elle adopter pour formuler sa réponse ?",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:396"
  },
@@ -60760,8 +60760,8 @@
   "where": "packages/core/src/courses/rte.ts:110"
  },
  "What potential issues do you see?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Quels problèmes potentiels voyez-vous ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:246"
  },
@@ -60790,8 +60790,8 @@
   "where": "apps/web/components/studio-model.ts:55"
  },
  "What Product Management presents": {
-  "fr": "",
-  "status": "course",
+  "fr": "Ce que présente la gestion de produit",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:227"
  },
@@ -60844,8 +60844,8 @@
   "where": "apps/web/components/okr-explorer.tsx:238"
  },
  "What solutions can Product Management present to resolve those issues?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Quelles solutions la gestion de produit peut-elle présenter pour résoudre ces problèmes ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:231"
  },
@@ -60856,8 +60856,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:325"
  },
  "What stands out": {
-  "fr": "",
-  "status": "course",
+  "fr": "Ce qui ressort",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:335 packages/core/src/courses/popm.ts:361"
  },
@@ -60922,8 +60922,8 @@
   "where": "apps/web/lib/help.ts:154"
  },
  "What the feature does": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce que fait la fonctionnalité",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:611"
  },
@@ -60958,8 +60958,8 @@
   "where": "packages/core/src/classes.ts:630"
  },
  "What to change": {
-  "fr": "",
-  "status": "new",
+  "fr": "À modifier",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:686"
  },
@@ -60976,14 +60976,14 @@
   "where": "apps/web/lib/public.ts:145"
  },
  "What to keep": {
-  "fr": "",
-  "status": "new",
+  "fr": "À conserver",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:686"
  },
  "What to remove": {
-  "fr": "",
-  "status": "new",
+  "fr": "À retirer",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:686"
  },
@@ -61006,8 +61006,8 @@
   "where": "apps/web/components/planning-pages.tsx:507"
  },
  "What was missing:": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce qui manquait :",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:473"
  },
@@ -61018,8 +61018,8 @@
   "where": "apps/web/components/studio-model.ts:564"
  },
  "What we came to learn": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce que nous sommes venus apprendre",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:117"
  },
@@ -61030,14 +61030,14 @@
   "where": "apps/web/app/privacy/page.tsx:38"
  },
  "What we found": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce que nous avons constaté",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1231"
  },
  "What we found, to share with the class": {
-  "fr": "",
-  "status": "new",
+  "fr": "Ce que nous avons constaté, à partager en plénière",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:1224"
  },
@@ -61060,8 +61060,8 @@
   "where": "packages/core/src/classes.ts:688"
  },
  "What we would try next PI": {
-  "fr": "",
-  "status": "course",
+  "fr": "Ce que nous essaierions au prochain PI",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:262"
  },
@@ -61210,14 +61210,14 @@
   "where": "apps/web/components/studio-model.ts:564 apps/web/components/studio-views.tsx:277"
  },
  "Where AI helps": {
-  "fr": "",
-  "status": "course",
+  "fr": "Là où l’IA aide",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:267"
  },
  "Where are we going, and why does it matter?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Où allons-nous, et pourquoi est-ce important ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:210"
  },
@@ -61294,8 +61294,8 @@
   "where": "apps/web/components/studio-views-lpm.tsx:21"
  },
  "Where it would help, who decides the split, how often we revisit it…": {
-  "fr": "",
-  "status": "new",
+  "fr": "Où cela aiderait, qui décide de la répartition, à quelle fréquence nous la revoyons…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:852"
  },
@@ -61414,8 +61414,8 @@
   "where": "packages/core/src/courses/leading-safe.ts:116"
  },
  "Which sync events the class is leaning on": {
-  "fr": "",
-  "status": "new",
+  "fr": "Les événements de synchronisation sur lesquels les participants s’appuient",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:256"
  },
@@ -61648,8 +61648,8 @@
   "where": "packages/core/src/courses/lpm.ts:80"
  },
  "Who should POs and Product Management collaborate with to help minimize dependencies and address the issues identified?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Avec qui les PO et la gestion de produit devraient-ils collaborer pour réduire les dépendances au minimum et régler les problèmes cernés ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:246"
  },
@@ -61774,8 +61774,8 @@
   "where": "apps/web/components/studio-model-lsa.ts:28"
  },
  "Why should the team care?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Pourquoi l’équipe devrait-elle s’en soucier ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:210"
  },
@@ -61792,14 +61792,14 @@
   "where": "packages/core/src/courses/ai-native-arts.ts:300"
  },
  "Why these times": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pourquoi ces moments",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:602"
  },
  "Why these times minimize disruption to customers…": {
-  "fr": "",
-  "status": "new",
+  "fr": "Pourquoi ces moments perturbent le moins possible les clients…",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:602"
  },
@@ -61968,8 +61968,8 @@
   "where": "apps/web/components/readiness-board.tsx:349"
  },
  "With safeguards": {
-  "fr": "",
-  "status": "course",
+  "fr": "Avec des mesures de protection",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:387"
  },
@@ -62053,14 +62053,14 @@
   "where": "apps/web/components/studio-views-lpm.tsx:309"
  },
  "words · about": {
-  "fr": "",
-  "status": "new",
+  "fr": "mots · environ",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:903"
  },
  "words a minute.": {
-  "fr": "",
-  "status": "new",
+  "fr": "mots par minute.",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:903"
  },
@@ -62233,8 +62233,8 @@
   "where": "apps/web/app/guides/page.tsx:8"
  },
  "Working in an Agile environment": {
-  "fr": "",
-  "status": "new",
+  "fr": "Travail dans un environnement Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -62317,8 +62317,8 @@
   "where": "packages/core/src/boards.ts:308"
  },
  "Working outside of an Agile environment": {
-  "fr": "",
-  "status": "new",
+  "fr": "Travail hors d’un environnement Agile",
+  "status": "draft",
   "phase": "2",
   "where": "apps/web/components/popm-boards.tsx:35"
  },
@@ -62444,8 +62444,8 @@
   "where": "apps/web/app/(app)/admin/page.tsx:70"
  },
  "Would we act on this recommendation?": {
-  "fr": "",
-  "status": "course",
+  "fr": "Donnerions-nous suite à cette recommandation ?",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:386"
  },
@@ -62522,8 +62522,8 @@
   "where": "apps/web/components/studio-model-lpm.ts:214"
  },
  "Writing features": {
-  "fr": "",
-  "status": "course",
+  "fr": "Rédiger des fonctionnalités",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:127"
  },
@@ -62743,8 +62743,8 @@
   "where": "packages/core/src/courses/ai-native-value-architect.ts:15"
  },
  "You are an experienced Product Owner on an Agile Team. Write two to three iteration goals for the upcoming iteration from the user stories below. Each goal should state the outcome for the user or the business, be something the team can commit to, and be clear enough to check at the iteration review. Then list anything you had to assume.": {
-  "fr": "",
-  "status": "course",
+  "fr": "Vous êtes un Product Owner d’expérience au sein d’une équipe Agile. Rédigez deux ou trois objectifs d’itération pour la prochaine itération à partir des récits utilisateur ci-dessous. Chaque objectif doit énoncer le résultat pour l’utilisateur ou pour l’entreprise, être quelque chose sur quoi l’équipe peut s’engager et être assez clair pour être vérifié à la revue d’itération. Dressez ensuite la liste de tout ce que vous avez dû supposer.",
+  "status": "draft",
   "phase": "course",
   "where": "packages/core/src/courses/popm.ts:319"
  },
@@ -63003,8 +63003,8 @@
   "where": "apps/web/components/ainative.tsx:806"
  },
  "Your name": {
-  "fr": "",
-  "status": "new",
+  "fr": "Votre nom",
+  "status": "draft",
   "phase": "3",
   "where": "apps/web/components/landing.tsx:803 apps/web/components/popm-boards.tsx:90 apps/web/components/popm-boards.tsx:90"
  },
