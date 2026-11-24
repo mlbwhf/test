@@ -921,8 +921,8 @@ export function PoDepsBoard({ config, st, op, readOnly }: BoardProps) {
     <div className="ex-board po">
       <section className="po-panel">
         <div className="po-legend left">
-          {(["f", "d", "m"] as const).map((k) => (<span key={k} style={{ ["--c" as string]: DEP_FILL[k] }}><i className="card" />{DEP_WORD[k]}</span>))}
-          <span style={{ ["--c" as string]: "#e5231b" }}><i />String: one waits on the other</span>
+          {(["f", "d", "m"] as const).map((k) => (<span key={k}><i className="card" style={{ background: DEP_FILL[k] }} />{DEP_WORD[k]}</span>))}
+          <span><i style={{ background: "#e5231b" }} />String: one waits on the other</span>
           <span style={{ ["--c" as string]: "#d98a1c" }}><i className="ring" />Flagged as an issue</span>
         </div>
         <div className="po-chartwrap">
