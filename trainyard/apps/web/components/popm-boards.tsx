@@ -348,22 +348,24 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
     );
   }
   if (look === "pivot") {
-    // Four pivots as arrows around the customer; pick the one that would help, and the columns below say why and what comes next.
-    const pivots = (config.pivots as string[] | undefined) ?? [], sel = typeof st.pivot === "number" ? st.pivot : -1, ang = [200, 250, 290, 340];
+    // Four pivots as arrows fanning out from the customer; pick the one that would help.
+    const pivots = (config.pivots as string[] | undefined) ?? [], sel = typeof st.pivot === "number" ? st.pivot : -1, ang = [-168, -116, -64, -12];
+    const pick = (i: number) => !readOnly && op({ key: "pivot", op: "set", value: sel === i ? null : i });
     return (
-      <div className="po-vis two">
-        <svg viewBox="0 0 320 210" className="po-venn" role="img" aria-label={sel >= 0 ? `Chosen pivot: ${pivots[sel]}` : "No pivot chosen"}>
+      <div className="po-vis two" style={{ gridTemplateColumns: "minmax(260px, 420px) minmax(0, 1fr)" }}>
+        <svg viewBox="0 0 420 250" className="po-pivot" role="group" aria-label="Pivots">
           {pivots.slice(0, 4).map((n, i) => {
-            const a = (ang[i]! * Math.PI) / 180, x = 160 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 92, on = sel === i;
+            const on = sel === i, tone = on ? "#d98a1c" : i === 1 || i === 2 ? "#a9c43c" : "#3f7c80", words = n.split(" ");
+            const r = (ang[i]! * Math.PI) / 180, lx = 210 + Math.cos(r) * 165, ly = 196 + Math.sin(r) * 150;
             return (
-              <g key={n} className="po-depcard" role="button" tabIndex={readOnly ? -1 : 0} aria-pressed={on} onClick={() => !readOnly && op({ key: "pivot", op: "set", value: on ? null : i })} onKeyDown={(e) => e.key === "Enter" && !readOnly && op({ key: "pivot", op: "set", value: on ? null : i })}>
-                <line className="po-node" x1={160 + Math.cos(a) * 38} y1={150 + Math.sin(a) * 38} x2={x} y2={y} stroke={on ? "#d98a1c" : i === 1 || i === 2 ? "#a9c43c" : "#3f7c80"} strokeWidth={on ? 22 : 14} strokeLinecap="round" />
-                <text x={160 + Math.cos(a) * 132} y={150 + Math.sin(a) * 118} textAnchor="middle" className="po-deps-h" style={{ fontWeight: on ? 900 : 700 }}>{n}</text>
+              <g key={n} className={`po-arrow-g${on ? " on" : ""}`} role="button" tabIndex={readOnly ? -1 : 0} aria-pressed={on} aria-label={n} onClick={() => pick(i)} onKeyDown={(e) => e.key === "Enter" && pick(i)}>
+                <g transform={`translate(210 196) rotate(${ang[i]})`}><path d="M 46 -11 L 96 -11 L 96 -24 L 128 0 L 96 24 L 96 11 L 46 11 Z" fill={tone} stroke="#0d1815" strokeWidth={on ? 2.5 : 0} /></g>
+                {words.map((w, wi) => (<text key={w} x={lx} y={ly + wi * 15 - (words.length - 1) * 7} textAnchor="middle" className="po-deps-h" style={{ fontSize: 13, fontWeight: on ? 900 : 700 }}>{w}</text>))}
               </g>
             );
           })}
-          <circle cx="160" cy="150" r="36" fill="#fff" stroke="#a9c43c" strokeWidth="6" />
-          <circle cx="160" cy="140" r="11" fill="#777" /><path d="M140 172 q20 -26 40 0 z" fill="#06384a" />
+          <circle cx="210" cy="196" r="42" fill="#fff" stroke="#a9c43c" strokeWidth="6" />
+          <circle cx="210" cy="184" r="12" fill="#777" /><path d="M186 222 q24 -34 48 0 z" fill="#06384a" />
         </svg>
         <div className="po-verdict">
           <span className="ex-mono">The pivot that could improve this MVP</span>

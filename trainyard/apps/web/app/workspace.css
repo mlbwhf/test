@@ -1425,3 +1425,7 @@ input.cv2-voice:focus-visible { outline: 3px solid #f5b83d; border-color: transp
 .mx-chip { background: var(--c); color: #fff; border-radius: 99px; padding: 4px 12px; font-size: 13px; justify-self: start; animation: po-pop 0.3s both; }
 .mx-pick select { font: inherit; font-size: 13px; padding: 5px 6px; border: 1.5px solid #0d181855; border-radius: 8px; background: #fff; max-width: 100%; }
 @media (max-width: 900px) { .mx-row { grid-template-columns: 30px minmax(0, 1fr); } .mx-pick, .mx-why { grid-column: 2; } }
+.po-pivot { overflow: visible; }
+.po-arrow-g { cursor: pointer; outline: none; }
+.po-arrow-g path { transition: fill 0.3s, transform 0.3s; }
+.po-arrow-g:hover path, .po-arrow-g:focus-visible path, .po-arrow-g.on path { transform: translateX(8px); }
