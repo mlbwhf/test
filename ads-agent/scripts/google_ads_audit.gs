@@ -72,8 +72,20 @@ var QUERIES = [
    "WHERE segments.date BETWEEN '2025-09-01' AND '2026-11-30'"]
 ];
 
+function openSheet() {
+  // The agent Sheet may not be shared with the Google account running this script.
+  // Then make a new sheet owned by that account, and print its link in the Logs.
+  try { return SpreadsheetApp.openById(SHEET_ID); }
+  catch (e) {
+    var ss = SpreadsheetApp.create('Agile Agilist - Ads Audit ' + new Date().toISOString().slice(0, 10));
+    Logger.log('Could not open the agent Sheet (' + e + '). Wrote the audit here instead: ' + ss.getUrl());
+    return ss;
+  }
+}
+
 function main() {
-  var ss = SpreadsheetApp.openById(SHEET_ID);
+  var ss = openSheet();
+  Logger.log('Audit sheet: ' + ss.getUrl());
   var log = [['tab', 'rows', 'error']];
   for (var i = 0; i < QUERIES.length; i++) {
     var tab = QUERIES[i][0], query = QUERIES[i][1];
