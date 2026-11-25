@@ -2815,7 +2815,7 @@ function aa_reg_upcoming( $slug, $course ) {
 	foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 		if ( $c['end'] < $today ) { continue; }          // finished classes are not offers
 		if ( aa_reg_closed_for_sale( $c['start'] ) ) { continue; }   // started, or past 3 PM on its first day
-		if ( ! empty( $c['lang'] ) && $c['lang'] !== aa_reg_lang() ) { continue; }   // taught in another language only
+		if ( ! empty( $c['lang'] ) && ! in_array( aa_reg_lang(), (array) $c['lang'], true ) ) { continue; }   // not offered in this language
 		if ( aa_reg_seats_left( $course, $c ) < 1 ) { continue; }   // sold out
 		$out[] = $c;
 	}
@@ -2853,7 +2853,7 @@ function aa_reg_months( $cohorts ) {
  * English cadence never produces. aa_reg_extra_dates() cannot hold them -- a
  * date there is offered in every language and runs 9 to 5.
  *
- * Each row is one class: the language it is taught in, its first and last
+ * Each row is one class: the language(s) whose pages offer it, its first and last
  * day, and its hours as they should read on the card.
  *
  * THE CLASS EXISTS IN EVERY LANGUAGE'S SCHEDULE AND IS OFFERED IN ONE.
@@ -2867,11 +2867,11 @@ function aa_reg_lang_cohorts() {
 	return apply_filters( 'aa_reg_lang_cohorts', array(
 		'popm' => array(
 			/* Given as "November 27 and December 28", 8am to 12m: read as 27-28 Nov. */
-			array( 'lang' => 'es', 'start' => '2026-11-27', 'end' => '2026-11-28', 'hours' => '8 AM–12 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-11-27', 'end' => '2026-11-28', 'hours' => '8 AM–12 PM ET' ),
 		),
 		'scrum-master' => array(
-			array( 'lang' => 'es', 'start' => '2026-12-04', 'end' => '2026-12-05', 'hours' => '8 AM–12 PM ET' ),
-			array( 'lang' => 'es', 'start' => '2026-12-25', 'end' => '2026-12-26', 'hours' => '4–8 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-04', 'end' => '2026-12-05', 'hours' => '8 AM–12 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-25', 'end' => '2026-12-26', 'hours' => '4–8 PM ET' ),
 		),
 	) );
 }
@@ -2885,14 +2885,15 @@ function aa_reg_lang_cohorts_add( $slug, $course, $out ) {
 		if ( empty( $row['lang'] ) || empty( $row['start'] ) || empty( $row['end'] ) ) { continue; }
 		if ( $row['start'] < $today ) { continue; }
 		$hours = ! empty( $row['hours'] ) ? (string) $row['hours'] : aa_reg_slot_hours( 'morning' );
+		$langs = array_values( (array) $row['lang'] );   // one language, or several
 		$c          = aa_reg_make( $slug, $course, $row['start'], 'morning', 'hand-set' );
-		$c['id']    = $slug . '-' . $row['lang'] . '-' . $row['start'];
+		$c['id']    = $slug . '-' . implode( '-', $langs ) . '-' . $row['start'];
 		$c['start'] = $row['start'];
 		$c['end']   = $row['end'];
-		$c['lang']  = $row['lang'];
+		$c['lang']  = $langs;
 		$c['kind']  = 'weekday';
 		$c['hours'] = $hours;
-		$c['batch'] = ( isset( $names[ $row['lang'] ] ) ? $names[ $row['lang'] ] . ' · ' : '' ) . $hours;
+		$c['batch'] = ( count( $langs ) === 1 && isset( $names[ $langs[0] ] ) ? $names[ $langs[0] ] . ' · ' : '' ) . $hours;
 		$out[]      = $c;
 	}
 	return $out;
