@@ -253,7 +253,7 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
           <text x="100" y="116" textAnchor="middle" className="po-axis">notes</text>
         </svg>
         <div className="po-verdict">
-          <span className="ex-mono">Which sync events the class is leaning on</span>
+          <span className="ex-mono">{str(config.wheelLabel) || "Which sync events the class is leaning on"}</span>
           {kinds.map((k, i) => (
             <div key={k} className="po-bar-row" style={{ gridTemplateColumns: "110px minmax(0, 1fr) 28px" }}>
               <b style={{ fontSize: 13.5, gridColumn: "auto" }}>{k}</b>
@@ -261,7 +261,7 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
               <small>{per[i]}</small>
             </div>
           ))}
-          <p className="po-note">{total && per.some((x) => !x) ? `Not used yet: ${kinds.filter((_, i) => !per[i]).join(", ")}.` : "Tag each note with the sync event it belongs to."}</p>
+          <p className="po-note">{total && per.some((x) => !x) ? `Not used yet: ${kinds.filter((_, i) => !per[i]).join(", ")}.` : str(config.wheelNote) || "Tag each note with the sync event it belongs to."}</p>
         </div>
       </div>
     );
@@ -301,6 +301,97 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
       </div>
     );
   }
+  if (look === "diamond") {
+    // Four corners of a diamond, one per column; a corner fills as the group adds to it.
+    const pts = [[150, 26], [274, 150], [150, 274], [26, 150]], word = lenses.map(([n]) => n[0]).join("");
+    return (
+      <div className="po-vis two">
+        <svg viewBox="0 0 300 300" className="po-venn" role="img" aria-label={lenses.map(([n], i) => `${n}: ${count(i)} notes`).join(", ")}>
+          {pts.map((p, i) => { const q = pts[(i + 1) % 4]!; return <line key={i} x1={p[0]} y1={p[1]} x2={q[0]} y2={q[1]} stroke={WHEEL[i % WHEEL.length]} strokeWidth="7" strokeLinecap="round" opacity={count(i) && count((i + 1) % 4) ? 1 : 0.25} className="po-node" />; })}
+          {lenses.slice(0, 4).map(([n], i) => (
+            <g key={n}>
+              <circle className="po-node" cx={pts[i]![0]} cy={pts[i]![1]} r={20 + Math.min(count(i), 5) * 2} fill={count(i) ? WHEEL[i % WHEEL.length] : "#fff"} stroke={WHEEL[i % WHEEL.length]} strokeWidth="4" />
+              <text x={pts[i]![0]} y={pts[i]![1]! + 7} textAnchor="middle" className="po-node-n" style={{ fill: count(i) ? "#fff" : "#0d1815" }}>{n[0]}</text>
+            </g>
+          ))}
+          <text x="150" y="162" textAnchor="middle" className="po-pie-n">{word}</text>
+        </svg>
+        <div className="po-verdict">
+          <span className="ex-mono">{str(config.visLabel)}</span>
+          <p className="po-note">{lenses.filter((_, i) => !count(i)).length ? `Not covered yet: ${lenses.filter((_, i) => !count(i)).map(([n]) => n).join(", ")}. A side of the diamond lights up when both of its corners have an idea.` : "All four corners have an idea: the diamond is complete."}</p>
+        </div>
+      </div>
+    );
+  }
+  if (look === "pair") {
+    // Two columns weighed against each other, e.g. what we do today against what we are missing.
+    const a = count(0), b = count(1), t = a + b, share = t ? (a / t) * 100 : 50;
+    return (
+      <div className="po-vis">
+        <div className="po-spectrum" role="img" aria-label={`${lenses[0]?.[0]}: ${a}, ${lenses[1]?.[0]}: ${b}`}>
+          <b>{lenses[0]?.[0]} · {a}</b>
+          <div style={{ background: "#ffe9b8" }}><i style={{ width: `${share}%`, background: "#cfe8d4" }} /><span style={{ left: `${share}%` }} /></div>
+          <b>{lenses[1]?.[0]} · {b}</b>
+        </div>
+        <p className="po-note">{str(config.visLabel)}</p>
+      </div>
+    );
+  }
+  if (look === "days") {
+    // Thirty days ahead; each commitment in the first column lights the next few days.
+    const n = Math.min(30, count(0) * 5);
+    return (
+      <div className="po-vis">
+        <div className="po-days" role="img" aria-label={`${count(0)} practices to start in the next 30 days`}>{Array.from({ length: 30 }, (_, i) => (<i key={i} className={i < n ? "on" : ""} style={{ transitionDelay: `${i * 18}ms` }} />))}</div>
+        <p className="po-note"><b>{count(0)}</b> {count(0) === 1 ? "practice" : "practices"} to start in the next 30 days. {str(config.visLabel)}</p>
+      </div>
+    );
+  }
+  if (look === "triangle") {
+    // Three measurement domains as a triangle; each corner grows with the notes tagged to it, split into used well and used poorly.
+    const pts = [[150, 34], [44, 206], [256, 206]];
+    return (
+      <div className="po-vis two">
+        <svg viewBox="0 0 300 250" className="po-venn" role="img" aria-label={kinds.map((k, i) => `${k}: ${notes.filter((n) => num(n.kind) === i).length} notes`).join(", ")}>
+          <polygon points={pts.map((p) => p.join(",")).join(" ")} fill="#0d181808" stroke="#0d1815" strokeWidth="2.5" strokeLinejoin="round" />
+          {kinds.slice(0, 3).map((k, i) => {
+            const mine = notes.filter((n) => num(n.kind) === i), good = mine.filter((n) => num(n.lens) === 0).length, r = 22 + Math.min(mine.length, 6) * 3, C = 2 * Math.PI * r;
+            return (
+              <g key={k}>
+                <circle className="po-node" cx={pts[i]![0]} cy={pts[i]![1]} r={r} fill="#fff" stroke="#c2412d" strokeWidth="7" />
+                <circle className="po-node" cx={pts[i]![0]} cy={pts[i]![1]} r={r} fill="none" stroke="#2e8b57" strokeWidth="7" strokeDasharray={`${mine.length ? (good / mine.length) * C : C} ${C}`} transform={`rotate(-90 ${pts[i]![0]} ${pts[i]![1]})`} opacity={mine.length ? 1 : 0.15} />
+                <text x={pts[i]![0]} y={pts[i]![1]! + 6} textAnchor="middle" className="po-node-n">{mine.length}</text>
+                <text x={pts[i]![0]} y={pts[i]![1]! + (i === 0 ? -r - 8 : r + 20)} textAnchor="middle" className="po-deps-h">{k}</text>
+              </g>
+            );
+          })}
+        </svg>
+        <div className="po-verdict">
+          <span className="ex-mono">The three measurement domains</span>
+          <p className="po-note">Tag each note with its domain. A corner grows with what the class has seen there; the green part of its ring is where metrics were used well, the red where they were used poorly.</p>
+          <p className="po-note">{kinds.slice(0, 3).filter((_, i) => !notes.some((n) => num(n.kind) === i)).length ? `Nothing yet on: ${kinds.slice(0, 3).filter((_, i) => !notes.some((n) => num(n.kind) === i)).join(", ")}.` : "All three domains have stories."}</p>
+        </div>
+      </div>
+    );
+  }
+  if (look === "loop") {
+    // Continuous improvement as a loop of three arcs, one per thing that can change; an arc closes when the group has a tip for it.
+    const R = 62, C = 2 * Math.PI * R, arc = C / lenses.length, done = lenses.filter((_, i) => count(i)).length;
+    return (
+      <div className="po-vis two">
+        <svg viewBox="0 0 200 200" className={`po-wheel${done === lenses.length ? " spin" : ""}`} role="img" aria-label={`${done} of ${lenses.length} parts of the loop have a tip`}>
+          <circle cx="100" cy="100" r={R} fill="none" stroke="#0d181818" strokeWidth="22" />
+          {lenses.map(([n], i) => (<circle key={n} className="po-slice" cx="100" cy="100" r={R} fill="none" stroke={WHEEL[i % WHEEL.length]} strokeWidth="22" strokeLinecap="round" strokeDasharray={`${count(i) ? arc - 16 : 0} ${C}`} strokeDashoffset={-(i * arc) - 8} transform="rotate(-90 100 100)" />))}
+          <text x="100" y="98" textAnchor="middle" className="po-pie-n">{done}/{lenses.length}</text>
+          <text x="100" y="116" textAnchor="middle" className="po-axis">in the loop</text>
+        </svg>
+        <div className="po-verdict">
+          <span className="ex-mono">Fuelling continuous improvement</span>
+          <p className="po-note">{done === lenses.length ? "The loop is closed: the group has a change to try for each of the three." : `Still open: ${lenses.filter((_, i) => !count(i)).map(([n]) => n.toLowerCase()).join(", ")}. Each arc closes when the group names what it would change there.`}</p>
+        </div>
+      </div>
+    );
+  }
   if (look === "dial") {
     const d = config.dial as { label: string; low: string; high: string } | undefined, v = typeof st.dial === "number" ? st.dial : 50, ang = -90 + (v / 100) * 180;
     if (!d) return null;
@@ -332,6 +423,12 @@ export function PoAiBoard({ config, st, op, readOnly }: BoardProps) {
   return (
     <div className="ex-board po">
       <div className="ex-intro">{str(config.prompt)}</div>
+      {config.heading ? (
+        <label className="po-heading">
+          <span className="ex-mono">{(config.heading as { label: string }).label}</span>
+          <Field k="heading" st={st} op={op} readOnly={readOnly} rows={1} placeholder={(config.heading as { placeholder?: string }).placeholder ?? ""} label={(config.heading as { label: string }).label} />
+        </label>
+      ) : null}
       {Array.isArray(config.examples) ? (
         <div className="ex-examples">
           <span className="ex-mono">Examples</span>
@@ -350,7 +447,7 @@ export function PoAiBoard({ config, st, op, readOnly }: BoardProps) {
               </header>
               <p className="po-q">{question}</p>
               {mine.map((n) => (
-                <div key={n.id} className={`po-sticky k${num(n.kind)}${n.star ? " star" : ""}`}>
+                <div key={n.id} className={`po-sticky k${Array.isArray(config.tones) ? 0 : num(n.kind)}${n.star ? " star" : ""}`} style={Array.isArray(config.tones) ? { background: (config.tones as string[])[li], borderLeftColor: li ? "#c2412d" : "#2e8b57" } : undefined}>
                   {kinds.length ? <small>{kinds[num(n.kind)]}</small> : null}
                   <span>{str(n.text)}</span>
                   {!readOnly ? (
@@ -413,15 +510,15 @@ export function PoMessageBoard({ config, st, op, readOnly }: BoardProps) {
   return (
     <div className="ex-board po">
       <div className="po-chat">
-        <span className="po-avatar" aria-hidden>SD</span>
+        <span className="po-avatar" aria-hidden>{str(config.avatar) || "SD"}</span>
         <div>
-          <span className="ex-mono">Message from the Senior Developer</span>
+          <span className="ex-mono">{str(config.from) || "Message from the Senior Developer"}</span>
           <p>{str(config.scenario)}</p>
         </div>
       </div>
       <div className="po-seg" role="tablist" aria-label="Round">
-        <button role="tab" aria-selected={round === "r1"} aria-pressed={round === "r1"} onClick={() => setRound("r1")}>Step 2 · First prompt</button>
-        <button role="tab" aria-selected={round === "r2"} aria-pressed={round === "r2"} onClick={() => (round === "r2" || readOnly ? setRound("r2") : startRefine())}>Step 3 · Refine and compare</button>
+        <button role="tab" aria-selected={round === "r1"} aria-pressed={round === "r1"} onClick={() => setRound("r1")}>{(config.tabs as string[] | undefined)?.[0] ?? "Step 2 · First prompt"}</button>
+        <button role="tab" aria-selected={round === "r2"} aria-pressed={round === "r2"} onClick={() => (round === "r2" || readOnly ? setRound("r2") : startRefine())}>{(config.tabs as string[] | undefined)?.[1] ?? "Step 3 · Refine and compare"}</button>
       </div>
       <div className="po-two wide" key={round}>
         <section className="po-panel">
@@ -1209,7 +1306,7 @@ export function PoChecklistBoard({ config, st, op, readOnly }: BoardProps) {
               <b>{n}/{steps.length}</b>
             </span>
             <div>
-              <b>{n === steps.length ? "All done. Welcome to the community." : "Tick each step as your group completes it"}</b>
+              <b>{n === steps.length ? str(config.doneLabel) || "All done. Welcome to the community." : "Tick each step as your group completes it"}</b>
               {str(config.url) ? <p className="po-note"><a href={str(config.url)} target="_blank" rel="noopener noreferrer">{str(config.url)} ↗</a></p> : null}
             </div>
           </header>
@@ -1228,15 +1325,265 @@ export function PoChecklistBoard({ config, st, op, readOnly }: BoardProps) {
               {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: "notes", op: "remove", id: x.id })}>×</button> : null}
             </div>
           ))}
-          {!readOnly ? <AddLine label="What we found" placeholder="+ a post, event or tool worth sharing, Enter" onAdd={(text) => op({ key: "notes", op: "push", value: { text } })} /> : null}
+          {!readOnly ? <AddLine label="What we found" placeholder={str(config.add) || "+ a post, event or tool worth sharing, Enter"} onAdd={(text) => op({ key: "notes", op: "push", value: { text } })} /> : null}
         </section>
       </div>
     </div>
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard };
+// ---- Advanced SPC · lesson 1 --------------------------------------------------------------------
+
+// Past, Present, Future: a road with three stops. The class adds what it shares at each stop; the
+// traveller moves to the stop in focus and the road behind it fills in.
+export function AsTimelineBoard({ config, st, op, readOnly }: BoardProps) {
+  const eras = (config.eras as [string, string, string[]][] | undefined) ?? [];
+  const [at, setAt] = useState(0);
+  const notes = list(st, "notes");
+  const count = (e: number) => notes.filter((n) => num(n.era) === e).length;
+  const tones = ["#cde0f2", "#ffd37a", "#cfe8d4"], edges = ["#2f6fbd", "#d98a1c", "#2e8b57"];
+  const era = eras[at];
+  return (
+    <div className="ex-board po">
+      <div className="as-road" role="tablist" aria-label="Past, present, future" style={{ ["--at" as string]: at, ["--n" as string]: eras.length }}>
+        <i className="as-road-line" aria-hidden />
+        <i className="as-road-fill" aria-hidden />
+        <i className="as-walker" aria-hidden>●</i>
+        {eras.map(([name], i) => (
+          <button key={name} role="tab" aria-selected={i === at} className={`as-stop${i === at ? " on" : ""}${i < at ? " past" : ""}`} style={{ ["--c" as string]: edges[i % 3] }} onClick={() => setAt(i)}>
+            <span className="as-stop-dot">{count(i)}</span>
+            <b>{name}</b>
+          </button>
+        ))}
+      </div>
+      {era ? (
+        <section className="po-panel as-era" key={at} style={{ borderTop: `8px solid ${edges[at % 3]}` }}>
+          <p className="as-q">{era[1]}</p>
+          <div className="po-cols" style={{ ["--n" as string]: era[2].length }}>
+            {era[2].map((lane, li) => (
+              <div key={lane} className="po-col" style={{ animationDelay: `${li * 110}ms` }}>
+                <header><span className="po-n" style={{ background: edges[at % 3] }}>{li === 0 ? "✦" : "↗"}</span><b>{lane}</b></header>
+                {notes.filter((n) => num(n.era) === at && num(n.lane) === li).map((n) => (
+                  <div key={n.id} className="po-sticky" style={{ background: tones[at % 3], borderLeftColor: edges[at % 3] }}>
+                    {str(n.who) ? <small>{str(n.who)}</small> : null}
+                    <span>{str(n.text)}</span>
+                    {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: "notes", op: "remove", id: n.id })}>×</button> : null}
+                  </div>
+                ))}
+                {!readOnly ? <AddLine label={lane} placeholder="+ share it, Enter" onAdd={(text) => op({ key: "notes", op: "push", value: { era: at, lane: li, text } })} /> : null}
+              </div>
+            ))}
+          </div>
+          <div className="po-acts-row">
+            <button className="po-btn plain" disabled={at === 0} onClick={() => setAt(at - 1)}>← {eras[at - 1]?.[0] ?? "Back"}</button>
+            <button className="po-btn" disabled={at === eras.length - 1} onClick={() => setAt(at + 1)}>{eras[at + 1]?.[0] ?? "Done"} →</button>
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
+const DOMAIN_TONE: Record<string, string> = { Outcomes: "#2f6fbd", Flow: "#2e8b57", Competency: "#8c6bc8" };
+
+/** Three bars, one per measurement domain, and whether the set leans on one of them. */
+function DomainBalance({ domains, picked }: { domains: string[]; picked: string[] }) {
+  const per = domains.map((d) => picked.filter((x) => x === d).length), total = per.reduce((a, b) => a + b, 0), max = Math.max(...per, 1);
+  const missing = domains.filter((_, i) => !per[i]);
+  return (
+    <div className="po-vis two as-balance">
+      <div className="as-scale" role="img" aria-label={domains.map((d, i) => `${d}: ${per[i]}`).join(", ")}>
+        {domains.map((d, i) => (
+          <div key={d} className="as-col">
+            <b>{per[i]}</b>
+            <i style={{ height: `${10 + (per[i]! / max) * 90}%`, background: DOMAIN_TONE[d] ?? "#0d1815", opacity: per[i] ? 1 : 0.25 }} />
+            <span>{d}</span>
+          </div>
+        ))}
+      </div>
+      <div className="po-verdict">
+        <span className="ex-mono">Is the set balanced?</span>
+        <b className="as-verdict">{!total ? "Nothing to weigh yet" : missing.length ? `Leaning: no metric for ${missing.join(" or ")}` : Math.max(...per) - Math.min(...per) > 1 ? "All three domains, unevenly" : "Balanced across the three domains"}</b>
+        <p className="po-note">A balanced set draws on Outcomes, Flow and Competency, and pairs each metric with a complementary one so that improving the first cannot quietly harm something else.</p>
+      </div>
+    </div>
+  );
+}
+
+function CellText({ row, k, hint, op, readOnly, listKey }: { row: Row; k: string; hint: string; op: BoardProps["op"]; readOnly: boolean; listKey: string }) {
+  const saved = str(row[k]);
+  const [v, setV] = useState(saved);
+  useEffect(() => setV(saved), [saved]);
+  return <textarea className="po-text as-cell" rows={2} value={v} placeholder={hint} aria-label={hint} disabled={readOnly} onChange={(e) => setV(e.target.value)} onBlur={() => v !== saved && op({ key: listKey, op: "update", id: row.id, value: { [k]: v.trim() } })} />;
+}
+
+// Practice identifying a balanced set of metrics: the slide's table, a row per decision, with the
+// balance across the three measurement domains drawn above it.
+export function AsBalanceBoard({ config, st, op, readOnly }: BoardProps) {
+  const domains = (config.domains as string[] | undefined) ?? [], levels = (config.levels as string[] | undefined) ?? [];
+  const ex = config.example as Record<string, string> | undefined;
+  const rows = list(st, "rows");
+  const byLevel = (l: string) => rows.filter((r) => str(r.level) === l);
+  return (
+    <div className="ex-board po">
+      <DomainBalance domains={domains} picked={rows.map((r) => str(r.domain)).filter(Boolean)} />
+      <div className="as-tablewrap">
+        <div className="as-table" role="table" aria-label="Balanced set of metrics">
+          <div className="as-tr head" role="row">
+            {["Level", "Decision / Question", "Measurement domain", "Metric", "Complementary metric"].map((h, i) => (<span key={h} role="columnheader" className={i > 1 ? "teal" : ""}>{h}</span>))}
+          </div>
+          {ex ? (
+            <div className="as-tr example" role="row">
+              <b>{ex.level}</b><span>{ex.question}</span><span>{ex.domain}</span><span>{ex.metric}</span><span>{ex.complement}</span>
+              <em>Example</em>
+            </div>
+          ) : null}
+          {levels.map((l) => (
+            <div key={l} className="as-level">
+              {byLevel(l).map((r) => (
+                <div key={r.id} className="as-tr" role="row">
+                  <b>{l}</b>
+                  <CellText row={r} k="question" hint="The decision or question" op={op} readOnly={readOnly} listKey="rows" />
+                  <div className="as-domains" role="group" aria-label="Measurement domain">
+                    {domains.map((d) => (<button key={d} disabled={readOnly} aria-pressed={str(r.domain) === d} style={{ ["--c" as string]: DOMAIN_TONE[d] }} onClick={() => op({ key: "rows", op: "update", id: r.id, value: { domain: str(r.domain) === d ? "" : d } })}>{d}</button>))}
+                  </div>
+                  <CellText row={r} k="metric" hint="One metric that informs it" op={op} readOnly={readOnly} listKey="rows" />
+                  <CellText row={r} k="complement" hint="Its complementary metric, and why" op={op} readOnly={readOnly} listKey="rows" />
+                  {!readOnly ? <button className="ex-x" aria-label="Remove this row" onClick={() => op({ key: "rows", op: "remove", id: r.id })}>×</button> : null}
+                </div>
+              ))}
+              {!readOnly ? <button className="as-addrow" onClick={() => op({ key: "rows", op: "push", value: { level: l } })}><b>{l}</b>+ a decision or question at this level</button> : byLevel(l).length ? null : <div className="as-tr" role="row"><b>{l}</b><span className="po-note">Nothing yet.</span></div>}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// Analyze this set of metrics at CARS: the case in four cards, the set of metrics as given, and
+// for each metric whether the group keeps or changes it, with the blind spots it notices.
+export function AsCarsBoard({ config, st, op, readOnly }: BoardProps) {
+  const cards = (config.scenario as [string, string, string[]][] | undefined) ?? [];
+  const rows = (config.rows as string[][] | undefined) ?? [], domains = (config.domains as string[] | undefined) ?? [];
+  const [card, setCard] = useState(0);
+  const verdict = (st.verdict && typeof st.verdict === "object" ? st.verdict : {}) as Record<string, string>;
+  const keep = rows.filter((_, i) => verdict[i] === "keep").length, change = rows.filter((_, i) => verdict[i] === "change").length;
+  return (
+    <div className="ex-board po">
+      <section className="po-panel">
+        <div className="po-seg" role="tablist" aria-label="CARS scenario">
+          {cards.map(([t], i) => (<button key={t} role="tab" aria-selected={i === card} aria-pressed={i === card} onClick={() => setCard(i)}>{t}</button>))}
+        </div>
+        {cards[card] ? (
+          <div className="as-case" key={card}>
+            <p>{cards[card][1]}</p>
+            <ul>{cards[card][2].map((x) => { const [h, ...rest] = x.split(": "); return rest.length ? <li key={x}><b>{h}:</b> {rest.join(": ")}</li> : <li key={x}>{x}</li>; })}</ul>
+          </div>
+        ) : null}
+      </section>
+      <DomainBalance domains={domains} picked={rows.map((r) => r[2]!)} />
+      <div className="as-tablewrap">
+        <div className="as-table cars" role="table" aria-label="The set of metrics at CARS">
+          <div className="as-tr head" role="row">
+            {["Level", "Decision / Question", "Measurement domain", "Metric", "Complementary metric", "Our call"].map((h, i) => (<span key={h} role="columnheader" className={i > 1 ? "teal" : ""}>{h}</span>))}
+          </div>
+          {rows.map((r, i) => (
+            <div key={i} className={`as-tr v-${verdict[i] ?? "none"}`} role="row">
+              <b>{r[0]}</b><span>{r[1]}</span><span><i className="po-dot" style={{ background: DOMAIN_TONE[r[2]!], margin: "0 6px 0 0" }} />{r[2]}</span><span>{r[3]}</span><span>{r[4]}</span>
+              <div className="as-call">
+                <div className="po-seg small" role="group" aria-label={`Our call on ${r[3]}`}>
+                  {(["keep", "change"] as const).map((v) => (<button key={v} disabled={readOnly} aria-pressed={verdict[i] === v} onClick={() => op({ key: "verdict", op: "set", value: { ...verdict, [i]: verdict[i] === v ? "" : v } })}>{v === "keep" ? "Keep" : "Change"}</button>))}
+                </div>
+                {verdict[i] === "change" ? <Field k={`to:${i}`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="What we would use instead" label={`Change for ${r[3]}`} /> : null}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="po-two wide">
+        <section className="po-panel">
+          <span className="ex-mono">Our call so far</span>
+          <p className="po-big">{keep} kept · {change} changed · {rows.length - keep - change} to decide</p>
+        </section>
+        <section className="po-panel">
+          <span className="ex-mono">What potential blind spots do you notice?</span>
+          {list(st, "blind").map((n) => (
+            <div key={n.id} className="po-sticky" style={{ background: "#f9d9d2", borderLeftColor: "#c2412d" }}>
+              <span>{str(n.text)}</span>
+              {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: "blind", op: "remove", id: n.id })}>×</button> : null}
+            </div>
+          ))}
+          {!readOnly ? <AddLine label="Blind spot" placeholder="+ a blind spot, Enter" onAdd={(text) => op({ key: "blind", op: "push", value: { text } })} /> : null}
+        </section>
+      </div>
+    </div>
+  );
+}
+
+// Preparing for hard conversations: the case (context, the three leaders, what happened), the two
+// questions to prepare, the LLM steps, and the plan the group documents.
+export function AsHardBoard({ config, st, op, readOnly }: BoardProps) {
+  const cards = (config.scenario as [string, string[]][] | undefined) ?? [], personas = config.personas as { names: string[]; rows: string[][] } | undefined;
+  const qs = (config.questions as string[] | undefined) ?? [], steps = (config.steps as string[] | undefined) ?? [];
+  const tabs = [cards[0]?.[0], "Leader personas", cards[1]?.[0]].filter(Boolean) as string[];
+  const [tab, setTab] = useState(0);
+  const [who, setWho] = useState(0);
+  const done = (st.done && typeof st.done === "object" ? st.done : {}) as Record<string, boolean>;
+  const ready = [qs.every((_, i) => list(st, `q:${i}`).length), steps.every((_, i) => done[i]), !!str(st.plan)];
+  return (
+    <div className="ex-board po">
+      <section className="po-panel">
+        <div className="po-seg" role="tablist" aria-label="Hard conversations scenario">
+          {tabs.map((t, i) => (<button key={t} role="tab" aria-selected={i === tab} aria-pressed={i === tab} onClick={() => setTab(i)}>{t}</button>))}
+        </div>
+        {tab === 1 && personas ? (
+          <div className="as-personas" key="p">
+            <div className="po-chips">{personas.names.map((n, i) => (<button key={n} aria-pressed={who === i} onClick={() => setWho(i)}>{n}</button>))}</div>
+            <dl>
+              {personas.rows.map((r) => (<div key={r[0]}><dt>{r[0]}</dt><dd>{r[who + 1]}</dd></div>))}
+              <div><dt>What info are we missing?</dt><dd><Field k={`missing:${who}`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="Discuss as a team" label={`What we are missing about ${personas.names[who]}`} /></dd></div>
+            </dl>
+          </div>
+        ) : (
+          <div className="as-case" key={tab}>{(cards[tab === 0 ? 0 : 1]?.[1] ?? []).map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}</div>
+        )}
+      </section>
+      <ol className="po-steps" aria-label="Progress">{["Consider", "Experiment with an LLM", "Document the plan"].map((x, i) => (<li key={x} className={ready[i] ? "done" : ready.slice(0, i).every(Boolean) ? "on" : ""}>{x}</li>))}</ol>
+      <div className="po-cols" style={{ ["--n" as string]: qs.length }}>
+        {qs.map((q, qi) => (
+          <section key={q} className="po-col">
+            <header><span className="po-n">{qi + 1}</span><b>{q}</b></header>
+            {list(st, `q:${qi}`).map((n) => (
+              <div key={n.id} className="po-sticky" style={{ background: qi ? "#cde0f2" : "#cfe8d4", borderLeftColor: qi ? "#2f6fbd" : "#2e8b57" }}>
+                <span>{str(n.text)}</span>
+                {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `q:${qi}`, op: "remove", id: n.id })}>×</button> : null}
+              </div>
+            ))}
+            {!readOnly ? <AddLine label={q} placeholder="+ add, Enter" onAdd={(text) => op({ key: `q:${qi}`, op: "push", value: { text } })} /> : null}
+          </section>
+        ))}
+      </div>
+      <div className="po-two wide">
+        <section className="po-panel">
+          <span className="ex-mono">Experiment with an LLM to help you</span>
+          {steps.map((x, i) => (
+            <button key={x} className={`po-checkrow${done[i] ? " on" : ""}`} disabled={readOnly} aria-pressed={!!done[i]} onClick={() => op({ key: "done", op: "set", value: { ...done, [i]: !done[i] } })}>
+              <i aria-hidden>{done[i] ? "✓" : i + 1}</i><span>{x}</span>
+            </button>
+          ))}
+        </section>
+        <section className="po-panel">
+          <span className="ex-mono">Our plan for the conversation, to share with the class</span>
+          <Field k="plan" st={st} op={op} readOnly={readOnly} rows={9} placeholder="How we open, what we ask, the messages that need careful phrasing, and what we want to leave with." label="Our plan for the conversation" />
+        </section>
+      </div>
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

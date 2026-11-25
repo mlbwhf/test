@@ -16,6 +16,7 @@ import { addActivities, boardRevision, type ActivitySpec, type CoursePack } from
 import { RTE_COURSE } from "./courses/rte.js";
 import { LEADING_SAFE_COURSE } from "./courses/leading-safe.js";
 import { POPM_COURSE } from "./courses/popm.js";
+import { ASPC_COURSE } from "./courses/aspc.js";
 import { AI_NATIVE_ARTS_COURSE } from "./courses/ai-native-arts.js";
 import { AI_NATIVE_VALUE_ARCHITECT_COURSE } from "./courses/ai-native-value-architect.js";
 import { LPM_COURSE, LPM_WORKSHOP_COURSE } from "./courses/lpm.js";
@@ -624,10 +625,11 @@ const RAW_CLASSES: ClassSpec[] = [
     short: "ASPC",
     blurb: "Three days for experienced SPCs: the role, embracing AI, engaging executives, developing a transformation strategy, unlocking portfolio flow, customizing SAFe to your context, with the CARS case studies and a design-sprint learning lab.",
     days: 3,
+    course: ASPC_COURSE,
     lessons: [
-      { title: "Introducing the Advanced SPC Role", exercises: [{ kind: "stickies", title: "What brought you here", lanes: ["What I want from the class", "A transformation I lead"], rows: 3 }, ...CARS_SCENARIO] },
-      { title: "Embracing AI", exercises: [{ kind: "zones", title: "Where does AI change the work?", zones: ["Exponential", "Generative", "Emergent", "Disruptive"], color: COLORS.purple }, { kind: "stickies", title: "AI in our transformation", lanes: ["Use today", "Try next PI", "Guardrails we need"], rows: 2 }] },
-      { title: "Engaging Executives", exercises: [{ kind: "table", title: "Case study 1: charting the road ahead", columns: ["Leader persona", "What they care about", "What they fear", "Our ask"], rows: [], blankRows: 4 }, { kind: "slide", title: "Case study 2: communicating the transformation strategy", body: "Using the CARS scenario: draft the message from leadership to the organisation that resolves conflicting priorities, and decide who delivers it and how often.", minutes: 30 }] },
+      { title: "Introducing the Advanced SPC Role", exercises: ASPC_COURSE[0]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
+      { title: "Embracing AI", exercises: ASPC_COURSE[1]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
+      { title: "Engaging Executives", exercises: ASPC_COURSE[2]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Developing a Transformation Strategy", exercises: [{ kind: "table", title: "Case study 3: do we have the metrics we need?", columns: ["Outcome", "Measure", "Baseline", "Target", "Owner"], rows: [], blankRows: 5 }, { kind: "zones", title: "OKRs for the transformation", zones: ["Objective", "Key results", "Risks"] }] },
       { title: "Unlocking Portfolio Flow", exercises: [{ kind: "slide", title: "Case study 4: using facts as our guide", body: "Prioritise the CARS portfolio backlog with WSJF using Fibonacci values, then challenge each other's numbers: which assumptions drive the order?", minutes: 30 }, WSJF_EXAMPLE, WSJF_EPIC_EXAMPLE, WSJF_TABLE, { kind: "link", title: "Portfolio flow, live", body: "Portfolio Kanban with WIP limits, flow metrics and the value stream maps measured from Jira or Azure DevOps.", href: "/portfolio" }] },
       { title: "Customizing SAFe to Your Context", exercises: [{ kind: "stickies", title: "Keep · adapt · drop", lanes: ["Keep", "Adapt", "Drop", "Add"], rows: 3, color: COLORS.green }, { kind: "link", title: "Operating models as data", body: "Every scaling model in Trainyard is configuration: fork SAFe, rename levels and ceremonies, and the boards follow.", href: "/model" }] },
