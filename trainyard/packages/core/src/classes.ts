@@ -632,7 +632,7 @@ const RAW_CLASSES: ClassSpec[] = [
       { title: "Engaging Executives", exercises: ASPC_COURSE[2]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Developing a Transformation Strategy", exercises: ASPC_COURSE[3]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Unlocking Portfolio Flow", exercises: ASPC_COURSE[4]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
-      { title: "Customizing SAFe to Your Context", exercises: [{ kind: "stickies", title: "Keep · adapt · drop", lanes: ["Keep", "Adapt", "Drop", "Add"], rows: 3, color: COLORS.green }, { kind: "link", title: "Operating models as data", body: "Every scaling model in Trainyard is configuration: fork SAFe, rename levels and ceremonies, and the boards follow.", href: "/model" }] },
+      { title: "Customizing SAFe to Your Context", exercises: ASPC_COURSE[5]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Learning Lab: design sprint", exercises: DESIGN_SPRINT },
       { title: "Get Certified and Start Training", exercises: [{ kind: "stickies", title: "Your next transformation move", lanes: ["This week", "This PI", "This year"], rows: 2 }] },
     ],

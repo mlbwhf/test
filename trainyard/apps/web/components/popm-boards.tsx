@@ -2224,8 +2224,67 @@ export function AsMixBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard };
+// Testing with guardrails: a proposal, three use cases, and the four guardrails. For each use case
+// the class tests the proposal against each guardrail, votes yes or no, and gives its reasons.
+export function AsGuardrailBoard({ config, st, op, readOnly }: BoardProps) {
+  const cases = (config.cases as string[] | undefined) ?? [], rails = (config.guardrails as [string, string][] | undefined) ?? [];
+  const votes = list(st, "votes"), test = (st.test && typeof st.test === "object" ? st.test : {}) as Record<string, string>;
+  return (
+    <div className="ex-board po">
+      <div className="po-scenario"><span className="ex-mono">Proposal</span><p>{str(config.proposal)}</p></div>
+      <section className="po-panel">
+        <span className="ex-mono">Customize… the four guardrails</span>
+        <div className="gr-rails">
+          {rails.map(([yes, no]) => (<div key={yes} className="gr-rail"><b>✓ {yes}</b><i>rather than</i><span>⊘ {no}</span></div>))}
+        </div>
+      </section>
+      <div className="po-cols" style={{ ["--n" as string]: cases.length }}>
+        {cases.map((text, ci) => {
+          const y = votes.filter((v) => num(v.c) === ci && v.v === "y").length, n = votes.filter((v) => num(v.c) === ci && v.v === "n").length, t = y + n;
+          const pass = rails.filter((_, ri) => test[`${ci}:${ri}`] === "y").length, fail = rails.filter((_, ri) => test[`${ci}:${ri}`] === "n").length;
+          return (
+            <section key={ci} className="po-col gr-case" style={{ animationDelay: `${ci * 110}ms` }}>
+              <header><span className="po-n">{ci + 1}</span><b>Use Case #{ci + 1}</b></header>
+              <p className="gr-text">{text}</p>
+              <span className="ex-mono">Guardrail test · {pass} pass, {fail} fail</span>
+              {rails.map(([yes, no], ri) => {
+                const v = test[`${ci}:${ri}`];
+                return (
+                  <div key={yes} className={`gr-test ${v ?? ""}`}>
+                    <span>{v === "n" ? no : yes}</span>
+                    <span className="bl-acts">
+                      {(["y", "n"] as const).map((k) => (<button key={k} disabled={readOnly} aria-pressed={v === k} aria-label={`${yes}: ${k === "y" ? "passes" : "fails"}`} onClick={() => op({ key: "test", op: "set", value: { ...test, [`${ci}:${ri}`]: v === k ? "" : k } })}>{k === "y" ? "✓" : "⊘"}</button>))}
+                    </span>
+                  </div>
+                );
+              })}
+              <span className="ex-mono">Vote · {t} {t === 1 ? "vote" : "votes"}</span>
+              <div className="gr-bar" role="img" aria-label={`${y} yes, ${n} no`}><i style={{ width: `${t ? (y / t) * 100 : 50}%`, opacity: t ? 1 : 0.25 }} /></div>
+              {!readOnly ? (
+                <div className="gr-vote">
+                  <button className="po-btn" style={{ background: "#cfe8d4" }} onClick={() => op({ key: "votes", op: "push", value: { c: ci, v: "y" } })}>Yes · {y}</button>
+                  <button className="po-btn" style={{ background: "#f9d9d2" }} onClick={() => op({ key: "votes", op: "push", value: { c: ci, v: "n" } })}>No · {n}</button>
+                  {t ? <button className="po-reset" style={{ marginLeft: 0 }} onClick={() => votes.filter((v) => num(v.c) === ci).forEach((v) => op({ key: "votes", op: "remove", id: v.id }))}>Clear</button> : null}
+                </div>
+              ) : <p className="po-note">{y} yes · {n} no</p>}
+              <span className="ex-mono">The reason for our vote</span>
+              {list(st, `why:${ci}`).map((x) => (
+                <div key={x.id} className="po-sticky" style={{ background: "#fff", borderLeftColor: "#3f7c80", boxShadow: "0 0 0 1.5px #0d181826" }}>
+                  <span>{str(x.text)}</span>
+                  {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `why:${ci}`, op: "remove", id: x.id })}>×</button> : null}
+                </div>
+              ))}
+              {!readOnly ? <AddLine label={`Reason for use case ${ci + 1}`} placeholder="+ a reason, Enter" onAdd={(text2) => op({ key: `why:${ci}`, op: "push", value: { text: text2 } })} /> : null}
+            </section>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

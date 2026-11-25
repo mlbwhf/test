@@ -820,14 +820,89 @@ const lesson5: ActivitySpec[] = [
   },
 ];
 
-/** Lessons 1 to 5 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
+const lesson6: ActivitySpec[] = [
+  {
+    title: "Why do organizations customize SAFe?",
+    kind: "Discussion",
+    share: 7,
+    steps: "As a class, briefly discuss the following:\n- What reasons would cause an organization to customize SAFe?\n- What customizations would you be tempted to make in those situations?\n- Are there configurations you could make instead?",
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "As a class, briefly discuss the following.",
+      look: "wheel",
+      wheelLabel: "The reasons behind what the class names",
+      wheelNote: "Tag each note with the reason it comes from.",
+      kinds: ["Organizational size", "Business goals", "Industry needs", "Continuous improvement", "Technology landscape", "Regulatory requirements", "Language and culture", "Existing practices"],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["Reasons", "What reasons would cause an organization to customize SAFe?"], ["Tempting customizations", "What customizations would you be tempted to make in those situations?"], ["Configure instead", "Are there configurations you could make instead?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "The benefits of customizing SAFe",
+    kind: "Activity",
+    prepare: 10,
+    share: 5,
+    steps: "In your groups, choose one of the previous examples and answer the following questions:\n- What additional benefits were likely achieved by customizing SAFe at this company? Consider both tangible and intangible benefits.\n- What other customizations might have been considered to address the problem?\n- Be prepared to share",
+    board: "po-ai",
+    config: {
+      prompt: "Choose one of the previous examples and answer the following questions.",
+      heading: { label: "The example we chose", placeholder: "Which company or example" },
+      look: "wheel",
+      wheelLabel: "Tangible and intangible benefits",
+      wheelNote: "Tag each benefit as tangible or intangible.",
+      kinds: ["Tangible", "Intangible"],
+      add: "+ add, Enter",
+      shareLabel: "What we share",
+      lenses: [["Additional benefits", "What additional benefits were likely achieved by customizing SAFe at this company?"], ["Other customizations", "What other customizations might have been considered to address the problem?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Customize with caution",
+    kind: "Discussion",
+    share: 7,
+    steps: "As a class, discuss the following:\n- What benefits can be lost when changing an industry-standard framework such as SAFe?\n- What implementation challenges might you unintentionally introduce?",
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "As a class, discuss the following.",
+      look: "pair",
+      visLabel: "What is lost against what is introduced when a standard framework is changed.",
+      kinds: [],
+      tones: ["#ffe9b8", "#f9d9d2"],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["Benefits lost", "What benefits can be lost when changing an industry-standard framework such as SAFe?"], ["Challenges introduced", "What implementation challenges might you unintentionally introduce?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Testing with guardrails",
+    kind: "Discussion",
+    share: 7,
+    steps: "As a class, consider whether the proposed customization passes the guardrail test for each use case.\n- Vote yes or no for each use case.\n- Briefly explain the reason for your vote\nProposal: Customize the PI planning event by including two separate ARTs in a single Business Context briefing together, then they separate into two different PI planning events.",
+    board: "as-guard",
+    config: {
+      classWide: true,
+      proposal: "Customize the PI planning event by including two separate ARTs in a single Business Context briefing together, then they separate into two different PI planning events.",
+      cases: ["The ARTs share a Business Owner, though their work does not overlap", "The ARTs have very tightly coupled work with dependencies across them", "The Business Owner is too busy to hold two separate business context briefings"],
+      guardrails: [["To enhance agility", "Compromise the essence of SAFe"], ["When it’s the right solution", "The easiest thing to do"], ["To amplify outcomes", "Maintain the status quo"], ["To optimize systemically", "Solve local problems"]],
+    },
+    ...BOARD,
+  },
+];
+
+/** Lessons 1 to 6 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
 export const ASPC_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Introducing the Advanced SPC Role", activities: lesson1 },
   { title: "Embracing AI", activities: lesson2 },
   { title: "Engaging Executives", activities: lesson3 },
   { title: "Developing a Transformation Strategy", activities: lesson4 },
   { title: "Unlocking Portfolio Flow", activities: lesson5 },
-  { title: "Customizing SAFe to Your Context", activities: [], keep: true },
+  { title: "Customizing SAFe to Your Context", activities: lesson6 },
   { title: "Learning Lab: design sprint", activities: [], keep: true },
   { title: "Get Certified and Start Training", activities: [], keep: true },
 ];
