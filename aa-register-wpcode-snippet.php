@@ -683,11 +683,15 @@ function aa_reg_courses() {
 			   so each AI-Native weekend class has a weekend to itself. No paid
 			   registration was on a Wednesday cohort when this moved. */
 			'cadence'  => array(
-				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 1 ),
-				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 2 ),
-				array( 'dow' => 'Mon', 'slot' => 'morning', 'week' => 3 ),
-				array( 'dow' => 'Sat', 'slot' => 'morning', 'after' => array( 'dow' => 'Mon', 'week' => 3 ) ),
-				array( 'dow' => 'Thu', 'slot' => 'morning', 'week' => 4 ),
+				/* EVERY MONDAY AND EVERY THURSDAY, PLUS TWO WEEKENDS A MONTH, asked
+				   for on 24 Nov 2026 -- the same shape AI-Native Foundations took on
+				   16 Nov. Foundations has the 1st and 3rd weekends, so Launching
+				   takes the 2nd and 4th. Replaces the 3 Nov pattern of about one
+				   class a week. */
+				array( 'dow' => 'Mon', 'slot' => 'morning' ),
+				array( 'dow' => 'Thu', 'slot' => 'morning' ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 2 ),
+				array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 4 ),
 			),
 			'proof'    => array( 'Live online', 'Exam fee included', '15 PDUs' ),
 		),
@@ -1079,7 +1083,8 @@ function aa_reg_no_self_overlap( $out, $course, $slug = '' ) {
  * not instead of it" (16 Nov 2026).
  */
 function aa_reg_december_keeps_cadence() {
-	return apply_filters( 'aa_reg_december_keeps_cadence', array( 'ai-native-foundations' ) );
+	/* Launching added 25 Nov 2026 with its Mon/Thu schedule, as Foundations was. */
+	return apply_filters( 'aa_reg_december_keeps_cadence', array( 'ai-native-foundations', 'launching-ai-native-arts' ) );
 }
 
 /* The holiday-week starts, by course length. Two-day courses: 21, 26, 27, 28,
@@ -2376,9 +2381,13 @@ function aa_reg_price( $slug, $course ) {
    ========================================================================== */
 function aa_reg_sale_config() {
 	return apply_filters( 'aa_reg_sale_config', array(
-		'name' => 'Black Friday',
+		/* Cyber Monday on the last day, Black Friday before it (confirmed 20 Nov). */
+		'name' => ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' ) === '2026-11-30' ? 'Cyber Monday' : 'Black Friday',
 		'pct'  => 15,
-		'from' => '2026-11-18 00:00:00',   /* moved up from 23 Nov on 18 Nov: sale starts now */
+		/* The advertised window is 20-30 Nov (confirmed 20 Nov). The discount
+		   actually ran from 18 Nov; every date from here on is inside both, so
+		   moving the start only changes what the pages print. */
+		'from' => '2026-11-20 00:00:00',
 		'to'   => '2026-11-30 23:59:59',
 		'tz'   => 'America/New_York',
 	) );
@@ -2812,7 +2821,22 @@ function aa_reg_closed_for_sale( $start ) {
 function aa_reg_upcoming( $slug, $course ) {
 	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
 	$out   = array();
-	foreach ( aa_reg_generate( $slug, $course ) as $c ) {
+	$all   = aa_reg_generate( $slug, $course );
+	/* A HAND-SET CLASS TAKES ITS DAYS. A regular class of the same course whose
+	   days overlap one is not offered beside it -- the same trainer cannot
+	   teach both -- unless a seat on it has already been sold, in which case
+	   it stays and the clash is for a person to resolve. */
+	$hand = array();
+	foreach ( $all as $c ) {
+		if ( ! empty( $c['lang'] ) && in_array( aa_reg_lang(), (array) $c['lang'], true ) ) { $hand[] = $c; }
+	}
+	$sold = $hand ? (array) get_option( 'aa_reg_sold', array() ) : array();
+	foreach ( $all as $c ) {
+		if ( $hand && empty( $c['lang'] ) && empty( $sold[ $c['id'] ] ) ) {
+			$clash = false;
+			foreach ( $hand as $h ) { if ( $c['start'] <= $h['end'] && $c['end'] >= $h['start'] ) { $clash = true; break; } }
+			if ( $clash ) { continue; }
+		}
 		if ( $c['end'] < $today ) { continue; }          // finished classes are not offers
 		if ( aa_reg_closed_for_sale( $c['start'] ) ) { continue; }   // started, or past 3 PM on its first day
 		if ( ! empty( $c['lang'] ) && ! in_array( aa_reg_lang(), (array) $c['lang'], true ) ) { continue; }   // not offered in this language
@@ -2865,13 +2889,16 @@ function aa_reg_months( $cohorts ) {
  */
 function aa_reg_lang_cohorts() {
 	return apply_filters( 'aa_reg_lang_cohorts', array(
+		/* Dates as corrected on 25 Nov 2026; they replace the 24 Nov set
+		   (27-28 Nov, 4-5 Dec, 25-26 Dec), on which nothing had been sold. */
 		'popm' => array(
-			/* Given as "November 27 and December 28", 8am to 12m: read as 27-28 Nov. */
-			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-11-27', 'end' => '2026-11-28', 'hours' => '8 AM–12 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-11-28', 'end' => '2026-11-29', 'hours' => '8 AM–12 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2027-01-02', 'end' => '2027-01-03', 'hours' => '8 AM–12 PM ET' ),
 		),
 		'scrum-master' => array(
-			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-04', 'end' => '2026-12-05', 'hours' => '8 AM–12 PM ET' ),
-			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-25', 'end' => '2026-12-26', 'hours' => '4–8 PM ET' ),
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-05', 'end' => '2026-12-06', 'hours' => '8 AM–12 PM ET' ),
+			/* End time cut off in the message; 8 AM-12 PM assumed, like the others. */
+			array( 'lang' => array( 'en', 'es' ), 'start' => '2026-12-26', 'end' => '2026-12-27', 'hours' => '8 AM–12 PM ET' ),
 		),
 	) );
 }
@@ -5064,6 +5091,10 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 		   this runs as a REST request with no queried object, so it always
 		   reports English. */
 		'metadata[lang]'    => $buyer_lang,
+		/* WHERE THE SALE CAME FROM. Corsizio and invoices use the same Stripe
+		   account; this marker is what tells a website sale apart, for the ad
+		   platforms and the ads agent's daily reconciliation. */
+		'metadata[origin]'  => 'agile-agilist.com',
 	);
 
 	$res = wp_remote_post( 'https://api.stripe.com/v1/checkout/sessions', array(
@@ -5377,9 +5408,60 @@ function aa_reg_confirmation_shortcode() {
 		$h .= '<div class="aa-conf-inv">' . aa_reg_invoice_html( $data, $lang ? $lang : 'en' ) . '</div>';
 	}
 	$h .= '<p class="aa-conf-print"><button type="button" onclick="window.print()">' . esc_html( $t['print'] ) . '</button></p>';
-	return $h . '</div>';
+	return $h . aa_reg_purchase_event( $post ) . '</div>';
 }
 add_shortcode( 'aa_reg_confirmation', 'aa_reg_confirmation_shortcode' );
+
+/**
+ * THE AD PLATFORMS' PURCHASE EVENT -- ONE PER WEBSITE PAYMENT, ONCE.
+ *
+ * Google Ads and Microsoft Ads count only Stripe payments made through this
+ * site's checkout (owner rule, 19 Nov 2026). So the event is printed only when
+ * all of these hold, checked on the server:
+ *   - the record is a Stripe Checkout sale (stripe_session cs_...),
+ *   - it carries the website marker metadata.origin = agile-agilist.com,
+ *   - it was paid (an amount is recorded), and
+ *   - it has not been tracked before.
+ * A reload, an Eventbrite or Corsizio buyer sent to this page, or anyone
+ * opening the URL prints nothing. No name or email goes into the event.
+ *
+ * It is a dataLayer push: whichever Google Tag Manager container the site
+ * loads picks it up. If none is loaded yet, nothing is sent anywhere.
+ */
+function aa_reg_purchase_event( $post ) {
+	if ( ! $post ) { return ''; }
+	$id      = $post->ID;
+	$session = (string) get_post_meta( $id, 'stripe_session', true );
+	$cents   = (int) get_post_meta( $id, 'amount_total', true );
+	if ( strpos( $session, 'cs_' ) !== 0 || $cents <= 0 ) { return ''; }
+	if ( (string) get_post_meta( $id, 'origin', true ) !== 'agile-agilist.com' ) { return ''; }
+	if ( get_post_meta( $id, 'ad_tracked', true ) ) { return ''; }
+	/* Marked before printing, so two loads racing each other cannot both fire. */
+	if ( ! add_post_meta( $id, 'ad_tracked', gmdate( 'c' ), true ) ) { return ''; }
+
+	$slug   = (string) get_post_meta( $id, 'course', true );
+	$course = $slug !== '' ? aa_reg_course( $slug ) : null;
+	$cur    = strtoupper( (string) get_post_meta( $id, 'currency', true ) );
+	$seats  = max( 1, (int) get_post_meta( $id, 'seats', true ) );
+	$item   = array(
+		'item_id'       => $slug,
+		'item_name'     => $course && ! empty( $course['name'] ) ? $course['name'] : $slug,
+		'item_category' => $course && ! empty( $course['crumb'] ) ? $course['crumb'] : 'Training',
+		'quantity'      => $seats,
+		'price'         => round( $cents / 100 / $seats, 2 ),
+	);
+	$ev = array(
+		'event'     => 'purchase',
+		'ecommerce' => array(
+			'transaction_id' => $session,
+			'value'          => round( $cents / 100, 2 ),
+			'currency'       => $cur !== '' ? $cur : 'USD',
+			'items'          => array( $item ),
+		),
+	);
+	return '<script>window.dataLayer=window.dataLayer||[];window.dataLayer.push({ecommerce:null});window.dataLayer.push('
+	     . wp_json_encode( $ev ) . ');</script>';
+}
 
 /**
  * Keep both token pages out of search results and out of the sitemap.
@@ -6290,6 +6372,7 @@ function aa_reg_record_sale( $s, $eid ) {
 			'invoice_token'  => ! empty( $meta['token'] ) ? sanitize_text_field( $meta['token'] )
 			                                              : wp_generate_password( 32, false, false ),
 			'lang'           => aa_reg_lang_of( $meta ),
+			'origin'         => ! empty( $meta['origin'] ) ? sanitize_text_field( $meta['origin'] ) : '',
 		),
 	) );
 
