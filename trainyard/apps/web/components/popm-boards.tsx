@@ -1851,23 +1851,24 @@ export function AsBacklogBoard({ config, st, op, readOnly }: BoardProps) {
             </div>
             <div className="as-tablewrap">
               <div className="bl-table" role="table" aria-label="WSJF">
-                <div className="bl-tr head" role="row"><span>#</span><span>Item</span>{BL_SCORES.map(([k, l]) => (<span key={k}>{l}</span>))}<span>WSJF</span></div>
+                <div className="bl-tr head" role="row"><span>#</span><span>Item</span>{BL_SCORES.slice(0, 3).map(([k, l]) => (<span key={k}>{l}</span>))}<span className="calc">= Cost of delay</span><span>÷ Job size</span><span className="calc">= WSJF</span></div>
                 {ranked.map((x, i) => (
                   <div key={x.id} className={`bl-tr${blWsjf(x) !== null && i === 0 ? " top" : ""}`} role="row">
                     <b>{blWsjf(x) !== null ? i + 1 : "–"}</b>
                     <span><small style={{ background: BL_TONE[str(x.type)] }}>{str(x.type)}</small> {str(x.name)}</span>
-                    {BL_SCORES.map(([k, l]) => (
+                    {BL_SCORES.map(([k, l], ci) => [
+                      ci === 3 ? <b key="cod" className="bl-score calc" aria-label={`Cost of delay of ${str(x.name)}`}>{num(x.bv) && num(x.tc) && num(x.rr) ? num(x.bv) + num(x.tc) + num(x.rr) : "–"}</b> : null,
                       <select key={k} value={num(x[k]) || ""} disabled={readOnly} aria-label={`${l} of ${str(x.name)}`} onChange={(e) => set(x.id, { [k]: Number(e.target.value) || null })}>
                         <option value="">–</option>
                         {BL_FIB.map((f) => (<option key={f} value={f}>{f}</option>))}
-                      </select>
-                    ))}
-                    <b className="bl-score">{blWsjf(x) ?? "–"}</b>
+                      </select>,
+                    ])}
+                    <b key={String(blWsjf(x))} className="bl-score calc wsjf" aria-label={`WSJF of ${str(x.name)}`}>{blWsjf(x) ?? "–"}</b>
                   </div>
                 ))}
               </div>
             </div>
-            <p className="po-note">Cost of delay is the first three added together; WSJF divides it by job size. The list re-sorts as you score, highest first. Score it yourselves, or paste the AI&apos;s numbers in.</p>
+            <p className="po-note">You only pick the four scores. Cost of delay, WSJF and the rank are calculated for you, and the list re-sorts as you score, highest first.</p>
           </section>
         </>
       ) : null}
