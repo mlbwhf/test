@@ -137,11 +137,14 @@ still say Black Friday on Cyber Monday.
 **Descriptions**
 """ + "\n".join(f"- {d} ({len(d)}/90)" for d in DESCRIPTIONS) + """
 
-## 5. Budget for the promo window: your decision
-Trailing spend is about **CA$21/day**, under the November band of **~CA$50/day**. A live 15% offer
-justifies spending *up to the band*, not past it: raise toward **CA$50/day for 20-30 Nov** (a
-change above 20%, so it needs your OK; give Microsoft the first increase). On **1 Dec** the calendar
-moves to the February ramp (~CA$100/day), which is a separate decision.
+## 5. Budget: APPROVED by Mark, 25 Nov
+- **Now to 30 Nov: up to CA$50/day** across both accounts (the November seasonal band).
+- **From 1 Dec: about CA$100/day** (the December-January band, ahead of the February peak).
+- **Microsoft gets the first increase** (standing rule), then Google's SAFe campaigns (Certifications -
+  English), then the AI-Native campaigns.
+- The exact split per campaign comes from the conversion audit (where budget is cutting off
+  high-intent searches).
+- The agent alerts you if any day runs more than 30% over the band.
 
 ## 6. Website
 The /black-friday/ page currently says **23-30 Nov**. It needs to say **20-30 Nov**, with 30 Nov

@@ -279,7 +279,7 @@ def main() -> int:
                 per_stage[stage].append([camp, ag, "Responsive search ad",
                                          *(heads + [""] * (15 - len(heads))), *descs, p1, p2, url, "Enabled"])
             badge = ("held: not bookable yet" if stage == "hold" else
-                     "stage 4, proposed: needs your approval" if ag in PROPOSED else f"stage {stage[-1]}")
+                     "stage 4 (approved 25 Nov)" if ag in PROPOSED else f"stage {stage[-1]}")
             sections.append(
                 f"### {ag} · {badge}\n"
                 f"Campaign **{camp}** · Final URL {url} · Display path `/{p1}/{p2}`  \n"
@@ -310,8 +310,8 @@ def main() -> int:
     md = f"""# Responsive search ads for the new ad groups (DRAFT for your approval)
 
 {n_ads} ads, one per new ad group: {n_strings} strings in total. **Nothing is uploaded.** Phase 1:
-you import them. Stages 1-3 are approved. **Stage 4** (APM, Business Owner, Architects) is
-proposed and needs your OK. The 3 **Innovation** ads are drafted but held until those courses
+you import them. Stages 1-4 are approved (stage 4, APM, Business Owner and Architects, on 25 Nov;
+import it with stage 2 on 1 Dec). The 3 **Innovation** ads are drafted but held until those courses
 can be booked and paid for on agile-agilist.com, so they have no import file yet.
 
 **Validated:** every string passes `src/asset_generator.py` for **US and Canada** audiences, both

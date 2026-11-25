@@ -1,8 +1,8 @@
 # Responsive search ads for the new ad groups (DRAFT for your approval)
 
 18 ads, one per new ad group: 337 strings in total. **Nothing is uploaded.** Phase 1:
-you import them. Stages 1-3 are approved. **Stage 4** (APM, Business Owner, Architects) is
-proposed and needs your OK. The 3 **Innovation** ads are drafted but held until those courses
+you import them. Stages 1-4 are approved (stage 4, APM, Business Owner and Architects, on 25 Nov;
+import it with stage 2 on 1 Dec). The 3 **Innovation** ads are drafted but held until those courses
 can be booked and paid for on agile-agilist.com, so they have no import file yet.
 
 **Validated:** every string passes `src/asset_generator.py` for **US and Canada** audiences, both
@@ -30,7 +30,7 @@ serve. If an ad group already has an ad you like, delete its row from the CSV be
 | 1 | Now (20 Nov, Black Friday) | 4 | `proposals/2026-11_rsa_stage1_google-ads-editor.csv` |
 | 2 | 1 Dec (February ramp) | 5 | `proposals/2026-11_rsa_stage2_google-ads-editor.csv` |
 | 3 | Not before 4 Dec, after stage 1 has run 14 days | 3 | `proposals/2026-11_rsa_stage3_google-ads-editor.csv` |
-| 4 | Proposed 21 Nov: needs your approval (earliest 1 Dec) | 3 | `proposals/2026-11_rsa_stage4_google-ads-editor.csv` |
+| 4 | 1 Dec, with stage 2 (approved 25 Nov) | 3 | `proposals/2026-11_rsa_stage4_google-ads-editor.csv` |
 
 **No pinning.** Google needs freedom to mix headlines for good Ad Strength; the course name already
 appears in several headlines. **Google only:** add any Microsoft versions by hand, because an
@@ -364,7 +364,7 @@ Campaign **Certifications - English** · Final URL https://agile-agilist.com/tra
 | 3 | SAFe Advanced Scrum Master certification. Two days, live virtual, 16 PDUs. | 74 |
 | 4 | Exam included, with exam prep and support. Taught at a SAFe Platinum Partner. | 77 |
 
-### Agile Product Management · stage 4, proposed: needs your approval
+### Agile Product Management · stage 4 (approved 25 Nov)
 Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/adv-safe/apm/ · Display path `/SAFe/APM`  
 *Facts used:* 3 days, no prerequisites, exam included; Design Thinking, continuous exploration, Lean Startup, MVPs, hypothesis-driven epics, vision/roadmap/OKRs, WSJF. Format and PDUs left out: the page contradicts itself on delivery, and its 16 PDUs look templated.
 
@@ -393,7 +393,7 @@ Campaign **Certifications - English** · Final URL https://agile-agilist.com/tra
 | 3 | Three days, no prerequisites. Exam included, with exam prep and support. | 72 |
 | 4 | For Product Managers and Directors of Product. Taught at a SAFe Platinum Partner. | 81 |
 
-### Business Owner · stage 4, proposed: needs your approval
+### Business Owner · stage 4 (approved 25 Nov)
 Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/safe/bo/ · Display path `/SAFe/Business-Owner`  
 *Facts used:* 2 days, no prerequisites, exam included; connect strategy to execution, business value for PI Objectives, PI Planning, Inspect & Adapt, System Demos. Format and PDUs left out (as APM).
 
@@ -420,7 +420,7 @@ Campaign **Certifications - English** · Final URL https://agile-agilist.com/tra
 | 3 | Two days, no prerequisites. Exam included, with exam prep and support. | 70 |
 | 4 | For business owners, VPs of strategy and executive sponsors. See class dates. | 77 |
 
-### SAFe for Architects · stage 4, proposed: needs your approval
+### SAFe for Architects · stage 4 (approved 25 Nov)
 Campaign **Certifications - English** · Final URL https://agile-agilist.com/training/safe/arch/ · Display path `/SAFe/Architects`  
 *Facts used:* 3 days, no prerequisites, exam included; Lean-Agile technical strategy, architecture aligned to value, DevOps and Release on Demand, solution vision and roadmaps, architecture for PI Planning. Format and PDUs left out (as APM).
 

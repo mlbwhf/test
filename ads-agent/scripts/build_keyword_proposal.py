@@ -27,7 +27,6 @@ PLAN = [
             ("ai native foundations certification", "phrase", f"{GSC}: same query family", "P1"),
             ("ai native certification", "phrase", "Course name; you are the only Canadian F2F provider", "P1"),
             ("ai training toronto", "phrase", "In-person class; Toronto is your top Canadian city", "P2"),
-            ("ai upskilling course", "phrase", "Career-progression intent", "P3"),
         ]),
     ]),
     ("AI-Native - Virtual", [
@@ -114,14 +113,17 @@ PLAN = [
 ]
 NEGATIVES = ["free", "pdf", "jobs", "job", "salary", "practice test", "dumps", "exam answers", "login",
              "reddit", "course hero", "youtube"]
+# Approved 2026-11-25: searchers looking for these providers' cheap or free general AI courses.
+COMPETITOR_NEGATIVES = ["coursera", "grow google", "google ai essentials", "uoft", "university of toronto"]
 
 
 # Owner decision (Mark Saymen, 2026-11-20): all keywords approved. Ad groups whose landing page
 # is not confirmed stay on hold (never shipped to a guessed URL).
 APPROVED_ON = "2026-11-20"
 ON_HOLD: dict = {}  # ad group -> reason (ASM released 2026-11-20: owner sent /training/safe/asm/)
-# Ad groups drafted 2026-11-21 at the owner's request: NOT approved yet (new ad groups need approval).
+# Ad groups drafted 2026-11-21; APPROVED by Mark Saymen 2026-11-25 (stage 4, import with stage 2 on 1 Dec).
 PROPOSED = {"Agile Product Management", "Business Owner", "SAFe for Architects"}
+STAGE4_APPROVED_ON = "2026-11-25"
 # Not bookable yet (no dates/prices; CTA is a launch list), so no website Stripe payment is possible.
 LAUNCH_HOLD = {"Innovation Creator", "Innovation Facilitator", "Innovation Leader"}
 LAUNCH_HOLD_REASON = ("Not bookable yet: no dates or prices, and the button goes to a launch list on "
@@ -138,7 +140,7 @@ STAGES = [
     ("stage1", "Now (20 Nov, Black Friday)", lambda camp, pri: camp.startswith("AI-Native") and pri == "P1"),
     ("stage2", "1 Dec (February ramp)", lambda camp, pri: not camp.startswith("AI-Native") and pri == "P1"),
     ("stage3", "Not before 4 Dec, after stage 1 has run 14 days", lambda camp, pri: pri in ("P2", "P3")),
-    ("stage4", "Proposed 21 Nov: needs your approval (earliest 1 Dec)", lambda camp, pri: False),
+    ("stage4", "1 Dec, with stage 2 (approved 25 Nov)", lambda camp, pri: False),
 ]
 
 
@@ -166,7 +168,7 @@ def main() -> int:
             if ag in LAUNCH_HOLD:
                 flag = f"  \n⏸️ **On hold:** {LAUNCH_HOLD_REASON}"
             elif ag in PROPOSED:
-                flag = "  \n🆕 **Proposed 21 Nov: tick to approve** (no Search Console history; check volume in Keyword Planner)"
+                flag = f"  \n☑ **Approved {STAGE4_APPROVED_ON}, stage 4: import on 1 Dec with stage 2** (no Search Console history; judge after 14 days on website Stripe payments)"
             elif ag in ON_HOLD:
                 flag = f"  \n⏸️ **On hold:** {ON_HOLD[ag]}"
             elif not confirmed:
@@ -181,8 +183,7 @@ def main() -> int:
                     bad.append(f"{kw}: match type {match} not allowed")
                 shown = f"[{kw}]" if match == "exact" else f'"{kw}"'
                 if ag in PROPOSED:
-                    mark, stage = "☐", "stage4"
-                    proposed += 1
+                    mark, stage = "☑", "stage4"
                     csv_rows["stage4"].append([camp_name, ag, kw, match.capitalize(), url, "Enabled"])
                 elif ag in ON_HOLD or ag in LAUNCH_HOLD or kw in HOLD_KW:
                     mark, stage = "⏸️", "hold"
@@ -206,6 +207,13 @@ def main() -> int:
 
     out_dir = ROOT / "proposals"
     out_dir.mkdir(exist_ok=True)
+    # Stand-alone file so it can be imported now, whether or not stage 1 is already in.
+    with (out_dir / "2026-11_negatives_competitors_google-ads-editor.csv").open("w", newline="") as fh:
+        w = csv.writer(fh)
+        w.writerow(["Campaign", "Ad group", "Keyword", "Criterion Type", "Final URL", "Status"])
+        for camp_name in dict.fromkeys(CAMPAIGN_NAME.get(c, c) for c, _ in PLAN if "new campaign" not in c):
+            for kw in COMPETITOR_NEGATIVES:
+                w.writerow([camp_name, "", kw, "Campaign negative phrase", "", "Enabled"])
     header = ["Campaign", "Ad group", "Keyword", "Criterion Type", "Final URL", "Status"]
     files = []
     for key, when, _ in STAGES:
@@ -221,8 +229,8 @@ def main() -> int:
     md = f"""# Keyword plan, November 2026: APPROVED
 
 **Approved by Mark Saymen on {APPROVED_ON}.** {approved} keywords approved and ready to import;
-{proposed} **proposed on 21 Nov and waiting for your approval** (APM, Business Owner, Architects:
-stage 4); {held} on hold (see each one's reason). Phase 1: **you** import them. I
+{held} on hold (see each one's reason). Stage 4 (APM, Business Owner, Architects) was approved on
+25 Nov. Phase 1: **you** import them. I
 haven't touched the ad accounts.
 
 **Rules applied:** phrase and exact match only (no broad match, ever). Every final URL is a
@@ -240,7 +248,10 @@ Stripe numbers, not on the "Conversions" column.
 |---|---|---|---|
 {chr(10).join(files)}
 
-Stage 1 also adds the {len(NEGATIVES)} negative keywords to each campaign.
+Stage 1 also adds the {len(NEGATIVES)} negative keywords to each campaign. **Approved 25 Nov:** competitor
+negatives ({', '.join(COMPETITOR_NEGATIVES)}) in
+`2026-11_negatives_competitors_google-ads-editor.csv`. Import them now. Add the same 5 words by hand
+in Microsoft Ads (campaign negative keywords; this doesn't touch the tracking suffixes).
 
 **How to import (Google Ads Editor):** *Account → Import → From file*, pick the stage's CSV,
 **review the changes**, then *Post*. Google only: don't import these into Microsoft Ads, because

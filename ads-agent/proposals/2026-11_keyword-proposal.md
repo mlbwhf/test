@@ -1,8 +1,8 @@
 # Keyword plan, November 2026: APPROVED
 
-**Approved by Mark Saymen on 2026-11-20.** 28 keywords approved and ready to import;
-9 **proposed on 21 Nov and waiting for your approval** (APM, Business Owner, Architects:
-stage 4); 7 on hold (see each one's reason). Phase 1: **you** import them. I
+**Approved by Mark Saymen on 2026-11-20.** 36 keywords approved and ready to import;
+7 on hold (see each one's reason). Stage 4 (APM, Business Owner, Architects) was approved on
+25 Nov. Phase 1: **you** import them. I
 haven't touched the ad accounts.
 
 **Rules applied:** phrase and exact match only (no broad match, ever). Every final URL is a
@@ -20,10 +20,13 @@ Stripe numbers, not on the "Conversions" column.
 |---|---|---|---|
 | 1 | Now (20 Nov, Black Friday) | 6 | `proposals/2026-11_keywords_stage1_google-ads-editor.csv` |
 | 2 | 1 Dec (February ramp) | 8 | `proposals/2026-11_keywords_stage2_google-ads-editor.csv` |
-| 3 | Not before 4 Dec, after stage 1 has run 14 days | 14 | `proposals/2026-11_keywords_stage3_google-ads-editor.csv` |
-| 4 | Proposed 21 Nov: needs your approval (earliest 1 Dec) | 9 | `proposals/2026-11_keywords_stage4_google-ads-editor.csv` |
+| 3 | Not before 4 Dec, after stage 1 has run 14 days | 13 | `proposals/2026-11_keywords_stage3_google-ads-editor.csv` |
+| 4 | 1 Dec, with stage 2 (approved 25 Nov) | 9 | `proposals/2026-11_keywords_stage4_google-ads-editor.csv` |
 
-Stage 1 also adds the 12 negative keywords to each campaign.
+Stage 1 also adds the 12 negative keywords to each campaign. **Approved 25 Nov:** competitor
+negatives (coursera, grow google, google ai essentials, uoft, university of toronto) in
+`2026-11_negatives_competitors_google-ads-editor.csv`. Import them now. Add the same 5 words by hand
+in Microsoft Ads (campaign negative keywords; this doesn't touch the tracking suffixes).
 
 **How to import (Google Ads Editor):** *Account → Import → From file*, pick the stage's CSV,
 **review the changes**, then *Post*. Google only: don't import these into Microsoft Ads, because
@@ -50,7 +53,6 @@ Final URL: https://agile-agilist.com/training/ai-native/ai-native-foundations/
 | ☑ | `"ai native foundations certification"` | phrase | GSC: same query family | P1 | stage1 |
 | ☑ | `"ai native certification"` | phrase | Course name; you are the only Canadian F2F provider | P1 | stage1 |
 | ⏸️ | `"ai training toronto"` | phrase | In-person class; Toronto is your top Canadian city. **On hold:** The English AI-Native Foundations page says *live online*, while this keyword (and the Face-to-Face campaign) promise an in-person Toronto class. Confirm the format and I'll release it. | P2 | hold |
-| ☑ | `"ai upskilling course"` | phrase | Career-progression intent | P3 | stage3 |
 
 
 ## AI-Native - Virtual
@@ -150,33 +152,33 @@ Final URL: https://agile-agilist.com/training/safe/asm/
 
 ### Agile Product Management
 Final URL: https://agile-agilist.com/training/adv-safe/apm/  
-🆕 **Proposed 21 Nov: tick to approve** (no Search Console history; check volume in Keyword Planner)
+☑ **Approved 2026-11-25, stage 4: import on 1 Dec with stage 2** (no Search Console history; judge after 14 days on website Stripe payments)
 
 | ✓ | Keyword | Match | Evidence | Priority | Stage |
 |---|---|---|---|---|---|
-| ☐ | `"safe apm certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): KnowledgeHut 1 batch, Skillbook US$2,095 vs your US$1,799 | P2 | stage4 |
-| ☐ | `"agile product management certification"` | phrase | Course name + certification intent | P2 | stage4 |
-| ☐ | `"safe agile product manager"` | phrase | Role-based search | P2 | stage4 |
+| ☑ | `"safe apm certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): KnowledgeHut 1 batch, Skillbook US$2,095 vs your US$1,799 | P2 | stage4 |
+| ☑ | `"agile product management certification"` | phrase | Course name + certification intent | P2 | stage4 |
+| ☑ | `"safe agile product manager"` | phrase | Role-based search | P2 | stage4 |
 
 ### Business Owner
 Final URL: https://agile-agilist.com/training/safe/bo/  
-🆕 **Proposed 21 Nov: tick to approve** (no Search Console history; check volume in Keyword Planner)
+☑ **Approved 2026-11-25, stage 4: import on 1 Dec with stage 2** (no Search Console history; judge after 14 days on website Stripe payments)
 
 | ✓ | Keyword | Match | Evidence | Priority | Stage |
 |---|---|---|---|---|---|
-| ☐ | `"safe business owner certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): neither competitor offers it | P2 | stage4 |
-| ☐ | `"safe business owner training"` | phrase | Same intent | P2 | stage4 |
-| ☐ | `"safe business owner workshop"` | phrase | Scaled Agile's own name for the course | P2 | stage4 |
+| ☑ | `"safe business owner certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): neither competitor offers it | P2 | stage4 |
+| ☑ | `"safe business owner training"` | phrase | Same intent | P2 | stage4 |
+| ☑ | `"safe business owner workshop"` | phrase | Scaled Agile's own name for the course | P2 | stage4 |
 
 ### SAFe for Architects
 Final URL: https://agile-agilist.com/training/safe/arch/  
-🆕 **Proposed 21 Nov: tick to approve** (no Search Console history; check volume in Keyword Planner)
+☑ **Approved 2026-11-25, stage 4: import on 1 Dec with stage 2** (no Search Console history; judge after 14 days on website Stripe payments)
 
 | ✓ | Keyword | Match | Evidence | Priority | Stage |
 |---|---|---|---|---|---|
-| ☐ | `"safe architect certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): KnowledgeHut 'Announcing Soon', Skillbook none | P2 | stage4 |
-| ☐ | `"safe for architects"` | phrase | Course name | P2 | stage4 |
-| ☐ | `"safe system architect training"` | phrase | Role-based search | P2 | stage4 |
+| ☑ | `"safe architect certification"` | phrase | Competitor gap (proposals/2026-11_competitor-comparison.md): KnowledgeHut 'Announcing Soon', Skillbook none | P2 | stage4 |
+| ☑ | `"safe for architects"` | phrase | Course name | P2 | stage4 |
+| ☑ | `"safe system architect training"` | phrase | Role-based search | P2 | stage4 |
 
 
 ## Innovation - English (new campaign)
@@ -221,4 +223,4 @@ These are free, instant-result lead magnets, so link them under the matching ads
 - SAFe ads → **Agile Career Selector**: https://agile-agilist.com/assessments/cert-recommender/
 - All campaigns → **Career Compass**: https://agile-agilist.com/career-compass/
 
-Total: 44 keywords across 18 ad groups (28 approved, 9 proposed, 7 on hold).
+Total: 43 keywords across 18 ad groups (36 approved, 0 proposed, 7 on hold).
