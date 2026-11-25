@@ -1223,7 +1223,8 @@ span.studio-team { cursor: default; }
 /* Transformation canvas. */
 .cv-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .cv { background: #fff; border: 2px solid #06384a; border-radius: 10px; overflow: hidden; box-shadow: 3px 3px 0 #0d1815; }
-.cv-part { opacity: 0.5; transition: opacity 0.4s; }
+.cv-part { opacity: 0.78; filter: saturate(0.55); transition: opacity 0.4s, filter 0.4s; }
+.cv-part.focus, .cv-part:focus-within, .cv-part:hover { filter: none; }
 .cv-part.focus, .cv-part:focus-within, .cv-part:hover { opacity: 1; }
 .cv-bar { font-weight: 800; font-size: 14.5px; text-align: center; padding: 7px 10px; }
 .cv-ctx { display: grid; grid-template-columns: repeat(var(--n), minmax(0, 1fr)); }
@@ -1491,3 +1492,6 @@ input.cv2-voice:focus-visible { outline: 3px solid #f5b83d; border-color: transp
 .lab-task { margin: 0; background: #ffd37a; border: 2px solid #0d1815; border-radius: 10px; padding: 10px 14px; font-weight: 600; font-size: 15px; line-height: 1.45; }
 .lab-prompt { display: grid; gap: 5px; border-left: 6px solid var(--c); padding-left: 12px; } .lab-prompt b { font-size: 15px; line-height: 1.35; }
 .lab-phase { font: 700 11px "JetBrains Mono", var(--font-mono); text-transform: uppercase; color: var(--c); }
+.po-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.po-tags button { font: inherit; font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 99px; border: 1.5px solid #0d181855; background: #fff; color: #0d1815; cursor: pointer; transition: background 0.2s, color 0.2s; }
+.po-tags button[aria-pressed="true"] { background: #0d1815; color: #fff; border-color: #0d1815; }

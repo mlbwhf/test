@@ -262,7 +262,7 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
               <small>{per[i]}</small>
             </div>
           ))}
-          <p className="po-note">{total && per.some((x) => !x) ? `Not used yet: ${kinds.filter((_, i) => !per[i]).join(", ")}.` : str(config.wheelNote) || "Tag each note with the sync event it belongs to."}</p>
+          <p className="po-note">{total && per.some((x) => !x) ? `Not used yet: ${kinds.filter((_, i) => !per[i]).join(", ")}.` : str(config.wheelNote) || "Tag each note as you add it, and the wheel shows the split."}</p>
         </div>
       </div>
     );
@@ -507,7 +507,7 @@ export function PoAiBoard({ config, st, op, readOnly }: BoardProps) {
               {!readOnly ? (
                 <>
                   {kinds.length ? (
-                    <div className="po-seg small" role="group" aria-label="This is">
+                    <div className={kinds.length > 3 || lenses.length > 4 ? "po-tags" : "po-seg small"} role="group" aria-label="This is">
                       {kinds.map((t, ti) => (<button key={t} aria-pressed={(kind[li] ?? 0) === ti} onClick={() => setKind({ ...kind, [li]: ti })}>{t}</button>))}
                     </div>
                   ) : null}

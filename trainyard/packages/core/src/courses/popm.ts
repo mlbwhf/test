@@ -357,6 +357,7 @@ const lesson5: ActivitySpec[] = [
       classWide: true,
       prompt: "Think about the various sync events that are part of SAFe, then discuss as a class.",
       kinds: ["Team Sync", "Coach Sync", "PO Sync", "ART Sync", "Architect Sync"],
+      wheelNote: "Tag each note with the sync event it belongs to.",
       add: "+ add, Enter",
       shareLabel: "What stands out",
       look: "wheel",
