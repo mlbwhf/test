@@ -53,3 +53,16 @@ and Mark applies them.
   since Black Friday / Cyber Monday is live. That's above the November band, so it needs your OK.
 
 From 1 Dec the band is about CA$100/day across both accounts. The Google audit decides the split.
+
+## DECIDED 25 Nov: Option B (Mark)
+Microsoft keeps Search at about **CA$60/day through 30 Nov** (Black Friday / Cyber Monday). That's above the
+November band by owner choice; the December band (about CA$100/day for both accounts) starts 1 Dec.
+Daily budgets, based on each campaign's share of Search spend over the last 30 days:
+
+| Campaign | Daily budget | Note |
+|---|---|---|
+| Certifications - English | **CA$36** | Highest-intent searches |
+| AI-Native - Virtual | **CA$20** | |
+| AgileAgilist Defense - English | **CA$2** | Brand; max CPC CA$2 or less |
+| AI-Native - Face-to-Face | **CA$2** | Hold low until the delivery format is confirmed |
+| **Total** | **CA$60** | Audience Network OFF in all four |
