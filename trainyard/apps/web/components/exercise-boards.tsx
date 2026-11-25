@@ -328,13 +328,25 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
   );
 }
 
-/** The class day: two 1 h 30 sessions each side of lunch, a 15 minute break between them. The trainer sets when the day starts and how long lunch is. */
-const DAY_BLOCKS: [string, number, "s" | "b" | "l"][] = [["Morning session 1", 90, "s"], ["Break", 15, "b"], ["Morning session 2", 90, "s"], ["Lunch", 0, "l"], ["Afternoon session 1", 90, "s"], ["Break", 15, "b"], ["Afternoon session 2", 90, "s"]];
+/** The class day: 1 h 30 sessions with a 15 minute break between them, lunch after the second, and the last session ends when the class does. The trainer sets the start, the length of lunch and the end. */
 const hhmm = (m: number) => `${Math.floor(m / 60) % 24}:${String(m % 60).padStart(2, "0")}`;
+function dayBlocks(start: number, lunch: number, end: number) {
+  const out: { name: string; d: number; kind: "s" | "b" | "l"; from: number; to: number }[] = [];
+  let t = start, n = 0;
+  const add = (name: string, d: number, kind: "s" | "b" | "l") => { out.push({ name, d, kind, from: t, to: t + d }); t += d; };
+  add("Morning session 1", 90, "s"); add("Break", 15, "b"); add("Morning session 2", 90, "s"); add("Lunch", lunch, "l");
+  while (t < end && n < 6) {
+    n++;
+    add(`Afternoon session ${n}`, Math.min(90, end - t), "s");
+    if (end - t > 15) add("Break", 15, "b");
+    else break;
+  }
+  return out;
+}
 function DayStructure({ st, op, trainer, readOnly }: BoardProps) {
-  const start = typeof st["day:start"] === "number" ? (st["day:start"] as number) : 9 * 60, lunch = typeof st["day:lunch"] === "number" ? (st["day:lunch"] as number) : 60;
-  let t = start;
-  const blocks = DAY_BLOCKS.map(([name, mins, kind]) => { const d = kind === "l" ? lunch : mins, from = t; t += d; return { name, d, kind, from, to: t }; });
+  const start = typeof st["day:start"] === "number" ? (st["day:start"] as number) : 9 * 60, lunch = typeof st["day:lunch"] === "number" ? (st["day:lunch"] as number) : 45;
+  const end = typeof st["day:end"] === "number" ? (st["day:end"] as number) : 17 * 60 + 30;
+  const blocks = dayBlocks(start, lunch, end), t = blocks[blocks.length - 1]!.to;
   const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
     const tick = () => { const d = new Date(); setNow(d.getHours() * 60 + d.getMinutes()); };
@@ -346,10 +358,11 @@ function DayStructure({ st, op, trainer, readOnly }: BoardProps) {
   return (
     <section className="ex-board day" aria-label="Daily structure">
       <div className="day-head">
-        <div><span className="ex-mono">Daily structure</span><b>{hhmm(start)} to {hhmm(t)}</b></div>
+        <div><span className="ex-mono">Class agenda · daily structure</span><b>{hhmm(start)} to {hhmm(t)}</b></div>
         {can ? (
           <span className="day-set">
             <label>Starts at <input type="time" value={`${String(Math.floor(start / 60)).padStart(2, "0")}:${String(start % 60).padStart(2, "0")}`} onChange={(e) => { const [h, m] = e.target.value.split(":").map(Number); if (h !== undefined && m !== undefined && !Number.isNaN(h + m)) op({ key: "day:start", op: "set", value: h * 60 + m }); }} /></label>
+            <label>Ends at <input type="time" value={`${String(Math.floor(end / 60)).padStart(2, "0")}:${String(end % 60).padStart(2, "0")}`} onChange={(e) => { const [h, m] = e.target.value.split(":").map(Number); if (h !== undefined && m !== undefined && !Number.isNaN(h + m)) op({ key: "day:end", op: "set", value: h * 60 + m }); }} /></label>
             <label>Lunch <select value={lunch} onChange={(e) => op({ key: "day:lunch", op: "set", value: Number(e.target.value) })}>{[30, 45, 60, 75, 90].map((m) => (<option key={m} value={m}>{m} min</option>))}</select></label>
           </span>
         ) : null}
