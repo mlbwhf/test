@@ -5,6 +5,7 @@
 // prompt builder for the SAFe message. Each keeps what people add in the frame's state.
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
+import type { LabChallenge } from "@trainyard/core";
 import type { BoardProps } from "@/components/exercise-boards";
 
 type St = Record<string, unknown>;
@@ -2479,8 +2480,85 @@ export function AsBlueprintBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard };
+// The Learning Lab: four challenges a team solves in the order it chooses. The team sets its order,
+// each round names a facilitator, and each challenge has its problem, its input data and its
+// question prompts (assess, remedy, solve). The same board serves all four rounds.
+const LAB_PHASE: Record<string, string> = { "Assess the challenge": "#2f6fbd", "Remedy the problem": "#d98a1c", "Solve the challenge": "#2e8b57" };
+export function AsLabBoard({ config, st, op, readOnly }: BoardProps) {
+  const labs = (config.challenges as LabChallenge[] | undefined) ?? [], round = typeof config.round === "number" ? config.round : 0;
+  const order = (Array.isArray(st.order) ? (st.order as string[]) : []).filter((id) => labs.some((c) => c.id === id));
+  const planned = labs.find((c) => c.id === order[round]);
+  const [open, setOpen] = useState<string | null>(null);
+  const [tab, setTab] = useState<"problem" | "data" | "work">("problem");
+  const cur = labs.find((c) => c.id === open) ?? planned ?? null;
+  const answered = (c: LabChallenge) => c.prompts.filter((_, i) => str(st[`a:${c.id}:${i}`])).length;
+  const place = (id: string) => op({ key: "order", op: "set", value: order.includes(id) ? order.filter((x) => x !== id) : [...order, id] });
+  const example = config.canvas as Record<string, unknown> | undefined;
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <section className="po-panel">
+        <span className="ex-mono">Your team&apos;s order · click the challenges in the order you will solve them</span>
+        <div className="lab-order">
+          {labs.map((c) => {
+            const at = order.indexOf(c.id), n = answered(c);
+            return (
+              <div key={c.id} className={`lab-card${at === round ? " now" : ""}${cur?.id === c.id ? " open" : ""}${n === c.prompts.length ? " done" : ""}`}>
+                <button className="lab-pos" disabled={readOnly} aria-label={at >= 0 ? `${c.title}: number ${at + 1}. Click to take it out of the order.` : `${c.title}: add to the order`} onClick={() => place(c.id)}>{at >= 0 ? at + 1 : "+"}</button>
+                <button className="lab-name" onClick={() => (setOpen(c.id), setTab("problem"))}>
+                  <b>{c.title}</b>
+                  <small>{at === round ? "This round" : at >= 0 ? `Round ${at + 1}` : "Not placed"} · {n}/{c.prompts.length} prompts answered</small>
+                  <i className="lab-bar"><i style={{ width: `${(n / c.prompts.length) * 100}%` }} /></i>
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      </section>
+      {cur ? (
+        <section className="po-panel" key={cur.id}>
+          <div className="rd-advhead" style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "flex-end" }}>
+            <div><span className="ex-mono">Challenge{order.indexOf(cur.id) >= 0 ? ` · round ${order.indexOf(cur.id) + 1}` : ""}</span><b className="as-verdict" style={{ display: "block" }}>{cur.title}</b></div>
+            <label className="po-heading" style={{ minWidth: 220 }}><span className="ex-mono">Team facilitator for this challenge</span><Field k={`fac:${cur.id}`} st={st} op={op} readOnly={readOnly} rows={1} placeholder="Name" label="Team facilitator" /></label>
+          </div>
+          <div className="po-seg" role="tablist" aria-label="Parts of the challenge">
+            {([["problem", "The problem"], ["data", "Input data"], ["work", `Solve the challenge · ${answered(cur)}/${cur.prompts.length}`]] as const).map(([k, l]) => (<button key={k} role="tab" aria-selected={tab === k} aria-pressed={tab === k} onClick={() => setTab(k)}>{l}</button>))}
+          </div>
+          {tab === "problem" ? <div className="as-case" key="p">{cur.problem.map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}</div> : null}
+          {tab === "data" ? (
+            <div className="lab-data" key="d">
+              {cur.inputs.map((inp, i) => inp.kind === "text" ? <p key={i}>{inp.text}</p> : inp.kind === "list" ? (
+                <div key={i}><b>{inp.title}</b><ul>{inp.items.map((x) => (<li key={x}>{x}</li>))}</ul></div>
+              ) : inp.kind === "table" ? (
+                <div key={i}><b>{inp.title}</b><div className="as-tablewrap"><table className="rf-table"><thead><tr>{inp.cols.map((c) => (<th key={c} scope="col">{c}</th>))}</tr></thead><tbody>{inp.rows.map((r, ri) => (<tr key={ri}>{r.map((c, ci) => (ci ? <td key={ci}>{c}</td> : <th key={ci} scope="row">{c}</th>))}</tr>))}</tbody></table></div></div>
+              ) : example ? (
+                <div key={i}><b>{inp.title}</b><AsCanvasBoard board={undefined as never} frame={undefined as never} trainer={false} config={{ focus: "all", questions: config.questions, prompt: "The canvas as CARS filled it in." }} st={example} op={() => undefined} readOnly /></div>
+              ) : null)}
+            </div>
+          ) : null}
+          {tab === "work" ? (
+            <div className="lab-work" key="w">
+              <p className="lab-task">{cur.task}</p>
+              {cur.prompts.map(([phase, q], i) => (
+                <label key={i} className="lab-prompt" style={{ ["--c" as string]: LAB_PHASE[phase] }}>
+                  {i === 0 || cur.prompts[i - 1]![0] !== phase ? <span className="lab-phase">{phase}</span> : null}
+                  <b>{q}</b>
+                  <Field k={`a:${cur.id}:${i}`} st={st} op={op} readOnly={readOnly} rows={5} placeholder="Our answer" label={q} />
+                </label>
+              ))}
+              {answered(cur) === cur.prompts.length ? <p className="rd-ok" style={{ margin: 0 }}>Congratulations on completing this challenge!</p> : null}
+            </div>
+          ) : null}
+        </section>
+      ) : (
+        <p className="po-empty">{order.length ? `Round ${round + 1} has no challenge yet: add one to your order above, or open any challenge by its name.` : "Decide your order first: click + on the challenge you will solve first."}</p>
+      )}
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint", "as-lab"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard, "as-lab": AsLabBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

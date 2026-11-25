@@ -6,6 +6,7 @@
 
 import type { ActivitySpec } from "../activities.js";
 import { ASPC_ASPECTS, ASPC_INDICATORS } from "./aspc-reference.js";
+import { ASPC_LAB } from "./aspc-lab.js";
 
 /** Every exercise has a board of its own; its frame only needs room for it on the canvas. */
 const BOARD = { width: 1200, height: 600 };
@@ -1054,7 +1055,145 @@ const lesson6: ActivitySpec[] = [
   },
 ];
 
-/** Lessons 1 to 6 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
+const lesson7: ActivitySpec[] = [
+  {
+    title: "The value of ASPCs to CARS",
+    kind: "Discussion",
+    share: 7,
+    steps: "As a class, discuss,\n- What perspective, skills, and knowledge will you offer CARS?\n- How is your value proposition as a change leader helping this organization move forward?",
+    board: "po-ai",
+    config: { classWide: true, prompt: "You are the new LACE Leaders at CARS: 5 years as SPCs, 2 months in this role, reporting to the SVP of Global Portfolio Operations.", look: "loop", loopLabel: "Looking back as a team", loopDone: "The team has answered all of it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["What we offer", "What perspective, skills, and knowledge will you offer CARS?"], ["Our value proposition", "How is your value proposition as a change leader helping this organization move forward?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Know your team's superpowers",
+    kind: "Activity",
+    prepare: 7,
+    steps: "Your instructor will put you in teams of 3-4 participants. You will work in the same team for the duration of the learning lab.\n- What ASPC skills does your team need for each challenge?\n- What skills and experience do each of you bring from your years as an SPC?\n- Which challenge will you solve first?",
+    board: "po-ai",
+    config: { prompt: "The challenges, in alphabetical order: Charting the Road Ahead; Communicating the Transformation Strategy; Navigating the Portfolio Realignment Debate; Using Facts as Our Guide.", look: "loop", loopLabel: "Looking back as a team", loopDone: "The team has answered all of it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Skills each challenge needs", "What ASPC skills does your team need for each challenge?"], ["What each of us brings", "What skills and experience do each of you bring from your years as an SPC?"], ["First challenge", "Which challenge will you solve first?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Solve the first challenge",
+    kind: "Activity",
+    prepare: 45,
+    steps: "As a team,\n- Choose a team facilitator to guide your team through the first challenge\n- Using the activity guide, solve the challenge\n- Be sure to complete all the question prompts",
+    board: "as-lab",
+    config: { shared: "aspc-lab", round: 0, challenges: ASPC_LAB, canvas: CANVAS_EXAMPLE, questions: CANVAS_QUESTIONS, prompt: "Round 1 of 4. Choose a team facilitator, then solve the challenge and complete all the question prompts." },
+    ...BOARD,
+  },
+  {
+    title: "Reflect on working as a team",
+    kind: "Discussion",
+    prepare: 5,
+    steps: "As a team, discuss the following:\n- What is the strongest element of your solution? What is its weakness?\n- How well did you work together as a LACE team?\n- What will you do differently in the next challenge?\n- Which challenge will you do next?",
+    board: "po-ai",
+    config: { prompt: "As a team, discuss the following.", look: "pipeline", pipeNote: "A stop fills in as the team answers it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Strongest and weakest", "What is the strongest element of your solution? What is its weakness?"], ["Working together", "How well did you work together as a LACE team?"], ["Do differently", "What will you do differently in the next challenge?"], ["Next challenge", "Which challenge will you do next?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Solve the second challenge",
+    kind: "Activity",
+    prepare: 45,
+    steps: "As a team,\n- Choose a new team facilitator to guide your team through the second challenge\n- Using the activity guide, solve the challenge\n- Be sure to complete all the question prompts",
+    board: "as-lab",
+    config: { shared: "aspc-lab", round: 1, challenges: ASPC_LAB, canvas: CANVAS_EXAMPLE, questions: CANVAS_QUESTIONS, prompt: "Round 2 of 4. Choose a new team facilitator, then solve the challenge and complete all the question prompts." },
+    ...BOARD,
+  },
+  {
+    title: "Reflect on how you are using AI",
+    kind: "Discussion",
+    prepare: 5,
+    steps: "As a team, discuss the following:\n- What is the strongest element of your solution? What is its weakness?\n- Did you use AI to solve the second challenge?\n- How might you experiment with AI in the remaining challenges to get even better results?\n- Which challenge will you do next?",
+    board: "po-ai",
+    config: { prompt: "As a team, discuss the following.", look: "pipeline", pipeNote: "A stop fills in as the team answers it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Strongest and weakest", "What is the strongest element of your solution? What is its weakness?"], ["Did we use AI?", "Did you use AI to solve the second challenge?"], ["Experiment with AI", "How might you experiment with AI in the remaining challenges to get even better results?"], ["Next challenge", "Which challenge will you do next?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Navigating complex transformations",
+    kind: "Activity",
+    share: 5,
+    steps: "You learn that your top competitor is releasing an autonomous green vehicle to the market 2 months before the CARS prototype will be unveiled. As a class, discuss:\n- Which challenge does this change make most important to solve immediately?\n- If this is different than the one your team planned to solve next, why would you recommend this change?",
+    board: "po-ai",
+    config: { classWide: true, prompt: "You learn that your top competitor is releasing an autonomous green vehicle to the market 2 months before the CARS prototype will be unveiled.", look: "loop", loopLabel: "Looking back as a team", loopDone: "The team has answered all of it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Most important now", "Which challenge does this change make most important to solve immediately?"], ["Why change the plan", "If this is different than the one your team planned to solve next, why would you recommend this change?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Solve the third challenge",
+    kind: "Activity",
+    prepare: 45,
+    steps: "As a team,\n- Choose a new team facilitator to guide your team through the third challenge\n- Using the activity guide, solve the challenge\n- Be sure to complete all the question prompts",
+    board: "as-lab",
+    config: { shared: "aspc-lab", round: 2, challenges: ASPC_LAB, canvas: CANVAS_EXAMPLE, questions: CANVAS_QUESTIONS, prompt: "Round 3 of 4. Choose a new team facilitator, then solve the challenge and complete all the question prompts." },
+    ...BOARD,
+  },
+  {
+    title: "Reflect on working with incomplete information",
+    kind: "Discussion",
+    prepare: 5,
+    steps: "As a team, discuss the following:\n- What is the strongest element of your solution? What is its weakness?\n- What information were you lacking that would have made solving this challenge easier?\n- In your own context, what techniques have you used to overcome lack of complete information?\n- Which challenge will you do next?",
+    board: "po-ai",
+    config: { prompt: "As a team, discuss the following.", look: "pipeline", pipeNote: "A stop fills in as the team answers it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Strongest and weakest", "What is the strongest element of your solution? What is its weakness?"], ["What we lacked", "What information were you lacking that would have made solving this challenge easier?"], ["Our techniques", "In your own context, what techniques have you used to overcome lack of complete information?"], ["Next challenge", "Which challenge will you do next?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Solve the fourth challenge",
+    kind: "Activity",
+    prepare: 45,
+    steps: "As a team,\n- Choose a new team facilitator to guide your team through the final challenge\n- Using the activity guide, solve the challenge\n- Be sure to complete all the question prompts",
+    board: "as-lab",
+    config: { shared: "aspc-lab", round: 3, challenges: ASPC_LAB, canvas: CANVAS_EXAMPLE, questions: CANVAS_QUESTIONS, prompt: "Round 4 of 4. Choose a new team facilitator, then solve the challenge and complete all the question prompts." },
+    ...BOARD,
+  },
+  {
+    title: "Reflect on the role of an ASPC",
+    kind: "Discussion",
+    prepare: 5,
+    steps: "As a team, discuss the following:\n- What is the strongest element of your solution? What is its weakness?\n- Did the order in which you addressed the challenges impact your results? If yes, how?\n- What did you learn about leading, navigating, and sustaining a complex transformation?",
+    board: "po-ai",
+    config: { prompt: "As a team, discuss the following.", look: "loop", loopLabel: "Looking back as a team", loopDone: "The team has answered all of it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Strongest and weakest", "What is the strongest element of your solution? What is its weakness?"], ["Did the order matter?", "Did the order in which you addressed the challenges impact your results? If yes, how?"], ["What we learned", "What did you learn about leading, navigating, and sustaining a complex transformation?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Team preparation for learning lab readout",
+    kind: "Activity",
+    prepare: 15,
+    steps: "As a team, prepare to share your learning lab experience. You will have 20 minutes for the readout.\n- Choose a person in your group to do the readout\n- Prepare answers to the following questions:\n- What order did you choose for the four challenges, and why?\n- How did that sequence affect your results and learning?\n- What were your key takeaways from each challenge?\n- What would you do differently next time?\n- What lessons from your experience should others in the class take away?",
+    board: "po-ai",
+    config: { heading: { label: "Who does the readout", placeholder: "Name" }, prompt: "Prepare to share your learning lab experience. Choose a person in your group to do the readout.", look: "pipeline", pipeNote: "A stop fills in as the team answers it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Our order, and why", "What order did you choose for the four challenges, and why?"], ["Effect of the sequence", "How did that sequence affect your results and learning?"], ["Key takeaways", "What were your key takeaways from each challenge?"], ["Do differently", "What would you do differently next time?"], ["Lessons for the class", "What lessons from your experience should others in the class take away?"]] },
+    ...BOARD,
+  },
+  {
+    title: "Learning lab readout",
+    kind: "Activity",
+    share: 60,
+    steps: "As a class,\n- Invite a team to share their readout (15 minutes)\n- Discuss as a class\n- Continue with the next team until all have shared",
+    board: "po-check",
+    config: { classWide: true, prompt: "Each team shares its readout, then the class discusses.", doneLabel: "All teams have shared.", notesLabel: "What the class takes from the readouts", add: "+ a takeaway, Enter", steps: [["Invite a team. ", "Invite a team to share their readout (15 minutes)."], ["Discuss. ", "Discuss as a class."], ["Next team. ", "Continue with the next team until all have shared."]] },
+    ...BOARD,
+  },
+  {
+    title: "Class closing",
+    kind: "Discussion",
+    share: 10,
+    steps: "As a class,\n- Discuss what patterns emerged in the readouts regarding leading, navigating, and sustaining complex transformations\n- Take a moment to review the parking lot and ask any questions that have been unanswered so far\n- Share appreciations with each other",
+    board: "po-ai",
+    config: { classWide: true, prompt: "As a class, close the learning lab.", look: "loop", loopLabel: "Looking back as a team", loopDone: "The team has answered all of it.", kinds: [], add: "+ add, Enter", shareLabel: "What stands out", lenses: [["Patterns", "What patterns emerged in the readouts regarding leading, navigating, and sustaining complex transformations?"], ["Parking lot", "Review the parking lot and ask any questions that have been unanswered so far."], ["Appreciations", "Share appreciations with each other."]] },
+    ...BOARD,
+  },
+  {
+    title: "Review",
+    kind: "Action plan",
+    prepare: 5,
+    steps: "Take a moment to review your action plan from Advanced SPC.\n- Make adjustments as you see fit\n- Decide what your first step is when you return to work\n- Put it in a memorable place so you can find it again",
+    board: "po-check",
+    config: { prompt: "Take a moment to review your action plan from Advanced SPC.", doneLabel: "Your action plan is ready to take back to work.", notesLabel: "My first step when I return to work", add: "+ my first step, Enter", steps: [["Adjust. ", "Make adjustments as you see fit."], ["First step. ", "Decide what your first step is when you return to work."], ["Keep it. ", "Put it in a memorable place so you can find it again."]] },
+    ...BOARD,
+  },
+];
+
+/** Lessons 1 to 7 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
 export const ASPC_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Introducing the Advanced SPC Role", activities: lesson1 },
   { title: "Embracing AI", activities: lesson2 },
@@ -1062,6 +1201,6 @@ export const ASPC_COURSE: { title: string; activities: ActivitySpec[]; keep?: bo
   { title: "Developing a Transformation Strategy", activities: lesson4 },
   { title: "Unlocking Portfolio Flow", activities: lesson5 },
   { title: "Customizing SAFe to Your Context", activities: lesson6 },
-  { title: "Learning Lab: design sprint", activities: [], keep: true },
+  { title: "Learning Lab", activities: lesson7 },
   { title: "Get Certified and Start Training", activities: [], keep: true },
 ];

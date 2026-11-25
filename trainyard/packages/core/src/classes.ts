@@ -623,7 +623,7 @@ const RAW_CLASSES: ClassSpec[] = [
     id: "aspc",
     name: "Advanced SPC",
     short: "ASPC",
-    blurb: "Three days for experienced SPCs: the role, embracing AI, engaging executives, developing a transformation strategy, unlocking portfolio flow, customizing SAFe to your context, with the CARS case studies and a design-sprint learning lab.",
+    blurb: "Three days for experienced SPCs: the role, embracing AI, engaging executives, developing a transformation strategy, unlocking portfolio flow, customizing SAFe to your context, with the CARS scenario throughout and a learning lab of four challenges.",
     days: 3,
     course: ASPC_COURSE,
     lessons: [
@@ -633,7 +633,7 @@ const RAW_CLASSES: ClassSpec[] = [
       { title: "Developing a Transformation Strategy", exercises: ASPC_COURSE[3]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Unlocking Portfolio Flow", exercises: ASPC_COURSE[4]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Customizing SAFe to Your Context", exercises: ASPC_COURSE[5]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
-      { title: "Learning Lab: design sprint", exercises: DESIGN_SPRINT },
+      { title: "Learning Lab", exercises: ASPC_COURSE[6]!.activities.map((x): Exercise => ({ kind: "slide", title: `${x.kind}: ${x.title}`, body: "", minutes: (x.prepare ?? 0) + (x.share ?? 0) })) },
       { title: "Get Certified and Start Training", exercises: [{ kind: "stickies", title: "Your next transformation move", lanes: ["This week", "This PI", "This year"], rows: 2 }] },
     ],
   },
