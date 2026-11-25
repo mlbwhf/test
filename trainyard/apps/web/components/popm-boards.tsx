@@ -1692,6 +1692,27 @@ const CV_SIDES = [["bo", "Business Operations"], ["sd", "Solution Delivery"]] as
 const CV_FOCUS: Record<string, string[]> = { all: ["context", "tobj", "bobj", "ktr", "kbr", "align"], context: ["context"], business: ["bobj", "kbr"], transformation: ["tobj", "ktr"], alignment: ["ktr", "align", "kbr"] };
 const linksOf = (r: Row): string[] => (Array.isArray(r.links) ? (r.links as string[]) : []);
 
+type RefTable = { title: string; cols: string[]; rows: string[][] };
+/** Reference tables to draw ideas from, one at a time. */
+function ReferenceTables({ tables }: { tables: RefTable[] }) {
+  const [at, setAt] = useState(0);
+  const t = tables[at];
+  if (!t) return null;
+  return (
+    <details className="po-material rf">
+      <summary>Ideas for key results: leading and lagging indicators, and example metrics</summary>
+      <div className="po-chips" style={{ margin: "10px 0" }}>{tables.map((x, i) => (<button key={x.title} aria-pressed={i === at} onClick={() => setAt(i)}>{x.title.replace(/^(Leading indicators of|Examples of) /, "").replace(/ key results$/, "")}</button>))}</div>
+      <b>{t.title}</b>
+      <div className="as-tablewrap">
+        <table className="rf-table">
+          <thead><tr>{t.cols.map((c) => (<th key={c} scope="col">{c}</th>))}</tr></thead>
+          <tbody>{t.rows.map((r) => (<tr key={r[0]}>{r.map((c, i) => (i ? <td key={i}>{c}</td> : <th key={i} scope="row">{c}</th>))}</tr>))}</tbody>
+        </table>
+      </div>
+    </details>
+  );
+}
+
 /** One field of a key result, saved when it is left. */
 function RowInput({ row, k, hint, op, readOnly, listKey, className }: { row: Row; k: string; hint: string; op: BoardProps["op"]; readOnly: boolean; listKey: string; className?: string }) {
   const saved = str(row[k]);
@@ -1839,6 +1860,7 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
         <Results side="b" />
       </section>
 
+      {Array.isArray(config.reference) ? <ReferenceTables tables={config.reference as RefTable[]} /> : null}
       {Array.isArray(config.also) ? (
         <div className="po-cols" style={{ ["--n" as string]: (config.also as string[]).length }}>
           {(config.also as string[]).map((q, qi) => (
@@ -2369,6 +2391,7 @@ export function AsBlueprintBoard({ config, st, op, readOnly }: BoardProps) {
   const rows = list(st, "rows"), step = str(config.step) || "all", on = (c: string) => (BP_STEPS[step] ?? BP_STEPS.all!).includes(c);
   const rails = (config.guardrails as [string, string][] | undefined) ?? [], cards = (config.scenario as string[] | undefined) ?? [], example = config.example as Record<string, unknown>[] | undefined;
   const set = (id: string, value: Record<string, unknown>) => op({ key: "rows", op: "update", id, value });
+  const aspects = (config.aspects as Record<string, Record<string, string[]>> | undefined) ?? {};
   const gOf = (r: Row) => (r.g && typeof r.g === "object" ? r.g : {}) as Record<string, string>;
   const passes = (r: Row) => rails.length > 0 && rails.every((_, i) => gOf(r)[i] === "y"), fails = (r: Row) => rails.some((_, i) => gOf(r)[i] === "n");
   return (
@@ -2408,7 +2431,20 @@ export function AsBlueprintBoard({ config, st, op, readOnly }: BoardProps) {
                 <div className="as-domains" style={{ flexDirection: "row", flexWrap: "wrap" }} role="group" aria-label="Aspect of SAFe">
                   {BP_ASPECTS.map(([n, c]) => (<button key={n} disabled={readOnly} aria-pressed={str(r.aspect) === n} style={{ ["--c" as string]: c }} onClick={() => set(r.id, { aspect: str(r.aspect) === n ? "" : n })}>{n}</button>))}
                 </div>
-                <CellText row={r} k="detail" hint="Which aspect exactly? e.g. Work Artifact" op={op} readOnly={readOnly} listKey="rows" />
+                {aspects[str(r.aspect)] ? (
+                  <select className="bp-kind" value={str(r.detail)} disabled={readOnly} aria-label="Which aspect exactly" onChange={(e) => set(r.id, { detail: e.target.value })}>
+                    <option value="">Which {str(r.aspect).toLowerCase()} aspect…</option>
+                    {str(r.detail) && !Object.entries(aspects[str(r.aspect)]!).some(([k, v]) => k === str(r.detail) || v.some((x) => `${k}: ${x}` === str(r.detail))) ? <option>{str(r.detail)}</option> : null}
+                    {Object.entries(aspects[str(r.aspect)]!).map(([kind, items]) => (
+                      <optgroup key={kind} label={kind}>
+                        <option value={kind}>{kind} (any, or a new one)</option>
+                        {items.map((x) => (<option key={x} value={`${kind}: ${x}`}>{x}</option>))}
+                      </optgroup>
+                    ))}
+                  </select>
+                ) : (
+                  <CellText row={r} k="detail" hint="Which aspect exactly? e.g. Work Artifact" op={op} readOnly={readOnly} listKey="rows" />
+                )}
               </div>
               <div className={`bp-cell cv-part${on("change") ? " focus" : ""}`}>
                 <span className="bp-h">Proposed change</span>

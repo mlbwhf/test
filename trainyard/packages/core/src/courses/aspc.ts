@@ -5,6 +5,7 @@
 // repository's Apache License 2.0. See NOTICE.md in this folder.
 
 import type { ActivitySpec } from "../activities.js";
+import { ASPC_ASPECTS, ASPC_INDICATORS } from "./aspc-reference.js";
 
 /** Every exercise has a board of its own; its frame only needs room for it on the canvas. */
 const BOARD = { width: 1200, height: 600 };
@@ -550,7 +551,7 @@ const lesson4: ActivitySpec[] = [
     share: 7,
     steps: "As a group, fill out this information in the blank transformation canvas in your workbook. As you do so, consider:\n- How would business operations and solution delivery leaders answer these four questions differently based on their context?\n- What would it look like for their answers to be different but complementary?\nRefer to the example in the lesson Appendix for ideas.",
     board: "as-canvas",
-    config: { shared: "aspc-canvas", focus: "context", prompt: "Fill out the business context: how would business operations and solution delivery leaders answer these four questions differently, and what would make their answers different but complementary?", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE },
+    config: { shared: "aspc-canvas", reference: ASPC_INDICATORS, focus: "context", prompt: "Fill out the business context: how would business operations and solution delivery leaders answer these four questions differently, and what would make their answers different but complementary?", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE },
     ...BOARD,
   },
   {
@@ -559,7 +560,7 @@ const lesson4: ActivitySpec[] = [
     share: 10,
     steps: "As a group, fill in the business objective and key business results sections in the blank transformation canvas in your workbook. As you do so:\n- Discuss how solution delivery and transformation leaders at CARS might react to this OKR.\n- Use your LLM to explore additional key results that could support this business objective.\n- Be prepared to share.",
     board: "as-canvas",
-    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "business", prompt: "Fill in the business objective and the key business results.", also: ["How might solution delivery and transformation leaders react to this OKR?", "Additional key results from your LLM that could support this business objective"] },
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, reference: ASPC_INDICATORS, focus: "business", prompt: "Fill in the business objective and the key business results.", also: ["How might solution delivery and transformation leaders react to this OKR?", "Additional key results from your LLM that could support this business objective"] },
     ...BOARD,
   },
   {
@@ -568,7 +569,7 @@ const lesson4: ActivitySpec[] = [
     share: 7,
     steps: "As a group, fill in the transformation objective and key transformation results sections in the blank transformation canvas in your workbook. As you do so:\n- Identify 3-5 desired transformation outcomes (faster time to market, higher quality, increased productivity, and/or improved engagement)\n- Use your LLM to generate a transformation objective with key results (OKR) that achieves the desired outcomes and supports the business objective\n- Add the OKR into the transformation canvas",
     board: "as-canvas",
-    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "transformation", prompt: "Fill in the transformation objective and the key transformation results: 3-5 desired outcomes (faster time to market, higher quality, increased productivity, and/or improved engagement)." },
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, reference: ASPC_INDICATORS, focus: "transformation", prompt: "Fill in the transformation objective and the key transformation results: 3-5 desired outcomes (faster time to market, higher quality, increased productivity, and/or improved engagement)." },
     ...BOARD,
   },
   {
@@ -577,7 +578,7 @@ const lesson4: ActivitySpec[] = [
     share: 5,
     steps: "As a group, use your transformation canvas to consider how you would complete the canvas by aligning transformation metrics with the business metrics they support. Discuss the following:\n- What time-to-market, quality, productivity, and engagement metrics would serve as leading indicators of revenue, cost, risk, and customer happiness?",
     board: "as-canvas",
-    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "alignment", prompt: "Align the transformation metrics with the business metrics they support: on each transformation result, pick the business results it leads to." },
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, reference: ASPC_INDICATORS, focus: "alignment", prompt: "Align the transformation metrics with the business metrics they support: on each transformation result, pick the business results it leads to." },
     ...BOARD,
   },
   {
@@ -947,7 +948,7 @@ const lesson6: ActivitySpec[] = [
     prepare: 15,
     steps: "In your groups, start your Customization Blueprint for CARS:\n- Read the Customizing SAFe scenario and fill in the Need column in your blank blueprint.\n- Then for each row, fill in the Customized Aspect column. Be sure to have at least one row each for People, Work, and Activities.",
     board: "as-blueprint",
-    config: { shared: "aspc-blueprint", guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "need", prompt: "Start your Customization Blueprint for CARS: fill in the Need column, then the Customized Aspect for each row." },
+    config: { shared: "aspc-blueprint", aspects: ASPC_ASPECTS, guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "need", prompt: "Start your Customization Blueprint for CARS: fill in the Need column, then the Customized Aspect for each row." },
     ...BOARD,
   },
   {
@@ -956,7 +957,7 @@ const lesson6: ActivitySpec[] = [
     prepare: 7,
     steps: "In your groups, continue your customization blueprint:\n- Fill in the proposed change column.",
     board: "as-blueprint",
-    config: { shared: "aspc-blueprint", guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "change", prompt: "Continue your customization blueprint: fill in the proposed change column." },
+    config: { shared: "aspc-blueprint", aspects: ASPC_ASPECTS, guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "change", prompt: "Continue your customization blueprint: fill in the proposed change column." },
     ...BOARD,
   },
   {
@@ -965,7 +966,7 @@ const lesson6: ActivitySpec[] = [
     prepare: 10,
     steps: "In your groups:\n- Take the first row of your blueprint and apply all four guardrails. Does it pass all guardrails? Note yes or no, and why or why not, in the Validation column\n- If not, are there adjustments to the proposed change that would enable it to pass?\n- Do this for all the rows",
     board: "as-blueprint",
-    config: { shared: "aspc-blueprint", guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "validate", prompt: "Take each row of your blueprint and apply all four guardrails. Does it pass? Note why or why not, and any adjustment that would let it pass." },
+    config: { shared: "aspc-blueprint", aspects: ASPC_ASPECTS, guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "validate", prompt: "Take each row of your blueprint and apply all four guardrails. Does it pass? Note why or why not, and any adjustment that would let it pass." },
     ...BOARD,
   },
   {
@@ -975,7 +976,7 @@ const lesson6: ActivitySpec[] = [
     share: 7,
     steps: "In your groups, consider the customizations that passed the guardrail test.\n- For each, consider what success will look like and how it will be measured\n- Summarize your discussion in the Benefit column\n- Be prepared to share",
     board: "as-blueprint",
-    config: { shared: "aspc-blueprint", guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "benefit", prompt: "For each customization that passed the guardrail test: what will success look like, and how will it be measured? Summarize it in the Benefit column." },
+    config: { shared: "aspc-blueprint", aspects: ASPC_ASPECTS, guardrails: BLUEPRINT_GUARDRAILS, scenario: BLUEPRINT_SCENARIO, example: BLUEPRINT_EXAMPLE, step: "benefit", prompt: "For each customization that passed the guardrail test: what will success look like, and how will it be measured? Summarize it in the Benefit column." },
     ...BOARD,
   },
   {
@@ -1011,6 +1012,43 @@ const lesson6: ActivitySpec[] = [
       add: "+ add, Enter",
       shareLabel: "What we share",
       lenses: [["Approach", "What approach would you use to prioritize (Cost of Delay, WSJF, etc.)?"], ["Who is involved", "Who would need to be involved in prioritization discussions?"], ["Input to gather", "What additional input might need to be gathered?"], ["LACE backlog?", "Would customizations become part of the LACE backlog?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "How do SAFe and customizations co-exist?",
+    kind: "Discussion",
+    share: 5,
+    steps: "Customizing SAFe takes effort. Considering your customization blueprint:\n- How would you apply your customizations when using SAFe courseware, workshops, and toolkits?\n- How might future changes in SAFe guidance impact your customizations?\n- What expectations would you set regarding the ongoing maintenance of your customizations?",
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "Customizing SAFe takes effort. Considering your customization blueprint:",
+      look: "loop",
+      loopLabel: "Living with a customization",
+      loopDone: "Using it, keeping up with SAFe, and maintaining it: all three are answered.",
+      kinds: [],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["Courseware, workshops, toolkits", "How would you apply your customizations when using SAFe courseware, workshops, and toolkits?"], ["Future SAFe guidance", "How might future changes in SAFe guidance impact your customizations?"], ["Ongoing maintenance", "What expectations would you set regarding the ongoing maintenance of your customizations?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Action Plan: customizing SAFe in your context",
+    kind: "Action plan",
+    prepare: 5,
+    steps: "With your AI Action Planning Buddy, share your reflections on customizing SAFe in your context. Consider the following:\n- What needs do you have for customizing SAFe?\n- What concerns do you have about making these changes?\n- Ask your AI thinking buddy to summarize the pros and cons of making these customizations.",
+    board: "po-ai",
+    config: {
+      prompt: "With your AI Action Planning Buddy, share your reflections on customizing SAFe in your context.",
+      look: "pair",
+      visLabel: "Your needs against your concerns; then the pros and cons your AI thinking buddy summarizes.",
+      kinds: [],
+      tones: ["#cde0f2", "#ffe9b8", "#cfe8d4"],
+      add: "+ add, Enter",
+      shareLabel: "Marked to keep in my action plan",
+      lenses: [["My needs", "What needs do you have for customizing SAFe?"], ["My concerns", "What concerns do you have about making these changes?"], ["Pros and cons", "Ask your AI thinking buddy to summarize the pros and cons of making these customizations."]],
     },
     ...BOARD,
   },

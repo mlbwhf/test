@@ -31,6 +31,7 @@ export * from "./stack.js";
 export { VALUE_ARCHITECT_LAB } from "./courses/ai-native-value-architect.js";
 export { RTE_TTA, RTE_TUCKMAN_QUESTIONS } from "./courses/rte.js";
 export { TRANSFORMATION_CANVAS_QUESTIONS, TRANSFORMATION_CANVAS_EXAMPLE } from "./courses/aspc.js";
+export { ASPC_INDICATORS, ASPC_ASPECTS } from "./courses/aspc-reference.js";
 export * from "./teams.js";
 export * from "./class-meta.js";
 export * from "./export.js";
