@@ -1525,6 +1525,9 @@ function aa_reg_generate( $slug, $course ) {
 	/* Hand-set cohorts go in after the cap, so an explicitly requested date is
 	   never dropped by a limit sized for the cadence. */
 	$out = aa_reg_extra_cohorts( $slug, $course, $out );
+	/* Classes taught in one language only. In every language's list, so that
+	   checkout can find them; aa_reg_upcoming() decides who is shown them. */
+	$out = aa_reg_lang_cohorts_add( $slug, $course, $out );
 	usort( $out, function ( $a, $b ) { return strcmp( $a['start'], $b['start'] ); } );
 
 	return $memo[ $key ] = $out;
@@ -2812,6 +2815,7 @@ function aa_reg_upcoming( $slug, $course ) {
 	foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 		if ( $c['end'] < $today ) { continue; }          // finished classes are not offers
 		if ( aa_reg_closed_for_sale( $c['start'] ) ) { continue; }   // started, or past 3 PM on its first day
+		if ( ! empty( $c['lang'] ) && $c['lang'] !== aa_reg_lang() ) { continue; }   // taught in another language only
 		if ( aa_reg_seats_left( $course, $c ) < 1 ) { continue; }   // sold out
 		$out[] = $c;
 	}
@@ -2839,6 +2843,66 @@ function aa_reg_months( $cohorts ) {
 		$by[ $k ]['items'][] = $c;
 	}
 	return $by;
+}
+
+/**
+ * CLASSES TAUGHT IN ONE LANGUAGE ONLY, ON DATES AND HOURS SET BY HAND.
+ *
+ * Asked for on 24 Nov 2026: Spanish Product Owner/Product Manager and Scrum
+ * Master classes that run as two four-hour sessions, on days and at hours the
+ * English cadence never produces. aa_reg_extra_dates() cannot hold them -- a
+ * date there is offered in every language and runs 9 to 5.
+ *
+ * Each row is one class: the language it is taught in, its first and last
+ * day, and its hours as they should read on the card.
+ *
+ * THE CLASS EXISTS IN EVERY LANGUAGE'S SCHEDULE AND IS OFFERED IN ONE.
+ * Checkout and the Stripe webhook run without a page and answer 'en', so a
+ * class generated only for Spanish could be shown and never sold. It is
+ * therefore generated always, marked with 'lang', and aa_reg_upcoming() is
+ * what keeps it off the pages of every other language. The id carries the
+ * language so it can never collide with a cadence class on the same day.
+ */
+function aa_reg_lang_cohorts() {
+	return apply_filters( 'aa_reg_lang_cohorts', array(
+		'popm' => array(
+			/* Given as "November 27 and December 28", 8am to 12m: read as 27-28 Nov. */
+			array( 'lang' => 'es', 'start' => '2026-11-27', 'end' => '2026-11-28', 'hours' => '8 AM–12 PM ET' ),
+		),
+		'scrum-master' => array(
+			array( 'lang' => 'es', 'start' => '2026-12-04', 'end' => '2026-12-05', 'hours' => '8 AM–12 PM ET' ),
+			array( 'lang' => 'es', 'start' => '2026-12-25', 'end' => '2026-12-26', 'hours' => '4–8 PM ET' ),
+		),
+	) );
+}
+
+function aa_reg_lang_cohorts_add( $slug, $course, $out ) {
+	$map = aa_reg_lang_cohorts();
+	if ( empty( $map[ $slug ] ) || ! is_array( $map[ $slug ] ) ) { return $out; }
+	$today = ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' );
+	$names = aa_reg_lang_names();
+	foreach ( $map[ $slug ] as $row ) {
+		if ( empty( $row['lang'] ) || empty( $row['start'] ) || empty( $row['end'] ) ) { continue; }
+		if ( $row['start'] < $today ) { continue; }
+		$hours = ! empty( $row['hours'] ) ? (string) $row['hours'] : aa_reg_slot_hours( 'morning' );
+		$c          = aa_reg_make( $slug, $course, $row['start'], 'morning', 'hand-set' );
+		$c['id']    = $slug . '-' . $row['lang'] . '-' . $row['start'];
+		$c['start'] = $row['start'];
+		$c['end']   = $row['end'];
+		$c['lang']  = $row['lang'];
+		$c['kind']  = 'weekday';
+		$c['hours'] = $hours;
+		$c['batch'] = ( isset( $names[ $row['lang'] ] ) ? $names[ $row['lang'] ] . ' · ' : '' ) . $hours;
+		$out[]      = $c;
+	}
+	return $out;
+}
+
+/** Whether a month from aa_reg_months() holds a class taught in one language only. */
+function aa_reg_month_has_lang( $m ) {
+	if ( empty( $m['items'] ) || ! is_array( $m['items'] ) ) { return false; }
+	foreach ( $m['items'] as $it ) { if ( ! empty( $it['lang'] ) ) { return true; } }
+	return false;
 }
 
 /** Above this many batches in a month, the picker switches from cards to rows.
@@ -3912,8 +3976,11 @@ function aa_reg_panel( $atts ) {
 		    . ' id="aacal-panel-' . esc_attr( $k ) . '" aria-labelledby="aacal-tab-' . esc_attr( $k ) . '"'
 		    . ' data-month="' . esc_attr( $k ) . '"'
 		    . ' data-month-count="' . (int) count( $m['items'] ) . '"'
-		    . ( $i === 0 ? '' : ' hidden data-lazy="1"' ) . '>';
-		if ( $i === 0 ) {
+		    . ( $i === 0 ? '' : ( aa_reg_month_has_lang( $m ) ? ' hidden' : ' hidden data-lazy="1"' ) ) . '>';
+		/* A month holding a class taught in this language only is printed
+		   here rather than fetched: the fetch has no page behind it, answers
+		   in English, and would leave that class out. */
+		if ( $i === 0 || aa_reg_month_has_lang( $m ) ) {
 			$h .= aa_reg_month_html( $course, $m, $first['id'], $cur );
 		}
 		$h .= '</div>';
