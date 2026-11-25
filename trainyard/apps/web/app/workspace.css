@@ -1377,3 +1377,7 @@ span.studio-team { cursor: default; }
 .cv2-warn { color: #8a2a1a !important; font-weight: 600; }
 @media (max-width: 900px) { .cv2-voices { grid-template-columns: minmax(0, 1fr); } .cv2-voice { display: none; } .cv2-objs, .cv2-link { grid-template-columns: minmax(0, 1fr); gap: 10px; } .cv2-strings { display: none; } .cv2-score { padding: 8px; } }
 @media (prefers-reduced-motion: reduce) { .cv2-string, .cv2-kr { animation: none; } }
+input.cv2-voice { font: inherit; font-weight: 800; font-size: 13px; text-align: center; border: 2px dashed transparent; max-width: 100%; cursor: text; }
+input.cv2-voice:hover:not(:disabled) { border-color: #06384a66; }
+input.cv2-voice:focus-visible { outline: 3px solid #f5b83d; border-color: transparent; }
+@media (max-width: 900px) { input.cv2-voice { display: none; } }

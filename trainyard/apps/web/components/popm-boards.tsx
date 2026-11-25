@@ -1655,6 +1655,14 @@ function RowInput({ row, k, hint, op, readOnly, listKey, className }: { row: Row
   return <input className={className} value={v} placeholder={hint} aria-label={hint} disabled={readOnly} onClick={(e) => e.stopPropagation()} onChange={(e) => setV(e.target.value)} onBlur={() => v !== saved && op({ key: listKey, op: "update", id: row.id, value: { [k]: v.trim() } })} onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()} />;
 }
 
+/** The name of one side of the business context: the slide's name to start with, and the group's own once typed. */
+function VoiceName({ k, fallback, tone, st, op, readOnly }: Pick<BoardProps, "st" | "op" | "readOnly"> & { k: string; fallback: string; tone: string }) {
+  const saved = str(st[k]);
+  const [v, setV] = useState(saved || fallback);
+  useEffect(() => setV(saved || fallback), [saved, fallback]);
+  return <input className={`cv2-voice ${tone}`} value={v} disabled={readOnly} aria-label={`Name of this side (${fallback})`} title="Click to rename" size={Math.max(12, v.length + 1)} onFocus={(e) => e.target.select()} onChange={(e) => setV(e.target.value)} onBlur={() => { const t = v.trim(); if (!t) setV(fallback); if ((t && t !== fallback ? t : "") !== saved) op({ key: k, op: "set", value: t && t !== fallback ? t : null }); }} onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()} />;
+}
+
 export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
   const qs = (config.questions as string[] | undefined) ?? [], focus = str(config.focus) || "all", example = config.example as Record<string, unknown> | undefined;
   const on = (p: string) => (CV_FOCUS[focus] ?? CV_FOCUS.all!).includes(p);
@@ -1699,7 +1707,7 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
   };
   const clear = () => {
     if (!window.confirm("Clear the whole canvas to work on your own?")) return;
-    for (const k of [...qs.flatMap((_, i) => CV_SIDES.map(([s]) => `ctx:${i}:${s}`)), "who", "tobj", "bobj", "ktr", "kbr"]) op({ key: k, op: "set", value: null });
+    for (const k of [...qs.flatMap((_, i) => CV_SIDES.map(([s]) => `ctx:${i}:${s}`)), "who", "voice:sd", "voice:bo", "tobj", "bobj", "ktr", "kbr"]) op({ key: k, op: "set", value: null });
     setPick(null);
   };
   const Results = ({ side }: { side: "t" | "b" }) => {
@@ -1748,11 +1756,11 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
       <section className={`cv2-context cv-part${on("context") ? " focus" : ""}`}>
         <header><span className="ex-mono">Business context</span><Field k="who" st={st} op={op} readOnly={readOnly} rows={1} placeholder="Whose canvas is this? Your own organization, or CARS" label="Organization" /></header>
         <div className="cv2-voices">
-          <span className="cv2-voice sd">Solution Delivery</span><span /><span className="cv2-voice bo">Business Operations</span>
+          <VoiceName k="voice:sd" fallback="Solution Delivery" tone="sd" st={st} op={op} readOnly={readOnly} /><span /><VoiceName k="voice:bo" fallback="Business Operations" tone="bo" st={st} op={op} readOnly={readOnly} />
           {qs.map((q, i) => [
-            <label key={`sd${i}`} className="cv2-bubble sd"><Field k={`ctx:${i}:sd`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} Solution Delivery`} /></label>,
+            <label key={`sd${i}`} className="cv2-bubble sd"><Field k={`ctx:${i}:sd`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} ${str(st["voice:sd"]) || "Solution Delivery"}`} /></label>,
             <b key={`q${i}`} className="cv2-q">{q}</b>,
-            <label key={`bo${i}`} className="cv2-bubble bo"><Field k={`ctx:${i}:bo`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} Business Operations`} /></label>,
+            <label key={`bo${i}`} className="cv2-bubble bo"><Field k={`ctx:${i}:bo`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} ${str(st["voice:bo"]) || "Business Operations"}`} /></label>,
           ])}
         </div>
       </section>
