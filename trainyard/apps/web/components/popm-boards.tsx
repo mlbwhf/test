@@ -2483,13 +2483,17 @@ export function AsBlueprintBoard({ config, st, op, readOnly }: BoardProps) {
 // The Learning Lab: four challenges a team solves in the order it chooses. The team sets its order,
 // each round names a facilitator, and each challenge has its problem, its input data and its
 // question prompts (assess, remedy, solve). The same board serves all four rounds.
-const LAB_PHASE: Record<string, string> = { "Assess the challenge": "#2f6fbd", "Remedy the problem": "#d98a1c", "Solve the challenge": "#2e8b57" };
+const LAB_PHASES = [
+  ["Assess the challenge", "#2f6fbd", "Answer the following questions in the space provided."],
+  ["Remedy the problem", "#d98a1c", "Write your recommendations in the space provided."],
+  ["Solve the challenge", "#2e8b57", "Record your work in the space provided."],
+] as const;
 export function AsLabBoard({ config, st, op, readOnly }: BoardProps) {
   const labs = (config.challenges as LabChallenge[] | undefined) ?? [], round = typeof config.round === "number" ? config.round : 0;
   const order = (Array.isArray(st.order) ? (st.order as string[]) : []).filter((id) => labs.some((c) => c.id === id));
   const planned = labs.find((c) => c.id === order[round]);
   const [open, setOpen] = useState<string | null>(null);
-  const [tab, setTab] = useState<"problem" | "data" | "work">("problem");
+  const [tab, setTab] = useState<"problem" | "data" | 0 | 1 | 2>("problem");
   const cur = labs.find((c) => c.id === open) ?? planned ?? null;
   const answered = (c: LabChallenge) => c.prompts.filter((_, i) => str(st[`a:${c.id}:${i}`])).length;
   const place = (id: string) => op({ key: "order", op: "set", value: order.includes(id) ? order.filter((x) => x !== id) : [...order, id] });
@@ -2521,10 +2525,19 @@ export function AsLabBoard({ config, st, op, readOnly }: BoardProps) {
             <div><span className="ex-mono">Challenge{order.indexOf(cur.id) >= 0 ? ` · round ${order.indexOf(cur.id) + 1}` : ""}</span><b className="as-verdict" style={{ display: "block" }}>{cur.title}</b></div>
             <label className="po-heading" style={{ minWidth: 220 }}><span className="ex-mono">Team facilitator for this challenge</span><Field k={`fac:${cur.id}`} st={st} op={op} readOnly={readOnly} rows={1} placeholder="Name" label="Team facilitator" /></label>
           </div>
-          <div className="po-seg" role="tablist" aria-label="Parts of the challenge">
-            {([["problem", "The problem"], ["data", "Input data"], ["work", `Solve the challenge · ${answered(cur)}/${cur.prompts.length}`]] as const).map(([k, l]) => (<button key={k} role="tab" aria-selected={tab === k} aria-pressed={tab === k} onClick={() => setTab(k)}>{l}</button>))}
+          <div className="lab-tabs" role="tablist" aria-label="Parts of the challenge">
+            {([["problem", "The problem"], ["data", "Input data"]] as const).map(([k, l]) => (<button key={k} role="tab" className="lab-tab" aria-selected={tab === k} onClick={() => setTab(k)}>{l}</button>))}
+            <span className="lab-arrow" aria-hidden>→</span>
+            {LAB_PHASES.map(([name, tone], pi) => {
+              const mine = cur.prompts.map(([ph], i) => [ph, i] as const).filter(([ph]) => ph === name), n = mine.filter(([, i]) => str(st[`a:${cur.id}:${i}`])).length;
+              return (
+                <button key={name} role="tab" className={`lab-tab phase${n === mine.length ? " done" : ""}`} style={{ ["--c" as string]: tone }} aria-selected={tab === pi} onClick={() => setTab(pi as 0 | 1 | 2)}>
+                  <i>{n === mine.length ? "✓" : pi + 1}</i><span><b>{name}</b><small>{n}/{mine.length} answered</small></span>
+                </button>
+              );
+            })}
           </div>
-          {tab === "problem" ? <div className="as-case" key="p">{cur.problem.map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}</div> : null}
+          {tab === "problem" ? <div className="as-case" key="p">{cur.problem.map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}<p className="lab-task">{cur.task}</p></div> : null}
           {tab === "data" ? (
             <div className="lab-data" key="d">
               {cur.inputs.map((inp, i) => inp.kind === "text" ? <p key={i}>{inp.text}</p> : inp.kind === "list" ? (
@@ -2536,16 +2549,19 @@ export function AsLabBoard({ config, st, op, readOnly }: BoardProps) {
               ) : null)}
             </div>
           ) : null}
-          {tab === "work" ? (
-            <div className="lab-work" key="w">
-              <p className="lab-task">{cur.task}</p>
-              {cur.prompts.map(([phase, q], i) => (
-                <label key={i} className="lab-prompt" style={{ ["--c" as string]: LAB_PHASE[phase] }}>
-                  {i === 0 || cur.prompts[i - 1]![0] !== phase ? <span className="lab-phase">{phase}</span> : null}
+          {typeof tab === "number" ? (
+            <div className="lab-work" key={tab} style={{ ["--c" as string]: LAB_PHASES[tab][1] }}>
+              <header className="lab-phasehead"><i>{tab + 1}</i><div><b>{LAB_PHASES[tab][0]}:</b><span>{LAB_PHASES[tab][2]}</span></div></header>
+              {cur.prompts.map(([phase, q], i) => phase !== LAB_PHASES[tab][0] ? null : (
+                <label key={i} className="lab-prompt">
                   <b>{q}</b>
-                  <Field k={`a:${cur.id}:${i}`} st={st} op={op} readOnly={readOnly} rows={5} placeholder="Our answer" label={q} />
+                  <Field k={`a:${cur.id}:${i}`} st={st} op={op} readOnly={readOnly} rows={6} placeholder="Our answer" label={q} />
                 </label>
               ))}
+              <div className="po-acts-row">
+                <button className="po-btn plain" onClick={() => setTab(tab === 0 ? "data" : ((tab - 1) as 0 | 1))}>← {tab === 0 ? "Input data" : LAB_PHASES[tab - 1]![0]}</button>
+                {tab < 2 ? <button className="po-btn" onClick={() => setTab((tab + 1) as 1 | 2)}>{LAB_PHASES[tab + 1]![0]} →</button> : null}
+              </div>
               {answered(cur) === cur.prompts.length ? <p className="rd-ok" style={{ margin: 0 }}>Congratulations on completing this challenge!</p> : null}
             </div>
           ) : null}
@@ -2557,8 +2573,118 @@ export function AsLabBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint", "as-lab"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard, "as-lab": AsLabBoard };
+// Hexagon diagram (hexagonal thinking): one idea per hexagon, placed on a honeycomb. Two hexagons
+// whose sides touch are connected, and the team writes why for the connections that matter. The
+// team arranges and rearranges until the diagram says what it means, then calls it final.
+const HX_TONES = ["#06384a", "#0b7f9b", "#8accce", "#f7f1e3", "#f5b84c", "#a52412", "#1b6338"];
+const HX_LIGHT = new Set(["#8accce", "#f7f1e3", "#f5b84c"]);
+const HX_COLS = 7, HX_ROWS = 5;
+const hxAt = (c: number, r: number) => ({ left: `${((c + 0.5 + (r % 2 ? 0.5 : 0)) / (HX_COLS + 0.5)) * 100}%`, top: `${((r * 0.75 + 0.5) / (HX_ROWS * 0.75 + 0.25)) * 100}%` });
+const hxNear = (c: number, r: number) => { const o = r % 2 ? 0 : -1; return [[c - 1, r], [c + 1, r], [c + o, r - 1], [c + o + 1, r - 1], [c + o, r + 1], [c + o + 1, r + 1]] as [number, number][]; };
+export function AsHexBoard({ config, st, op, readOnly }: BoardProps) {
+  const hexes = list(st, "hexes"), final = st.final === true, lock = readOnly || final;
+  const placed = hexes.filter((h) => typeof h.c === "number" && typeof h.r === "number"), tray = hexes.filter((h) => !placed.includes(h));
+  const at = (c: number, r: number) => placed.find((h) => h.c === c && h.r === r);
+  const [sel, setSel] = useState<string | null>(null);
+  const [edge, setEdge] = useState<string | null>(null);
+  const cur = hexes.find((h) => h.id === sel) ?? null;
+  const name = (h: Row) => str(h.text) || "…";
+  const tone = (h: Row) => (HX_TONES.includes(str(h.tone)) ? str(h.tone) : HX_TONES[0]!);
+  const edges = placed.flatMap((h) => hxNear(num(h.c), num(h.r)).map(([c, r]) => at(c, r)).filter((g): g is Row => !!g && h.id < g.id).map((g) => ({ key: `why:${h.id}|${g.id}`, a: h, b: g })));
+  const told = edges.filter((e) => str(st[e.key]));
+  const touch = (h: Row) => edges.filter((e) => e.a === h || e.b === h).length;
+  const hub = placed.length ? [...placed].sort((x, y) => touch(y) - touch(x))[0]! : null;
+  const alone = placed.filter((h) => !touch(h));
+  const move = (id: string, c: number, r: number) => {
+    const there = at(c, r), me = hexes.find((h) => h.id === id);
+    if (!me || lock || there === me) return;
+    if (there) op({ key: "hexes", op: "update", id: there.id, value: { c: typeof me.c === "number" ? me.c : null, r: typeof me.r === "number" ? me.r : null } });
+    op({ key: "hexes", op: "update", id, value: { c, r } });
+  };
+  const cell = (c: number, r: number) => (lock ? undefined : sel && cur ? (move(sel, c, r), setSel(null)) : op({ key: "hexes", op: "push", value: { text: "", tone: HX_TONES[hexes.length % HX_TONES.length], c, r } }));
+  const example = (config.example as string[] | undefined) ?? [], steps = (config.steps as string[] | undefined) ?? [];
+  const stage = final ? 2 : placed.length >= 2 ? 1 : 0;
+  const pick = (h: Row) => (setEdge(null), !lock && sel && sel !== h.id && typeof h.c === "number" ? (move(sel, num(h.c), num(h.r)), setSel(null)) : setSel(sel === h.id ? null : h.id));
+  const hexStyle = (h: Row) => ({ ["--c" as string]: tone(h), color: HX_LIGHT.has(tone(h)) ? "#0d1815" : "#fff" });
+  const open = edges.find((e) => e.key === edge) ?? null;
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <ol className="hx-steps" aria-label="Steps">
+        {steps.map((s, i) => (<li key={s} className={i === stage ? "on" : i < stage ? "past" : ""}><i>{i < stage ? "✓" : i + 1}</i>{s}</li>))}
+      </ol>
+      {!lock ? (
+        <section className="po-panel hx-tray">
+          <span className="ex-mono">Hexagons waiting · {tray.length ? "click one, then click a place on the honeycomb (or drag it there)" : "every hexagon is on the honeycomb"}</span>
+          <div className="hx-chips">
+            {tray.map((h) => (
+              <button key={h.id} className={`hx-chip${sel === h.id ? " sel" : ""}`} style={hexStyle(h)} draggable onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id))} onClick={() => pick(h)}><span>{name(h)}</span></button>
+            ))}
+            <button className="hx-chip add" onClick={() => op({ key: "hexes", op: "push", value: { text: "", tone: HX_TONES[hexes.length % HX_TONES.length] } })}><span>+ blank</span></button>
+          </div>
+          {!hexes.length && example.length ? <button className="po-btn plain" onClick={() => example.forEach((text, i) => op({ key: "hexes", op: "push", value: { text, tone: HX_TONES[i % HX_TONES.length] } }))}>{str(config.exampleLabel) || "Load the example"}</button> : null}
+        </section>
+      ) : null}
+      <div className="hx-wrap">
+        <div className={`hx-grid${final ? " final" : ""}${sel ? " picking" : ""}`}>
+          {!lock ? Array.from({ length: HX_ROWS * HX_COLS }, (_, i) => [i % HX_COLS, Math.floor(i / HX_COLS)] as const).filter(([c, r]) => !at(c, r)).map(([c, r]) => (
+            <button key={`${c}:${r}`} className="hx-cell" style={hxAt(c, r)} aria-label={sel ? `Place it in row ${r + 1}, position ${c + 1}` : `New hexagon in row ${r + 1}, position ${c + 1}`} onClick={() => cell(c, r)} onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), move(e.dataTransfer.getData("text/plain"), c, r), setSel(null))}><span>+</span></button>
+          )) : null}
+          {placed.map((h) => (
+            <button key={h.id} className={`hx-hex${sel === h.id ? " sel" : ""}${open && (open.a === h || open.b === h) ? " linked" : ""}`} style={{ ...hxAt(num(h.c), num(h.r)), ...hexStyle(h) }} draggable={!lock} onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id), setEdge(null))} onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), move(e.dataTransfer.getData("text/plain"), num(h.c), num(h.r)), setSel(null))} onClick={() => pick(h)}><span>{name(h)}</span></button>
+          ))}
+          {edges.map((e) => {
+            const p = hxAt(num(e.a.c), num(e.a.r)), q = hxAt(num(e.b.c), num(e.b.r)), n = told.indexOf(e);
+            return <button key={e.key} className={`hx-dot${n >= 0 ? " told" : ""}${edge === e.key ? " on" : ""}`} style={{ left: `${(parseFloat(p.left) + parseFloat(q.left)) / 2}%`, top: `${(parseFloat(p.top) + parseFloat(q.top)) / 2}%` }} aria-label={`Connection between ${name(e.a)} and ${name(e.b)}${n >= 0 ? `: ${str(st[e.key])}` : ": not explained yet"}`} onClick={() => (setSel(null), setEdge(edge === e.key ? null : e.key))}>{n >= 0 ? n + 1 : ""}</button>;
+          })}
+          {!placed.length ? <p className="hx-hint">{lock ? "No hexagons yet." : "An empty honeycomb. Click any place to start a hexagon there."}</p> : null}
+        </div>
+      </div>
+      {open ? (
+        <section className="po-panel hx-edit" key={open.key}>
+          <span className="ex-mono">A connection · these two sides touch</span>
+          <div className="hx-pair"><b style={hexStyle(open.a)}>{name(open.a)}</b><i aria-hidden>⟷</i><b style={hexStyle(open.b)}>{name(open.b)}</b></div>
+          <Field k={open.key} st={st} op={op} readOnly={readOnly} rows={2} placeholder="Why are these two connected? What does one do to the other?" label="Why these two are connected" />
+        </section>
+      ) : cur && !lock ? (
+        <section className="po-panel hx-edit" key={cur.id}>
+          <span className="ex-mono">This hexagon{typeof cur.c === "number" ? ` · touches ${touch(cur)} of 6` : " · waiting"}</span>
+          <CellText row={cur} k="text" hint="One challenge, idea or fact: a few words" op={op} readOnly={readOnly} listKey="hexes" />
+          <div className="hx-tools">
+            <div className="hx-tones" role="group" aria-label="Colour">{HX_TONES.map((t) => (<button key={t} style={{ background: t }} aria-label={`Colour ${t}`} aria-pressed={tone(cur) === t} onClick={() => op({ key: "hexes", op: "update", id: cur.id, value: { tone: t } })} />))}</div>
+            {typeof cur.c === "number" ? <button className="po-btn plain" onClick={() => (op({ key: "hexes", op: "update", id: cur.id, value: { c: null, r: null } }), setSel(null))}>Take it off the honeycomb</button> : null}
+            <button className="po-btn plain" onClick={() => (op({ key: "hexes", op: "remove", id: cur.id }), setSel(null))}>Delete</button>
+            <span className="po-note">To move it: click an empty place, or another hexagon to swap.</span>
+          </div>
+        </section>
+      ) : null}
+      <div className="po-two wide">
+        <section className="po-panel">
+          <span className="ex-mono">What the diagram shows</span>
+          <p className="po-big">{placed.length} hexagons · {edges.length} connections · {told.length} explained</p>
+          {hub && touch(hub) ? <p className="hx-read"><b>Most connected:</b> {name(hub)} (touches {touch(hub)})</p> : null}
+          {alone.length && placed.length > 1 ? <p className="hx-read"><b>Standing alone:</b> {alone.map(name).join("; ")}</p> : null}
+          <p className="po-note">A hexagon can touch up to six others. The dot on a shared side is the connection: click it and write why.</p>
+        </section>
+        <section className="po-panel">
+          <span className="ex-mono">Our connections, explained</span>
+          {told.length ? <ol className="hx-list">{told.map((e) => (<li key={e.key}><button onClick={() => (setSel(null), setEdge(e.key))}><b>{name(e.a)} ⟷ {name(e.b)}</b><span>{str(st[e.key])}</span></button></li>))}</ol> : <p className="po-empty">Click a dot between two hexagons to explain that connection.</p>}
+        </section>
+      </div>
+      {str(config.credit) ? <p className="po-note" style={{ margin: 0 }}>Method: {str(config.credit)}</p> : null}
+      {!readOnly ? (
+        <div className="po-acts-row">
+          <span className="po-note">{final ? "This is the team's final hexagon diagram." : "Arrange and rearrange until the diagram says what you mean."}</span>
+          <button className={`po-btn${final ? " plain" : ""}`} disabled={!final && placed.length < 2} onClick={() => (op({ key: "final", op: "set", value: final ? null : true }), setSel(null))}>{final ? "Keep rearranging" : "This is our final hexagon diagram"}</button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint", "as-lab", "as-hex"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard, "as-lab": AsLabBoard, "as-hex": AsHexBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

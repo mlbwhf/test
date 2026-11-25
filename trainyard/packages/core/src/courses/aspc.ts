@@ -1075,6 +1075,20 @@ const lesson7: ActivitySpec[] = [
     ...BOARD,
   },
   {
+    title: "Use a hexagon diagram to assess relationships",
+    kind: "Activity",
+    steps: "Visualize and explore the relationships among transformation challenges:\n- Identify connections\n- Arrange and rearrange\n- Create your final hexagon diagram",
+    board: "as-hex",
+    config: {
+      prompt: "Visualize and explore the relationships among transformation challenges.",
+      credit: "Potash, B. \"Hexagonal Thinking.\"",
+      steps: ["Identify connections", "Arrange and rearrange", "Create your final hexagon diagram"],
+      exampleLabel: "Load the transformation challenges facing TTC",
+      example: ["Is it time to adjust Lean budgets?", "Communication is hard", "Develop a transformation roadmap", "Do we have the metrics we need?", "Green Compass is not reliable", "Executive culture clash", "Portfolio structure pros and cons"],
+    },
+    ...BOARD,
+  },
+  {
     title: "Solve the first challenge",
     kind: "Activity",
     prepare: 45,
