@@ -1582,8 +1582,65 @@ export function AsHardBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard };
+// Different needs, different starting points: the implementation roadmap as a winding road. Click a
+// step to name it a valid starting point; each one chosen gets its pros and cons.
+export function AsRoadmapBoard({ config, st, op, readOnly }: BoardProps) {
+  const steps = (config.steps as string[] | undefined) ?? [], per = 4;
+  const starts = (st.starts && typeof st.starts === "object" ? st.starts : {}) as Record<string, boolean>;
+  const chosen = steps.map((_, i) => i).filter((i) => starts[i]);
+  const [at, setAt] = useState<number | null>(null);
+  const focus = at !== null && starts[at] ? at : (chosen[0] ?? null);
+  const rows = Array.from({ length: Math.ceil(steps.length / per) }, (_, r) => steps.map((x, i) => [x, i] as const).slice(r * per, r * per + per));
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <section className="po-panel">
+        <span className="ex-mono">The implementation roadmap · {chosen.length} starting {chosen.length === 1 ? "point" : "points"} named</span>
+        <div className="as-rm">
+          {rows.map((row, r) => (
+            <div key={r} className={`as-rm-row${r % 2 ? " back" : ""}`}>
+              {row.map(([name, i]) => (
+                <button key={name} className={`as-rm-step${starts[i] ? " on" : ""}${focus === i ? " focus" : ""}`} disabled={readOnly && !starts[i]} aria-pressed={!!starts[i]} style={{ animationDelay: `${i * 60}ms` }}
+                  onClick={() => (starts[i] ? setAt(i) : !readOnly && (op({ key: "starts", op: "set", value: { ...starts, [i]: true } }), setAt(i)))}>
+                  <i>{starts[i] ? "⚑" : i + 1}</i>
+                  <span>{name}</span>
+                </button>
+              ))}
+            </div>
+          ))}
+        </div>
+        <p className="po-note">The road runs left to right, turns, and comes back, as on the slide. Click a step to name it a valid starting point; click a named one to work on its pros and cons.</p>
+      </section>
+      {focus !== null ? (
+        <section className="po-panel" key={focus}>
+          <div className="rd-advhead" style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+            <b className="as-verdict">Starting at: {steps[focus]}</b>
+            {!readOnly ? <button className="po-btn plain" onClick={() => (op({ key: "starts", op: "set", value: { ...starts, [focus]: false } }), setAt(null))}>Not a starting point after all</button> : null}
+          </div>
+          <div className="po-cols" style={{ ["--n" as string]: 2 }}>
+            {(["pro", "con"] as const).map((k) => (
+              <div key={k} className="po-col">
+                <header><span className="po-n" style={{ background: k === "pro" ? "#2e8b57" : "#c2412d" }}>{k === "pro" ? "+" : "−"}</span><b>{k === "pro" ? "Pros" : "Cons"}</b></header>
+                {list(st, `${k}:${focus}`).map((n) => (
+                  <div key={n.id} className="po-sticky" style={{ background: k === "pro" ? "#cfe8d4" : "#f9d9d2", borderLeftColor: k === "pro" ? "#2e8b57" : "#c2412d" }}>
+                    <span>{str(n.text)}</span>
+                    {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `${k}:${focus}`, op: "remove", id: n.id })}>×</button> : null}
+                  </div>
+                ))}
+                {!readOnly ? <AddLine label={k === "pro" ? "Pro" : "Con"} placeholder="+ add, Enter" onAdd={(text) => op({ key: `${k}:${focus}`, op: "push", value: { text } })} /> : null}
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : (
+        <p className="po-empty">No starting point named yet. Click a step on the road.</p>
+      )}
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;
