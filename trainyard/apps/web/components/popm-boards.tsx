@@ -375,6 +375,23 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
       </div>
     );
   }
+  if (look === "palette") {
+    // The palette of Big Picture additions: three aspects, each with its kinds; a kind lights up when a note is tagged with it.
+    const groups = (config.palette as [string, string[]][] | undefined) ?? [];
+    return (
+      <div className="po-vis">
+        <div className="bp-palette">
+          {groups.map(([g, items]) => (
+            <div key={g} className="bp-pal-row">
+              <b>{g}</b>
+              {items.map((it) => { const n = notes.filter((x) => kinds[num(x.kind)] === it).length; return <span key={it} className={n ? "on" : ""}>{it}{n ? <i>{n}</i> : null}</span>; })}
+            </div>
+          ))}
+        </div>
+        <p className="po-note">Additions to the Big Picture can be made with this palette. Tag a note with the kind of addition it would be, and that tile lights up.</p>
+      </div>
+    );
+  }
   if (look === "triangle") {
     // Three measurement domains as a triangle; each corner grows with the notes tagged to it, split into used well and used poorly.
     const pts = [[150, 34], [44, 206], [256, 206]];
@@ -2283,8 +2300,151 @@ export function AsGuardrailBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard };
+// A customization tested guardrail by guardrail: each row carries the guardrail's powerful question,
+// what the group adds per column, and (when asked) whether the guardrail is satisfied.
+export function AsGuardQuestionsBoard({ config, st, op, readOnly }: BoardProps) {
+  const rails = (config.guardrails as [string, string][] | undefined) ?? [], cols = (config.cols as string[] | undefined) ?? [], more = (config.more as string[] | undefined) ?? [];
+  const cards = (config.scenario as [string, string[]][] | undefined) ?? [], ok = (st.ok && typeof st.ok === "object" ? st.ok : {}) as Record<string, string>;
+  const [tab, setTab] = useState(0);
+  const yes = rails.filter((_, i) => ok[i] === "y").length, no = rails.filter((_, i) => ok[i] === "n").length;
+  const Notes = ({ k, hint, bg }: { k: string; hint: string; bg: string }) => (
+    <>
+      {list(st, k).map((x) => (
+        <div key={x.id} className="po-sticky" style={{ background: bg, borderLeftColor: "#3f7c80" }}>
+          <span>{str(x.text)}</span>
+          {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: k, op: "remove", id: x.id })}>×</button> : null}
+        </div>
+      ))}
+      {!readOnly ? <AddLine label={hint} placeholder={`+ ${hint.toLowerCase()}, Enter`} onAdd={(text) => op({ key: k, op: "push", value: { text } })} /> : null}
+    </>
+  );
+  return (
+    <div className="ex-board po">
+      {cards.length > 1 ? (
+        <section className="po-panel">
+          <div className="po-seg" role="tablist" aria-label="Scenario">{cards.map(([t], i) => (<button key={t} role="tab" aria-selected={i === tab} aria-pressed={i === tab} onClick={() => setTab(i)}>{t}</button>))}</div>
+          <div className="as-case" key={tab}>{(cards[tab]?.[1] ?? []).map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}</div>
+        </section>
+      ) : cards[0] ? (
+        <div className="po-scenario"><span className="ex-mono">{cards[0][0]}</span>{cards[0][1].map((x) => (<p key={x}>{x}</p>))}</div>
+      ) : null}
+      {config.verdict ? (
+        <div className="th-tally" role="img" aria-label={`${yes} guardrails satisfied, ${no} not, ${rails.length - yes - no} to decide`}>
+          <span style={{ background: "#cfe8d4", flexGrow: yes || 0.4 }}><b>{yes}</b> satisfied</span>
+          <span style={{ background: "#f9d9d2", flexGrow: no || 0.4 }}><b>{no}</b> not satisfied</span>
+          <span style={{ background: "#fff", flexGrow: rails.length - yes - no || 0.4 }}><b>{rails.length - yes - no}</b> to decide</span>
+        </div>
+      ) : null}
+      <div className="gq-rows">
+        {rails.map(([name, question], ri) => (
+          <section key={name} className={`gq-row ${ok[ri] ?? ""}`} style={{ animationDelay: `${ri * 90}ms` }}>
+            <header>
+              <b>{name}</b>
+              <p>{question}</p>
+              {config.verdict ? (
+                <div className="po-seg small" role="group" aria-label={`Is “${name}” satisfied?`}>
+                  {([["y", "Satisfied"], ["n", "Not satisfied"]] as const).map(([k, l]) => (<button key={k} disabled={readOnly} aria-pressed={ok[ri] === k} onClick={() => op({ key: "ok", op: "set", value: { ...ok, [ri]: ok[ri] === k ? "" : k } })}>{l}</button>))}
+                </div>
+              ) : null}
+            </header>
+            {cols.map((c, ci) => (<div key={c} className="gq-cell"><span className="ex-mono">{c}</span><Notes k={`g:${ri}:${ci}`} hint={c} bg={ci ? "#cfe8d4" : "#cde0f2"} /></div>))}
+          </section>
+        ))}
+      </div>
+      {more.length ? (
+        <div className="po-cols" style={{ ["--n" as string]: more.length }}>
+          {more.map((q, qi) => (<section key={q} className="po-col"><header><span className="po-n">{qi + 1}</span><b>{q}</b></header><Notes k={`m:${qi}`} hint="Add" bg="#ffe9b8" /></section>))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+// The SAFe Customization Blueprint: one blueprint the group fills column by column over several
+// steps. A card per customization: the need, the aspect of SAFe, the proposed change, its validation
+// against the four guardrails, and the benefit. The step's columns are in full colour.
+const BP_ASPECTS = [["People", "#8c6bc8"], ["Work", "#2f6fbd"], ["Activities", "#d98a1c"]] as const;
+const BP_STEPS: Record<string, string[]> = { need: ["need", "aspect"], change: ["change"], validate: ["valid"], benefit: ["benefit"], all: ["need", "aspect", "change", "valid", "benefit"] };
+export function AsBlueprintBoard({ config, st, op, readOnly }: BoardProps) {
+  const rows = list(st, "rows"), step = str(config.step) || "all", on = (c: string) => (BP_STEPS[step] ?? BP_STEPS.all!).includes(c);
+  const rails = (config.guardrails as [string, string][] | undefined) ?? [], cards = (config.scenario as string[] | undefined) ?? [], example = config.example as Record<string, unknown>[] | undefined;
+  const set = (id: string, value: Record<string, unknown>) => op({ key: "rows", op: "update", id, value });
+  const gOf = (r: Row) => (r.g && typeof r.g === "object" ? r.g : {}) as Record<string, string>;
+  const passes = (r: Row) => rails.length > 0 && rails.every((_, i) => gOf(r)[i] === "y"), fails = (r: Row) => rails.some((_, i) => gOf(r)[i] === "n");
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      {cards.length ? (
+        <details className="po-material" open={step === "need"}>
+          <summary>CARS scenario: Customizing SAFe</summary>
+          {cards.map((x) => (<p key={x} style={{ margin: "8px 0 0", fontSize: 14.5, lineHeight: 1.45 }}>{x}</p>))}
+        </details>
+      ) : null}
+      <div className="cv-top">
+        <ol className="po-steps" aria-label="Columns of the blueprint">
+          {([["need", "Need and aspect"], ["change", "Proposed change"], ["validate", "Validation"], ["benefit", "Benefit"]] as const).map(([k, l]) => (<li key={k} className={k === step ? "on" : ""}>{l}</li>))}
+        </ol>
+        <div className="bp-cover" role="img" aria-label={BP_ASPECTS.map(([n]) => `${n}: ${rows.filter((r) => str(r.aspect) === n).length}`).join(", ")}>
+          {BP_ASPECTS.map(([n, c]) => { const k = rows.filter((r) => str(r.aspect) === n).length; return <span key={n} style={{ background: k ? c : "#fff", color: k ? "#fff" : "#0d1815", borderColor: c }}>{n} · {k}</span>; })}
+        </div>
+        {!readOnly ? (
+          <span style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {example && !rows.length ? <button className="po-reset" style={{ marginLeft: 0 }} onClick={() => op({ key: "rows", op: "set", value: example })}>Load the slide&apos;s examples</button> : null}
+            {rows.length ? <button className="po-reset" style={{ marginLeft: 0 }} onClick={() => window.confirm("Clear the whole blueprint?") && op({ key: "rows", op: "set", value: null })}>Clear</button> : null}
+          </span>
+        ) : null}
+      </div>
+      <div className="bp-list">
+        {rows.map((r, i) => {
+          const tone = BP_ASPECTS.find(([n]) => n === str(r.aspect))?.[1] ?? "#0d181855", g = gOf(r);
+          return (
+            <article key={r.id} className={`bp-row${passes(r) ? " pass" : fails(r) ? " fail" : ""}`} style={{ ["--c" as string]: tone, animationDelay: `${Math.min(i, 6) * 70}ms` }}>
+              <div className={`bp-cell cv-part${on("need") ? " focus" : ""}`}>
+                <span className="bp-h">Need</span>
+                <CellText row={r} k="need" hint="What is the problem or opportunity that needs addressing?" op={op} readOnly={readOnly} listKey="rows" />
+              </div>
+              <div className={`bp-cell cv-part${on("aspect") ? " focus" : ""}`}>
+                <span className="bp-h">Customized aspect</span>
+                <div className="as-domains" style={{ flexDirection: "row", flexWrap: "wrap" }} role="group" aria-label="Aspect of SAFe">
+                  {BP_ASPECTS.map(([n, c]) => (<button key={n} disabled={readOnly} aria-pressed={str(r.aspect) === n} style={{ ["--c" as string]: c }} onClick={() => set(r.id, { aspect: str(r.aspect) === n ? "" : n })}>{n}</button>))}
+                </div>
+                <CellText row={r} k="detail" hint="Which aspect exactly? e.g. Work Artifact" op={op} readOnly={readOnly} listKey="rows" />
+              </div>
+              <div className={`bp-cell cv-part${on("change") ? " focus" : ""}`}>
+                <span className="bp-h">Proposed change</span>
+                <CellText row={r} k="change" hint="What are the details of the change being proposed?" op={op} readOnly={readOnly} listKey="rows" />
+              </div>
+              <div className={`bp-cell wide cv-part${on("valid") ? " focus" : ""}`}>
+                <span className="bp-h">Validation (guardrails) {passes(r) ? <em className="ok">passes all four</em> : fails(r) ? <em className="no">does not pass</em> : null}</span>
+                <div className="bp-rails">
+                  {rails.map(([yes, no], gi) => (
+                    <button key={yes} className={g[gi] ?? ""} disabled={readOnly} title={`${yes}, rather than: ${no}`} aria-label={`${yes}: ${g[gi] === "y" ? "passes" : g[gi] === "n" ? "fails" : "not tested"}. Click to change.`} onClick={() => set(r.id, { g: { ...g, [gi]: g[gi] === "y" ? "n" : g[gi] === "n" ? "" : "y" } })}>
+                      <i>{g[gi] === "y" ? "✓" : g[gi] === "n" ? "⊘" : gi + 1}</i>{g[gi] === "n" ? no : yes}
+                    </button>
+                  ))}
+                </div>
+                <CellText row={r} k="why" hint="Why, or why not?" op={op} readOnly={readOnly} listKey="rows" />
+                {fails(r) ? <CellText row={r} k="adjust" hint="An adjustment to the proposed change that would let it pass" op={op} readOnly={readOnly} listKey="rows" /> : null}
+              </div>
+              <div className={`bp-cell cv-part${on("benefit") ? " focus" : ""}`}>
+                <span className="bp-h">Benefit</span>
+                <CellText row={r} k="benefit" hint="What does success look like, and how do we measure it?" op={op} readOnly={readOnly} listKey="rows" />
+              </div>
+              {!readOnly ? <button className="ex-x" aria-label="Remove this customization" onClick={() => op({ key: "rows", op: "remove", id: r.id })}>×</button> : null}
+            </article>
+          );
+        })}
+        {!readOnly ? <button className="cv2-add" onClick={() => op({ key: "rows", op: "push", value: {} })}>+ a need (a row of the blueprint)</button> : null}
+        {!rows.length && readOnly ? <p className="po-empty">The blueprint is empty.</p> : null}
+      </div>
+      {step === "need" && rows.length ? <p className="po-note">{BP_ASPECTS.filter(([n]) => !rows.some((r) => str(r.aspect) === n)).length ? `Be sure to have at least one row each for People, Work, and Activities. Still missing: ${BP_ASPECTS.filter(([n]) => !rows.some((r) => str(r.aspect) === n)).map(([n]) => n).join(", ")}.` : "You have at least one row each for People, Work, and Activities."}</p> : null}
+      {step === "validate" ? <p className="po-note">Click a guardrail to mark it as passed (✓), click again for not passed (⊘), a third time to clear. A row passes when all four are ✓.</p> : null}
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;
