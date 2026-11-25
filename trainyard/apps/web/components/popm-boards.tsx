@@ -1180,6 +1180,12 @@ export function PoDepsBoard({ config, st, op, readOnly }: BoardProps) {
 // The user's activities across the top; under each, the stories it needs. The dark stories are the
 // minimum to complete the feature and flow into the team backlog; the light ones wait.
 
+function MapEdit({ value, onSave, onClose, label }: { value: string; onSave: (v: string) => void; onClose: () => void; label: string }) {
+  const [v, setV] = useState(value);
+  const done = () => (onClose(), v.trim() && v.trim() !== value ? onSave(v.trim()) : undefined);
+  return <textarea className="po-mapedit" autoFocus rows={2} value={v} aria-label={label} onChange={(e) => setV(e.target.value)} onFocus={(e) => e.target.select()} onBlur={done} onKeyDown={(e) => (e.key === "Enter" && !e.shiftKey ? (e.preventDefault(), done()) : e.key === "Escape" ? onClose() : undefined)} />;
+}
+
 export function PoStoryMapBoard({ config, st, op: save, readOnly }: BoardProps) {
   const feature = config.feature as Record<string, string> | undefined;
   // The map starts with the slide's own example: its activities, and the stories under the first
@@ -1201,8 +1207,33 @@ export function PoStoryMapBoard({ config, st, op: save, readOnly }: BoardProps) 
     save({ key: "stories", op: "set", value: next.stories });
   };
   const [task, setTask] = useState("");
+  const [edit, setEdit] = useState<string | null>(null);
+  const [drag, setDrag] = useState<{ kind: "story" | "task"; id: string } | null>(null);
+  const [over, setOver] = useState<string | null>(null);
   const must = tasks.flatMap((t) => stories.filter((s) => s.task === t.id && s.must === true));
   const addTask = () => task.trim() && tasks.length < 7 && (op({ key: "tasks", op: "push", value: { name: task.trim() } }), setTask(""));
+  // A move changes the order of a list, so the lists are saved whole (this also makes the example the team's own).
+  const commit = (nextTasks: Row[], nextStories: Row[]) => (save({ key: "tasks", op: "set", value: nextTasks }), save({ key: "stories", op: "set", value: nextStories }));
+  const moveStory = (id: string, toTask: string, toMust: boolean, before?: string) => {
+    const me = stories.find((x) => x.id === id);
+    if (!me || before === id) return;
+    const rest = stories.filter((x) => x.id !== id), at = before ? rest.findIndex((x) => x.id === before) : -1, moved = { ...me, task: toTask, must: toMust };
+    commit(tasks, at < 0 ? [...rest, moved] : [...rest.slice(0, at), moved, ...rest.slice(at)]);
+  };
+  const moveTask = (id: string, before: string | null) => {
+    const me = tasks.find((x) => x.id === id);
+    if (!me || before === id) return;
+    // Dropped on an activity further along, it lands after it; dropped on an earlier one, before it.
+    const fwd = !!before && tasks.findIndex((x) => x.id === id) < tasks.findIndex((x) => x.id === before);
+    const rest = tasks.filter((x) => x.id !== id), at = before ? rest.findIndex((x) => x.id === before) + (fwd ? 1 : 0) : -1;
+    commit(at < 0 ? [...rest, me] : [...rest.slice(0, at), me, ...rest.slice(at)], stories);
+  };
+  const shift = (id: string, by: number) => { const i = tasks.findIndex((x) => x.id === id), j = i + by; if (i < 0 || j < 0 || j >= tasks.length) return; const next = [...tasks]; [next[i], next[j]] = [next[j]!, next[i]!]; commit(next, stories); };
+  const end = () => (setDrag(null), setOver(null));
+  const dropOn = (key: string, kind: "story" | "task", run: (id: string) => void) => readOnly ? {} : {
+    onDragOver: (e: React.DragEvent) => { if (drag?.kind === kind) { e.preventDefault(); e.stopPropagation(); if (over !== key) setOver(key); } },
+    onDrop: (e: React.DragEvent) => { if (drag?.kind === kind) { e.preventDefault(); e.stopPropagation(); run(drag.id); end(); } },
+  };
   return (
     <div className="ex-board po">
       {feature ? (
@@ -1217,16 +1248,23 @@ export function PoStoryMapBoard({ config, st, op: save, readOnly }: BoardProps) 
       <div className="po-map">
         <div className="po-mapmain">
           <div className="po-arrow">These are the activities or tasks the user must perform in order to accomplish their goal.</div>
+          {!readOnly ? <p className="po-note" style={{ margin: 0 }}>Drag an activity to reorder the workflow, drag a story to another activity or priority, and click any text to edit it.</p> : null}
           <div className="po-mapscroll">
             <div className="po-mapgrid" style={{ ["--n" as string]: Math.max(1, tasks.length + (readOnly ? 0 : 1)) }}>
-              {tasks.map((t) => (
-                <div key={t.id} className="po-task">
-                  <span>{str(t.name)}</span>
-                  {!readOnly ? <button className="ex-x" aria-label={`Remove ${str(t.name)}`} onClick={() => op({ key: "tasks", op: "remove", id: t.id })}>×</button> : null}
+              {tasks.map((t, ti) => (
+                <div key={t.id} className={`po-task${drag?.id === t.id ? " dragging" : ""}${over === `t:${t.id}` ? " over" : ""}`} draggable={!readOnly && edit !== t.id} onDragStart={(e) => (e.dataTransfer.setData("text/plain", t.id), (e.dataTransfer.effectAllowed = "move"), setDrag({ kind: "task", id: t.id }))} onDragEnd={end} {...dropOn(`t:${t.id}`, "task", (id) => moveTask(id, t.id))}>
+                  {edit === t.id ? <MapEdit key={t.id} value={str(t.name)} label="Activity or task" onClose={() => setEdit(null)} onSave={(name) => op({ key: "tasks", op: "update", id: t.id, value: { name } })} /> : readOnly ? <span>{str(t.name)}</span> : <button className="po-maptext" title="Click to edit" onClick={() => setEdit(t.id)}>{str(t.name)}</button>}
+                  {!readOnly && edit !== t.id ? (
+                    <span className="po-taskacts">
+                      <button aria-label={`Move ${str(t.name)} earlier`} disabled={ti === 0} onClick={() => shift(t.id, -1)}>←</button>
+                      <button aria-label={`Move ${str(t.name)} later`} disabled={ti === tasks.length - 1} onClick={() => shift(t.id, 1)}>→</button>
+                      <button aria-label={`Remove ${str(t.name)}`} onClick={() => op({ key: "tasks", op: "remove", id: t.id })}>×</button>
+                    </span>
+                  ) : null}
                 </div>
               ))}
               {!readOnly && tasks.length < 7 ? (
-                <div className="po-task new">
+                <div className={`po-task new${over === "t:end" ? " over" : ""}`} {...dropOn("t:end", "task", (id) => moveTask(id, null))}>
                   <input value={task} placeholder="+ activity or task" aria-label="Activity or task" onChange={(e) => setTask(e.target.value)} onKeyDown={(e) => e.key === "Enter" && addTask()} onBlur={addTask} />
                 </div>
               ) : null}
@@ -1235,11 +1273,11 @@ export function PoStoryMapBoard({ config, st, op: save, readOnly }: BoardProps) 
                   <span className="ex-mono">{band === "must" ? "Essential stories for this release · high priority" : "Stories for future releases · low priority"}</span>
                   <div className="po-mapgrid" style={{ ["--n" as string]: Math.max(1, tasks.length + (readOnly ? 0 : 1)) }}>
                     {tasks.map((t) => (
-                      <div key={t.id} className="po-stack">
+                      <div key={t.id} className={`po-stack${over === `c:${t.id}:${band}` ? " over" : ""}`} {...dropOn(`c:${t.id}:${band}`, "story", (id) => moveStory(id, t.id, band === "must"))}>
                         {stories.filter((s) => s.task === t.id && (s.must === true) === (band === "must")).map((s) => (
-                          <div key={s.id} className={`po-story ${band}`}>
-                            <span>{str(s.text)}</span>
-                            {!readOnly ? (
+                          <div key={s.id} className={`po-story ${band}${drag?.id === s.id ? " dragging" : ""}${over === `s:${s.id}` ? " over" : ""}`} draggable={!readOnly && edit !== s.id} onDragStart={(e) => (e.stopPropagation(), e.dataTransfer.setData("text/plain", s.id), (e.dataTransfer.effectAllowed = "move"), setDrag({ kind: "story", id: s.id }))} onDragEnd={end} {...dropOn(`s:${s.id}`, "story", (id) => moveStory(id, t.id, band === "must", s.id))}>
+                            {edit === s.id ? <MapEdit key={s.id} value={str(s.text)} label="Story" onClose={() => setEdit(null)} onSave={(text) => op({ key: "stories", op: "update", id: s.id, value: { text } })} /> : readOnly ? <span>{str(s.text)}</span> : <button className="po-maptext" title="Click to edit" onClick={() => setEdit(s.id)}>{str(s.text)}</button>}
+                            {!readOnly && edit !== s.id ? (
                               <span className="po-storyacts">
                                 <button aria-label={band === "must" ? "Move to later" : "Needed for the feature"} title={band === "must" ? "Move to later" : "Needed for the feature"} onClick={() => op({ key: "stories", op: "update", id: s.id, value: { must: band !== "must" } })}>{band === "must" ? "↓" : "↑"}</button>
                                 <button aria-label="Remove" onClick={() => op({ key: "stories", op: "remove", id: s.id })}>×</button>

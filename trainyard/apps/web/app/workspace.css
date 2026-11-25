@@ -1554,3 +1554,20 @@ input.cv2-voice:focus-visible { outline: 3px solid #f5b83d; border-color: transp
 .hx-list { margin: 0; padding-left: 22px; display: grid; gap: 6px; } .hx-list li::marker { font-weight: 800; }
 .hx-list button { font: inherit; color: #0d1815; text-align: left; border: 0; background: transparent; cursor: pointer; padding: 2px 0; display: grid; gap: 1px; } .hx-list button span { font-size: 14px; line-height: 1.4; }
 @media (prefers-reduced-motion: reduce) { .hx-hex { animation: none; transition: none; } }
+
+/* Story map: drag and edit */
+.po-maptext { font: inherit; color: inherit; background: transparent; border: 0; padding: 0; text-align: center; cursor: text; width: 100%; border-radius: 4px; }
+.po-maptext:hover { background: #ffffff2e; outline: 1px dashed currentColor; outline-offset: 3px; }
+.po-mapedit { font: inherit; width: 100%; border: 2px solid #0d1815; border-radius: 6px; background: #fff; color: #0d1815; padding: 4px 6px; resize: vertical; text-align: center; }
+.po-task[draggable="true"], .po-story[draggable="true"] { cursor: grab; }
+.po-task { padding-top: 22px; }
+.po-taskacts { position: absolute; top: 1px; left: 0; right: 16px; display: flex; justify-content: center; gap: 2px; opacity: 0; transition: opacity 0.15s; }
+.po-task:hover .po-taskacts, .po-task:focus-within .po-taskacts { opacity: 1; }
+.po-taskacts button { font: inherit; font-size: 13px; width: 22px; height: 20px; border: 0; background: transparent; color: #0d1815; cursor: pointer; padding: 0; opacity: 0.7; }
+.po-taskacts button:hover:not(:disabled) { opacity: 1; } .po-taskacts button:disabled { opacity: 0.2; cursor: default; }
+.po-task.dragging, .po-story.dragging { opacity: 0.35; }
+.po-task.over { filter: brightness(1.15); box-shadow: inset 5px 0 0 #0d1815; }
+.po-story.over { box-shadow: 0 -4px 0 #f5b84c; }
+.po-stack { min-height: 40px; border-radius: 6px; transition: background 0.15s; }
+.po-stack.over { background: #f5b84c44; outline: 2px dashed #d98a1c; outline-offset: 2px; }
+@media (hover: none) { .po-taskacts { opacity: 1; } }

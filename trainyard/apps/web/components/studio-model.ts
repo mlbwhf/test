@@ -174,6 +174,13 @@ export function studioModel(c: StudioCtx): Record<string, any> {
       vl: [69, 272, 474, 677, 880, 1082, 1285, 1488].map((x) => ({ x })),
       hl: [190, 239, 301, 349, 398, 447, 495, 544, 593, 641, 690, 752].map((y) => ({ y, w: y === 641 ? 5 : 1.5 })),
       rows: ([["Milestones/", 258], ["Events", 283], ["Unicorns", 333], ["Dolphins", 382], ["Bears", 430], ["Eagles", 479], ["Iguanas", 528], ["Antelope", 577], ["Tarantulas", 625], ["Needs UX Help", 674], ["Needs Sys", 716], ["Arch Help", 741]] as [string, number][]).map((r) => ({ label: r[0], ty: r[1] })),
+      // The strings that touch each row, as a bar under its name.
+      bars: (() => {
+        const n = GY.map(() => 0);
+        PAIRS[ab]!.forEach((pr) => { const rows = new Set((pr.split("-") as [string, string]).map((id) => GY.indexOf(near(GY, P(id)[1])))); rows.forEach((r) => (n[r] = (n[r] ?? 0) + 1)); });
+        const max = Math.max(1, ...n.slice(1)), bottom = [301, 349, 398, 447, 495, 544, 593, 641, 690, 752];
+        return n.map((k, i) => ({ y: bottom[i]! - 8, w: (k / max) * 199, o: 0.3 + (k / max) * 0.6, n: k })).slice(1).filter((b) => b.n > 0);
+      })(),
       links: B.l.map((d, i) => {
         const [a, b] = PAIRS[ab]![i]!.split("-") as [string, string];
         if (!mv[a] && !mv[b]) return { d };

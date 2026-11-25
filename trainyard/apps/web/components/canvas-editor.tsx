@@ -235,6 +235,19 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     for (const f of frames) for (const t of f.activity?.connectionTypes ?? []) if (!m.has(t.id)) m.set(t.id, t.color);
     return m;
   }, [frames]);
+  // A board laid out as rows by columns (teams by iterations, ARTs by iterations): the connectors
+  // that touch each row, drawn as a bar along the foot of the row's first cell.
+  const rowLoad = useMemo(() => {
+    const rows = new Map<string, typeof shownFrames>();
+    for (const f of shownFrames) { const i = f.title.indexOf(" · "); if (i > 0 && !f.layout) rows.set(f.title.slice(0, i), [...(rows.get(f.title.slice(0, i)) ?? []), f]); }
+    const grid = [...rows.entries()].filter(([, fs]) => fs.length > 1 && fs.every((f) => f.y === fs[0]!.y));
+    if (grid.length < 2 || !board.edges.length) return [];
+    const rowOf = (id: string) => { const n = shownNodes.find((x) => x.id === id); if (!n) return null; const cx = n.x + (n.width ?? 180) / 2, cy = n.y + (n.height ?? 120) / 2; return grid.find(([, fs]) => fs.some((f) => f.id === n.frameId || (cx >= f.x && cx <= f.x + f.width && cy >= f.y && cy <= f.y + f.height)))?.[0] ?? null; };
+    const n = new Map<string, number>();
+    for (const e of board.edges) for (const r of new Set([rowOf(e.fromId), rowOf(e.toId)])) if (r) n.set(r, (n.get(r) ?? 0) + 1);
+    const max = Math.max(1, ...n.values());
+    return grid.filter(([r]) => n.get(r)).map(([r, fs]) => { const f = [...fs].sort((a, b) => a.x - b.x)[0]!, k = n.get(r)!; return { key: r, x: f.x + 18, y: f.y + f.height - 20, w: (f.width - 36) * (k / max), full: f.width - 36, o: 0.3 + (k / max) * 0.6, n: k }; });
+  }, [shownFrames, shownNodes, board.edges]);
   const counts = useMemo(() => {
     const inside = new Set(shownNodes.map((n) => n.id));
     const c: Record<string, number> = {};
@@ -815,6 +828,14 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                     {f.title}
                   </text>
                 )}
+              </g>
+            ))}
+            {rowLoad.map((b) => (
+              <g key={b.key} pointerEvents="none">
+                <title>{`${b.n} connector${b.n === 1 ? "" : "s"} touch ${b.key}`}</title>
+                <rect x={b.x} y={b.y} width={b.full} height={8} rx={4} fill="#d81b60" opacity={0.1} />
+                <rect x={b.x} y={b.y} width={b.w} height={8} rx={4} fill="#d81b60" opacity={b.o} style={{ transition: "width 0.5s" }} />
+                <text x={b.x + b.full} y={b.y - 6} textAnchor="end" fontSize={13} fontWeight={700} fill="#a3134a">{b.n} {b.n === 1 ? "string" : "strings"}</text>
               </g>
             ))}
             {shownNodes.map((n) => {

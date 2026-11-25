@@ -552,6 +552,7 @@ export function ArtView({ v }: { v: any }) {
 {(v.art.hl || []).map((v: any, v_n: number) => (<Fragment key={v_n}><line x1="69" y1={v.y} x2="1488" y2={v.y} stroke="#7a7a7a" strokeWidth={v.w} /></Fragment>))}
 {(v.art.cols || []).map((c: any, c_n: number) => (<Fragment key={c_n}><text x={c.tx} y="223" textAnchor="middle" fontSize="21" fontWeight="700" fill="#0d1815">{c.label}</text></Fragment>))}
 {(v.art.rows || []).map((r: any, r_n: number) => (<Fragment key={r_n}><text x="170" y={r.ty} textAnchor="middle" fontSize="21" fontWeight="700" fill="#0d1815">{r.label}</text></Fragment>))}
+{(v.art.bars || []).map((b: any, b_n: number) => (<Fragment key={b_n}><rect x="71" y={b.y} width={b.w} height="6" rx="3" fill="#d81b60" opacity={b.o} style={{ transition: "width .5s" }}><title>{`${b.n} string${b.n === 1 ? "" : "s"} touch this row`}</title></rect></Fragment>))}
 {(v.art.links || []).map((l: any, l_n: number) => (<Fragment key={l_n}><path d={l.d} fill="none" stroke="#e8101a" strokeWidth="3.5" /></Fragment>))}
 {(v.art.cards || []).map((k: any, k_n: number) => (<Fragment key={k_n}><g onMouseDown={k.down} style={{ cursor: `${v.art.cur}` } as any}><rect x={k.x} y={k.y} width="52" height="36" fill={k.bg} stroke={k.st} strokeWidth="3" /><text x={k.tx} y={k.ty} textAnchor="middle" fontSize="22" fontWeight="700" fill={k.fg}>{k.id}</text></g></Fragment>))}
 </svg></div>

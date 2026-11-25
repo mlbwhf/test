@@ -872,10 +872,18 @@ export function PlanningRoomPage({ docKey = "planning-room", mode = "template" }
   const depIterOf = (d: Ticket): number | null => d.iter || (d.type === "risk" && featOfT(d.parent) ? fSlot[featOfT(d.parent)!.id] ?? null : null) || null;
   const rowHas = (rowKey: number | "ux" | "arch", t: Ticket) => (typeof rowKey === "number" ? t.team === rowKey && !t.svc : t.svc === rowKey);
   const mkCells = (rowKey: number | "ux" | "arch") => [...iters.map((i) => ({ key: `w:${i}`, ip: i === cal.n, feats: FEAT.filter((f) => rowHas(rowKey, f) && fSlot[f.id] === i).map((f) => fCard[f.id]), deps: DEPS.filter((d) => rowHas(rowKey, d) && depIterOf(d) === i).map(depCard) })),
-    { key: "yard", ip: false, feats: FEAT.filter((f) => rowHas(rowKey, f) && !fSlot[f.id]).map((f) => fCard[f.id]), deps: DEPS.filter((d) => rowHas(rowKey, d) && !depIterOf(d)).map(depCard) }].map((c) => ({ ...c, bg: c.key === "yard" ? "#f4f1ea" : c.ip ? "#fff9dc" : "#fff" }));
+    { key: "yard", ip: false, feats: FEAT.filter((f) => rowHas(rowKey, f) && !fSlot[f.id]).map((f) => fCard[f.id]), deps: DEPS.filter((d) => rowHas(rowKey, d) && !depIterOf(d)).map(depCard) }].map((c) => {
+      // Each team's load against its capacity in that iteration, as on the PI planning board.
+      const i = c.key.startsWith("w:") ? +c.key.slice(2) : 0, l = typeof rowKey === "number" && i ? loadOf(rowKey, i) : 0, cp = typeof rowKey === "number" && i ? capOf(rowKey, i) : 0;
+      return { ...c, bg: c.key === "yard" ? "#f4f1ea" : c.ip ? "#fff9dc" : "#fff", hasLoad: cp > 0, loadT: `${l}/${cp}`, loadW: `${Math.min(100, cp ? (l / cp) * 100 : 0)}%`, loadC: l > cp ? "#c8372d" : l >= cp * 0.8 ? "#d98a1c" : "#2e8b57", loadFg: l > cp ? "#c8372d" : "#5b5b6e" };
+    });
   const pbRows: any[] = [];
-  for (let n = 1; n <= N; n++) { const tmn = teamOf(n), l = iters.reduce((a, i) => a + loadOf(n, i), 0), c = iters.reduce((a, i) => a + capOf(n, i), 0); pbRows.push({ name: tmn.name, color: tmn.color, sub: `${l} / ${c} pts loaded`, subC: l > c ? "#c8372d" : "#5b5b6e", sep: "none", lbg: "#fff", cells: mkCells(n), go: () => set(() => ({ view: String(n), sel: null })) }); }
-  SVC.forEach(([k, nm], j) => pbRows.push({ name: nm, color: "#8a8a99", sub: "Shared services", subC: "#5b5b6e", sep: j ? "none" : "4px solid #14123a", lbg: "#f4f1ea", cells: mkCells(k), go: () => undefined }));
+  const strOf = (rowKey: number | "ux" | "arch") => DEPS.filter((d) => { const ff = featOfT(d.parent); return !!ff && (rowHas(rowKey, d) || rowHas(rowKey, ff)); }).length;
+  for (let n = 1; n <= N; n++) { const tmn = teamOf(n), l = iters.reduce((a, i) => a + loadOf(n, i), 0), c = iters.reduce((a, i) => a + capOf(n, i), 0); pbRows.push({ name: tmn.name, color: tmn.color, sub: `${l} / ${c} pts loaded`, subC: l > c ? "#c8372d" : "#5b5b6e", sep: "none", lbg: "#fff", cells: mkCells(n), go: () => set(() => ({ view: String(n), sel: null })), hasUtil: c > 0, utilW: `${Math.min(100, c ? (l / c) * 100 : 0)}%`, utilC: l > c ? "#c8372d" : l >= c * 0.8 ? "#d98a1c" : "#2e8b57", utilT: c ? `${Math.round((l / c) * 100)}% of capacity` : "", strings: strOf(n) }); }
+  SVC.forEach(([k, nm], j) => pbRows.push({ name: nm, color: "#8a8a99", sub: "Shared services", subC: "#5b5b6e", sep: j ? "none" : "4px solid #14123a", lbg: "#f4f1ea", cells: mkCells(k), go: () => undefined, hasUtil: false, utilW: "0%", utilC: "#8a8a99", utilT: "", strings: strOf(k) }));
+  // The strings that touch a row: how much of the train's coordination lands on that team.
+  const strMax = Math.max(1, ...pbRows.map((r) => r.strings));
+  pbRows.forEach((r) => { r.strW = `${(r.strings / strMax) * 100}%`; r.strO = 0.3 + (r.strings / strMax) * 0.6; r.strT = `${r.strings} string${r.strings === 1 ? "" : "s"}`; r.hasStr = r.strings > 0; });
   pbLinksRef.current = pbLinks;
   const miles: Milestone[] = s.miles ?? (s.scn === "geek" ? [{ id: "M1", t: "Investor demo", iter: 3 }] : s.scn === "av" ? [{ id: "M1", t: "Test track day", iter: 3 }] : []);
   const setMiles = (f: (a: Milestone[]) => Milestone[]) => set((x) => ({ miles: f([...(x.miles ?? miles)]) }));
