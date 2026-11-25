@@ -347,6 +347,32 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
       </div>
     );
   }
+  if (look === "pivot") {
+    // Four pivots as arrows around the customer; pick the one that would help, and the columns below say why and what comes next.
+    const pivots = (config.pivots as string[] | undefined) ?? [], sel = typeof st.pivot === "number" ? st.pivot : -1, ang = [200, 250, 290, 340];
+    return (
+      <div className="po-vis two">
+        <svg viewBox="0 0 320 210" className="po-venn" role="img" aria-label={sel >= 0 ? `Chosen pivot: ${pivots[sel]}` : "No pivot chosen"}>
+          {pivots.slice(0, 4).map((n, i) => {
+            const a = (ang[i]! * Math.PI) / 180, x = 160 + Math.cos(a) * 92, y = 150 + Math.sin(a) * 92, on = sel === i;
+            return (
+              <g key={n} className="po-depcard" role="button" tabIndex={readOnly ? -1 : 0} aria-pressed={on} onClick={() => !readOnly && op({ key: "pivot", op: "set", value: on ? null : i })} onKeyDown={(e) => e.key === "Enter" && !readOnly && op({ key: "pivot", op: "set", value: on ? null : i })}>
+                <line className="po-node" x1={160 + Math.cos(a) * 38} y1={150 + Math.sin(a) * 38} x2={x} y2={y} stroke={on ? "#d98a1c" : i === 1 || i === 2 ? "#a9c43c" : "#3f7c80"} strokeWidth={on ? 22 : 14} strokeLinecap="round" />
+                <text x={160 + Math.cos(a) * 132} y={150 + Math.sin(a) * 118} textAnchor="middle" className="po-deps-h" style={{ fontWeight: on ? 900 : 700 }}>{n}</text>
+              </g>
+            );
+          })}
+          <circle cx="160" cy="150" r="36" fill="#fff" stroke="#a9c43c" strokeWidth="6" />
+          <circle cx="160" cy="140" r="11" fill="#777" /><path d="M140 172 q20 -26 40 0 z" fill="#06384a" />
+        </svg>
+        <div className="po-verdict">
+          <span className="ex-mono">The pivot that could improve this MVP</span>
+          <b className="as-verdict">{sel >= 0 ? pivots[sel] : "Pick an arrow"}</b>
+          <p className="po-note">Click an arrow to choose the pivot, then describe the scenario and the next experiment below.</p>
+        </div>
+      </div>
+    );
+  }
   if (look === "triangle") {
     // Three measurement domains as a triangle; each corner grows with the notes tagged to it, split into used well and used poorly.
     const pts = [[150, 34], [44, 206], [256, 206]];
@@ -386,8 +412,8 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
           <text x="100" y="116" textAnchor="middle" className="po-axis">in the loop</text>
         </svg>
         <div className="po-verdict">
-          <span className="ex-mono">Fuelling continuous improvement</span>
-          <p className="po-note">{done === lenses.length ? "The loop is closed: the group has a change to try for each of the three." : `Still open: ${lenses.filter((_, i) => !count(i)).map(([n]) => n.toLowerCase()).join(", ")}. Each arc closes when the group names what it would change there.`}</p>
+          <span className="ex-mono">{str(config.loopLabel) || "Fuelling continuous improvement"}</span>
+          <p className="po-note">{done === lenses.length ? str(config.loopDone) || "The loop is closed: the group has a change to try for each of the three." : `Still open: ${lenses.filter((_, i) => !count(i)).map(([n]) => n.toLowerCase()).join(", ")}. Each arc closes when the group names what it would change there.`}</p>
         </div>
       </div>
     );
@@ -1967,8 +1993,237 @@ export function AsBacklogBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard };
+// Improving strategic themes: the case to read, each theme with its key results and the group's call
+// on it (keep, revise, remove), themes to add, and what AI suggested.
+const TH_CALLS = [["keep", "Keep", "#cfe8d4"], ["revise", "Revise", "#ffe9b8"], ["remove", "Remove", "#f9d9d2"]] as const;
+export function AsThemesBoard({ config, st, op, readOnly }: BoardProps) {
+  const cards = (config.scenario as [string, string[]][] | undefined) ?? [], themes = (config.themes as [string, string, string[]][] | undefined) ?? [];
+  const [tab, setTab] = useState(0);
+  const call = (st.call && typeof st.call === "object" ? st.call : {}) as Record<string, string>, added = list(st, "added");
+  const n = (k: string) => themes.filter((_, i) => call[i] === k).length;
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <section className="po-panel">
+        <div className="po-seg" role="tablist" aria-label="CARS scenario">{cards.map(([t], i) => (<button key={t} role="tab" aria-selected={i === tab} aria-pressed={i === tab} onClick={() => setTab(i)}>{t}</button>))}</div>
+        <div className="as-case" key={tab}>{(cards[tab]?.[1] ?? []).map((x) => { const [h, ...rest] = x.split(": "); return rest.length && h!.length < 28 ? <p key={x} style={{ fontWeight: 500 }}><b>{h}:</b> {rest.join(": ")}</p> : <p key={x} style={{ fontWeight: 500 }}>{x}</p>; })}</div>
+      </section>
+      <div className="th-tally" role="img" aria-label={`${n("keep")} kept, ${n("revise")} revised, ${n("remove")} removed, ${added.length} added`}>
+        {TH_CALLS.map(([k, l, c]) => (<span key={k} style={{ background: c, flexGrow: n(k) || 0.4 }}><b>{n(k)}</b> {l.toLowerCase()}</span>))}
+        <span style={{ background: "#cde0f2", flexGrow: added.length || 0.4 }}><b>{added.length}</b> added</span>
+      </div>
+      <div className="th-grid">
+        {themes.map(([name, text, krs], i) => (
+          <article key={name} className={`th-card ${call[i] ?? ""}`} style={{ animationDelay: `${i * 90}ms` }}>
+            <header><span className="po-n">{i + 1}</span><b>{name}</b></header>
+            <p>{text}</p>
+            <ul>{krs.map((k) => (<li key={k}>{k}</li>))}</ul>
+            <div className="po-seg small" role="group" aria-label={`Our call on ${name}`}>
+              {TH_CALLS.map(([k, l]) => (<button key={k} disabled={readOnly} aria-pressed={call[i] === k} onClick={() => op({ key: "call", op: "set", value: { ...call, [i]: call[i] === k ? "" : k } })}>{l}</button>))}
+            </div>
+            {call[i] === "revise" ? <Field k={`rev:${i}`} st={st} op={op} readOnly={readOnly} rows={3} placeholder="The theme as we would revise it" label={`Revision of ${name}`} /> : null}
+            {call[i] === "remove" ? <Field k={`why:${i}`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="Why it should go" label={`Why remove ${name}`} /> : null}
+          </article>
+        ))}
+        <article className="th-card new">
+          <header><span className="po-n">+</span><b>Should any be added?</b></header>
+          {added.map((x) => (
+            <div key={x.id} className="po-sticky" style={{ background: "#cde0f2", borderLeftColor: "#2f6fbd" }}>
+              <span>{str(x.text)}</span>
+              {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: "added", op: "remove", id: x.id })}>×</button> : null}
+            </div>
+          ))}
+          {!readOnly ? <AddLine label="A theme to add" placeholder="+ a strategic theme to add, Enter" onAdd={(text) => op({ key: "added", op: "push", value: { text } })} /> : null}
+        </article>
+      </div>
+      <section className="po-panel">
+        <span className="ex-mono">Ask AI to analyze your assessment: its ideas for improvements</span>
+        <Field k="ai" st={st} op={op} readOnly={readOnly} rows={4} placeholder="Paste or summarize what the AI suggested, and what you take from it." label="AI ideas for improvements" />
+      </section>
+    </div>
+  );
+}
+
+// The Green Compass epic hypothesis statement: the epic as given, and the four parts the class
+// brainstorms (business outcomes, leading indicators, MVP features, go / no-go).
+export function AsEpicBoard({ config, st, op, readOnly }: BoardProps) {
+  const epic = config.epic as { head: [string, string][]; name: string; desc: [string, string][] } | undefined;
+  const parts = (config.parts as [string, string, string][] | undefined) ?? [], domains = (config.domains as string[] | undefined) ?? [];
+  const ind = list(st, "p:1"), picked = ind.map((x) => str(x.domain)).filter(Boolean);
+  return (
+    <div className="ex-board po">
+      {epic ? (
+        <section className="ep-card">
+          <div className="ep-head">{epic.head.map(([k, v]) => (<div key={k}><span>{k}</span><b>{v}</b></div>))}</div>
+          <div className="ep-body">
+            <span className="ep-spine">Epic Hypothesis Statement</span>
+            <div>
+              <span className="ep-label">Epic Name</span><p className="ep-name">{epic.name}</p>
+              <span className="ep-label">Epic Description</span>
+              <p className="ep-desc">{epic.desc.map(([k, v]) => (<span key={k}><b>{k}</b> {v} </span>))}</p>
+            </div>
+          </div>
+        </section>
+      ) : null}
+      <div className="ep-grid">
+        {parts.map(([name, hint, tone], pi) => (
+          <section key={name} className="po-col" style={{ animationDelay: `${pi * 90}ms` }}>
+            <header><span className="po-n" style={{ background: tone }}>{list(st, `p:${pi}`).length}</span><b>{name}</b></header>
+            {list(st, `p:${pi}`).map((x) => (
+              <div key={x.id} className="po-sticky" style={{ background: "#fff", borderLeftColor: tone, boxShadow: "0 0 0 1.5px #0d181826" }}>
+                {pi === 1 && str(x.domain) ? <small style={{ color: DOMAIN_TONE[str(x.domain)] }}>{str(x.domain)}</small> : null}
+                <span>{str(x.text)}</span>
+                {pi === 1 && !readOnly ? <span className="bl-acts" style={{ marginTop: 4 }}>{domains.map((d) => (<button key={d} aria-pressed={str(x.domain) === d} style={str(x.domain) === d ? { background: DOMAIN_TONE[d], color: "#fff" } : undefined} onClick={() => op({ key: "p:1", op: "update", id: x.id, value: { domain: str(x.domain) === d ? "" : d } })}>{d}</button>))}</span> : null}
+                {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `p:${pi}`, op: "remove", id: x.id })}>×</button> : null}
+              </div>
+            ))}
+            {!readOnly ? <AddLine label={name} placeholder={hint} onAdd={(text) => op({ key: `p:${pi}`, op: "push", value: { text } })} /> : null}
+          </section>
+        ))}
+      </div>
+      <DomainBalance domains={domains} picked={picked} />
+      <div className="po-two wide">
+        <section className="po-panel">
+          <span className="ex-mono">Use AI: the experiment to start with to test the MVP</span>
+          <Field k="experiment" st={st} op={op} readOnly={readOnly} rows={3} placeholder="The first experiment, and what it would tell us" label="The experiment to start with" />
+        </section>
+        <section className="po-panel">
+          <span className="ex-mono">Is a complementary metric needed?</span>
+          <Field k="complement" st={st} op={op} readOnly={readOnly} rows={3} placeholder="Do the leading indicators give a balanced set for the MVP? If not, the metric we would add." label="Complementary metric" />
+        </section>
+      </div>
+    </div>
+  );
+}
+
+// Portfolio role-play practice: two scenarios, each with its three characters. People volunteer for
+// a role, the class notes each character's problems, feelings and goals, then gives feedback.
+const RP_ASPECTS = ["Problems", "Feelings", "Goals"];
+export function AsRoleplayBoard({ config, st, op, readOnly }: BoardProps) {
+  const scenarios = (config.scenarios as { title: string; text: string[]; roles: [string, string][] }[] | undefined) ?? [];
+  const [si, setSi] = useState(0);
+  const [ri, setRi] = useState(0);
+  const sc = scenarios[si], role = sc?.roles[ri];
+  const [aspect, setAspect] = useState(0);
+  const tones = ["#f6c28b", "#c9b6ec", "#8accce"];
+  if (!sc || !role) return null;
+  const notes = list(st, `n:${si}:${ri}`);
+  return (
+    <div className="ex-board po">
+      <div className="po-seg" role="tablist" aria-label="Scenario">{scenarios.map((x, i) => (<button key={x.title} role="tab" aria-selected={i === si} aria-pressed={i === si} onClick={() => (setSi(i), setRi(0))}>Scenario #{i + 1} · {x.title}</button>))}</div>
+      <section className="po-panel as-case" key={si}>{sc.text.map((x) => (<p key={x} style={{ fontWeight: 500 }}>{x}</p>))}</section>
+      <div className="rp-cast">
+        {sc.roles.map(([name], i) => {
+          const who = str(st[`who:${si}:${i}`]);
+          return (
+            <button key={name} className={`rp-role${i === ri ? " on" : ""}`} style={{ ["--c" as string]: tones[i % 3] }} aria-pressed={i === ri} onClick={() => setRi(i)}>
+              <span className="rp-face" aria-hidden>{who ? who.slice(0, 1).toUpperCase() : "?"}</span>
+              <b>{name}</b>
+              <small>{who ? `Played by ${who}` : "No volunteer yet"} · {list(st, `n:${si}:${i}`).length} notes</small>
+            </button>
+          );
+        })}
+      </div>
+      <div className="po-two wide" key={`${si}-${ri}`}>
+        <section className="po-panel" style={{ borderTop: `8px solid ${tones[ri % 3]}` }}>
+          <b className="as-verdict">{role[0]}</b>
+          <p style={{ margin: 0, fontSize: 15, lineHeight: 1.45 }}>{role[1]}</p>
+          <label className="po-heading"><span className="ex-mono">Volunteer to take on this role</span><Field k={`who:${si}:${ri}`} st={st} op={op} readOnly={readOnly} rows={1} placeholder="Name of the volunteer" label={`Volunteer for ${role[0]}`} /></label>
+        </section>
+        <section className="po-panel">
+          <span className="ex-mono">This character&apos;s perspective</span>
+          {RP_ASPECTS.map((a, ai) => (
+            <div key={a} className="rp-aspect">
+              <b>{a}</b>
+              {notes.filter((n) => num(n.aspect) === ai).map((n) => (
+                <div key={n.id} className="po-sticky" style={{ background: "#fff", borderLeftColor: tones[ri % 3], boxShadow: "0 0 0 1.5px #0d181826" }}>
+                  <span>{str(n.text)}</span>
+                  {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `n:${si}:${ri}`, op: "remove", id: n.id })}>×</button> : null}
+                </div>
+              ))}
+            </div>
+          ))}
+          {!readOnly ? (
+            <>
+              <div className="po-seg small" role="group" aria-label="This note is about their">{RP_ASPECTS.map((a, ai) => (<button key={a} aria-pressed={aspect === ai} onClick={() => setAspect(ai)}>{a}</button>))}</div>
+              <AddLine label={`${RP_ASPECTS[aspect]} of ${role[0]}`} placeholder={`+ their ${RP_ASPECTS[aspect]!.toLowerCase()}, Enter`} onAdd={(text) => op({ key: `n:${si}:${ri}`, op: "push", value: { aspect, text } })} />
+            </>
+          ) : null}
+        </section>
+      </div>
+      <section className="po-panel">
+        <span className="ex-mono">Feedback for the debrief of this scenario</span>
+        {list(st, `fb:${si}`).map((n) => (
+          <div key={n.id} className="po-sticky" style={{ background: "#cde0f2", borderLeftColor: "#2f6fbd" }}>
+            <span>{str(n.text)}</span>
+            {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `fb:${si}`, op: "remove", id: n.id })}>×</button> : null}
+          </div>
+        ))}
+        {!readOnly ? <AddLine label="Feedback" placeholder="+ feedback for the players, Enter" onAdd={(text) => op({ key: `fb:${si}`, op: "push", value: { text } })} /> : null}
+      </section>
+    </div>
+  );
+}
+
+// Portfolio mix and match: seven scenarios, seven portfolio types. Pick a type, then click the
+// scenarios it fits (or pick on the scenario itself); each match takes a short rationale.
+const MX_TONES = ["#2f6fbd", "#2e8b57", "#8c6bc8", "#1f8a9e", "#c2412d", "#d98a1c", "#777"];
+export function AsMixBoard({ config, st, op, readOnly }: BoardProps) {
+  const types = (config.types as [string, string][] | undefined) ?? [], scenarios = (config.scenarios as string[] | undefined) ?? [];
+  const match = (st.match && typeof st.match === "object" ? st.match : {}) as Record<string, number | null>;
+  const [brush, setBrush] = useState<number | null>(null);
+  const setM = (i: number, t: number | null) => op({ key: "match", op: "set", value: { ...match, [i]: t } });
+  const of = (i: number) => (typeof match[i] === "number" ? (match[i] as number) : null);
+  const done = scenarios.filter((_, i) => of(i) !== null).length, C = 2 * Math.PI * 26;
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <section className="po-panel">
+        <div className="mx-top">
+          <span className="po-ring" style={{ width: 68, height: 68 }}>
+            <svg width="68" height="68" viewBox="0 0 68 68" role="img" aria-label={`${done} of ${scenarios.length} scenarios matched`}><circle cx="34" cy="34" r="26" fill="none" stroke="#0d181822" strokeWidth="7" /><circle className="po-ring-v" cx="34" cy="34" r="26" fill="none" stroke={done === scenarios.length ? "#2e8b57" : "#d98a1c"} strokeWidth="7" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - done / Math.max(1, scenarios.length))} transform="rotate(-90 34 34)" /></svg>
+            <b style={{ fontSize: 15 }}>{done}/{scenarios.length}</b>
+          </span>
+          <div><span className="ex-mono">Portfolio options</span><p className="po-note">{readOnly ? "" : brush === null ? "Pick a portfolio type, then click every scenario it fits. A type can be used more than once." : `Now click the scenarios that fit “${types[brush]![0]}”. Click the type again when you are done.`}</p></div>
+        </div>
+        <div className="mx-types" role="group" aria-label="Portfolio options">
+          {types.map(([name, icon], t) => {
+            const n = scenarios.filter((_, i) => of(i) === t).length;
+            return (
+              <button key={name} className={`mx-type${brush === t ? " on" : ""}`} style={{ ["--c" as string]: MX_TONES[t % MX_TONES.length] }} disabled={readOnly} aria-pressed={brush === t} onClick={() => setBrush(brush === t ? null : t)}>
+                <span aria-hidden>{icon}</span><b>{name}</b>{n ? <i>{n}</i> : null}
+              </button>
+            );
+          })}
+        </div>
+      </section>
+      <div className="mx-list">
+        {scenarios.map((text, i) => {
+          const t = of(i);
+          return (
+            <article key={i} className={`mx-row${t !== null ? " set" : ""}${brush !== null ? " aim" : ""}`} style={{ ["--c" as string]: t !== null ? MX_TONES[t % MX_TONES.length] : "#0d181855", animationDelay: `${i * 60}ms` }} onClick={() => brush !== null && !readOnly && setM(i, t === brush ? null : brush)}>
+              <span className="po-n">{i + 1}</span>
+              <p>{text}</p>
+              <div className="mx-pick" onClick={(e) => e.stopPropagation()}>
+                {t !== null ? <b className="mx-chip">{types[t]![1]} {types[t]![0]}</b> : null}
+                <select value={t ?? ""} disabled={readOnly} aria-label={`Portfolio type for scenario ${i + 1}`} onChange={(e) => setM(i, e.target.value === "" ? null : Number(e.target.value))}>
+                  <option value="">{t === null ? "Choose the portfolio type…" : "Change…"}</option>
+                  {types.map(([n], k) => (<option key={n} value={k}>{n}</option>))}
+                </select>
+              </div>
+              <div className="mx-why" onClick={(e) => e.stopPropagation()}>
+                <Field k={`why:${i}`} st={st} op={op} readOnly={readOnly} rows={2} placeholder={t !== null && types[t]![0] === "Other" ? "Which other structure, and why" : "Rationale: why this portfolio type suits this situation"} label={`Rationale for scenario ${i + 1}`} />
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;
