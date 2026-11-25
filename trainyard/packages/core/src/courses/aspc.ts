@@ -10,9 +10,9 @@ import type { ActivitySpec } from "../activities.js";
 const BOARD = { width: 1200, height: 600 };
 const DOMAINS = ["Outcomes", "Flow", "Competency"];
 
-const CANVAS_QUESTIONS = ["Who are we?", "What is our purpose?", "Who do we serve?", "How will we succeed?"];
+export const TRANSFORMATION_CANVAS_QUESTIONS = ["Who are we?", "What is our purpose?", "Who do we serve?", "How will we succeed?"];
 /** The filled transformation canvas of the workbook (CARS), to load as a starting example. */
-const CANVAS_EXAMPLE = {
+export const TRANSFORMATION_CANVAS_EXAMPLE = {
   who: "CARS",
   "ctx:0:bo": "Autonomous Vehicle Delivery Operations",
   "ctx:0:sd": "Autonomous Vehicle Engineering",
@@ -37,6 +37,8 @@ const CANVAS_EXAMPLE = {
     { id: "ex-b4", outcome: "Revenue", metric: "Customer Growth Year 1", from: "--", to: "15%" },
   ],
 };
+
+const CANVAS_QUESTIONS = TRANSFORMATION_CANVAS_QUESTIONS, CANVAS_EXAMPLE = TRANSFORMATION_CANVAS_EXAMPLE;
 
 const lesson1: ActivitySpec[] = [
   {
@@ -626,13 +628,35 @@ const lesson4: ActivitySpec[] = [
   },
 ];
 
+const lesson5: ActivitySpec[] = [
+  {
+    title: "Recognizing portfolio flow",
+    kind: "Discussion",
+    share: 5,
+    steps: "As a class, discuss the following questions:\n- What is portfolio flow, and why is it important?\n- How do you know if portfolios are flowing?",
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "As a class, discuss the following questions.",
+      look: "pair",
+      visLabel: "What portfolio flow is, against the signs that tell you it is happening.",
+      kinds: [],
+      tones: ["#cde0f2", "#cfe8d4"],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["What and why", "What is portfolio flow, and why is it important?"], ["Signs of flow", "How do you know if portfolios are flowing?"]],
+    },
+    ...BOARD,
+  },
+];
+
 /** Lessons 1 to 4 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
 export const ASPC_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Introducing the Advanced SPC Role", activities: lesson1 },
   { title: "Embracing AI", activities: lesson2 },
   { title: "Engaging Executives", activities: lesson3 },
   { title: "Developing a Transformation Strategy", activities: lesson4 },
-  { title: "Unlocking Portfolio Flow", activities: [], keep: true },
+  { title: "Unlocking Portfolio Flow", activities: lesson5, keep: true },
   { title: "Customizing SAFe to Your Context", activities: [], keep: true },
   { title: "Learning Lab: design sprint", activities: [], keep: true },
   { title: "Get Certified and Start Training", activities: [], keep: true },

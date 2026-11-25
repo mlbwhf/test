@@ -77,6 +77,7 @@ function template(info: TemplateInfo, build: (b: Board) => void): Board & { info
 }
 
 export const TEMPLATE_CATALOG: TemplateInfo[] = [
+  { id: "transformation-canvas", name: "Transformation canvas", blurb: "Align transformation objectives with business objectives on one canvas: the business context as solution delivery and business operations each see it, the two objectives, their key results with leading and lagging indicators, and the links between them. Load the worked example or start from your own.", event: "Transformation strategy · LACE", method: "safe", tags: ["safe", "portfolio"], zones: ["Business context: two voices", "Transformation and business objectives", "Key results, from and to", "Alignment: what leads to what"], cardTypes: ["Key transformation result", "Key business result"], mapsTo: "Nothing (strategy canvas)" },
   { id: "launch-readiness", name: "AI-Native ART launch readiness", blurb: "Is this ART ready to launch? Rate the 48 statements of the twelve success factors on a readiness map, turn every gap into an action, and read the results, the launch plan and the trainings that close the most gaps.", event: "Ahead of the first PI Outcome Planning", method: "safe", tags: ["safe", "portfolio"], zones: ["Results and advice", "Readiness map: 4 shifts × 3 success factors", "Launch plan: three phases", "Report and CSV"], cardTypes: ["Statement rating", "Action"], mapsTo: "Nothing (assessment and launch plan)" },
   { id: "pi-planning-room", name: "PI planning room", blurb: "The multi-team planning room from the Leading SAFe design: a train per team with iterations as wagons, capacity gauges, planning poker, ROAM, PI objectives with business value, the yard view across teams and the program view of shared epics. Seed it with a simulation (ALICE, GeekBooks), your own backlog or Jira/Azure DevOps.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Setup: teams, PI calendar, backlog", "Yard · all teams", "One train per team: iterations, freight yard, risks, poker", "Program view: shared epics"], cardTypes: ["Feature", "Story", "Risk", "PI objective"], mapsTo: "Nothing yet (its own document)" },
   { id: "pi-planning", name: "PI Planning board", blurb: "Teams × iterations with features, dependencies and capacity.", event: "PI Planning", method: "safe", tags: ["safe"], zones: ["Teams × iterations", "Milestones", "Uncommitted", "Risks (ROAM)"], cardTypes: ["Feature", "Enabler", "Milestone"], mapsTo: "Items and dependencies" },
@@ -145,6 +146,11 @@ export function builtinTemplates(teamNames: string[] = ["Team 1", "Team 2", "Tea
 
   return [
     // The launch readiness tool (readiness.ts, apps/web readiness-board.tsx): the board carries the marker, one frame holds the ratings and actions.
+    // The transformation canvas (apps/web popm-boards.tsx AsCanvasBoard): the board carries the marker, one frame holds what is filled in.
+    template(info("transformation-canvas"), (b) => {
+      b.fields = { transformationCanvas: true };
+      b.frames = [{ id: "canvas", title: "Transformation canvas", x: 0, y: 0, width: 2400, height: 900 }];
+    }),
     template(info("launch-readiness"), (b) => {
       b.fields = { readiness: true };
       b.frames = [{ id: "readiness", title: "AI-Native ART launch readiness", x: 0, y: 0, width: 2400, height: 900 }];
