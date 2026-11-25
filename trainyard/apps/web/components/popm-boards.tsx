@@ -1643,43 +1643,56 @@ export function AsRoadmapBoard({ config, st, op, readOnly }: BoardProps) {
 // the group fills part by part over several exercises. Each exercise puts one part in focus; the
 // whole canvas is always there. An example can be loaded, and cleared to work on the group's own.
 const CV_SIDES = [["bo", "Business Operations"], ["sd", "Solution Delivery"]] as const;
-const CV_COLS = [["outcome", "Desired outcome"], ["metric", "Metric"], ["from", "From"], ["to", "To"]] as const;
 
 const CV_FOCUS: Record<string, string[]> = { all: ["context", "tobj", "bobj", "ktr", "kbr", "align"], context: ["context"], business: ["bobj", "kbr"], transformation: ["tobj", "ktr"], alignment: ["ktr", "align", "kbr"] };
 const linksOf = (r: Row): string[] => (Array.isArray(r.links) ? (r.links as string[]) : []);
 
-function CanvasResults({ k, title, indicator, tone, st, op, readOnly, other, on }: { k: "ktr" | "kbr"; title: string; indicator: string; tone: string; st: St; op: BoardProps["op"]; readOnly: boolean; other?: Row[]; on: boolean }) {
-  const rows = list(st, k), tag = k === "ktr" ? "T" : "B", ink = k === "ktr" ? "#fff" : "#06384a";
-  return (
-    <div className={`cv-results cv-part${on ? " focus" : ""}`}>
-      <div className="cv-bar" style={{ background: tone, color: ink }}>{title}</div>
-      <div className="cv-rhead">{CV_COLS.map(([c, l]) => (<span key={c}>{c === "metric" ? `${l} · ${indicator}` : l}</span>))}</div>
-      {rows.map((r, i) => (
-        <div key={r.id} className="cv-rrow">
-          <b className="cv-tag" style={{ background: tone, color: ink }}>{tag}{i + 1}</b>
-          {CV_COLS.map(([c, l]) => (<CellText key={c} row={r} k={c} hint={l} op={op} readOnly={readOnly} listKey={k} />))}
-          {other?.length ? (
-            <div className="cv-link" role="group" aria-label={`${tag}${i + 1} is a leading indicator of`}>
-              <span>leads to</span>
-              {other.map((o, j) => { const has = linksOf(r).includes(o.id); return <button key={o.id} disabled={readOnly} aria-pressed={has} title={str(o.outcome)} onClick={() => op({ key: k, op: "update", id: r.id, value: { links: has ? linksOf(r).filter((x) => x !== o.id) : [...linksOf(r), o.id] } })}>B{j + 1}</button>; })}
-            </div>
-          ) : null}
-          {!readOnly ? <button className="ex-x" aria-label="Remove this row" onClick={() => op({ key: k, op: "remove", id: r.id })}>×</button> : null}
-        </div>
-      ))}
-      {!readOnly && rows.length < 6 ? <button className="cv-add" onClick={() => op({ key: k, op: "push", value: {} })}>+ a key result</button> : null}
-    </div>
-  );
+/** One field of a key result, saved when it is left. */
+function RowInput({ row, k, hint, op, readOnly, listKey, className }: { row: Row; k: string; hint: string; op: BoardProps["op"]; readOnly: boolean; listKey: string; className?: string }) {
+  const saved = str(row[k]);
+  const [v, setV] = useState(saved);
+  useEffect(() => setV(saved), [saved]);
+  return <input className={className} value={v} placeholder={hint} aria-label={hint} disabled={readOnly} onClick={(e) => e.stopPropagation()} onChange={(e) => setV(e.target.value)} onBlur={() => v !== saved && op({ key: listKey, op: "update", id: row.id, value: { [k]: v.trim() } })} onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()} />;
 }
 
 export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
   const qs = (config.questions as string[] | undefined) ?? [], focus = str(config.focus) || "all", example = config.example as Record<string, unknown> | undefined;
   const on = (p: string) => (CV_FOCUS[focus] ?? CV_FOCUS.all!).includes(p);
   const ktr = list(st, "ktr"), kbr = list(st, "kbr");
-  const links = ktr.flatMap((t, i) => linksOf(t).map((id) => ({ t: i, b: kbr.findIndex((b) => b.id === id) }))).filter((x) => x.b >= 0);
-  const looseT = ktr.map((_, i) => i).filter((i) => !links.some((l) => l.t === i)), looseB = kbr.map((_, j) => j).filter((j) => !links.some((l) => l.b === j));
+  const links = ktr.flatMap((t) => linksOf(t).filter((id) => kbr.some((b) => b.id === id)).map((b) => ({ t: t.id, b })));
+  const looseT = ktr.filter((t) => !links.some((l) => l.t === t.id)), looseB = kbr.filter((b) => !links.some((l) => l.b === b.id));
   const ctxFilled = qs.flatMap((_, i) => CV_SIDES.map(([s]) => str(st[`ctx:${i}:${s}`]))).filter(Boolean).length;
   const empty = !ctxFilled && !str(st.tobj) && !str(st.bobj) && !ktr.length && !kbr.length;
+  const total = ktr.length + kbr.length, score = total ? Math.round(((total - looseT.length - looseB.length) / total) * 100) : 0;
+  // Linking: pick a result on either side, then click results on the other side to connect or disconnect them.
+  const [pick, setPick] = useState<string | null>(null);
+  const [hover, setHover] = useState<string | null>(null);
+  const active = pick ?? hover, pickedT = ktr.find((t) => t.id === pick), pickedB = kbr.find((b) => b.id === pick);
+  const toggle = (t: Row, bId: string) => op({ key: "ktr", op: "update", id: t.id, value: { links: linksOf(t).includes(bId) ? linksOf(t).filter((x) => x !== bId) : [...linksOf(t), bId] } });
+  const click = (side: "t" | "b", r: Row) => {
+    if (readOnly) return;
+    if (side === "t") return pickedB ? toggle(r, pickedB.id) : setPick(pick === r.id ? null : r.id);
+    return pickedT ? toggle(pickedT, r.id) : setPick(pick === r.id ? null : r.id);
+  };
+  const lit = (id: string) => !active || id === active || links.some((l) => (l.t === active && l.b === id) || (l.b === active && l.t === id));
+  // The strings are drawn between the cards where they really are on the page.
+  const box = useRef<HTMLDivElement>(null);
+  const [geo, setGeo] = useState<{ w: number; h: number; at: Record<string, [number, number]> }>({ w: 0, h: 0, at: {} });
+  const sig = `${ktr.map((r) => r.id + str(r.outcome) + str(r.metric)).join("|")}#${kbr.map((r) => r.id + str(r.outcome) + str(r.metric)).join("|")}`;
+  useEffect(() => {
+    const measure = () => {
+      const el = box.current;
+      if (!el) return;
+      const o = el.getBoundingClientRect(), at: Record<string, [number, number]> = {};
+      el.querySelectorAll<HTMLElement>("[data-kr]").forEach((c) => { const r = c.getBoundingClientRect(); at[c.dataset.kr!] = [c.dataset.side === "t" ? r.right - o.left : r.left - o.left, r.top - o.top + r.height / 2]; });
+      setGeo({ w: o.width, h: o.height, at });
+    };
+    measure();
+    const ro = typeof ResizeObserver !== "undefined" ? new ResizeObserver(measure) : null;
+    if (ro && box.current) ro.observe(box.current);
+    window.addEventListener("resize", measure);
+    return () => (ro?.disconnect(), window.removeEventListener("resize", measure));
+  }, [sig]);
   const load = () => {
     if (!example || (!empty && !window.confirm("Replace what is on the canvas with the example?"))) return;
     for (const [k, v] of Object.entries(example)) op({ key: k, op: "set", value: v });
@@ -1687,14 +1700,42 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
   const clear = () => {
     if (!window.confirm("Clear the whole canvas to work on your own?")) return;
     for (const k of [...qs.flatMap((_, i) => CV_SIDES.map(([s]) => `ctx:${i}:${s}`)), "who", "tobj", "bobj", "ktr", "kbr"]) op({ key: k, op: "set", value: null });
+    setPick(null);
   };
-  const n = Math.max(ktr.length, kbr.length, 1), H = n * 46 + 16, y = (i: number, of: number) => 8 + ((i + 0.5) * (H - 16)) / Math.max(of, 1);
+  const Results = ({ side }: { side: "t" | "b" }) => {
+    const k = side === "t" ? "ktr" : "kbr", rows = side === "t" ? ktr : kbr, loose = side === "t" ? looseT : looseB;
+    return (
+      <div className={`cv2-side ${side} cv-part${on(k) ? " focus" : ""}`}>
+        <div className="cv2-sidehead"><b>{side === "t" ? "Key Transformation Results" : "Key Business Results"}</b><span>{side === "t" ? "leading indicators" : "lagging indicators"}</span></div>
+        {rows.map((r, i) => {
+          const n = links.filter((l) => (side === "t" ? l.t : l.b) === r.id).length, target = side === "t" ? !!pickedB : !!pickedT;
+          const linked = target && (side === "t" ? linksOf(r).includes(pick!) : linksOf(pickedT!).includes(r.id));
+          return (
+            <div key={r.id} data-kr={r.id} data-side={side} role="button" tabIndex={readOnly ? -1 : 0} aria-pressed={pick === r.id}
+              className={`cv2-kr${pick === r.id ? " picked" : ""}${target ? " target" : ""}${linked ? " linked" : ""}${lit(r.id) ? "" : " dim"}${loose.includes(r) ? " loose" : ""}`}
+              onClick={() => click(side, r)} onKeyDown={(e) => e.key === "Enter" && e.target === e.currentTarget && click(side, r)} onMouseEnter={() => setHover(r.id)} onMouseLeave={() => setHover(null)}>
+              <span className="cv2-tag">{side === "t" ? "T" : "B"}{i + 1}</span>
+              <div className="cv2-krbody">
+                <RowInput className="cv2-outcome" row={r} k="outcome" hint="Desired outcome" op={op} readOnly={readOnly} listKey={k} />
+                <RowInput className="cv2-metric" row={r} k="metric" hint={side === "t" ? "Metric (leading indicator)" : "Metric (lagging indicator)"} op={op} readOnly={readOnly} listKey={k} />
+                <div className="cv2-fromto"><RowInput row={r} k="from" hint="From" op={op} readOnly={readOnly} listKey={k} /><i aria-hidden>→</i><RowInput row={r} k="to" hint="To" op={op} readOnly={readOnly} listKey={k} /></div>
+              </div>
+              <span className="cv2-port" title={n ? `${n} connected` : "Not connected"}>{target ? (linked ? "✓" : "+") : n || "!"}</span>
+              {!readOnly ? <button className="ex-x" aria-label="Remove this key result" onClick={(e) => (e.stopPropagation(), op({ key: k, op: "remove", id: r.id }), setPick(null))}>×</button> : null}
+            </div>
+          );
+        })}
+        {!readOnly && rows.length < 6 ? <button className="cv2-add" onClick={() => op({ key: k, op: "push", value: {} })}>+ a key result</button> : null}
+      </div>
+    );
+  };
+  const C = 2 * Math.PI * 26;
   return (
     <div className="ex-board po">
       <div className="ex-intro">{str(config.prompt)}</div>
       <div className="cv-top">
         <ol className="po-steps" aria-label="Parts of the canvas">
-          {([["context", "Business context", ctxFilled === qs.length * 2], ["business", "Business OKR", !!str(st.bobj) && kbr.length > 0], ["transformation", "Transformation OKR", !!str(st.tobj) && ktr.length > 0], ["alignment", "Alignment", ktr.length > 0 && !looseT.length && !looseB.length]] as const).map(([p, l, ok]) => (<li key={p} className={ok ? "done" : focus === p ? "on" : ""}>{l}</li>))}
+          {([["context", "Business context", ctxFilled === qs.length * 2], ["business", "Business OKR", !!str(st.bobj) && kbr.length > 0], ["transformation", "Transformation OKR", !!str(st.tobj) && ktr.length > 0], ["alignment", "Alignment", total > 0 && score === 100]] as const).map(([p, l, ok]) => (<li key={p} className={ok ? "done" : focus === p ? "on" : ""}>{l}</li>))}
         </ol>
         {!readOnly ? (
           <span style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap" }}>
@@ -1703,45 +1744,48 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
           </span>
         ) : null}
       </div>
-      <div className="cv" aria-label="Transformation canvas">
-        <section className={`cv-part${on("context") ? " focus" : ""}`}>
-          <div className="cv-bar" style={{ background: "#06384a", color: "#fff" }}>Business Context</div>
-          <label className="cv-who"><span>Organization</span><Field k="who" st={st} op={op} readOnly={readOnly} rows={1} placeholder="Whose canvas is this? Your own organization, or CARS" label="Organization" /></label>
-          <div className="cv-ctx" style={{ ["--n" as string]: qs.length }}>
-            {qs.map((q, i) => (
-              <div key={q} className="cv-q">
-                <b>{q}</b>
-                <div className="cv-split">
-                  {CV_SIDES.map(([s, label]) => (
-                    <label key={s}>
-                      <Field k={`ctx:${i}:${s}`} st={st} op={op} readOnly={readOnly} rows={3} placeholder="…" label={`${q} ${label}`} />
-                      <em>{label}</em>
-                    </label>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-        <div className="cv-two">
-          <label className={`cv-part${on("tobj") ? " focus" : ""}`}><div className="cv-bar" style={{ background: "#3f7c80", color: "#fff" }}>Transformation Objective</div><Field k="tobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the transformation sets out to achieve" label="Transformation Objective" /></label>
-          <label className={`cv-part${on("bobj") ? " focus" : ""}`}><div className="cv-bar" style={{ background: "#8accce", color: "#06384a" }}>Business Objective</div><Field k="bobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the business sets out to achieve" label="Business Objective" /></label>
+
+      <section className={`cv2-context cv-part${on("context") ? " focus" : ""}`}>
+        <header><span className="ex-mono">Business context</span><Field k="who" st={st} op={op} readOnly={readOnly} rows={1} placeholder="Whose canvas is this? Your own organization, or CARS" label="Organization" /></header>
+        <div className="cv2-voices">
+          <span className="cv2-voice sd">Solution Delivery</span><span /><span className="cv2-voice bo">Business Operations</span>
+          {qs.map((q, i) => [
+            <label key={`sd${i}`} className="cv2-bubble sd"><Field k={`ctx:${i}:sd`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} Solution Delivery`} /></label>,
+            <b key={`q${i}`} className="cv2-q">{q}</b>,
+            <label key={`bo${i}`} className="cv2-bubble bo"><Field k={`ctx:${i}:bo`} st={st} op={op} readOnly={readOnly} rows={2} placeholder="…" label={`${q} Business Operations`} /></label>,
+          ])}
         </div>
-        <div className="cv-three">
-          <CanvasResults k="ktr" title="Key Transformation Results" indicator="leading indicator" tone="#3f7c80" st={st} op={op} readOnly={readOnly} other={kbr} on={on("ktr")} />
-          <div className={`cv-align cv-part${on("align") ? " focus" : ""}`}>
-            <div className="cv-bar" style={{ background: "#06384a", color: "#fff" }}>Alignment</div>
-            <svg viewBox={`0 0 170 ${H}`} role="img" aria-label={links.length ? links.map((l) => `T${l.t + 1} leads to B${l.b + 1}`).join(", ") : "No links yet"}>
-              <defs><marker id="cv-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#06384a" /></marker></defs>
-              {links.map((l) => (<line key={`${l.t}-${l.b}`} className="cv-line" x1="34" y1={y(l.t, ktr.length)} x2="136" y2={y(l.b, kbr.length)} stroke="#06384a" strokeWidth="1.8" markerEnd="url(#cv-arrow)" />))}
-              {ktr.map((t, i) => (<g key={t.id}><circle cx="18" cy={y(i, ktr.length)} r="13" fill={looseT.includes(i) ? "#fff" : "#3f7c80"} stroke="#3f7c80" strokeWidth="2.5" /><text x="18" y={y(i, ktr.length) + 4} textAnchor="middle" className="cv-dot" style={{ fill: looseT.includes(i) ? "#06384a" : "#fff" }}>T{i + 1}</text></g>))}
-              {kbr.map((b, j) => (<g key={b.id}><circle cx="152" cy={y(j, kbr.length)} r="13" fill={looseB.includes(j) ? "#fff" : "#8accce"} stroke="#8accce" strokeWidth="2.5" /><text x="152" y={y(j, kbr.length) + 4} textAnchor="middle" className="cv-dot">B{j + 1}</text></g>))}
-            </svg>
-            <p className="po-note" style={{ padding: "0 8px 8px", fontSize: 12 }}>{!ktr.length || !kbr.length ? "Add key results on both sides, then say which business results each transformation result leads to." : looseT.length || looseB.length ? `Not connected: ${[...looseT.map((i) => `T${i + 1}`), ...looseB.map((j) => `B${j + 1}`)].join(", ")}.` : "Every result is connected."}</p>
-          </div>
-          <CanvasResults k="kbr" title="Key Business Results" indicator="lagging indicator" tone="#8accce" st={st} op={op} readOnly={readOnly} on={on("kbr")} />
+      </section>
+
+      <section className="cv2-objs">
+        <label className={`cv2-obj t cv-part${on("tobj") ? " focus" : ""}`}><span>Transformation Objective</span><Field k="tobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the transformation sets out to achieve" label="Transformation Objective" /></label>
+        <div className={`cv2-score cv-part${on("align") ? " focus" : ""}`} role="img" aria-label={`${score}% of the key results are connected`}>
+          <svg width="68" height="68" viewBox="0 0 68 68"><circle cx="34" cy="34" r="26" fill="#fff" stroke="#06384a22" strokeWidth="7" /><circle className="po-ring-v" cx="34" cy="34" r="26" fill="none" stroke={score === 100 ? "#2e8b57" : "#d98a1c"} strokeWidth="7" strokeLinecap="round" strokeDasharray={C} strokeDashoffset={C * (1 - score / 100)} transform="rotate(-90 34 34)" /></svg>
+          <b>{score}%</b><small>aligned</small>
         </div>
-      </div>
+        <label className={`cv2-obj b cv-part${on("bobj") ? " focus" : ""}`}><span>Business Objective</span><Field k="bobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the business sets out to achieve" label="Business Objective" /></label>
+      </section>
+
+      <section className={`cv2-link${pick ? " linking" : ""}`} ref={box}>
+        <svg className={`cv2-strings cv-part${on("align") ? " focus" : ""}`} width={geo.w} height={geo.h} aria-hidden>
+          <defs><linearGradient id="cv2-g" x1="0" x2="1"><stop offset="0" stopColor="#3f7c80" /><stop offset="1" stopColor="#5fb3b8" /></linearGradient></defs>
+          {links.map((l) => {
+            const a = geo.at[l.t], b = geo.at[l.b];
+            if (!a || !b) return null;
+            const hot = active === l.t || active === l.b, mid = (b[0] - a[0]) / 2;
+            return <path key={`${l.t}-${l.b}`} className={`cv2-string${hot ? " hot" : active ? " cold" : ""}`} d={`M ${a[0]} ${a[1]} C ${a[0] + mid} ${a[1]}, ${b[0] - mid} ${b[1]}, ${b[0]} ${b[1]}`} />;
+          })}
+        </svg>
+        <Results side="t" />
+        <div className={`cv2-mid cv-part${on("align") ? " focus" : ""}`}>
+          <b>Alignment</b>
+          <p>{readOnly ? "" : pickedT ? `Click the business results that “${str(pickedT.outcome) || "this result"}” leads to.` : pickedB ? `Click the transformation results that lead to “${str(pickedB.outcome) || "this result"}”.` : total ? "Click a key result, then click the ones on the other side it connects to. Click again to disconnect." : "Add key results on both sides, then connect them."}</p>
+          {pick && !readOnly ? <button className="po-btn plain" onClick={() => setPick(null)}>Done</button> : null}
+          {!pick && (looseT.length || looseB.length) ? <p className="cv2-warn">{looseT.length ? `${looseT.length} leading ${looseT.length === 1 ? "indicator leads" : "indicators lead"} nowhere. ` : ""}{looseB.length ? `Nothing leads to ${looseB.length} business ${looseB.length === 1 ? "result" : "results"}.` : ""}</p> : null}
+        </div>
+        <Results side="b" />
+      </section>
+
       {Array.isArray(config.also) ? (
         <div className="po-cols" style={{ ["--n" as string]: (config.also as string[]).length }}>
           {(config.also as string[]).map((q, qi) => (
@@ -1758,7 +1802,7 @@ export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
           ))}
         </div>
       ) : null}
-      <p className="po-note">The canvas is the same one in every step of this lesson: what you fill in here is there in the next step. The part this step is about is in full colour.</p>
+      <p className="po-note">The canvas is the same one in every step of this lesson. The part this step is about is in full colour; the rest is still yours to edit.</p>
     </div>
   );
 }
