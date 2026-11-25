@@ -49,3 +49,24 @@ Google reviews landing pages against the ads.
   - The assessment credits *Mutation Readiness* for the Principles; the hub credits *The Innovation Playground*.
   - /training/ says 22 certifications, but its meta and footer say 19.
   - /services/innovation-culture/ has the typo "The the Six Practices", with only five listed.
+
+## 5. URGENT (25 Nov): Launching AI-Native ARTs schedule not updated
+WPCode snippet **"AA – Register PHP" (ID 32391)** builds the course-page date picker from each course's
+`cadence`. Launching (`'launching-ai-native-arts'`) still has the **3 Nov** pattern: Mon week 1, Thu
+week 2, Mon week 3, Thu week 4, plus one Saturday after the week-3 Monday. That's about one class a
+week and one weekend a month. The owner's schedule (24 Nov) is **every Monday and every Thursday,
+plus a weekend class twice a month**. AI-Native Foundations already got exactly this change on 16 Nov;
+Launching didn't. Fix, the same way Foundations did it:
+```php
+'cadence'  => array(
+	array( 'dow' => 'Mon', 'slot' => 'morning' ),
+	array( 'dow' => 'Thu', 'slot' => 'morning' ),
+	array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 2 ),   // weeks 2 and 4: Foundations already
+	array( 'dow' => 'Sat', 'slot' => 'morning', 'week' => 4 ),   // has the 1st and 3rd weekends
+),
+```
+Then check the live page: the picker should list Mondays, Thursdays and two weekends a month for
+several weeks ahead. Our rendered check on 25 Nov showed only "Week of Nov 23".
+Also: the ~40 Eventbrite-imported class posts (/event/launching-ai-native-arts-certification-N/) are
+Events Calendar posts. The picker doesn't read them (it reads `wp_events` with `event_start_date`), so
+the course page never shows them. They also link to Eventbrite, which doesn't count as an ad conversion.
