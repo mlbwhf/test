@@ -212,7 +212,7 @@ function LensVisual({ look, lenses, kinds, notes, config, st, op, readOnly }: { 
             </g>
           ))}
         </svg>
-        <p className="po-note">Value flows left to right. A stage turns green and grows as the class adds how product roles support it; an empty stage is where the pipeline has no product voice yet.</p>
+        <p className="po-note">{str(config.pipeNote) || "Value flows left to right. A stage turns green and grows as the class adds how product roles support it; an empty stage is where the pipeline has no product voice yet."}</p>
       </div>
     );
   }
@@ -1639,8 +1639,283 @@ export function AsRoadmapBoard({ config, st, op, readOnly }: BoardProps) {
   );
 }
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard };
+// The transformation canvas (Align transformation objectives with business objectives): one canvas
+// the group fills part by part over several exercises. Each exercise puts one part in focus; the
+// whole canvas is always there. An example can be loaded, and cleared to work on the group's own.
+const CV_SIDES = [["bo", "Business Operations"], ["sd", "Solution Delivery"]] as const;
+const CV_COLS = [["outcome", "Desired outcome"], ["metric", "Metric"], ["from", "From"], ["to", "To"]] as const;
+
+const CV_FOCUS: Record<string, string[]> = { all: ["context", "tobj", "bobj", "ktr", "kbr", "align"], context: ["context"], business: ["bobj", "kbr"], transformation: ["tobj", "ktr"], alignment: ["ktr", "align", "kbr"] };
+const linksOf = (r: Row): string[] => (Array.isArray(r.links) ? (r.links as string[]) : []);
+
+function CanvasResults({ k, title, indicator, tone, st, op, readOnly, other, on }: { k: "ktr" | "kbr"; title: string; indicator: string; tone: string; st: St; op: BoardProps["op"]; readOnly: boolean; other?: Row[]; on: boolean }) {
+  const rows = list(st, k), tag = k === "ktr" ? "T" : "B", ink = k === "ktr" ? "#fff" : "#06384a";
+  return (
+    <div className={`cv-results cv-part${on ? " focus" : ""}`}>
+      <div className="cv-bar" style={{ background: tone, color: ink }}>{title}</div>
+      <div className="cv-rhead">{CV_COLS.map(([c, l]) => (<span key={c}>{c === "metric" ? `${l} · ${indicator}` : l}</span>))}</div>
+      {rows.map((r, i) => (
+        <div key={r.id} className="cv-rrow">
+          <b className="cv-tag" style={{ background: tone, color: ink }}>{tag}{i + 1}</b>
+          {CV_COLS.map(([c, l]) => (<CellText key={c} row={r} k={c} hint={l} op={op} readOnly={readOnly} listKey={k} />))}
+          {other?.length ? (
+            <div className="cv-link" role="group" aria-label={`${tag}${i + 1} is a leading indicator of`}>
+              <span>leads to</span>
+              {other.map((o, j) => { const has = linksOf(r).includes(o.id); return <button key={o.id} disabled={readOnly} aria-pressed={has} title={str(o.outcome)} onClick={() => op({ key: k, op: "update", id: r.id, value: { links: has ? linksOf(r).filter((x) => x !== o.id) : [...linksOf(r), o.id] } })}>B{j + 1}</button>; })}
+            </div>
+          ) : null}
+          {!readOnly ? <button className="ex-x" aria-label="Remove this row" onClick={() => op({ key: k, op: "remove", id: r.id })}>×</button> : null}
+        </div>
+      ))}
+      {!readOnly && rows.length < 6 ? <button className="cv-add" onClick={() => op({ key: k, op: "push", value: {} })}>+ a key result</button> : null}
+    </div>
+  );
+}
+
+export function AsCanvasBoard({ config, st, op, readOnly }: BoardProps) {
+  const qs = (config.questions as string[] | undefined) ?? [], focus = str(config.focus) || "all", example = config.example as Record<string, unknown> | undefined;
+  const on = (p: string) => (CV_FOCUS[focus] ?? CV_FOCUS.all!).includes(p);
+  const ktr = list(st, "ktr"), kbr = list(st, "kbr");
+  const links = ktr.flatMap((t, i) => linksOf(t).map((id) => ({ t: i, b: kbr.findIndex((b) => b.id === id) }))).filter((x) => x.b >= 0);
+  const looseT = ktr.map((_, i) => i).filter((i) => !links.some((l) => l.t === i)), looseB = kbr.map((_, j) => j).filter((j) => !links.some((l) => l.b === j));
+  const ctxFilled = qs.flatMap((_, i) => CV_SIDES.map(([s]) => str(st[`ctx:${i}:${s}`]))).filter(Boolean).length;
+  const empty = !ctxFilled && !str(st.tobj) && !str(st.bobj) && !ktr.length && !kbr.length;
+  const load = () => {
+    if (!example || (!empty && !window.confirm("Replace what is on the canvas with the example?"))) return;
+    for (const [k, v] of Object.entries(example)) op({ key: k, op: "set", value: v });
+  };
+  const clear = () => {
+    if (!window.confirm("Clear the whole canvas to work on your own?")) return;
+    for (const k of [...qs.flatMap((_, i) => CV_SIDES.map(([s]) => `ctx:${i}:${s}`)), "who", "tobj", "bobj", "ktr", "kbr"]) op({ key: k, op: "set", value: null });
+  };
+  const n = Math.max(ktr.length, kbr.length, 1), H = n * 46 + 16, y = (i: number, of: number) => 8 + ((i + 0.5) * (H - 16)) / Math.max(of, 1);
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <div className="cv-top">
+        <ol className="po-steps" aria-label="Parts of the canvas">
+          {([["context", "Business context", ctxFilled === qs.length * 2], ["business", "Business OKR", !!str(st.bobj) && kbr.length > 0], ["transformation", "Transformation OKR", !!str(st.tobj) && ktr.length > 0], ["alignment", "Alignment", ktr.length > 0 && !looseT.length && !looseB.length]] as const).map(([p, l, ok]) => (<li key={p} className={ok ? "done" : focus === p ? "on" : ""}>{l}</li>))}
+        </ol>
+        {!readOnly ? (
+          <span style={{ marginLeft: "auto", display: "flex", gap: 8, flexWrap: "wrap" }}>
+            {example ? <button className="po-reset" style={{ marginLeft: 0 }} onClick={load}>Load the CARS example</button> : null}
+            {!empty ? <button className="po-reset" style={{ marginLeft: 0 }} onClick={clear}>Clear for our own</button> : null}
+          </span>
+        ) : null}
+      </div>
+      <div className="cv" aria-label="Transformation canvas">
+        <section className={`cv-part${on("context") ? " focus" : ""}`}>
+          <div className="cv-bar" style={{ background: "#06384a", color: "#fff" }}>Business Context</div>
+          <label className="cv-who"><span>Organization</span><Field k="who" st={st} op={op} readOnly={readOnly} rows={1} placeholder="Whose canvas is this? Your own organization, or CARS" label="Organization" /></label>
+          <div className="cv-ctx" style={{ ["--n" as string]: qs.length }}>
+            {qs.map((q, i) => (
+              <div key={q} className="cv-q">
+                <b>{q}</b>
+                <div className="cv-split">
+                  {CV_SIDES.map(([s, label]) => (
+                    <label key={s}>
+                      <Field k={`ctx:${i}:${s}`} st={st} op={op} readOnly={readOnly} rows={3} placeholder="…" label={`${q} ${label}`} />
+                      <em>{label}</em>
+                    </label>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+        <div className="cv-two">
+          <label className={`cv-part${on("tobj") ? " focus" : ""}`}><div className="cv-bar" style={{ background: "#3f7c80", color: "#fff" }}>Transformation Objective</div><Field k="tobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the transformation sets out to achieve" label="Transformation Objective" /></label>
+          <label className={`cv-part${on("bobj") ? " focus" : ""}`}><div className="cv-bar" style={{ background: "#8accce", color: "#06384a" }}>Business Objective</div><Field k="bobj" st={st} op={op} readOnly={readOnly} rows={2} placeholder="What the business sets out to achieve" label="Business Objective" /></label>
+        </div>
+        <div className="cv-three">
+          <CanvasResults k="ktr" title="Key Transformation Results" indicator="leading indicator" tone="#3f7c80" st={st} op={op} readOnly={readOnly} other={kbr} on={on("ktr")} />
+          <div className={`cv-align cv-part${on("align") ? " focus" : ""}`}>
+            <div className="cv-bar" style={{ background: "#06384a", color: "#fff" }}>Alignment</div>
+            <svg viewBox={`0 0 170 ${H}`} role="img" aria-label={links.length ? links.map((l) => `T${l.t + 1} leads to B${l.b + 1}`).join(", ") : "No links yet"}>
+              <defs><marker id="cv-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#06384a" /></marker></defs>
+              {links.map((l) => (<line key={`${l.t}-${l.b}`} className="cv-line" x1="34" y1={y(l.t, ktr.length)} x2="136" y2={y(l.b, kbr.length)} stroke="#06384a" strokeWidth="1.8" markerEnd="url(#cv-arrow)" />))}
+              {ktr.map((t, i) => (<g key={t.id}><circle cx="18" cy={y(i, ktr.length)} r="13" fill={looseT.includes(i) ? "#fff" : "#3f7c80"} stroke="#3f7c80" strokeWidth="2.5" /><text x="18" y={y(i, ktr.length) + 4} textAnchor="middle" className="cv-dot" style={{ fill: looseT.includes(i) ? "#06384a" : "#fff" }}>T{i + 1}</text></g>))}
+              {kbr.map((b, j) => (<g key={b.id}><circle cx="152" cy={y(j, kbr.length)} r="13" fill={looseB.includes(j) ? "#fff" : "#8accce"} stroke="#8accce" strokeWidth="2.5" /><text x="152" y={y(j, kbr.length) + 4} textAnchor="middle" className="cv-dot">B{j + 1}</text></g>))}
+            </svg>
+            <p className="po-note" style={{ padding: "0 8px 8px", fontSize: 12 }}>{!ktr.length || !kbr.length ? "Add key results on both sides, then say which business results each transformation result leads to." : looseT.length || looseB.length ? `Not connected: ${[...looseT.map((i) => `T${i + 1}`), ...looseB.map((j) => `B${j + 1}`)].join(", ")}.` : "Every result is connected."}</p>
+          </div>
+          <CanvasResults k="kbr" title="Key Business Results" indicator="lagging indicator" tone="#8accce" st={st} op={op} readOnly={readOnly} on={on("kbr")} />
+        </div>
+      </div>
+      {Array.isArray(config.also) ? (
+        <div className="po-cols" style={{ ["--n" as string]: (config.also as string[]).length }}>
+          {(config.also as string[]).map((q, qi) => (
+            <section key={q} className="po-col">
+              <header><span className="po-n">{qi + 1}</span><b>{q}</b></header>
+              {list(st, `also:${focus}:${qi}`).map((x) => (
+                <div key={x.id} className="po-sticky" style={{ background: "#cde0f2", borderLeftColor: "#2f6fbd" }}>
+                  <span>{str(x.text)}</span>
+                  {!readOnly ? <button className="ex-x" aria-label="Remove" onClick={() => op({ key: `also:${focus}:${qi}`, op: "remove", id: x.id })}>×</button> : null}
+                </div>
+              ))}
+              {!readOnly ? <AddLine label={q} placeholder="+ add, Enter" onAdd={(text) => op({ key: `also:${focus}:${qi}`, op: "push", value: { text } })} /> : null}
+            </section>
+          ))}
+        </div>
+      ) : null}
+      <p className="po-note">The canvas is the same one in every step of this lesson: what you fill in here is there in the next step. The part this step is about is in full colour.</p>
+    </div>
+  );
+}
+
+// The transformation backlog: one backlog across three exercises. Storm features or epics, add the
+// items that unblock anticipated impediments, score with WSJF, then place them on the PI roadmap.
+const BL_FIB = [1, 2, 3, 5, 8, 13, 20];
+const BL_SCORES = [["bv", "User-business value"], ["tc", "Time criticality"], ["rr", "Risk reduction · opportunity enablement"], ["size", "Job size"]] as const;
+const blWsjf = (x: Row) => (num(x.bv) && num(x.tc) && num(x.rr) && num(x.size) ? Math.round(((num(x.bv) + num(x.tc) + num(x.rr)) / num(x.size)) * 10) / 10 : null);
+const blRanked = (items: Row[]) => [...items].sort((a, b) => (blWsjf(b) ?? -1) - (blWsjf(a) ?? -1));
+const BL_TONE: Record<string, string> = { Feature: "#a8d4f5", Epic: "#c9b6ec", Unblocker: "#f6c28b" };
+
+export function AsBacklogBoard({ config, st, op, readOnly }: BoardProps) {
+  const step = str(config.step) || "storm", items = list(st, "items"), imps = list(st, "imps");
+  const [name, setName] = useState("");
+  const [type, setType] = useState("Feature");
+  const [copied, setCopied] = useState(false);
+  const add = (t = type, n = name, from?: string) => n.trim() && (op({ key: "items", op: "push", value: { name: n.trim(), type: t, ...(from ? { from } : {}) } }), setName(""));
+  const ranked = blRanked(items), scored = items.filter((x) => blWsjf(x) !== null).length;
+  const range = (config.range as [number, number] | undefined) ?? [8, 10];
+  const text = ranked.map((x, i) => `${i + 1}. [${str(x.type)}] ${str(x.name)}${blWsjf(x) !== null ? ` (WSJF ${blWsjf(x)})` : ""}`).join("\n");
+  const prompt = `${str(config.llm)}\n\n${text}`;
+  const pis = ["PI 1", "PI 2", "PI 3"];
+  const set = (id: string, value: Record<string, unknown>) => op({ key: "items", op: "update", id, value });
+  const Card = ({ x, children }: { x: Row; children?: ReactNode }) => (
+    <div className="bl-card" style={{ borderLeftColor: BL_TONE[str(x.type)] ?? "#a8d4f5" }}>
+      <small style={{ background: BL_TONE[str(x.type)] }}>{str(x.type)}</small>
+      <span>{str(x.name)}</span>
+      {blWsjf(x) !== null ? <b title="WSJF">{blWsjf(x)}</b> : null}
+      {children}
+    </div>
+  );
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <ol className="po-steps" aria-label="Progress">
+        {([["storm", `Brainstorm · ${items.filter((x) => str(x.type) !== "Unblocker").length}`], ["wsjf", `Impediments and WSJF · ${scored}/${items.length}`], ["roadmap", `Roadmap · ${items.filter((x) => typeof x.pi === "number").length} placed`]] as const).map(([k, l]) => (<li key={k} className={k === step ? "on" : ""}>{l}</li>))}
+      </ol>
+
+      {step === "storm" ? (
+        <section className="po-panel">
+          <div className="po-build">
+            <span className="po-count" data-ok={items.length >= range[0]}>{items.length}/{range[0]}</span>
+            <p className="po-note">Brainstorm {range[0]} to {range[1]} SAFe implementation items that would achieve the desired transformation outcomes. Choose for each whether it is a Feature or an Epic.</p>
+          </div>
+          {!readOnly ? (
+            <div className="po-evform" style={{ gridTemplateColumns: "auto minmax(0, 1fr) auto" }}>
+              <div className="po-seg" role="group" aria-label="Kind of item">{["Feature", "Epic"].map((t) => (<button key={t} aria-pressed={type === t} onClick={() => setType(t)}>{t}</button>))}</div>
+              <input className="po-input" value={name} placeholder={`Name the ${type.toLowerCase()}, Enter`} aria-label="Item name" onChange={(e) => setName(e.target.value)} onKeyDown={(e) => e.key === "Enter" && add()} />
+              <button className="po-btn" disabled={!name.trim()} onClick={() => add()}>Add</button>
+            </div>
+          ) : null}
+          <div className="bl-wall">
+            {items.map((x) => (
+              <Card key={x.id} x={x}>
+                {!readOnly ? (
+                  <span className="bl-acts">
+                    {str(x.type) !== "Unblocker" ? <button title="Switch between Feature and Epic" onClick={() => set(x.id, { type: str(x.type) === "Epic" ? "Feature" : "Epic" })}>⇄</button> : null}
+                    <button aria-label="Remove" onClick={() => op({ key: "items", op: "remove", id: x.id })}>×</button>
+                  </span>
+                ) : null}
+              </Card>
+            ))}
+            {!items.length ? <p className="po-empty">Nothing in the backlog yet.</p> : null}
+          </div>
+        </section>
+      ) : null}
+
+      {step === "wsjf" ? (
+        <>
+          <section className="po-panel">
+            <span className="ex-mono">Impediments we might encounter, and the backlog item that unblocks each</span>
+            {imps.map((m) => {
+              const fix = items.find((x) => x.from === m.id);
+              return (
+                <div key={m.id} className="bl-imp">
+                  <span className="bl-block">⛔ {str(m.text)}</span>
+                  <i aria-hidden>→</i>
+                  {fix ? <Card x={fix} /> : !readOnly ? <AddLine label={`How to overcome: ${str(m.text)}`} placeholder="+ the item that unblocks it, Enter" onAdd={(t) => add("Unblocker", t, m.id)} /> : <span className="po-note">No item yet</span>}
+                  {!readOnly ? <button className="ex-x" aria-label="Remove impediment" onClick={() => op({ key: "imps", op: "remove", id: m.id })}>×</button> : null}
+                </div>
+              );
+            })}
+            {!readOnly ? <AddLine label="Impediment" placeholder="+ an impediment to our transformation strategy, Enter" onAdd={(t) => op({ key: "imps", op: "push", value: { text: t } })} /> : null}
+          </section>
+          <section className="po-panel">
+            <div className="rd-advhead" style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <span className="ex-mono">WSJF · {items.length} items, aim for {range[0]} to {range[1]}</span>
+              <button className="po-btn plain" disabled={!items.length} onClick={() => void navigator.clipboard?.writeText(prompt).then(() => (setCopied(true), window.setTimeout(() => setCopied(false), 1600)))}>{copied ? "Copied" : "Copy the backlog as a prompt for AI"}</button>
+            </div>
+            <div className="as-tablewrap">
+              <div className="bl-table" role="table" aria-label="WSJF">
+                <div className="bl-tr head" role="row"><span>#</span><span>Item</span>{BL_SCORES.map(([k, l]) => (<span key={k}>{l}</span>))}<span>WSJF</span></div>
+                {ranked.map((x, i) => (
+                  <div key={x.id} className={`bl-tr${blWsjf(x) !== null && i === 0 ? " top" : ""}`} role="row">
+                    <b>{blWsjf(x) !== null ? i + 1 : "–"}</b>
+                    <span><small style={{ background: BL_TONE[str(x.type)] }}>{str(x.type)}</small> {str(x.name)}</span>
+                    {BL_SCORES.map(([k, l]) => (
+                      <select key={k} value={num(x[k]) || ""} disabled={readOnly} aria-label={`${l} of ${str(x.name)}`} onChange={(e) => set(x.id, { [k]: Number(e.target.value) || null })}>
+                        <option value="">–</option>
+                        {BL_FIB.map((f) => (<option key={f} value={f}>{f}</option>))}
+                      </select>
+                    ))}
+                    <b className="bl-score">{blWsjf(x) ?? "–"}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <p className="po-note">Cost of delay is the first three added together; WSJF divides it by job size. The list re-sorts as you score, highest first. Score it yourselves, or paste the AI&apos;s numbers in.</p>
+          </section>
+        </>
+      ) : null}
+
+      {step === "roadmap" ? (
+        <>
+          <section className="po-panel">
+            <div className="rd-advhead" style={{ display: "flex", justifyContent: "space-between", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
+              <span className="ex-mono">Prioritized backlog · not on the roadmap yet</span>
+              <button className="po-btn plain" disabled={!items.length} onClick={() => void navigator.clipboard?.writeText(prompt).then(() => (setCopied(true), window.setTimeout(() => setCopied(false), 1600)))}>{copied ? "Copied" : "Copy for your AI thinking buddy"}</button>
+            </div>
+            <div className="bl-wall">
+              {ranked.filter((x) => typeof x.pi !== "number").map((x) => (
+                <Card key={x.id} x={x}>{!readOnly ? <span className="bl-acts">{pis.map((p, i) => (<button key={p} onClick={() => set(x.id, { pi: i })}>{p}</button>))}</span> : null}</Card>
+              ))}
+              {ranked.every((x) => typeof x.pi === "number") ? <p className="po-note">{items.length ? "Every item is on the roadmap." : "The backlog is empty: brainstorm and prioritize it in the earlier activities."}</p> : null}
+            </div>
+          </section>
+          <div className="bl-arrow" aria-hidden />
+          <div className="bl-road">
+            {pis.map((p, i) => (
+              <section key={p} className="bl-pi">
+                <header>{p}</header>
+                <div>
+                  {ranked.filter((x) => x.pi === i).map((x) => (
+                    <Card key={x.id} x={x}>
+                      {!readOnly ? (
+                        <span className="bl-acts">
+                          <button aria-label="Earlier" disabled={i === 0} onClick={() => set(x.id, { pi: i - 1 })}>←</button>
+                          <button aria-label="Later" disabled={i === pis.length - 1} onClick={() => set(x.id, { pi: i + 1 })}>→</button>
+                          <button aria-label="Back to the backlog" onClick={() => set(x.id, { pi: null })}>×</button>
+                        </span>
+                      ) : null}
+                    </Card>
+                  ))}
+                </div>
+                <footer>{i === 0 ? "Committed" : "Forecast"}</footer>
+              </section>
+            ))}
+          </div>
+        </>
+      ) : null}
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

@@ -10,6 +10,34 @@ import type { ActivitySpec } from "../activities.js";
 const BOARD = { width: 1200, height: 600 };
 const DOMAINS = ["Outcomes", "Flow", "Competency"];
 
+const CANVAS_QUESTIONS = ["Who are we?", "What is our purpose?", "Who do we serve?", "How will we succeed?"];
+/** The filled transformation canvas of the workbook (CARS), to load as a starting example. */
+const CANVAS_EXAMPLE = {
+  who: "CARS",
+  "ctx:0:bo": "Autonomous Vehicle Delivery Operations",
+  "ctx:0:sd": "Autonomous Vehicle Engineering",
+  "ctx:1:bo": "Enable point-to-point, light-load autonomous vehicle deliveries",
+  "ctx:1:sd": "Design and manufacture autonomous delivery vehicles",
+  "ctx:2:bo": "General public, suburban areas near CARS distribution hubs",
+  "ctx:2:sd": "CARS business units",
+  "ctx:3:bo": "Capture dominant market share in emerging regions",
+  "ctx:3:sd": "Provide safe, reliable, market-leading AVs to fuel business growth",
+  tobj: "Establish a world-class innovation hub for market-leading autonomous vehicle technology",
+  bobj: "Achieve a dominant position within the autonomous vehicle delivery market",
+  ktr: [
+    { id: "ex-t1", outcome: "Time to Market", metric: "Lead Time to Validate MVP", from: "6 months", to: "1 month", links: ["ex-b1", "ex-b4"] },
+    { id: "ex-t2", outcome: "Workforce Engagement", metric: "eNPS", from: "50", to: "70", links: ["ex-b1", "ex-b2"] },
+    { id: "ex-t3", outcome: "Productivity", metric: "% Staff AV Certified", from: "75%", to: "100%", links: ["ex-b4"] },
+    { id: "ex-t4", outcome: "Quality", metric: "FMVSS Lean QMS", from: "Partial Compliance", to: "Full Compliance", links: ["ex-b2", "ex-b3", "ex-b4"] },
+  ],
+  kbr: [
+    { id: "ex-b1", outcome: "Market Share", metric: "Serviceable Market %", from: "45%", to: "75%" },
+    { id: "ex-b2", outcome: "Customer Happiness", metric: "Customer NPS", from: "35", to: "60" },
+    { id: "ex-b3", outcome: "Revenue", metric: "Repeat Business Rate", from: "60%", to: "80%" },
+    { id: "ex-b4", outcome: "Revenue", metric: "Customer Growth Year 1", from: "--", to: "15%" },
+  ],
+};
+
 const lesson1: ActivitySpec[] = [
   {
     title: "Past, Present, Future",
@@ -494,14 +522,116 @@ const lesson4: ActivitySpec[] = [
     },
     ...BOARD,
   },
+  {
+    title: "Are the CARS leaders aligned?",
+    kind: "Discussion",
+    share: 10,
+    steps: "Consider what you know of the CARS scenario so far:\n- How would you describe the goals of the business operations leaders, solution delivery leaders, and transformation leaders?\nAs a class, discuss:\n- How might their strategies be aligned and not aligned?\n- How might their metrics be aligned and not aligned?\n- What work might you need to do to bring them into alignment?",
+    side: [{ title: "CARS Scenario: SAFe transformation goals", text: "Improve alignment and collaboration across the company by fostering a shared understanding of goals and priorities. This will break down the current silos and create a unified approach to problem-solving.\nEnhance communication and create a cohesive message from leadership to the entire organization. By implementing a clear communication strategy, we can reduce the confusion and demotivation caused by conflicting priorities.\nIncrease quality and agility in product development. Moving away from our past practice of \"cutting corners,\" we will establish a continuous delivery pipeline and practices like relentless improvement to build more robust and reliable products." }],
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "Consider what you know of the CARS scenario so far.",
+      look: "wheel",
+      wheelLabel: "Aligned or not",
+      wheelNote: "Tag each note: is this a place where the leaders are aligned, or not?",
+      kinds: ["Aligned", "Not aligned"],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["Their goals", "How would you describe the goals of the business operations leaders, solution delivery leaders, and transformation leaders?"], ["Strategies", "How might their strategies be aligned and not aligned?"], ["Metrics", "How might their metrics be aligned and not aligned?"], ["Work to align", "What work might you need to do to bring them into alignment?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Explore the CARS business context",
+    kind: "Activity",
+    share: 7,
+    steps: "As a group, fill out this information in the blank transformation canvas in your workbook. As you do so, consider:\n- How would business operations and solution delivery leaders answer these four questions differently based on their context?\n- What would it look like for their answers to be different but complementary?\nRefer to the example in the lesson Appendix for ideas.",
+    board: "as-canvas",
+    config: { shared: "aspc-canvas", focus: "context", prompt: "Fill out the business context: how would business operations and solution delivery leaders answer these four questions differently, and what would make their answers different but complementary?", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE },
+    ...BOARD,
+  },
+  {
+    title: "Explore CARS desired business outcomes",
+    kind: "Activity",
+    share: 10,
+    steps: "As a group, fill in the business objective and key business results sections in the blank transformation canvas in your workbook. As you do so:\n- Discuss how solution delivery and transformation leaders at CARS might react to this OKR.\n- Use your LLM to explore additional key results that could support this business objective.\n- Be prepared to share.",
+    board: "as-canvas",
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "business", prompt: "Fill in the business objective and the key business results.", also: ["How might solution delivery and transformation leaders react to this OKR?", "Additional key results from your LLM that could support this business objective"] },
+    ...BOARD,
+  },
+  {
+    title: "Explore desired transformation outcomes at CARS",
+    kind: "Activity",
+    share: 7,
+    steps: "As a group, fill in the transformation objective and key transformation results sections in the blank transformation canvas in your workbook. As you do so:\n- Identify 3-5 desired transformation outcomes (faster time to market, higher quality, increased productivity, and/or improved engagement)\n- Use your LLM to generate a transformation objective with key results (OKR) that achieves the desired outcomes and supports the business objective\n- Add the OKR into the transformation canvas",
+    board: "as-canvas",
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "transformation", prompt: "Fill in the transformation objective and the key transformation results: 3-5 desired outcomes (faster time to market, higher quality, increased productivity, and/or improved engagement)." },
+    ...BOARD,
+  },
+  {
+    title: "Connect leading and lagging indicators",
+    kind: "Activity",
+    share: 5,
+    steps: "As a group, use your transformation canvas to consider how you would complete the canvas by aligning transformation metrics with the business metrics they support. Discuss the following:\n- What time-to-market, quality, productivity, and engagement metrics would serve as leading indicators of revenue, cost, risk, and customer happiness?",
+    board: "as-canvas",
+    config: { shared: "aspc-canvas", questions: CANVAS_QUESTIONS, example: CANVAS_EXAMPLE, focus: "alignment", prompt: "Align the transformation metrics with the business metrics they support: on each transformation result, pick the business results it leads to." },
+    ...BOARD,
+  },
+  {
+    title: "Communicate early and often",
+    kind: "Discussion",
+    share: 5,
+    steps: "Discuss how the transformation canvas can be used to communicate your transformation strategy.\n- What information from the canvas is valuable for formal events, such as town halls and PI Planning?\n- What other opportunities are there to communicate this information?\n- How will you know when the transformation canvas has been adequately communicated?\n- How can AI help you with communicating your transformation strategy?",
+    board: "po-ai",
+    config: {
+      classWide: true,
+      prompt: "Discuss how the transformation canvas can be used to communicate your transformation strategy.",
+      look: "pipeline",
+      pipeNote: "From the formal events to every other chance, to knowing it has landed, with AI helping along the way. A stop fills in as the class adds to it.",
+      kinds: [],
+      add: "+ add, Enter",
+      shareLabel: "What stands out",
+      lenses: [["Formal events", "What information from the canvas is valuable for formal events, such as town halls and PI Planning?"], ["Other opportunities", "What other opportunities are there to communicate this information?"], ["Adequately communicated", "How will you know when the transformation canvas has been adequately communicated?"], ["With AI", "How can AI help you with communicating your transformation strategy?"]],
+    },
+    ...BOARD,
+  },
+  {
+    title: "Brainstorm a transformation backlog",
+    kind: "Activity",
+    prepare: 7,
+    steps: "In your groups, create a transformation backlog to support your transformation canvas.\n- Brainstorm 8 to 10 Feature level SAFe implementation items that would achieve the desired transformation outcomes\n- Be prepared to share",
+    board: "as-backlog",
+    config: { shared: "aspc-backlog", llm: "You are an experienced SAFe Practice Consultant. Here is our transformation backlog. Apply WSJF (user-business value, time criticality, risk reduction and opportunity enablement, job size, on the scale 1, 2, 3, 5, 8, 13, 20), then suggest a sequence across PI 1 (committed), PI 2 and PI 3 (forecast), and say why.", step: "storm", range: [8, 10], prompt: "Create a transformation backlog to support your transformation canvas." },
+    ...BOARD,
+  },
+  {
+    title: "Anticipate impediments",
+    kind: "Activity",
+    share: 7,
+    steps: "In your group, anticipate impediments to your transformation strategy and account for them in your transformation backlog:\n- Discuss what impediments you might encounter and brainstorm how to overcome them\n- Add items to the backlog that unblock the way to achieving transformation outcomes\n- Ask AI to apply WSJF to your transformation backlog to prioritize it\n- The result should be a prioritized backlog of 10 to 15 items for use in the next activity",
+    board: "as-backlog",
+    config: { shared: "aspc-backlog", llm: "You are an experienced SAFe Practice Consultant. Here is our transformation backlog. Apply WSJF (user-business value, time criticality, risk reduction and opportunity enablement, job size, on the scale 1, 2, 3, 5, 8, 13, 20), then suggest a sequence across PI 1 (committed), PI 2 and PI 3 (forecast), and say why.", step: "wsjf", range: [10, 15], prompt: "Anticipate impediments to your transformation strategy, add the items that unblock them, then prioritize the backlog with WSJF." },
+    ...BOARD,
+  },
+  {
+    title: "Draft a transformation roadmap",
+    kind: "Activity",
+    prepare: 15,
+    share: 5,
+    steps: "In your groups, use the prioritized backlog to fill in the blank transformation roadmap:\n- Instruct your AI thinking buddy to ingest the prioritized backlog and suggest sequencing\n- Fine-tune the sequencing and insert the backlog items into the transformation roadmap\n- Be prepared to share",
+    board: "as-backlog",
+    config: { shared: "aspc-backlog", llm: "You are an experienced SAFe Practice Consultant. Here is our transformation backlog. Apply WSJF (user-business value, time criticality, risk reduction and opportunity enablement, job size, on the scale 1, 2, 3, 5, 8, 13, 20), then suggest a sequence across PI 1 (committed), PI 2 and PI 3 (forecast), and say why.", step: "roadmap", range: [10, 15], prompt: "Use the prioritized backlog to fill in the transformation roadmap: PI 1 is committed, PI 2 and PI 3 are forecast." },
+    ...BOARD,
+  },
 ];
 
-/** Lessons 1 to 3 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
+/** Lessons 1 to 4 run on their own boards; the later lessons keep the class's canvas exercises until theirs are built. */
 export const ASPC_COURSE: { title: string; activities: ActivitySpec[]; keep?: boolean }[] = [
   { title: "Introducing the Advanced SPC Role", activities: lesson1 },
   { title: "Embracing AI", activities: lesson2 },
   { title: "Engaging Executives", activities: lesson3 },
-  { title: "Developing a Transformation Strategy", activities: lesson4, keep: true },
+  { title: "Developing a Transformation Strategy", activities: lesson4 },
   { title: "Unlocking Portfolio Flow", activities: [], keep: true },
   { title: "Customizing SAFe to Your Context", activities: [], keep: true },
   { title: "Learning Lab: design sprint", activities: [], keep: true },

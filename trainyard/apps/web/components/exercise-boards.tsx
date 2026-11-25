@@ -328,6 +328,49 @@ function HeadingInput({ label, placeholder, st, op, readOnly, k = "heading" }: {
   );
 }
 
+/** The class day: two 1 h 30 sessions each side of lunch, a 15 minute break between them. The trainer sets when the day starts and how long lunch is. */
+const DAY_BLOCKS: [string, number, "s" | "b" | "l"][] = [["Morning session 1", 90, "s"], ["Break", 15, "b"], ["Morning session 2", 90, "s"], ["Lunch", 0, "l"], ["Afternoon session 1", 90, "s"], ["Break", 15, "b"], ["Afternoon session 2", 90, "s"]];
+const hhmm = (m: number) => `${Math.floor(m / 60) % 24}:${String(m % 60).padStart(2, "0")}`;
+function DayStructure({ st, op, trainer, readOnly }: BoardProps) {
+  const start = typeof st["day:start"] === "number" ? (st["day:start"] as number) : 9 * 60, lunch = typeof st["day:lunch"] === "number" ? (st["day:lunch"] as number) : 60;
+  let t = start;
+  const blocks = DAY_BLOCKS.map(([name, mins, kind]) => { const d = kind === "l" ? lunch : mins, from = t; t += d; return { name, d, kind, from, to: t }; });
+  const [now, setNow] = useState<number | null>(null);
+  useEffect(() => {
+    const tick = () => { const d = new Date(); setNow(d.getHours() * 60 + d.getMinutes()); };
+    tick();
+    const id = window.setInterval(tick, 30000);
+    return () => window.clearInterval(id);
+  }, []);
+  const can = trainer && !readOnly;
+  return (
+    <section className="ex-board day" aria-label="Daily structure">
+      <div className="day-head">
+        <div><span className="ex-mono">Daily structure</span><b>{hhmm(start)} to {hhmm(t)}</b></div>
+        {can ? (
+          <span className="day-set">
+            <label>Starts at <input type="time" value={`${String(Math.floor(start / 60)).padStart(2, "0")}:${String(start % 60).padStart(2, "0")}`} onChange={(e) => { const [h, m] = e.target.value.split(":").map(Number); if (h !== undefined && m !== undefined && !Number.isNaN(h + m)) op({ key: "day:start", op: "set", value: h * 60 + m }); }} /></label>
+            <label>Lunch <select value={lunch} onChange={(e) => op({ key: "day:lunch", op: "set", value: Number(e.target.value) })}>{[30, 45, 60, 75, 90].map((m) => (<option key={m} value={m}>{m} min</option>))}</select></label>
+          </span>
+        ) : null}
+      </div>
+      <div className="day-track">
+        {blocks.map((b, i) => {
+          const live = now !== null && now >= b.from && now < b.to;
+          return (
+            <div key={i} className={`day-block ${b.kind}${live ? " live" : ""}${now !== null && now >= b.to ? " past" : ""}`} style={{ flexGrow: b.d }}>
+              <small>{hhmm(b.from)}</small>
+              <b>{b.name}</b>
+              <span>{b.d >= 60 ? `${Math.floor(b.d / 60)} h${b.d % 60 ? ` ${b.d % 60}` : ""}` : `${b.d} min`}</span>
+              {live ? <i style={{ width: `${((now! - b.from) / b.d) * 100}%` }} /> : null}
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  );
+}
+
 /** Picks the board for an activity's `board` kind: the Class Studio boards, or question lanes. */
 // The Class Studio boards and their logic arrive as their own bundle, the first time one is opened.
 const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: false, loading: () => <div className="studio-board faint" style={{ padding: 24 }}>Loading the exercise…</div> });
@@ -335,6 +378,8 @@ const StudioBoard = dynamic(() => import("@/components/studio-board"), { ssr: fa
 export function ExerciseBoard(props: BoardProps & { kind: string }) {
   if (PI_ROOM_KINDS.has(props.kind)) return <PiRoomEmbed boardId={props.board.id} trainer={props.trainer} lang={typeof props.board.fields?.lang === "string" ? props.board.fields.lang : undefined} />;
   if (props.kind === "matrix") return <MatrixBoard {...props} />;
+  // Every class's agenda opens with the structure of a class day, above the lessons.
+  if (props.kind === "agenda") return (<div style={{ display: "grid", gap: 14, minWidth: 0 }}><DayStructure {...props} /><StudioBoard {...props} /></div>);
   if (POPM_KINDS.has(props.kind)) return <PopmBoard {...props} />;
   return STUDIO_KINDS.has(props.kind) || LSA_KINDS.has(props.kind) || RTE_KINDS.has(props.kind) || props.kind === "aart" || props.kind === "lab" || props.kind === "agenda" || props.kind === "lpm" ? <StudioBoard {...props} /> : <LanesBoard {...props} />;
 }
