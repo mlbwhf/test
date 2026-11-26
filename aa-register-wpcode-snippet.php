@@ -2373,11 +2373,55 @@ function aa_reg_lang_premium( $slug, $days ) {
  * all of them to agree. A price that is right on the card and wrong at the
  * checkout is the failure being avoided.
  */
+/**
+ * THE PRICE LIST, 26 NOV 2026: charged price and the crossed-out original.
+ *
+ * Given by the owner in one message, and it wins over the table, the page and
+ * the overrides above. The crossed-out figure is price_was, so it shows
+ * beside the price everywhere the price is printed. A language premium on
+ * a mirror (aa_reg_lang_premium) still applies after this, as before.
+ *
+ * Leading the AI-Native Organization, AI-Native Foundations, Launching
+ * AI-Native ARTs and AI-Native SAFe Fundamentals are not in this list; they
+ * keep the prices set in their own table rows.
+ */
+function aa_reg_price_list() {
+	return apply_filters( 'aa_reg_price_list', array(
+		/* slug                     => array( charged, crossed-out original ) */
+		'spc'                     => array( 2899, 3150 ),
+		'aspc'                    => array( 2899, 3150 ),
+		'rte'                     => array( 2200, 2300 ),
+		'apm'                     => array( 1799, 2300 ),
+		'lpm'                     => array( 1799, 2300 ),
+		'ase'                     => array( 1799, 2300 ),
+		'arch'                    => array( 1799, 2300 ),
+		'asm'                     => array( 1699, 2000 ),   /* SASM */
+		'ai-native-change-agent'  => array( 2399, 2500 ),   /* Value Architect */
+		/* "All two-day classes are 999, crossed to 870." */
+		'sa'                      => array( 870, 999 ),
+		'scrum-master'            => array( 870, 999 ),
+		'popm'                    => array( 870, 999 ),
+		'team-practitioner'       => array( 870, 999 ),   /* SAFe for Teams */
+		'devops'                  => array( 870, 999 ),
+		'bo'                      => array( 870, 999 ),
+		'sa-gov'                  => array( 870, 999 ),
+		'safe-for-hardware'       => array( 870, 999 ),
+		'safe-for-hardware-teams' => array( 870, 999 ),
+		'large-solution'          => array( 870, 999 ),
+	) );
+}
+
 function aa_reg_price( $slug, $course ) {
 	if ( ! is_array( $course ) ) { return $course; }
 
 	$over = aa_reg_price_overrides();
 	if ( isset( $over[ (string) $slug ] ) ) { $course['price'] = (int) $over[ (string) $slug ]; }
+
+	$list = aa_reg_price_list();
+	if ( isset( $list[ (string) $slug ] ) ) {
+		$course['price']     = (int) $list[ (string) $slug ][0];
+		$course['price_was'] = (int) $list[ (string) $slug ][1];
+	}
 
 	if ( aa_reg_lang() !== 'en' && ! empty( $course['price'] ) && ! empty( $course['days'] )
 		&& ! aa_reg_lang_premium_exempt( $slug ) ) {
@@ -2388,6 +2432,8 @@ function aa_reg_price( $slug, $course ) {
 				: max( (int) $course['price'], $prem );
 		}
 	}
+	/* A crossed-out figure that is not above the price says nothing. */
+	if ( isset( $course['price_was'] ) && (int) $course['price_was'] <= (int) $course['price'] ) { unset( $course['price_was'] ); }
 	return $course;
 }
 
@@ -2481,7 +2527,7 @@ function aa_reg_find( $cohort_id ) {
 	foreach ( aa_reg_courses() as $slug => $course ) {
 		foreach ( aa_reg_generate( $slug, $course ) as $c ) {
 			if ( $c['id'] === $cohort_id ) {
-				return array( 'slug' => $slug, 'course' => aa_reg_sale_apply( $slug, $course ), 'cohort' => $c );
+				return array( 'slug' => $slug, 'course' => aa_reg_sale_apply( $slug, aa_reg_price( $slug, $course ) ), 'cohort' => $c );
 			}
 		}
 	}
@@ -2495,7 +2541,7 @@ function aa_reg_find( $cohort_id ) {
 		if ( $course ) {
 			foreach ( aa_reg_generate( $m[1], $course ) as $c ) {
 				if ( $c['id'] === $cohort_id ) {
-					return array( 'slug' => $m[1], 'course' => aa_reg_sale_apply( $m[1], $course ), 'cohort' => $c );
+					return array( 'slug' => $m[1], 'course' => aa_reg_sale_apply( $m[1], aa_reg_price( $m[1], $course ) ), 'cohort' => $c );
 				}
 			}
 		}
