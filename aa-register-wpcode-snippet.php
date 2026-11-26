@@ -161,6 +161,7 @@ function aa_reg_courses() {
 			/* THE ORIGINAL PRICE, 2995, given 26 Nov 2026 for every four-day class.
 			   A sale takes its discount from this, not from the 2899 above. */
 			'list'     => 2995,
+			'floor'    => 2750,   /* never sold below this, sale or not (26 Nov 2026) */
 			'days'     => 4,
 			'weeks'    => 26,
 			'cadence'  => array(
@@ -183,6 +184,7 @@ function aa_reg_courses() {
 			/* THE ORIGINAL PRICE, 2995, given 26 Nov 2026 for every four-day class.
 			   A sale takes its discount from this, not from the 2899 above. */
 			'list'     => 2995,
+			'floor'    => 2750,   /* never sold below this, sale or not (26 Nov 2026) */
 			/* FOUR, NOT THREE. Scaled Agile rebuilt ASPC as a four-day course
 			   (AI adoption, Customizing SAFe, the Learning Lab capstone) and
 			   every ASPC page already says so -- English, Spanish, French and
@@ -2400,12 +2402,15 @@ function aa_reg_sale_config() {
 	return apply_filters( 'aa_reg_sale_config', array(
 		/* Cyber Monday on the last day, Black Friday before it (confirmed 20 Nov). */
 		'name' => ( new DateTime( 'now', new DateTimeZone( 'America/New_York' ) ) )->format( 'Y-m-d' ) === '2026-11-30' ? 'Cyber Monday' : 'Black Friday',
-		'pct'  => 15,
+		/* SALE REMOVED 26 Nov 2026, at the owner's request: no 15% on any
+		   course. 0 here switches the discount off everywhere, and the end date
+		   below being past switches off the banners and the home-page block. */
+		'pct'  => 0,
 		/* The advertised window is 20-30 Nov (confirmed 20 Nov). The discount
 		   actually ran from 18 Nov; every date from here on is inside both, so
 		   moving the start only changes what the pages print. */
 		'from' => '2026-11-20 00:00:00',
-		'to'   => '2026-11-30 23:59:59',
+		'to'   => '2026-11-25 23:59:59',   /* was 30 Nov; ended early, see above */
 		'tz'   => 'America/New_York',
 	) );
 }
@@ -2429,7 +2434,7 @@ function aa_reg_sale_apply( $slug, $course ) {
 	   that is higher, as on the French, Spanish and Arabic SPC/ASPC pages. */
 	$base = max( (int) $course['price'], ! empty( $course['list'] ) ? (int) $course['list'] : 0 );
 	$course['price_was'] = $base;
-	$course['price']     = min( (int) $course['price'], aa_reg_sale_amount( $base, $pct ) );
+	$course['price']     = min( (int) $course['price'], max( (int) ( isset( $course['floor'] ) ? $course['floor'] : 0 ), aa_reg_sale_amount( $base, $pct ) ) );
 	return $course;
 }
 
