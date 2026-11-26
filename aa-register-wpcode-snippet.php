@@ -461,8 +461,10 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-change-agent/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 2250,   /* early bird; 2500 is the strike figure, which lives on the page */
-			'list'     => 2500,   /* original price, 26 Nov 2026: a sale takes its discount from this */
+			/* 2500 LIST, 2350 CHARGED, set 26 Nov 2026; price_was keeps the sale
+			   code from taking a further 15% off (see aa_reg_sale_apply()). */
+			'price'    => 2350,
+			'price_was' => 2500,
 			/* Two days, confirmed with the client Sep 2026 alongside the
 			   rename. The page still said three in five places and is being
 			   corrected to match. */
@@ -2130,6 +2132,7 @@ function aa_reg_price_overrides() {
 		'ai-native-ready-certification-2' => 1450,   /* AINORG, every language: a mirror reads 1,500 off its own page, and 1,500 is the crossed-out figure */
 		'ai-native-foundations'           => 1350,   /* AINF, every language, 26 Nov 2026 */
 		'launching-ai-native-arts'        => 1450,   /* Launching AI-Native ARTs, every language, 26 Nov 2026 */
+		'ai-native-change-agent'          => 2350,   /* AI-Native Value Architect, every language, 26 Nov 2026 */
 
 		/* BOTH HARDWARE COURSES ARE 999, CONFIRMED, AND THAT IS DELIBERATELY
 		   NOT THE PRICE OF THE COURSE THEY ARE AN EDITION OF.
