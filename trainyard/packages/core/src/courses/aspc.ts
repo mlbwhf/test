@@ -94,6 +94,31 @@ const lesson1: ActivitySpec[] = [
       domains: DOMAINS,
       levels: ["Portfolio", "ART", "Team"],
       example: { level: "ART", question: "Are we reducing our time to market?", domain: "Flow", metric: "Flow Time", complement: "NPS" },
+      // The reference slides: Determining Team, ART and Portfolio Metrics.
+      library: {
+        Team: [
+          ["Are the teams aligned on the work to be done?", "Outcomes", "Team PI Objectives / Iteration Goals"],
+          ["Do the teams have the right mix of skills for the work they are doing?", "Flow", "Flow Velocity"],
+          ["Are the teams able to balance business and technical demands? What support or guardrails do they need?", "Flow", "Flow Distribution"],
+          ["Which areas do we need to support the teams who are adopting Agile?", "Competency", "TTA Assessment"],
+        ],
+        ART: [
+          ["Are all the teams aligned on their commitments to the business?", "Outcomes", "Program PI Objectives"],
+          ["Are we reducing our time to market?", "Flow", "Flow Time"],
+          ["Are we reducing waste in our processes through our I&A events?", "Flow", "Flow Efficiency"],
+          ["Are we getting more predictable? Are there any teams that are struggling to deliver?", "Flow", "Flow Predictability"],
+          ["Where should we invest next in our Agile Product Management practices?", "Competency", "APD Assessment"],
+          ["Where should we apply automation to improve our DevOps pipeline?", "Competency", "DevOps Health Radar"],
+        ],
+        Portfolio: [
+          ["How should we adjust our business plan to ensure product success?", "Outcomes", "Value Stream KPIs"],
+          ["Is the current strategy delivering the expected outcomes or does it need changing?", "Outcomes", "OKRs"],
+          ["What improvements should we make to ensure this is a great place to work?", "Outcomes", "Employee NPS"],
+          ["What is the capacity of our portfolio?", "Flow", "Flow Load"],
+          ["How should we balance our work across investment horizons?", "Flow", "Flow Distribution"],
+          ["Where do we need to invest to improve our Lean and Agile ways of working?", "Competency", "Business Agility Assessment"],
+        ],
+      },
     },
     ...BOARD,
   },

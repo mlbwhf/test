@@ -1501,46 +1501,115 @@ function CellText({ row, k, hint, op, readOnly, listKey }: { row: Row; k: string
   return <textarea className="po-text as-cell" rows={2} value={v} placeholder={hint} aria-label={hint} disabled={readOnly} onChange={(e) => setV(e.target.value)} onBlur={() => v !== saved && op({ key: listKey, op: "update", id: row.id, value: { [k]: v.trim() } })} />;
 }
 
-// Practice identifying a balanced set of metrics: the slide's table, a row per decision, with the
-// balance across the three measurement domains drawn above it.
+// Practice identifying a balanced set of metrics. One level at a time: the group picks decisions
+// from the reference slides of that level (or types its own), and each pick becomes a card it
+// finishes in three moves: the domain, the metric, the complementary metric. The balance across
+// the three measurement domains is drawn as the set grows, and the slide's table sums it up.
+type MetricRef = [question: string, domain: string, metric: string];
 export function AsBalanceBoard({ config, st, op, readOnly }: BoardProps) {
   const domains = (config.domains as string[] | undefined) ?? [], levels = (config.levels as string[] | undefined) ?? [];
+  const library = (config.library as Record<string, MetricRef[]> | undefined) ?? {};
   const ex = config.example as Record<string, string> | undefined;
   const rows = list(st, "rows");
-  const byLevel = (l: string) => rows.filter((r) => str(r.level) === l);
+  const [level, setLevel] = useState(levels[0] ?? "");
+  const [open, setOpen] = useState(true);
+  const mine = rows.filter((r) => str(r.level) === level), refs = library[level] ?? [];
+  const has = (q: string) => mine.find((r) => str(r.question) === q);
+  const done = (r: Row) => [str(r.question), str(r.domain), str(r.metric), str(r.complement)].filter(Boolean).length;
+  const set = (r: Row, value: Record<string, unknown>) => op({ key: "rows", op: "update", id: r.id, value });
+  // Complementary candidates: the level's other reference metrics first, then the other levels'.
+  const candidates = (r: Row) => [...new Set([...refs, ...levels.filter((l) => l !== level).flatMap((l) => library[l] ?? [])].filter((x) => x[2] !== str(r.metric)).sort((x, y) => Number(x[1] === str(r.domain)) - Number(y[1] === str(r.domain))).map((x) => x[2]))].slice(0, 7);
+  const domainOf = (metric: string) => Object.values(library).flat().find((x) => x[2] === metric)?.[1] ?? "";
   return (
     <div className="ex-board po">
       <DomainBalance domains={domains} picked={rows.map((r) => str(r.domain)).filter(Boolean)} />
-      <div className="as-tablewrap">
-        <div className="as-table" role="table" aria-label="Balanced set of metrics">
-          <div className="as-tr head" role="row">
-            {["Level", "Decision / Question", "Measurement domain", "Metric", "Complementary metric"].map((h, i) => (<span key={h} role="columnheader" className={i > 1 ? "teal" : ""}>{h}</span>))}
-          </div>
-          {ex ? (
-            <div className="as-tr example" role="row">
-              <b>{ex.level}</b><span>{ex.question}</span><span>{ex.domain}</span><span>{ex.metric}</span><span>{ex.complement}</span>
-              <em>Example</em>
-            </div>
-          ) : null}
-          {levels.map((l) => (
-            <div key={l} className="as-level">
-              {byLevel(l).map((r) => (
-                <div key={r.id} className="as-tr" role="row">
-                  <b>{l}</b>
-                  <CellText row={r} k="question" hint="The decision or question" op={op} readOnly={readOnly} listKey="rows" />
-                  <div className="as-domains" role="group" aria-label="Measurement domain">
-                    {domains.map((d) => (<button key={d} disabled={readOnly} aria-pressed={str(r.domain) === d} style={{ ["--c" as string]: DOMAIN_TONE[d] }} onClick={() => op({ key: "rows", op: "update", id: r.id, value: { domain: str(r.domain) === d ? "" : d } })}>{d}</button>))}
-                  </div>
-                  <CellText row={r} k="metric" hint="One metric that informs it" op={op} readOnly={readOnly} listKey="rows" />
-                  <CellText row={r} k="complement" hint="Its complementary metric, and why" op={op} readOnly={readOnly} listKey="rows" />
-                  {!readOnly ? <button className="ex-x" aria-label="Remove this row" onClick={() => op({ key: "rows", op: "remove", id: r.id })}>×</button> : null}
-                </div>
-              ))}
-              {!readOnly ? <button className="as-addrow" onClick={() => op({ key: "rows", op: "push", value: { level: l } })}><b>{l}</b>+ a decision or question at this level</button> : byLevel(l).length ? null : <div className="as-tr" role="row"><b>{l}</b><span className="po-note">Nothing yet.</span></div>}
-            </div>
-          ))}
-        </div>
+      <div className="mt-levels" role="tablist" aria-label="Level of the framework">
+        {levels.map((l) => {
+          const n = rows.filter((r) => str(r.level) === l), full = n.filter((r) => done(r) === 4).length;
+          return (
+            <button key={l} role="tab" aria-selected={l === level} className={`mt-level${n.length && full === n.length ? " done" : ""}`} onClick={() => (setLevel(l), setOpen(true))}>
+              <b>{l}</b><small>{n.length ? `${n.length} ${n.length === 1 ? "decision" : "decisions"} · ${full} complete` : "Nothing yet"}</small>
+            </button>
+          );
+        })}
       </div>
+      {!readOnly ? (
+        <section className="po-panel mt-pick">
+          <button className="mt-pickhead" aria-expanded={open} onClick={() => setOpen(!open)}>
+            <span><span className="ex-mono">Step 1 · {level}</span><b>Pick the decisions and questions that matter most, or type your own</b></span><i aria-hidden>{open ? "–" : "+"}</i>
+          </button>
+          {open ? (
+            <>
+              <div className="mt-refs">
+                {refs.map(([q, d, m]) => {
+                  const on = has(q);
+                  return (
+                    <button key={q} className={`mt-ref${on ? " on" : ""}`} aria-pressed={!!on} style={{ ["--c" as string]: DOMAIN_TONE[d] }} onClick={() => (on ? op({ key: "rows", op: "remove", id: on.id }) : op({ key: "rows", op: "push", value: { level, question: q, domain: d, metric: m, ref: true } }))}>
+                      <i aria-hidden>{on ? "✓" : "+"}</i>
+                      <span><b>{q}</b><small><em>{d}</em>{m}</small></span>
+                    </button>
+                  );
+                })}
+              </div>
+              <AddLine label={`Your own decision or question at the ${level} level`} placeholder={`+ your own decision or question at the ${level} level, Enter`} onAdd={(question) => op({ key: "rows", op: "push", value: { level, question } })} />
+            </>
+          ) : null}
+        </section>
+      ) : null}
+      <section className="mt-set">
+        <span className="ex-mono">{readOnly ? `${level} · the set` : `Step 2 · ${level} · for each one: the domain, one metric, and its complementary metric`}</span>
+        {mine.map((r, ri) => {
+          const n = done(r), comp = str(r.complement), cd = domainOf(comp);
+          return (
+            <article key={r.id} className={`mt-card${n === 4 ? " done" : ""}`} style={{ ["--c" as string]: DOMAIN_TONE[str(r.domain)] ?? "#0d1815", animationDelay: `${ri * 60}ms` }}>
+              <header>
+                <i className="mt-ring" style={{ ["--p" as string]: n / 4 }} aria-label={`${n} of 4 parts filled`}>{n === 4 ? "✓" : `${n}/4`}</i>
+                <CellText row={r} k="question" hint="The decision to be taken, or the question to be answered" op={op} readOnly={readOnly} listKey="rows" />
+                {!readOnly ? <button className="ex-x" aria-label="Remove this decision" onClick={() => op({ key: "rows", op: "remove", id: r.id })}>×</button> : null}
+              </header>
+              <div className="mt-flow">
+                <div className="mt-part">
+                  <span className="mt-h">Measurement domain</span>
+                  <div className="mt-chips" role="group" aria-label="Measurement domain">
+                    {domains.map((d) => (<button key={d} disabled={readOnly} aria-pressed={str(r.domain) === d} style={{ ["--c" as string]: DOMAIN_TONE[d] }} onClick={() => set(r, { domain: str(r.domain) === d ? "" : d })}>{d}</button>))}
+                  </div>
+                </div>
+                <b className="mt-arrow" aria-hidden>→</b>
+                <div className="mt-part">
+                  <span className="mt-h">Metric</span>
+                  <CellText row={r} k="metric" hint="One metric that informs it" op={op} readOnly={readOnly} listKey="rows" />
+                  {!readOnly && !str(r.metric) ? <div className="mt-chips small">{refs.filter((x) => !str(r.domain) || x[1] === str(r.domain)).slice(0, 5).map((x) => (<button key={x[2]} onClick={() => set(r, { metric: x[2], ...(str(r.domain) ? {} : { domain: x[1] }) })}>{x[2]}</button>))}</div> : null}
+                </div>
+                <b className="mt-arrow" aria-hidden>⇄</b>
+                <div className="mt-part comp">
+                  <span className="mt-h">Complementary metric {cd && cd !== str(r.domain) ? <em style={{ color: DOMAIN_TONE[cd] }}>{cd}: a second domain</em> : null}</span>
+                  <CellText row={r} k="complement" hint="What keeps this metric honest?" op={op} readOnly={readOnly} listKey="rows" />
+                  {!readOnly && !comp ? <div className="mt-chips small">{candidates(r).map((m) => (<button key={m} style={{ ["--c" as string]: DOMAIN_TONE[domainOf(m)] }} onClick={() => set(r, { complement: m })}><i className="po-dot" style={{ background: DOMAIN_TONE[domainOf(m)], margin: "0 5px 0 0" }} />{m}</button>))}</div> : null}
+                  {comp ? <CellText row={r} k="why" hint="Why this one?" op={op} readOnly={readOnly} listKey="rows" /> : null}
+                </div>
+              </div>
+            </article>
+          );
+        })}
+        {!mine.length ? <p className="po-empty">{readOnly ? "Nothing at this level yet." : `Nothing at the ${level} level yet: pick a decision above, or type your own.`}</p> : null}
+        {!readOnly && levels.indexOf(level) < levels.length - 1 ? <div className="po-acts-row"><span /><button className="po-btn" onClick={() => (setLevel(levels[levels.indexOf(level) + 1]!), setOpen(true))}>Next level: {levels[levels.indexOf(level) + 1]} →</button></div> : null}
+      </section>
+      <details className="mt-sum" open={readOnly}>
+        <summary><span className="ex-mono">Our balanced set · the whole table to share</span><b>{rows.length} {rows.length === 1 ? "row" : "rows"}</b></summary>
+        <div className="as-tablewrap">
+          <div className="as-table" role="table" aria-label="Balanced set of metrics">
+            <div className="as-tr head" role="row">
+              {["Level", "Decision / Question", "Measurement domain", "Metric", "Complementary metric"].map((h, i) => (<span key={h} role="columnheader" className={i > 1 ? "teal" : ""}>{h}</span>))}
+            </div>
+            {ex ? (<div className="as-tr example" role="row"><b>{ex.level}</b><span>{ex.question}</span><span>{ex.domain}</span><span>{ex.metric}</span><span>{ex.complement}</span><em>Example</em></div>) : null}
+            {levels.flatMap((l) => rows.filter((r) => str(r.level) === l)).map((r) => (
+              <div key={r.id} className="as-tr" role="row">
+                <b>{str(r.level)}</b><span>{str(r.question)}</span><span>{str(r.domain) ? <><i className="po-dot" style={{ background: DOMAIN_TONE[str(r.domain)], margin: "0 6px 0 0" }} />{str(r.domain)}</> : "—"}</span><span>{str(r.metric) || "—"}</span><span>{str(r.complement) || "—"}{str(r.why) ? <small style={{ display: "block", opacity: 0.75 }}>{str(r.why)}</small> : null}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </details>
     </div>
   );
 }
