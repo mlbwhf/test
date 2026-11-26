@@ -410,7 +410,11 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-foundations/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 1350,   /* early bird; 1500 is the strike figure, which lives on the page */
+			/* 1500 LIST, 1350 CHARGED, set 26 Nov 2026: "list price is 1500, all
+			   discount is from list price". price_was keeps the sale code from
+			   taking a further 15% off (see aa_reg_sale_apply()). */
+			'price'    => 1350,
+			'price_was' => 1500,
 			/* TWO DAYS, CONFIRMED BY THE CLIENT 11 Oct 2026.
 			   This was 2, was changed to 1 because the page said one day in
 			   four places, and is now 2 again on the client's word. The four
@@ -482,11 +486,10 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/ai-native-ready-certification-2/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			/* 1500 LIST, 1250 CHARGED, set on 23 Nov 2026 "across all". price_was is
-			   the crossed-out figure; because it is set here, the sale code leaves
-			   this course alone (see aa_reg_sale_apply()), so 1250 is the price in
-			   and out of a sale. Was 1100 with the 1500 written on the page. */
-			'price'    => 1250,
+			/* 1500 LIST, 1450 CHARGED, set 26 Nov 2026 (was 1250 from 23 Nov).
+			   price_was is the crossed-out figure; because it is set here, the
+			   sale code leaves this course alone (see aa_reg_sale_apply()). */
+			'price'    => 1450,
 			'price_was' => 1500,
 			/* WAS 1. The page calls it a two-day executive cohort in its own
 			   lede and its chip, and the note at the top of this block says the
@@ -673,7 +676,9 @@ function aa_reg_courses() {
 			'url'      => '/training/ai-native/launching-ai-native-arts/',
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
-			'price'    => 999,
+			/* 1500 LIST, 1450 CHARGED, set 26 Nov 2026 (was 999). */
+			'price'    => 1450,
+			'price_was' => 1500,
 			'days'     => 2,
 			'weeks'    => 52,
 			/* MONDAY AND THURSDAY IN ALTERNATE WEEKS, PLUS ONE WEEKEND, asked
@@ -2115,7 +2120,9 @@ function aa_reg_price_overrides() {
 		'ase'                      => 1799,
 		'bo'                       => 850,
 		'sa-gov'                   => 999,    /* Leading SAFe for Government */
-		'ai-native-ready-certification-2' => 1250,   /* AINORG, every language: a mirror reads 1,500 off its own page, and 1,500 is the crossed-out figure */
+		'ai-native-ready-certification-2' => 1450,   /* AINORG, every language: a mirror reads 1,500 off its own page, and 1,500 is the crossed-out figure */
+		'ai-native-foundations'           => 1350,   /* AINF, every language, 26 Nov 2026 */
+		'launching-ai-native-arts'        => 1450,   /* Launching AI-Native ARTs, every language, 26 Nov 2026 */
 
 		/* BOTH HARDWARE COURSES ARE 999, CONFIRMED, AND THAT IS DELIBERATELY
 		   NOT THE PRICE OF THE COURSE THEY ARE AN EDITION OF.
