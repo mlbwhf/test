@@ -158,6 +158,9 @@ function aa_reg_courses() {
 			/* $2,899 -- matched to Corsizio, which is the other place this same
 			   cohort is sold. The two were $24 apart and a buyer could see both. */
 			'price'    => 2899,
+			/* THE ORIGINAL PRICE, 2995, given 26 Nov 2026 for every four-day class.
+			   A sale takes its discount from this, not from the 2899 above. */
+			'list'     => 2995,
 			'days'     => 4,
 			'weeks'    => 26,
 			'cadence'  => array(
@@ -177,6 +180,9 @@ function aa_reg_courses() {
 			'crumb'    => 'Advanced SAFe',
 			'currency' => 'usd',
 			'price'    => 2899,
+			/* THE ORIGINAL PRICE, 2995, given 26 Nov 2026 for every four-day class.
+			   A sale takes its discount from this, not from the 2899 above. */
+			'list'     => 2995,
 			/* FOUR, NOT THREE. Scaled Agile rebuilt ASPC as a four-day course
 			   (AI adoption, Customizing SAFe, the Learning Lab capstone) and
 			   every ASPC page already says so -- English, Spanish, French and
@@ -456,6 +462,7 @@ function aa_reg_courses() {
 			'crumb'    => 'AI-Native',
 			'currency' => 'usd',
 			'price'    => 2250,   /* early bird; 2500 is the strike figure, which lives on the page */
+			'list'     => 2500,   /* original price, 26 Nov 2026: a sale takes its discount from this */
 			/* Two days, confirmed with the client Sep 2026 alongside the
 			   rename. The page still said three in five places and is being
 			   corrected to match. */
@@ -2413,8 +2420,13 @@ function aa_reg_sale_apply( $slug, $course ) {
 	if ( ! is_array( $course ) || isset( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
 	$pct = aa_reg_sale_pct();
 	if ( $pct <= 0 ) { return $course; }
-	$course['price_was'] = (int) $course['price'];
-	$course['price']     = aa_reg_sale_amount( $course['price'], $pct );
+	/* FROM THE ORIGINAL PRICE (asked for 26 Nov 2026). A course whose table
+	   price is already an early-bird figure carries its original as 'list',
+	   and the discount is taken from that -- or from the price itself when
+	   that is higher, as on the French, Spanish and Arabic SPC/ASPC pages. */
+	$base = max( (int) $course['price'], ! empty( $course['list'] ) ? (int) $course['list'] : 0 );
+	$course['price_was'] = $base;
+	$course['price']     = min( (int) $course['price'], aa_reg_sale_amount( $base, $pct ) );
 	return $course;
 }
 
