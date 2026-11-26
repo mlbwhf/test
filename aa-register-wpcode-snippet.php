@@ -1637,6 +1637,9 @@ function aa_reg_extra_dates() {
 		   classes that are actually running. */
 		'ai-native-foundations'           => array( '2026-11-21', '2026-12-07' ),
 		'ai-native-ready-certification-2' => array( '2026-11-23', '2026-12-09' ),
+		/* VALUE ARCHITECT, SATURDAY 28 NOV 2026: a class that runs, confirmed
+		   26 Nov after a buyer was refused it at checkout. */
+		'ai-native-change-agent'          => array( '2026-11-28' ),
 
 		/* RTE ON TUESDAY 27 OCTOBER 2026, asked for on 13 Oct.
 		   The cadence runs RTE on Mondays, Wednesdays and Fridays, so a Tuesday
@@ -4972,6 +4975,10 @@ function aa_reg_agreed_prices() {
 		   1,000 deposit taken at checkout. The balance of 1,250 is billed
 		   as 6 monthly payments outside the site. Remove after the deposit. */
 		'thamaraiselvik@gmail.com' => array( 'ai-native-change-agent' => 1000 ),
+
+		/* Offered 26 Nov 2026 after her Nov 28 checkout was refused:
+		   Value Architect at 2,350. Remove once paid. */
+		'balavadra@gmail.com' => array( 'ai-native-change-agent' => 2350 ),
 	) );
 }
 
@@ -5003,6 +5010,22 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	   the table and not from anything the browser said. */
 	if ( ! $found && ! empty( $d['course'] ) && ! empty( $d['start'] ) ) {
 		$found = aa_reg_find_by_date( (string) $d['course'], (string) $d['start'] );
+	}
+
+	/* THIRD WAY IN: AN ID BUILT FROM THE PAGE TITLE.
+	   A calendar on the Value Architect page sent "ai-native-value-architect-
+	   2026-11-28" on 26 Nov; the course slug is ai-native-change-agent. Read
+	   the date off the id and look it up under the known slug -- or, failing
+	   that, under the slug of the page the buyer was on. The price still comes
+	   from the table. */
+	if ( ! $found && ! empty( $d['cohort'] ) && preg_match( '/^([a-z0-9-]+)-(\d{4}-\d{2}-\d{2})$/', (string) $d['cohort'], $m ) ) {
+		$aliases = apply_filters( 'aa_reg_cohort_key_aliases', array( 'ai-native-value-architect' => 'ai-native-change-agent' ) );
+		$key     = isset( $aliases[ $m[1] ] ) ? $aliases[ $m[1] ] : '';
+		if ( $key === '' ) {
+			$path = (string) parse_url( (string) $req->get_header( 'referer' ), PHP_URL_PATH );
+			$key  = basename( untrailingslashit( $path ) );
+		}
+		if ( $key !== '' && preg_match( '/^[a-z0-9-]+$/', $key ) ) { $found = aa_reg_find_by_date( $key, $m[2] ); }
 	}
 
 	if ( ! $found ) {
