@@ -2,7 +2,7 @@
 
 Give Claude in Chrome **one task at a time**, in order. Each task lists where to go, what to change,
 and what must not be touched. **Owner decisions already made:** Microsoft Option B budgets, Audience
-Network off, brand CPC at most CA$2, competitor negatives, active GTM container = **GTM-K9627QZB**.
+Network off, brand CPC at most CA$2, competitor negatives, GTM container = **GTM-KNLG4JL5** (changed 27 Nov after the screenshots; see Task 3).
 
 **Standing rules for every task:**
 - **Microsoft Ads:** never edit **Tracking template** or **Final URL suffix**.
@@ -71,18 +71,25 @@ Go to `https://ads.google.com` → account 337-177-3090.
 3. **Don't change bid strategies, budgets, keywords or ads** in this task.
 4. **Screenshot:** one campaign's Networks section, and the negative list with its applied campaigns.
 
-## TASK 3: Audit GTM-K9627QZB (read-only, about 5 min)
-Go to `https://tagmanager.google.com` → container **GTM-K9627QZB**.
+## TASK 3: GTM audit: DONE from the owner's screenshots (27 Nov)
+| | **GTM-KNLG4JL5** | GTM-K9627QZB |
+|---|---|---|
+| Google's container quality | **Good** | **Urgent** (2 issues: usually "tag not found on the site") |
+| Google tags | GA4 **G-9PD6PWS906** + GT-M6JL466, Google Ads **AW-17013571967** | AW-17013571967 only |
+| Tags | Conversion Linker, GA4 Configuration, Google Tag AW, Google Ads Eventbrite Click Conversion, UET base, UET Eventbrite Click | Hotjar (3 yrs), Conversion Linker, Google Ads Eventbrite Click, UET base, UET Eventbrite Click, Microsoft Clarity |
+| Last edits | 4-7 months ago | 2-3 years (Hotjar, linker), 5-7 months |
 
-1. **Versions:** screenshot the latest **published** version (number, date, who published).
-2. **Tags:** screenshot the full list with types and firing triggers.
-3. **Flag (don't delete yet)** any tag that:
-   - (a) fires on outbound clicks to **eventbrite**;
-   - (b) is a **Corsizio** conversion;
-   - (c) fires on **/registration-confirmed/** page view;
-   - (d) sends any URL that may contain `name=`.
-4. Confirm whether a **Conversion Linker** tag and a **Microsoft UET** tag (343248805) exist.
-5. **Send the screenshots to Claude** (the ads agent session) before Task 6.
+**Decision: use GTM-KNLG4JL5.** It's rated Good (Google sees it on the site), it carries your GA4
+history, and it already has the Conversion Linker and UET base. **Keep GTM-K9627QZB off.** The GTM4WP
+plugin output must stay OFF; switching it on would load a second copy of the Eventbrite and UET tags
+and double-count. If you want Microsoft Clarity, recreate it in KNLG4JL5.
+
+**Confirm in 1 minute:** install Google **Tag Assistant**, open agile-agilist.com, and check that
+**exactly one** container is shown and that it's KNLG4JL5. Send a screenshot.
+
+Flagged for the cut-over (Task 7): **Google Ads - Eventbrite Click Conversion** and **Microsoft Ads -
+UET - Eventbrite Click**. Leave them running until then, so bidding keeps a signal. No Corsizio tag, no
+/registration-confirmed/ tag and no name-in-URL tag were found.
 
 ## TASK 4: Google Ads, create the website purchase conversion (about 5 min)
 Goals → Conversions → **+ New conversion action** → Website → **Add a conversion action manually**.
@@ -100,7 +107,7 @@ Conversions → Conversion goals → **Create** → Website → **Event**.
 - UET tag: **343248805**.
 - **Include in "Conversions": NO for now** (until Task 7).
 
-## TASK 6: Build the tags in GTM-K9627QZB (workspace + Preview only, about 20 min)
+## TASK 6: Build the tags in GTM-KNLG4JL5 (workspace + Preview only, about 15 min)
 New workspace named `website-purchase`.
 
 1. **Variables** (Data Layer Variable, version 2):
@@ -109,19 +116,17 @@ New workspace named `website-purchase`.
    - `DLV - ecommerce.currency` → `ecommerce.currency`
 2. **Trigger:** Custom Event, event name **`purchase`** (exact), all custom events.
 3. **Tags:**
-   - **Conversion Linker**, firing on All Pages (skip if one already exists).
+   - Conversion Linker and the UET base tag **already exist**. Don't add new ones.
    - **Google Ads Conversion Tracking:**
      - Conversion ID and Label from Task 4.
      - Value = `{{DLV - ecommerce.value}}`, Transaction ID = `{{DLV - ecommerce.transaction_id}}`,
        Currency = `{{DLV - ecommerce.currency}}`.
      - Trigger: `purchase`.
-   - **Microsoft UET base tag** (Tag ID 343248805) on All Pages, **only if Task 3 found none** and
-     UET isn't installed some other way.
    - **Microsoft UET custom event:**
      - Action `purchase`.
      - Revenue = `{{DLV - ecommerce.value}}`, currency = `{{DLV - ecommerce.currency}}`.
      - Trigger: `purchase`.
-4. **Pause** (don't delete) the tags flagged in Task 3 (a) to (d).
+4. Don't pause the Eventbrite click tags yet. That happens in Task 7.
 5. **Preview** on agile-agilist.com:
    - Ordinary page loads show the linker and the UET base tag, and **no** purchase tags.
 6. **Don't Publish.** Screenshot the workspace changes list.
@@ -131,12 +136,13 @@ New workspace named `website-purchase`.
 - Mark website Stripe payments with `metadata.origin = agile-agilist.com`.
 - Push one `purchase` dataLayer event, server-verified, once per paid website checkout.
 - Remove the name from the confirmation URL.
-- Switch **GTM4WP output ON with GTM-K9627QZB**.
+- **Leave GTM4WP output OFF.** KNLG4JL5 already loads on the site; don't add a second container.
 
 **Then, with Claude in Chrome:**
 1. **Test in GTM Preview:** a Stripe **test-mode** website purchase fires exactly **one** `purchase`.
    Reloading the confirmation page fires **none**. No name or email appears in any URL.
-2. **Publish** the GTM workspace (version name: `website purchase tracking`).
+2. In the workspace, **pause** "Google Ads - Eventbrite Click Conversion" and "Microsoft Ads - UET -
+   Eventbrite Click". Then **Publish** (version name: `website purchase tracking`).
 3. **Google Ads:** make **Website Purchase - Paid Registration** **Primary**. Set **Eventbrite Click -
    Register** and **Corsizio Registration - AI-Native** to **Secondary**.
 4. **Microsoft Ads:** set **Website Purchase** to Include in "Conversions" = **Yes**. Untick it on the
