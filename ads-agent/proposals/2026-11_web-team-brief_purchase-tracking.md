@@ -19,6 +19,11 @@ Wherever the site creates a Stripe Checkout Session or Payment Link, set:
 ### 1.2 No personal data in URLs
 Stop putting `?name=…&course=…` in the confirmation URL. `[aa_reg_confirmation]` looks the session up
 **server-side** from `session_id` and renders the name and course from Stripe.
+**Two changes (verified 27 Nov):**
+- **(a)** the checkout code that builds the redirect URL;
+- **(b)** the script block at the bottom of **page 28108** (`/registration-confirmed/`). It reads
+  `name`, `first_name`, `course`, `cohort`, `delivery` and `time` from the URL and writes them into
+  the page. Remove it once the shortcode renders those details server-side.
 
 ### 1.3 Push ONE purchase event, server-verified
 On `/registration-confirmed/`, retrieve the Checkout Session from Stripe and require **all** of:
@@ -51,11 +56,24 @@ Apply 1.1 to **every** place on the site that takes payment. The ones we've seen
 - any course configured with a Stripe `payment_link`. Set its "After payment → Redirect" to the URL in 1.1.
 - card-payment links or invoices sent to teams, if any.
 
+**Checked from the browser on 27 Nov** (snippet code couldn't be read from there):
+- course registration = WPCode **#32391 "AA – Register PHP"**, edited today at 06:18. If someone is
+  already working on it, please read this brief first.
+- class picker = page **37935**, snippet **#37972** `aa_class_flow`.
+- Leading SAFe native checkout: card, Apple/Google Pay and financing. **All of them** must end on the
+  confirmation URL with the metadata.
+- no `buy.stripe.com` links in page content; check snippet code and course settings for `payment_link`.
+- confirm whether **#38186 "AA — Checkout telemetry"** (active), **#37856 "Checkout guard"** or
+  **#38314 "AA — Course page fixes"** (both inactive) touch Stripe or fire any tracking.
+  **Nothing else may push a `purchase` event.**
+
 Please send back the complete list you find.
 
 ### 1.5 Tag Manager: one container only
-- **GTM-KNLG4JL5** is the container in use (GA4 + Google Ads + Microsoft UET). Please confirm how it's
-  loaded today (theme, plugin or snippet).
+- **GTM-KNLG4JL5** is the container in use (GA4 + Google Ads + Microsoft UET). **Verified 27 Nov:** the
+  homepage loads exactly one gtm.js, from a hand-placed snippet (not GTM4WP), with no separate UET or
+  gtag scripts. Tell us where it's placed (theme, the "AA — Site fixes" plugin or WPCode), so nobody
+  removes it by accident.
 - **Keep the GTM4WP plugin output OFF.** It's set to GTM-K9627QZB; switching it on would load a second
   container and double-count.
 - **Don't publish anything in GTM.** The ads side publishes the `website-purchase` workspace after the
