@@ -47,6 +47,22 @@ The owner ended the sale on 27 Nov. Remove every offer item **today**:
 - **Found:** all four Google campaigns are already on **Maximize clicks**, so Task 7 step 5 isn't needed.
 - Microsoft financial status changed to "Hold" on 15 Nov. **Resolved:** the owner confirmed on 27 Nov that billing is fine and ads are running.
 
+## STATUS 27 Nov, end of day (Chrome report): Tasks 0-6 DONE, nothing published
+- **Google networks:** the 4 live campaigns were already Search-only. 4 paused ones (TIcket registeration
+  x2, Message, SAFe High-Intent) had partners or Display; those are now off too. **Keep all paused
+  campaigns paused**, including the 3 paused PMax (no PMax: constitution).
+- **Competitor negative list** applied to all 9 Search campaigns.
+- **Google conversion created:** "Website Purchase - Paid Registration", ID 17013571967, label
+  xJLRCNCcyMAdEP-C2rA_, secondary.
+- **Microsoft goal 93009378 created** (UET 343248805, action purchase), not in Conversions.
+  **Decision: turn its enhanced conversions OFF.** The site sends no hashed customer data, and the owner
+  avoids personal data in tracking.
+- **GTM-KNLG4JL5, workspace `website-purchase`:** 6 additions, Preview OK, not published.
+  The Conversion Linker has 4 triggers, so it fires 3 times per page. Tidy it in Task 7: keep
+  "Initialization - All Pages" only.
+- **Microsoft Audience Network: still on.** There's no checkbox and no Audience bid adjustment in this
+  account. Next step: Microsoft Ads support (see the chat reply), and watch the Ad-distribution segment.
+
 ## TASK 1: Microsoft Ads budgets, Audience Network, brand CPC (about 15 min)
 Go to `https://ads.microsoft.com` → Agile Agilist account (187136875) → **Campaigns**.
 
@@ -149,7 +165,7 @@ New workspace named `website-purchase`.
 **Then, with Claude in Chrome:**
 1. **Test in GTM Preview:** a Stripe **test-mode** website purchase fires exactly **one** `purchase`.
    Reloading the confirmation page fires **none**. No name or email appears in any URL.
-2. In the workspace, **pause** "Google Ads - Eventbrite Click Conversion" and "Microsoft Ads - UET -
+2. In the workspace, set the **Conversion Linker** trigger to "Initialization - All Pages" only. **Pause** "Google Ads - Eventbrite Click Conversion" and "Microsoft Ads - UET -
    Eventbrite Click". Then **Publish** (version name: `website purchase tracking`).
 3. **Google Ads:** make **Website Purchase - Paid Registration** **Primary**. Set **Eventbrite Click -
    Register** and **Corsizio Registration - AI-Native** to **Secondary**.

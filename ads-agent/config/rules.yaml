@@ -137,6 +137,10 @@ owner_directives:
     - corsizio
     - stripe_other
     website_conversion_action: Website Purchase - Paid Registration
+    # Created 2026-11-27 (secondary / not in "Conversions" until the cut-over). Not secrets.
+    google_ads_conversion: {id: '17013571967', label: 'xJLRCNCcyMAdEP-C2rA_'}
+    microsoft_conversion_goal: {id: '93009378', uet_tag: '343248805', action: purchase}
+    gtm_container: GTM-KNLG4JL5          # workspace 'website-purchase' built, NOT published
     website_stripe_marker:            # the website checkout sets this on every payment
       metadata_key: origin
       metadata_value: agile-agilist.com
