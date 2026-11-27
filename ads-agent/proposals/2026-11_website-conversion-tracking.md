@@ -59,6 +59,35 @@ the URL directly.
 and copy them into the Stripe payment metadata. That enables server-side conversion uploads, which
 survive ad blockers.
 
+
+**2.8 Every website payment path, one event (added 27 Nov).** Stripe's own checkout page
+(checkout.stripe.com / buy.stripe.com) can never carry your GTM, and that's expected. The purchase is
+recorded when the buyer **returns to agile-agilist.com**. So every place on the website that takes
+payment, for **every course**, must do the same two things:
+- **A. When it creates the Stripe payment** (Checkout Session or Payment Link):
+  - set `metadata.origin = agile-agilist.com`, `metadata.course`, and `metadata.seats` if more than 1;
+  - set the success/after-payment URL to
+    `https://agile-agilist.com/registration-confirmed/?session_id={CHECKOUT_SESSION_ID}`.
+    Stripe Payment Links support this in "After payment → Don't show confirmation page → Redirect".
+- **B. The confirmation page** verifies the session server-side and pushes **one** `purchase` event
+  (2.4), whichever course or entry point it came from.
+
+Entry points seen on the site (the web team confirms the full list):
+- the **course-page registration** ("Pick a date" → "Register with Agile Agilist");
+- the **class picker** /training/select/;
+- the **Leading SAFe native checkout** /training/safe/sa/enroll-leading-safe-pilot/;
+- any course configured with a Stripe **payment_link**;
+- invoices or "pay by card" links sent to teams.
+
+**Not tracked for ads, on purpose (owner rule):** Eventbrite and Corsizio. The agent still records
+them as internal data.
+
+**GA4 (G-9PD6PWS906):** Admin → Data streams → Configure tag settings → **List unwanted referrals** →
+add `stripe.com`. Otherwise every purchase looks like a visit "referred by Stripe".
+
+**Test each entry point once** in Stripe test mode. Tag Assistant losing the tag on Stripe's page is
+normal. Keep going through payment to the return page, where the purchase tag must fire once.
+
 ## 3. Ad-platform setup (you, in the UIs)
 **Google Ads** → Goals → Conversions:
 - **New** → Website → *Add manually*: name **`Website Purchase - Paid Registration`** (exactly:
