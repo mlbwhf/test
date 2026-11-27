@@ -143,7 +143,11 @@ def cmd_record(a):
     out = STATE / "books.jsonl"
     STATE.mkdir(exist_ok=True)
     strikes = {}
+    model_mtime = MODEL_PATH.stat().st_mtime if MODEL_PATH.exists() else 0
     while True:
+        if MODEL_PATH.exists() and MODEL_PATH.stat().st_mtime != model_mtime:
+            model, nu = load_model()
+            model_mtime = MODEL_PATH.stat().st_mtime
         try:
             snap = snapshot(model, nu, a.asset, a.period, strikes)
             if snap:
