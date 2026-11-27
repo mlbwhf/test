@@ -45,7 +45,7 @@ The owner ended the sale on 27 Nov. Remove every offer item **today**:
   - **Audience network:** there's no on/off checkbox, so the decision is a **-100% Audience ads bid adjustment** on all 4 campaigns.
   - **Defense max CPC: skipped.** The campaign is on Maximize Clicks with the CPC limit option hidden, and the CA$2/day budget already caps it.
 - **Found:** all four Google campaigns are already on **Maximize clicks**, so Task 7 step 5 isn't needed.
-- **Found:** Microsoft financial status changed to **"Hold" on 15 Nov.** The owner checks Billing.
+- Microsoft financial status changed to "Hold" on 15 Nov. **Resolved:** the owner confirmed on 27 Nov that billing is fine and ads are running.
 
 ## TASK 1: Microsoft Ads budgets, Audience Network, brand CPC (about 15 min)
 Go to `https://ads.microsoft.com` → Agile Agilist account (187136875) → **Campaigns**.
