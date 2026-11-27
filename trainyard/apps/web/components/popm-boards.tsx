@@ -2688,12 +2688,30 @@ const HX_LIGHT = new Set(["#8accce", "#f7f1e3", "#f5b84c"]);
 const HX_COLS = 7, HX_ROWS = 5;
 const hxAt = (c: number, r: number) => ({ left: `${((c + 0.5 + (r % 2 ? 0.5 : 0)) / (HX_COLS + 0.5)) * 100}%`, top: `${((r * 0.75 + 0.5) / (HX_ROWS * 0.75 + 0.25)) * 100}%` });
 const hxNear = (c: number, r: number) => { const o = r % 2 ? 0 : -1; return [[c - 1, r], [c + 1, r], [c + o, r - 1], [c + o + 1, r - 1], [c + o, r + 1], [c + o + 1, r + 1]] as [number, number][]; };
+function HexType({ value, onDone, onCancel }: { value: string; onDone: (t: string, enter?: boolean) => void; onCancel: () => void }) {
+  const [v, setV] = useState(value);
+  return <textarea autoFocus value={v} maxLength={70} aria-label="Text of this hexagon" placeholder="Type here" onChange={(e) => setV(e.target.value)} onFocus={(e) => e.target.select()} onBlur={() => onDone(v)} onKeyDown={(e) => (e.key === "Enter" && !e.shiftKey ? (e.preventDefault(), onDone(v, true)) : e.key === "Escape" ? onCancel() : undefined)} />;
+}
+
+function HexWhy({ value, readOnly, onDone }: { value: string; readOnly: boolean; onDone: (t: string) => void }) {
+  const [v, setV] = useState(value);
+  return (
+    <>
+      <textarea autoFocus rows={3} value={v} disabled={readOnly} aria-label="Why these two are connected" placeholder="Why are these two connected? What does one do to the other?" onChange={(e) => setV(e.target.value)} onKeyDown={(e) => (e.key === "Enter" && !e.shiftKey ? (e.preventDefault(), onDone(v.trim())) : e.key === "Escape" ? onDone(value) : undefined)} />
+      <div className="hx-popacts"><button className="go" onClick={() => onDone(v.trim())}>Save</button><button onClick={() => onDone(value)}>Cancel</button></div>
+    </>
+  );
+}
+
 export function AsHexBoard({ config, st, op, readOnly }: BoardProps) {
   const hexes = list(st, "hexes"), final = st.final === true, lock = readOnly || final;
   const placed = hexes.filter((h) => typeof h.c === "number" && typeof h.r === "number"), tray = hexes.filter((h) => !placed.includes(h));
   const at = (c: number, r: number) => placed.find((h) => h.c === c && h.r === r);
   const [sel, setSel] = useState<string | null>(null);
   const [edge, setEdge] = useState<string | null>(null);
+  // Typing happens inside the hexagon. A hexagon just made at a place opens for typing as soon as it arrives.
+  const [typing, setTyping] = useState<string | null>(null);
+  const [fresh, setFresh] = useState<string | null>(null);
   const cur = hexes.find((h) => h.id === sel) ?? null;
   const name = (h: Row) => str(h.text) || "…";
   const tone = (h: Row) => (HX_TONES.includes(str(h.tone)) ? str(h.tone) : HX_TONES[0]!);
@@ -2708,10 +2726,18 @@ export function AsHexBoard({ config, st, op, readOnly }: BoardProps) {
     if (there) op({ key: "hexes", op: "update", id: there.id, value: { c: typeof me.c === "number" ? me.c : null, r: typeof me.r === "number" ? me.r : null } });
     op({ key: "hexes", op: "update", id, value: { c, r } });
   };
-  const cell = (c: number, r: number) => (lock ? undefined : sel && cur ? (move(sel, c, r), setSel(null)) : op({ key: "hexes", op: "push", value: { text: "", tone: HX_TONES[hexes.length % HX_TONES.length], c, r } }));
+  const cell = (c: number, r: number) => (lock ? undefined : sel && cur ? (move(sel, c, r), setSel(null)) : (setFresh(`${c}:${r}`), op({ key: "hexes", op: "push", value: { text: "", tone: HX_TONES[hexes.length % HX_TONES.length], c, r } })));
+  const at2 = (h: Row) => `${num(h.c)}:${num(h.r)}`;
+  // A new hexagon's id changes once the server answers, so what is being typed in is tracked by its place.
+  const born = fresh ? placed.find((h) => at2(h) === fresh && !str(h.text)) : undefined;
+  useEffect(() => { if (born) { setTyping(at2(born)); setFresh(null); } }, [born]);
+  const typed = typing ? placed.find((h) => at2(h) === typing) : undefined;
+  useEffect(() => { if (typed && sel !== typed.id) setSel(typed.id); }, [typed, sel]);
+  const write = (h: Row, text: string) => (setTyping(null), text.trim() !== str(h.text) ? op({ key: "hexes", op: "update", id: h.id, value: { text: text.trim() } }) : undefined);
   const example = (config.example as string[] | undefined) ?? [], steps = (config.steps as string[] | undefined) ?? [];
   const stage = final ? 2 : placed.length >= 2 ? 1 : 0;
-  const pick = (h: Row) => (setEdge(null), !lock && sel && sel !== h.id && typeof h.c === "number" ? (move(sel, num(h.c), num(h.r)), setSel(null)) : setSel(sel === h.id ? null : h.id));
+  // One click selects; a click on the selected hexagon (or a double click, or an empty one) opens it for typing.
+  const pick = (h: Row) => (setEdge(null), lock ? undefined : sel === h.id || !str(h.text) ? (setSel(h.id), setTyping(at2(h))) : setSel(h.id));
   const hexStyle = (h: Row) => ({ ["--c" as string]: tone(h), color: HX_LIGHT.has(tone(h)) ? "#0d1815" : "#fff" });
   const open = edges.find((e) => e.key === edge) ?? null;
   return (
@@ -2722,49 +2748,61 @@ export function AsHexBoard({ config, st, op, readOnly }: BoardProps) {
       </ol>
       {!lock ? (
         <section className="po-panel hx-tray">
-          <span className="ex-mono">Hexagons waiting · {tray.length ? "click one, then click a place on the honeycomb (or drag it there)" : "every hexagon is on the honeycomb"}</span>
+          <span className="ex-mono">Hexagons waiting · {tray.length ? "click one, then click a place on the honeycomb (or drag it there)" : "click any empty place on the honeycomb and type"}</span>
           <div className="hx-chips">
             {tray.map((h) => (
-              <button key={h.id} className={`hx-chip${sel === h.id ? " sel" : ""}`} style={hexStyle(h)} draggable onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id))} onClick={() => pick(h)}><span>{name(h)}</span></button>
+              <button key={h.id} className={`hx-chip${sel === h.id ? " sel" : ""}`} style={hexStyle(h)} draggable onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id))} onClick={() => (setEdge(null), setSel(sel === h.id ? null : h.id))}><span>{name(h)}</span></button>
             ))}
             <button className="hx-chip add" onClick={() => op({ key: "hexes", op: "push", value: { text: "", tone: HX_TONES[hexes.length % HX_TONES.length] } })}><span>+ blank</span></button>
           </div>
+          {cur && typeof cur.c !== "number" ? (
+            <div className="hx-trayedit" key={cur.id}>
+              <CellText row={cur} k="text" hint="One challenge, idea or fact: a few words" op={op} readOnly={readOnly} listKey="hexes" />
+              <div className="hx-tones" role="group" aria-label="Colour">{HX_TONES.map((t) => (<button key={t} style={{ background: t }} aria-label={`Colour ${t}`} aria-pressed={tone(cur) === t} onClick={() => op({ key: "hexes", op: "update", id: cur.id, value: { tone: t } })} />))}</div>
+              <button className="po-btn plain" onClick={() => (op({ key: "hexes", op: "remove", id: cur.id }), setSel(null))}>Delete</button>
+            </div>
+          ) : null}
           {!hexes.length && example.length ? <button className="po-btn plain" onClick={() => example.forEach((text, i) => op({ key: "hexes", op: "push", value: { text, tone: HX_TONES[i % HX_TONES.length] } }))}>{str(config.exampleLabel) || "Load the example"}</button> : null}
         </section>
       ) : null}
       <div className="hx-wrap">
-        <div className={`hx-grid${final ? " final" : ""}${sel ? " picking" : ""}`}>
+        <div className={`hx-grid${final ? " final" : ""}${sel && !typing ? " picking" : ""}`}>
           {!lock ? Array.from({ length: HX_ROWS * HX_COLS }, (_, i) => [i % HX_COLS, Math.floor(i / HX_COLS)] as const).filter(([c, r]) => !at(c, r)).map(([c, r]) => (
             <button key={`${c}:${r}`} className="hx-cell" style={hxAt(c, r)} aria-label={sel ? `Place it in row ${r + 1}, position ${c + 1}` : `New hexagon in row ${r + 1}, position ${c + 1}`} onClick={() => cell(c, r)} onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), move(e.dataTransfer.getData("text/plain"), c, r), setSel(null))}><span>+</span></button>
           )) : null}
-          {placed.map((h) => (
-            <button key={h.id} className={`hx-hex${sel === h.id ? " sel" : ""}${open && (open.a === h || open.b === h) ? " linked" : ""}`} style={{ ...hxAt(num(h.c), num(h.r)), ...hexStyle(h) }} draggable={!lock} onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id), setEdge(null))} onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), move(e.dataTransfer.getData("text/plain"), num(h.c), num(h.r)), setSel(null))} onClick={() => pick(h)}><span>{name(h)}</span></button>
+          {placed.map((h) => typing === at2(h) && !lock ? (
+            <div key={`type:${at2(h)}`} className="hx-hex sel typing" style={{ ...hxAt(num(h.c), num(h.r)), ...hexStyle(h) }}>
+              <HexType value={str(h.text)} onDone={(t, enter) => (write(h, t), enter ? setSel(null) : undefined)} onCancel={() => setTyping(null)} />
+            </div>
+          ) : (
+            <button key={h.id} className={`hx-hex${sel === h.id ? " sel" : ""}${open && (open.a === h || open.b === h) ? " linked" : ""}`} style={{ ...hxAt(num(h.c), num(h.r)), ...hexStyle(h) }} title={lock ? undefined : sel === h.id ? "Click again to type" : "Click to select, click again to type"} draggable={!lock} onDragStart={(e) => (e.dataTransfer.setData("text/plain", h.id), setSel(h.id), setEdge(null))} onDragOver={(e) => e.preventDefault()} onDrop={(e) => (e.preventDefault(), move(e.dataTransfer.getData("text/plain"), num(h.c), num(h.r)), setSel(null))} onClick={() => pick(h)} onDoubleClick={() => !lock && (setSel(h.id), setTyping(at2(h)))}><span>{name(h)}</span></button>
           ))}
           {edges.map((e) => {
             const p = hxAt(num(e.a.c), num(e.a.r)), q = hxAt(num(e.b.c), num(e.b.r)), n = told.indexOf(e);
             return <button key={e.key} className={`hx-dot${n >= 0 ? " told" : ""}${edge === e.key ? " on" : ""}`} style={{ left: `${(parseFloat(p.left) + parseFloat(q.left)) / 2}%`, top: `${(parseFloat(p.top) + parseFloat(q.top)) / 2}%` }} aria-label={`Connection between ${name(e.a)} and ${name(e.b)}${n >= 0 ? `: ${str(st[e.key])}` : ": not explained yet"}`} onClick={() => (setSel(null), setEdge(edge === e.key ? null : e.key))}>{n >= 0 ? n + 1 : ""}</button>;
           })}
+          {open ? (() => {
+            const p = hxAt(num(open.a.c), num(open.a.r)), q = hxAt(num(open.b.c), num(open.b.r)), up = Math.max(num(open.a.r), num(open.b.r)) >= HX_ROWS - 2;
+            return (
+              <div key={open.key} className={`hx-pop edge${up ? " up" : ""}`} style={{ left: `${Math.min(80, Math.max(20, (parseFloat(p.left) + parseFloat(q.left)) / 2))}%`, top: `${(parseFloat(p.top) + parseFloat(q.top)) / 2}%` }}>
+                <div className="hx-pair"><b style={hexStyle(open.a)}>{name(open.a)}</b><i aria-hidden>⟷</i><b style={hexStyle(open.b)}>{name(open.b)}</b></div>
+                <HexWhy value={str(st[open.key])} readOnly={readOnly} onDone={(t) => (t !== str(st[open.key]) ? op({ key: open.key, op: "set", value: t || null }) : undefined, setEdge(null))} />
+              </div>
+            );
+          })() : cur && !lock && typeof cur.c === "number" ? (
+            <div key={cur.id} className={`hx-pop tools${num(cur.r) >= HX_ROWS - 1 ? " up" : ""}`} style={{ ...hxAt(num(cur.c), num(cur.r)), left: `${Math.min(88, Math.max(12, parseFloat(hxAt(num(cur.c), num(cur.r)).left)))}%` }}>
+              <div className="hx-tones" role="group" aria-label="Colour">{HX_TONES.map((t) => (<button key={t} style={{ background: t }} aria-label={`Colour ${t}`} aria-pressed={tone(cur) === t} onMouseDown={(e) => e.preventDefault()} onClick={() => op({ key: "hexes", op: "update", id: cur.id, value: { tone: t } })} />))}</div>
+              <div className="hx-popacts">
+                {typing !== at2(cur) ? <button onClick={() => setTyping(at2(cur))}>✎ Type</button> : null}
+                <button onMouseDown={(e) => e.preventDefault()} onClick={() => (setTyping(null), op({ key: "hexes", op: "update", id: cur.id, value: { c: null, r: null } }), setSel(null))}>Take off</button>
+                <button onMouseDown={(e) => e.preventDefault()} onClick={() => (setTyping(null), op({ key: "hexes", op: "remove", id: cur.id }), setSel(null))}>Delete</button>
+                <button aria-label="Close" onClick={() => (setTyping(null), setSel(null))}>×</button>
+              </div>
+            </div>
+          ) : null}
           {!placed.length ? <p className="hx-hint">{lock ? "No hexagons yet." : "An empty honeycomb. Click any place to start a hexagon there."}</p> : null}
         </div>
       </div>
-      {open ? (
-        <section className="po-panel hx-edit" key={open.key}>
-          <span className="ex-mono">A connection · these two sides touch</span>
-          <div className="hx-pair"><b style={hexStyle(open.a)}>{name(open.a)}</b><i aria-hidden>⟷</i><b style={hexStyle(open.b)}>{name(open.b)}</b></div>
-          <Field k={open.key} st={st} op={op} readOnly={readOnly} rows={2} placeholder="Why are these two connected? What does one do to the other?" label="Why these two are connected" />
-        </section>
-      ) : cur && !lock ? (
-        <section className="po-panel hx-edit" key={cur.id}>
-          <span className="ex-mono">This hexagon{typeof cur.c === "number" ? ` · touches ${touch(cur)} of 6` : " · waiting"}</span>
-          <CellText row={cur} k="text" hint="One challenge, idea or fact: a few words" op={op} readOnly={readOnly} listKey="hexes" />
-          <div className="hx-tools">
-            <div className="hx-tones" role="group" aria-label="Colour">{HX_TONES.map((t) => (<button key={t} style={{ background: t }} aria-label={`Colour ${t}`} aria-pressed={tone(cur) === t} onClick={() => op({ key: "hexes", op: "update", id: cur.id, value: { tone: t } })} />))}</div>
-            {typeof cur.c === "number" ? <button className="po-btn plain" onClick={() => (op({ key: "hexes", op: "update", id: cur.id, value: { c: null, r: null } }), setSel(null))}>Take it off the honeycomb</button> : null}
-            <button className="po-btn plain" onClick={() => (op({ key: "hexes", op: "remove", id: cur.id }), setSel(null))}>Delete</button>
-            <span className="po-note">To move it: click an empty place, or another hexagon to swap.</span>
-          </div>
-        </section>
-      ) : null}
       <div className="po-two wide">
         <section className="po-panel">
           <span className="ex-mono">What the diagram shows</span>

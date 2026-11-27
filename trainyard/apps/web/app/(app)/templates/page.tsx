@@ -11,7 +11,7 @@ import { LaneBoard, type Lane } from "@/components/lane-board";
 import { KanbanBoard } from "@/components/kanban-board";
 import { TeamBoard } from "@/components/team-board";
 import { ReadinessBoard } from "@/components/readiness-board";
-import { TransformationCanvasBoard } from "@/components/transformation-canvas";
+import { HexagonCanvasBoard, TransformationCanvasBoard } from "@/components/transformation-canvas";
 import { useTheme } from "@/components/workspace-shell";
 import { METHOD_DOT, THEMES, methodTheme, type ThemeId } from "@/lib/themes";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
@@ -237,6 +237,8 @@ export default function TemplatesPage() {
                 </div>
               ) : preview.data.board.fields?.transformationCanvas ? (
                 <TransformationCanvasBoard board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />
+              ) : preview.data.board.fields?.hexCanvas ? (
+                <HexagonCanvasBoard board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />
               ) : preview.data.board.fields?.readiness ? (
                 <ReadinessBoard board={preview.data.board} readOnly onChanged={() => undefined} onError={setErr} />
               ) : preview.data.board.fields?.teamBoard ? (

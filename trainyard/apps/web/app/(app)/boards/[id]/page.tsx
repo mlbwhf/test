@@ -10,7 +10,7 @@ import { ClassBoard } from "@/components/class-board";
 import { KanbanBoard } from "@/components/kanban-board";
 import { TeamBoard } from "@/components/team-board";
 import { ReadinessBoard } from "@/components/readiness-board";
-import { TransformationCanvasBoard } from "@/components/transformation-canvas";
+import { HexagonCanvasBoard, TransformationCanvasBoard } from "@/components/transformation-canvas";
 import dynamic from "next/dynamic";
 import { ErrorList, Loading, PageHead } from "@/components/ui";
 import { CLASS_LANGUAGES, useClassLanguage } from "@/lib/translate";
@@ -276,6 +276,8 @@ export default function BoardPage({ params }: { params: Promise<{ id: string }> 
             )
           ) : tcanvas ? (
             <TransformationCanvasBoard board={board} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
+          ) : board.fields?.hexCanvas && board.frames[0] ? (
+            <HexagonCanvasBoard board={board} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : readiness ? (
             <ReadinessBoard board={board} readOnly={board.isTemplate} onChanged={() => void view.reload()} onError={setErr} />
           ) : teamBoard ? (
