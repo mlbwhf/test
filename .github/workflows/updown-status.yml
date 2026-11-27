@@ -1,0 +1,29 @@
+# On-demand look at the bot on the VPS: container state, recent logs, model fit and paper P&L.
+name: updown-status
+on:
+  workflow_dispatch:
+jobs:
+  status:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ~/updown
+            echo "== containers"; docker compose ps --format '{{.Service}} {{.State}} {{.Status}}'
+            echo "== mode"; grep -E '^UPDOWN_MODE=' .env
+            echo "== calibrate"; docker compose logs --no-log-prefix --tail 15 calibrate
+            echo "== trader"; docker compose logs --no-log-prefix --tail 30 trader
+            echo "== recorder"; docker compose logs --no-log-prefix --tail 5 recorder
+            echo "== state"; ls -la state
+            echo "== model"; [ -f state/model.json ] && python3 -c "import json;d=json.load(open('state/model.json'));print('nu',d['nu'],'beta',d['har']['beta']);print({k:d['oos'][k] for k in ('n','brier','brier_coinflip')})" || echo none
+            echo "== paper pnl"; [ -f state/paper.jsonl ] && python3 -c "
+            import json
+            rows=[json.loads(l) for l in open('state/paper.jsonl')]
+            s=[r for r in rows if r['event']=='settle']
+            pnl=sum(r['payout']-r['shares']*r['cost'] for r in s)
+            print('fills',sum(r['event']=='fill' for r in rows),'settled',len(s),'wins',sum(r['payout']>0 for r in s),'pnl',round(pnl,2))" || echo none
+            echo "== books recorded"; [ -f state/books.jsonl ] && wc -l < state/books.jsonl || echo 0
