@@ -2411,6 +2411,37 @@ function aa_reg_price_list() {
 	) );
 }
 
+/**
+ * EARLY BIRD: BOOK A MONTH AHEAD FOR THE LOWER PRICE (owner, 27 Nov 2026).
+ *
+ * "This discount applies if you book a month before the class -- apply this to
+ * all early bird." Every course that carries a crossed-out price (price_was)
+ * sells at its lower price only while the class starts at least 30 days from
+ * today (Eastern). Inside 30 days the crossed-out figure IS the price, and
+ * nothing is crossed out. Applied per batch wherever a batch is known -- the
+ * date cards, the track calendar, the schema offers and the Stripe charge --
+ * so the number on the card is the number charged. A price agreed with one
+ * buyer (aa_reg_agreed_prices) still wins at checkout.
+ */
+function aa_reg_early_bird_days() {
+	return max( 0, (int) apply_filters( 'aa_reg_early_bird_days', 30 ) );
+}
+function aa_reg_early_bird_open( $start, $now = '' ) {
+	if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', (string) $start ) ) { return true; }
+	$tz    = new DateTimeZone( 'America/New_York' );
+	$today = new DateTime( $now !== '' ? $now : 'now', $tz );
+	$today->setTime( 0, 0 );
+	$days  = (int) $today->diff( new DateTime( $start, $tz ) )->format( '%r%a' );
+	return $days >= aa_reg_early_bird_days();
+}
+function aa_reg_at_cohort( $course, $start ) {
+	if ( ! is_array( $course ) || empty( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
+	if ( aa_reg_early_bird_open( $start ) ) { return $course; }
+	$course['price'] = (int) $course['price_was'];
+	unset( $course['price_was'] );
+	return $course;
+}
+
 function aa_reg_price( $slug, $course ) {
 	if ( ! is_array( $course ) ) { return $course; }
 
@@ -2675,6 +2706,7 @@ function aa_reg_config_script( $course_key = '', $course = null, $cur = 'usd' ) 
  *                    would leave the form pointed at the wrong cohort.
  */
 function aa_reg_inline( $course, $cohort, $cur, $prefix = 'aareg', $fixed = false ) {
+	if ( isset( $cohort['start'] ) ) { $course = aa_reg_at_cohort( $course, $cohort['start'] ); }
 	if ( ! aa_reg_on_sale( $course ) ) { return aa_reg_ask_block( $prefix ); }
 	$live = aa_reg_is_live();
 	/* Not every caller hands over a full course record -- the track calendar's
@@ -3062,6 +3094,7 @@ function aa_reg_tabs( $prefix, $months ) {
  * batch is called.
  */
 function aa_reg_row( $course, $c, $is_first, $cur, $prefix = 'aacal' ) {
+	$course = aa_reg_at_cohort( $course, $c['start'] );
 	$left  = aa_reg_seats_left( $course, $c );
 	$hot   = $left <= 6;
 	$kind  = isset( $c['kind'] ) ? $c['kind'] : aa_reg_kind( $c['start'], $course['days'] );
@@ -3367,8 +3400,8 @@ function aa_reg_hero( $atts ) {
 	    . '<p class="aahero-fact" data-hero-range>' . esc_html( aa_reg_range( $first['start'], $first['end'] ) ) . '</p></div>'
 	    . '<span class="aahero-rule" aria-hidden="true"></span>'
 	    . '<div><p class="aahero-minilabel">' . esc_html( aa_reg_t( 'investment', 'Investment' ) ) . '</p><p class="aahero-fact">'
-	    . ( ! empty( $course['price_was'] ) ? '<s class="aa-was">' . esc_html( aa_reg_money( $course['price_was'], $course['currency'] ) ) . '</s> ' : '' )
-	    . esc_html( aa_reg_money( $course['price'], $course['currency'] ) )
+	    . ( ! empty( aa_reg_at_cohort( $course, $first['start'] )['price_was'] ) ? '<s class="aa-was">' . esc_html( aa_reg_money( $course['price_was'], $course['currency'] ) ) . '</s> ' : '' )
+	    . esc_html( aa_reg_money( aa_reg_at_cohort( $course, $first['start'] )['price'], $course['currency'] ) )
 	    . ' <span class="aahero-factnote">' . esc_html( aa_reg_incl( $course ) ) . '</span></p></div></div>';
 	$h .= aa_reg_hero_more( $a['course'], aa_reg_hero_room( $months ) );
 	$h .= '</div>';
@@ -3571,6 +3604,7 @@ function aa_reg_track_calendar( $atts ) {
 			'proof' => isset( $course['proof'] ) && is_array( $course['proof'] ) ? $course['proof'] : array(),
 			'incl'  => aa_reg_incl( $course ),
 			'price' => $course['price'],
+			'was'   => ! empty( $course['price_was'] ) ? (int) $course['price_was'] : 0,
 			'cur'   => $course['currency'],
 			'days'  => $days,
 			'short' => $days . 'd',
@@ -3882,6 +3916,11 @@ function aa_reg_track_calendar( $atts ) {
 		);
 		if ( ! empty( $c['place'] ) ) { $rec['place'] = $c['place']; }
 		if ( ! empty( $c['hours'] ) ) { $rec['hours'] = $c['hours']; }
+		/* Early bird closed on this batch: its own price overrides the course's. */
+		if ( isset( $meta[ $row['code'] ] ) && ! empty( $meta[ $row['code'] ]['was'] ) && ! aa_reg_early_bird_open( $c['start'] ) ) {
+			$rec['price'] = aa_reg_money( $meta[ $row['code'] ]['was'], $meta[ $row['code'] ]['cur'] );
+			$rec['raw']   = (int) $meta[ $row['code'] ]['was'];
+		}
 		$payload[ $c['id'] ] = $rec;
 	}
 	$h .= '<script>window.AA_TC=' . wp_json_encode( array(
@@ -3930,6 +3969,7 @@ function aa_reg_track_panel( $row, $meta, $label = '', $dates = array() ) {
 	if ( ! $row || ! isset( $meta[ $row['code'] ] ) ) { return ''; }
 	$mm    = $meta[ $row['code'] ];
 	$c     = $row['c'];
+	if ( ! empty( $mm['was'] ) && ! aa_reg_early_bird_open( $c['start'] ) ) { $mm['price'] = $mm['was']; }
 	$left  = aa_reg_seats_left( $row['course'], $c );
 	$where = trim( ( ! empty( $c['place'] ) ? $c['place'] . ' · ' : '' ) . ( isset( $c['hours'] ) ? $c['hours'] : '' ), ' ·' );
 
@@ -4208,7 +4248,7 @@ function aa_reg_panel( $atts ) {
 			'location'   => array( '@type' => 'VirtualLocation', 'url' => home_url( $course['url'] ) ),
 			'offers'     => array(
 				'@type'         => 'Offer',
-				'price'         => (string) $course['price'],
+				'price'         => (string) aa_reg_at_cohort( $course, $c['start'] )['price'],
 				'priceCurrency' => strtoupper( $cur ),
 				'availability'  => $left <= 6 ? 'https://schema.org/LimitedAvailability' : 'https://schema.org/InStock',
 				'url'           => home_url( $course['url'] ),
@@ -5085,6 +5125,8 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	}
 	$course = $found['course'];
 	$cohort = $found['cohort'];
+	/* Early bird only a month or more ahead -- see aa_reg_at_cohort(). */
+	$course = aa_reg_at_cohort( $course, $cohort['start'] );
 
 	$email = isset( $d['email'] ) ? sanitize_email( $d['email'] ) : '';
 	if ( ! is_email( $email ) ) {
@@ -5136,7 +5178,7 @@ function aa_reg_checkout( WP_REST_Request $req ) {
 	$buyer_lang = aa_reg_lang_of( array(), (string) $req->get_header( 'referer' ) );
 	if ( $buyer_lang !== 'en' ) {
 		aa_reg_lang_override( $buyer_lang );
-		$mirror = aa_reg_course( $found['slug'] );
+		$mirror = aa_reg_at_cohort( aa_reg_course( $found['slug'] ), $cohort['start'] );
 		aa_reg_lang_override( '' );
 		if ( $mirror && ! empty( $mirror['price'] ) ) {
 			$course['price']    = $mirror['price'];
@@ -8134,7 +8176,7 @@ function aa_training_category_shortcode( $atts ) {
 				if ( $j >= 6 ) { break; }
 				$h .= '<button type="button" class="aat-dateopt' . ( $j === 0 ? ' is-on' : '' ) . '"'
 				    . ' data-aah-pick="' . esc_attr( $n['id'] ) . '"'
-				    . ' data-price="' . (int) $course['price'] . '"'
+				    . ' data-price="' . (int) aa_reg_at_cohort( $course, $n['start'] )['price'] . '"'
 				    . ' aria-pressed="' . ( $j === 0 ? 'true' : 'false' ) . '">'
 				    . '<b>' . esc_html( aa_reg_range( $n['start'], $n['end'] ) ) . '</b>'
 				    . '<span>' . (int) $course['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
@@ -9588,7 +9630,7 @@ function aa_reg_hub_hero( $atts ) {
 			foreach ( $ups[ $slug ] as $n ) {
 				$h .= '<button type="button" class="aat-dateopt' . ( $j === 0 ? ' is-on' : '' ) . '"'
 				    . ' data-aah-pick="' . esc_attr( $n['id'] ) . '"'
-				    . ' data-price="' . (int) $course['price'] . '"'
+				    . ' data-price="' . (int) aa_reg_at_cohort( $course, $n['start'] )['price'] . '"'
 				    . ' aria-pressed="' . ( $j === 0 ? 'true' : 'false' ) . '">'
 				    . '<b>' . esc_html( aa_reg_range( $n['start'], $n['end'] ) ) . '</b>'
 				    . '<span>' . (int) $course['days'] . ' ' . esc_html( aa_reg_t( 'days_l', 'days' ) ) . '</span>'
