@@ -45,3 +45,15 @@ def test_har_fit_and_calibration_on_sim():
     assert oos["n"] > 100
     assert oos["brier"] < oos["brier_coinflip"]
     assert 2.5 <= res["nu"] <= 30
+
+
+def test_executor_restores_fills_after_restart(tmp_path):
+    from updown.executor import PaperExecutor
+    p = tmp_path / "paper.jsonl"
+    ex = PaperExecutor(p)
+    ex.buy("m1", "UP", "tok", 10, 0.5, 0.52, 0.6, end=100, strike=50000.0)
+    ex2 = PaperExecutor(p)
+    assert [f.slug for f in ex2.fills] == ["m1"] and not ex2.fills[0].settled
+    assert ex2.settle("m1", up_won=True) == pytest.approx(10 - 10 * 0.52)
+    ex3 = PaperExecutor(p)
+    assert len(ex3.fills) == 1 and ex3.fills[0].settled

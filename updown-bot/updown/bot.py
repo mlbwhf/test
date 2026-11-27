@@ -86,7 +86,11 @@ def cmd_run(a):
     logp = STATE / ("live.jsonl" if a.live else "paper.jsonl")
     STATE.mkdir(exist_ok=True)
     ex = LiveExecutor(logp) if a.live else PaperExecutor(logp)
-    traded, strikes, pending = set(), {}, {}
+    traded = {f.slug for f in ex.fills}
+    pending = {f.slug: (f.end, f.strike) for f in ex.fills if not f.settled and f.end}
+    strikes = {}
+    if traded:
+        log.info("restored %d traded markets, %d awaiting settlement", len(traded), len(pending))
     day_pnl, errors = 0.0, 0
     log.info("starting %s mode, cfg=%s", ex.mode, asdict(cfg))
     model_mtime = MODEL_PATH.stat().st_mtime if MODEL_PATH.exists() else 0
@@ -124,7 +128,8 @@ def cmd_run(a):
                          up["asks"][:1], dn["asks"][:1], d.side, d.edge)
                 if d.side:
                     tok = m["up_token"] if d.side == "UP" else m["down_token"]
-                    ex.buy(m["slug"], d.side, tok, d.shares, d.limit_price, d.cost, d.fair)
+                    ex.buy(m["slug"], d.side, tok, d.shares, d.limit_price, d.cost, d.fair,
+                           end=m["end"], strike=K)
                     traded.add(m["slug"])
                     pending[m["slug"]] = (m["end"], K)
             errors = 0

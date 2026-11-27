@@ -20,6 +20,8 @@ class Fill:
     mode: str
     settled: bool = False
     payout: float = 0.0
+    end: int = 0           # market end (unix s), for settling after a restart
+    strike: float = 0.0
 
 
 @dataclass
@@ -28,8 +30,25 @@ class PaperExecutor:
     fills: list[Fill] = field(default_factory=list)
     mode: str = "paper"
 
-    def buy(self, slug, side, token_id, shares, limit_price, cost, fair) -> Fill:
-        f = Fill(time.time(), slug, side, shares, cost, fair, limit_price, self.mode)
+    def __post_init__(self):
+        self.load()
+
+    def load(self):
+        """Rebuild fills from the log so a restart never re-enters a traded market."""
+        if not self.log_path.exists():
+            return
+        by_key = {}
+        names = set(Fill.__dataclass_fields__)
+        for line in self.log_path.read_text().splitlines():
+            rec = json.loads(line)
+            if rec.get("event") in ("fill", "settle"):
+                f = Fill(**{k: v for k, v in rec.items() if k in names})
+                by_key[(f.slug, f.side, f.ts)] = f
+        self.fills = list(by_key.values())
+
+    def buy(self, slug, side, token_id, shares, limit_price, cost, fair, end=0, strike=0.0) -> Fill:
+        f = Fill(time.time(), slug, side, shares, cost, fair, limit_price, self.mode,
+                 end=end, strike=strike)
         self.fills.append(f)
         self._log({"event": "fill", **asdict(f)})
         return f
@@ -59,6 +78,7 @@ class LiveExecutor(PaperExecutor):
 
     def __init__(self, log_path: Path):
         super().__init__(log_path=log_path, mode="live")
+        self.load()
         from py_clob_client.client import ClobClient  # type: ignore
         self.client = ClobClient(
             "https://clob.polymarket.com", chain_id=137,
@@ -68,7 +88,7 @@ class LiveExecutor(PaperExecutor):
         )
         self.client.set_api_creds(self.client.create_or_derive_api_creds())
 
-    def buy(self, slug, side, token_id, shares, limit_price, cost, fair) -> Fill:
+    def buy(self, slug, side, token_id, shares, limit_price, cost, fair, end=0, strike=0.0) -> Fill:
         from py_clob_client.clob_types import OrderArgs, OrderType  # type: ignore
         from py_clob_client.order_builder.constants import BUY  # type: ignore
         order = self.client.create_order(OrderArgs(
@@ -77,4 +97,4 @@ class LiveExecutor(PaperExecutor):
         self._log({"event": "order_resp", "slug": slug, "side": side, "resp": resp})
         if not resp or not resp.get("success"):
             raise RuntimeError(f"order rejected: {resp}")
-        return super().buy(slug, side, token_id, shares, limit_price, cost, fair)
+        return super().buy(slug, side, token_id, shares, limit_price, cost, fair, end, strike)
