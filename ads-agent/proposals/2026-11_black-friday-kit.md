@@ -1,3 +1,6 @@
+> **ENDED EARLY by the owner on 27 Nov 2026.** Cyber Monday is cancelled. Remove every item below
+> (Chrome work order, Task 0). The copy rules reject all offer copy from 27 Nov.
+
 # Black Friday + Cyber Monday 2026: ad kit (APPROVED; dates updated 20 Nov)
 
 **Offer (owner-confirmed 20 Nov):** 15% off every public SAFe and AI-Native class, any upcoming

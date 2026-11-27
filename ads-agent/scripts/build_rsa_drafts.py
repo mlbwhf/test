@@ -319,8 +319,8 @@ during Black Friday and after it ends (15 Dec). That covers character limits, "S
 Partner" (never Gold), "exam prep and support" (no pass guarantee or money-back), no prices at all
 (so no CAD for US), no scarcity claims, and approved stable landing pages only.
 
-**Evergreen on purpose:** no Black Friday wording, so these don't need editing on 1 Dec. To
-promote the offer in a stage 1 ad group until 30 Nov, add the headlines from the Black Friday kit.
+**Evergreen on purpose:** no offer wording. (The Black Friday sale ended early on 27 Nov, so no
+offer copy may be added.)
 
 **Built on what each course actually teaches** (full English course pages, read 20 Nov), plus
 one claim you confirmed in chat: one-day **PI Outcome Planning** in Launching AI-Native ARTs.

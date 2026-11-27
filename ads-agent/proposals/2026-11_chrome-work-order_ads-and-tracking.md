@@ -13,6 +13,32 @@ Network off, brand CPC at most CA$2, competitor negatives, active GTM container 
 
 ---
 
+## TASK 0: Remove the Black Friday / Cyber Monday offer from both accounts (DO FIRST, about 15 min)
+The owner ended the sale on 27 Nov. Remove every offer item **today**:
+
+**Google Ads** (campaigns Certifications - English, AI-Native - Virtual, AI-Native - Face-to-Face):
+1. **Assets → Promotions:** remove the **Black Friday** promotion and the scheduled **Cyber Monday**
+   one.
+2. **Assets → Sitelinks:** remove "Black Friday: 15% Off" and "Cyber Monday: 15% Off".
+3. **Assets → Callouts:** remove "15% Off Until Nov 30". Keep "Exam Included", "Live Online Classes"
+   and "Exam Prep and Support".
+4. **Every responsive search ad** in those campaigns:
+   - Remove these headlines: "15% Off Until Nov 30", "15% Off Every SAFe Class", "15% Off AI-Native
+     Courses", "Offer Ends Nov 30", and any "Black Friday…" headline.
+   - Remove these descriptions: "15% off every public SAFe and AI-Native class…", "Any upcoming class
+     date. The 15% discount…", "…15% off until Nov 30."
+   - Unpin position 1 if "15% Off Until Nov 30" was pinned.
+   - Every ad must keep at least 3 headlines and 2 descriptions.
+5. Search the account (Ads → filter "Ad text contains `15%`", then `Black Friday`, then `Cyber`).
+   The answer must be **0 ads**.
+
+**Microsoft Ads** (same three campaigns, **by hand**):
+6. Remove the promotion extensions, the two sitelinks, the "15% Off Until Nov 30" callout, and the
+   same headlines and descriptions as above.
+7. **Don't touch the tracking template or Final URL suffix.**
+
+**Screenshot:** the "15%" ad search returning nothing in both accounts.
+
 ## TASK 1: Microsoft Ads budgets, Audience Network, brand CPC (about 15 min)
 Go to `https://ads.microsoft.com` → Agile Agilist account (187136875) → **Campaigns**.
 

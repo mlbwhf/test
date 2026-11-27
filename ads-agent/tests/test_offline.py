@@ -88,10 +88,13 @@ def main() -> int:
 
     rules = config.load_rules()
     # promo reminders fire on the end date and just after, not before
+    # (synthetic promo, so the test doesn't depend on the owner's real, editable promo dates)
     r = daily_run.promo_reminders
-    if not r(rules, datetime.date(2026, 11, 30)) or not r(rules, datetime.date(2026, 12, 1)):
-        failures.append("promo reminders missing on/after 2026-11-30")
-    if r(rules, datetime.date(2026, 11, 25)):
+    promo = {"confirmed_promotions": [{"id": "t", "offer": "15% off", "percent_off": 15,
+                                       "start": "2026-11-20", "end": "2026-11-30"}]}
+    if not r(promo, datetime.date(2026, 11, 30)) or not r(promo, datetime.date(2026, 12, 1)):
+        failures.append("promo reminders missing on/after the end date")
+    if r(promo, datetime.date(2026, 11, 25)):
         failures.append("promo reminder fired mid-promotion")
     # no data -> one clear alert, not silence
     if "NO SPEND DATA" not in " ".join(check_tripwires(rules, [], as_of=datetime.date(2026, 11, 18))):

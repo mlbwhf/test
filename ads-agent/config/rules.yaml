@@ -177,23 +177,16 @@ owner_directives:
 # human confirmation). Expired entries are kept as the audit trail.
 confirmed_promotions:
 # One 15% offer, two labels (owner, 2026-11-20): "Black Friday" 20-29 Nov, "Cyber Monday" on 30 Nov.
-# `occasion` = the only event name copy may use while that entry is active.
+# ENDED EARLY by the owner on 2026-11-27: the last valid day is 26 Nov, and Cyber Monday is cancelled.
+# Kept as the audit trail. No offer copy validates from 27 Nov.
 - id: black-friday-2026
   offer: 15% off every public SAFe and AI-Native class
   percent_off: 15
   occasion: black friday
   start: '2026-11-20'
-  end: '2026-11-29'
-  followed_by: cyber-monday-2026
+  end: '2026-11-26'
+  ended_early_on: '2026-11-27'
   landing_page: https://agile-agilist.com/black-friday/
   confirmed_by: Mark Saymen
   confirmed_on: '2026-11-20'
-- id: cyber-monday-2026
-  offer: 15% off every public SAFe and AI-Native class (last day)
-  percent_off: 15
-  occasion: cyber monday
-  start: '2026-11-30'
-  end: '2026-11-30'
-  landing_page: https://agile-agilist.com/black-friday/
-  confirmed_by: Mark Saymen
-  confirmed_on: '2026-11-20'
+# cyber-monday-2026 (30 Nov) cancelled by the owner on 2026-11-27.
