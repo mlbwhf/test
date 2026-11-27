@@ -17,8 +17,8 @@ what you click in the ad platforms. Section 5 is how the agent proves the rule h
 | Active snippet **"AA — Checkout telemetry"** (9 Nov). I couldn't read it. | Check it before adding tags, so nothing double-fires. |
 
 ## 2. Proposed site changes (for your web team)
-**2.1 Load exactly one GTM container site-wide.** Choose `GTM-K9627QZB` or `GTM-KNLG4JL5` and
-retire the other. Verify with Google Tag Assistant.
+**2.1 Load exactly one GTM container site-wide: `GTM-K9627QZB`** (owner, 27 Nov: the active one).
+Retire GTM-KNLG4JL5. Verify with Google Tag Assistant.
 
 **2.2 Mark every website checkout payment.** When the site creates the Stripe Checkout Session /
 PaymentIntent, set `metadata.origin = "agile-agilist.com"`, plus `metadata.course` (and
