@@ -2,6 +2,10 @@
 name: updown-status
 on:
   workflow_dispatch:
+  # also runs when the ping file changes, so it works before this file reaches the default branch
+  push:
+    branches: [claude/gifted-rubin-iq3ii3]
+    paths: ["updown-bot/deploy/status-ping"]
 jobs:
   status:
     runs-on: ubuntu-latest
