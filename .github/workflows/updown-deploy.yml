@@ -1,0 +1,98 @@
+# Test, build and push the updown-bot image to GHCR, then roll it onto the VPS over SSH.
+# Reuses the repository secrets gate and trainyard already use:
+#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_SSH_KEY
+# Runtime config lives in ~/updown/.env on the server (created in paper mode on first deploy).
+name: updown-deploy
+on:
+  push:
+    branches: [main, claude/gifted-rubin-iq3ii3]
+    paths: ["updown-bot/**", ".github/workflows/updown-deploy.yml"]
+  workflow_dispatch:
+
+concurrency:
+  group: updown-deploy
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+env:
+  IMAGE: ghcr.io/${{ github.repository_owner }}/updown-bot
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults: { run: { working-directory: updown-bot } }
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.13" }
+      - run: pip install -r requirements.txt pytest
+      - run: python -m pytest -q tests
+
+  build:
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: updown-bot
+          push: true
+          tags: |
+            ${{ env.IMAGE }}:${{ github.sha }}
+            ${{ env.IMAGE }}:latest
+          cache-from: type=gha,scope=updown
+          cache-to: type=gha,scope=updown,mode=max
+          provenance: false
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - uses: actions/checkout@v4
+      - name: Copy compose file and scripts to the server
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          source: updown-bot/deploy/docker-compose.yml,updown-bot/deploy/deploy.sh,updown-bot/deploy/env.example
+          target: updown
+          strip_components: 2
+      - name: Roll the stack
+        uses: appleboy/ssh-action@v1
+        env:
+          UPDOWN_IMAGE: ${{ env.IMAGE }}:${{ github.sha }}
+          GHCR_USER: ${{ github.actor }}
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          envs: UPDOWN_IMAGE,GHCR_USER,GHCR_TOKEN
+          script: |
+            set -eu
+            cd ~/updown
+            echo "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USER" --password-stdin
+            export UPDOWN_IMAGE
+            chmod +x deploy.sh && ./deploy.sh
+            docker logout ghcr.io
+      - name: Check the trader came up
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.DEPLOY_HOST }}
+          username: ${{ secrets.DEPLOY_USER }}
+          key: ${{ secrets.DEPLOY_SSH_KEY }}
+          script: |
+            cd ~/updown
+            docker compose ps --format '{{.Service}} {{.State}}' | tee /dev/stderr | grep -q '^trader running'
+            grep -E '^UPDOWN_MODE=' .env || true

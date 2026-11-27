@@ -34,3 +34,21 @@ python -m pytest -q tests
 - Calibration only shows the model is *calibrated*. Profit depends on the market being *less*
   calibrated than the model at the prices you can actually fill. Use `record` for several days and
   backtest against those books before risking money.
+
+## Deploy (VPS)
+`.github/workflows/updown-deploy.yml` tests, builds `ghcr.io/mlbwhf/updown-bot`, and rolls it onto the
+VPS over SSH with the existing `DEPLOY_*` secrets. It runs on every push to `updown-bot/**`, or by hand
+from the Actions tab.
+On the server, `~/updown` (the `deploy` user's home) holds:
+- `docker-compose.yml` with three services: `calibrate` (refits every 24h), `trader` (paper by default)
+  and `recorder` (logs real books to `state/books.jsonl` for backtests)
+- `.env`, created from `env.example` on first deploy and never overwritten afterwards
+- `state/`: `model.json`, `paper.jsonl` / `live.jsonl`, `books.jsonl`
+
+```
+ssh deploy@VPS 'cd ~/updown && docker compose logs -f trader'
+ssh deploy@VPS 'cd ~/updown && tail -n 20 state/paper.jsonl'
+```
+To go live: in `~/updown/.env` set `UPDOWN_MODE=live`, `POLY_PRIVATE_KEY`, `POLY_FUNDER`, then
+`docker compose up -d`. Polymarket blocks order placement from some countries (including the US),
+so check where the VPS is located first.

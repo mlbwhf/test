@@ -8,12 +8,15 @@ trusting tiny edges near the strike.
 from __future__ import annotations
 
 import json
+import os
 import time
 
 import numpy as np
 import requests
 
-BINANCE = "https://api.binance.com"
+# data-api.binance.vision is Binance's public market-data mirror; it works from regions
+# where api.binance.com returns 451. Override with UPDOWN_BINANCE_URL.
+BINANCE = os.environ.get("UPDOWN_BINANCE_URL", "https://data-api.binance.vision")
 GAMMA = "https://gamma-api.polymarket.com"
 CLOB = "https://clob.polymarket.com"
 

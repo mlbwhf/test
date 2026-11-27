@@ -37,12 +37,27 @@ def load_model() -> tuple[HARModel, float]:
 
 
 def cmd_calibrate(a):
+    while True:
+        try:
+            _calibrate_once(a)
+        except Exception:  # noqa: BLE001
+            log.exception("calibration failed")
+            if not a.every:
+                raise
+        if not a.every:
+            return
+        time.sleep(a.every * 3600)
+
+
+def _calibrate_once(a):
     kl = feeds.btc_history_1s(int(a.hours * 3600))
     r = feeds.log_returns(kl)
     res = calibrate(r)
     STATE.mkdir(exist_ok=True)
-    MODEL_PATH.write_text(json.dumps(res, indent=2))
-    print(json.dumps(res, indent=2))
+    tmp = MODEL_PATH.with_suffix(".tmp")
+    tmp.write_text(json.dumps(res, indent=2))
+    tmp.replace(MODEL_PATH)  # atomic so the trader never reads a half-written file
+    log.info("calibrated: nu=%.2f oos=%s", res["nu"], {k: res["oos"].get(k) for k in ("n", "brier", "brier_coinflip")})
 
 
 def snapshot(model: HARModel, nu: float, asset: str, period: int, strikes: dict):
@@ -69,11 +84,18 @@ def cmd_run(a):
     model, nu = load_model()
     cfg = Config(min_edge=a.min_edge, max_stake=a.max_stake, bankroll=a.bankroll)
     logp = STATE / ("live.jsonl" if a.live else "paper.jsonl")
+    STATE.mkdir(exist_ok=True)
     ex = LiveExecutor(logp) if a.live else PaperExecutor(logp)
     traded, strikes, pending = set(), {}, {}
     day_pnl, errors = 0.0, 0
     log.info("starting %s mode, cfg=%s", ex.mode, asdict(cfg))
+    model_mtime = MODEL_PATH.stat().st_mtime if MODEL_PATH.exists() else 0
     while True:
+        (STATE / "heartbeat").write_text(str(time.time()))
+        if MODEL_PATH.exists() and MODEL_PATH.stat().st_mtime != model_mtime:
+            model, nu = load_model()
+            model_mtime = MODEL_PATH.stat().st_mtime
+            log.info("reloaded model nu=%.2f beta=%s", nu, model.beta.round(3).tolist())
         try:
             # settle finished markets (paper: settle off Binance close; live: Polymarket pays out)
             for slug, (end, K) in list(pending.items()):
@@ -139,6 +161,7 @@ def main():
     p = argparse.ArgumentParser()
     sub = p.add_subparsers(dest="cmd", required=True)
     c = sub.add_parser("calibrate"); c.add_argument("--hours", type=float, default=24)
+    c.add_argument("--every", type=float, default=0, help="repeat every N hours (0 = once)")
     for name in ("run", "record"):
         s = sub.add_parser(name)
         s.add_argument("--asset", default="btc")

@@ -1,0 +1,21 @@
+# Lives at ~/updown/docker-compose.yml on the VPS; state (model, fills, books) in ~/updown/state.
+x-bot: &bot
+  image: ${UPDOWN_IMAGE:-ghcr.io/mlbwhf/updown-bot:latest}
+  env_file: .env
+  volumes: ["./state:/app/state"]
+  restart: unless-stopped
+  logging: { driver: json-file, options: { max-size: "20m", max-file: "5" } }
+  mem_limit: 512m
+
+services:
+  calibrate:
+    <<: *bot
+    command: ["calibrate"]
+    healthcheck: { disable: true }
+  trader:
+    <<: *bot
+    command: ["run"]
+  recorder:
+    <<: *bot
+    command: ["record"]
+    healthcheck: { disable: true }
