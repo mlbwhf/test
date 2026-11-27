@@ -39,6 +39,14 @@ The owner ended the sale on 27 Nov. Remove every offer item **today**:
 
 **Screenshot:** the "15%" ad search returning nothing in both accounts.
 
+## STATUS 27 Nov (Chrome report)
+- **Task 0: nothing to remove.** The offer was never added in either account (checked: no ads contain 15%, Black Friday or Cyber).
+- **Task 1: budgets done** (36/20/2/2).
+  - **Audience network:** there's no on/off checkbox, so the decision is a **-100% Audience ads bid adjustment** on all 4 campaigns.
+  - **Defense max CPC: skipped.** The campaign is on Maximize Clicks with the CPC limit option hidden, and the CA$2/day budget already caps it.
+- **Found:** all four Google campaigns are already on **Maximize clicks**, so Task 7 step 5 isn't needed.
+- **Found:** Microsoft financial status changed to **"Hold" on 15 Nov.** The owner checks Billing.
+
 ## TASK 1: Microsoft Ads budgets, Audience Network, brand CPC (about 15 min)
 Go to `https://ads.microsoft.com` → Agile Agilist account (187136875) → **Campaigns**.
 
@@ -147,6 +155,6 @@ New workspace named `website-purchase`.
    Register** and **Corsizio Registration - AI-Native** to **Secondary**.
 4. **Microsoft Ads:** set **Website Purchase** to Include in "Conversions" = **Yes**. Untick it on the
    Eventbrite-click goal.
-5. **Bidding: needs Mark's OK first.** Campaigns on Maximize Conversions move to **Maximize Clicks with
-   a max CPC cap**, until each one has 15 website purchases in 30 days (your smart-bidding rule).
+5. **Bidding:** nothing to switch. All four Google campaigns are already on Maximize clicks (27 Nov).
+   They stay there until each one has 15 website purchases in 30 days (your smart-bidding rule).
 6. Tell Claude. The daily agent then checks Stripe payments against Google's count every day.
