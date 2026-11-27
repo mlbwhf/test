@@ -1467,3 +1467,22 @@ Full record: `content-ops/launch-2026-11-10-market-research.md`.
   - The note column in the public State of AI CSVs (spending, year-over-year, 2026 in Numbers) still says "Report AI pages 93
     and 376 show $497B; pages 73, 320, 354 and 318 show $487B". That is no longer true; fix it at the next regeneration.
 
+
+## 22 Nov 2026: ChatGPT figure (318) and AI-lab valuations (73)
+- **318 Timeline:**
+  - "ChatGPT 900M weekly users", which had been miscredited to IDC, is now "ChatGPT 1B+ weekly users (31 Aug 2026)", credited to OpenAI.
+  - The "2026 (early)" row is now "2026 (to date)".
+  - A What-changed row was added. Stamps, `dateModified` and the Cite line now read 22 Nov.
+  - CSV reissued as `report-ai-data-state-of-ai-2022-2026-rev20261122.csv`. Two uploaded copies are unused and unlinked:
+    `…-rev20261121.csv` and `…-rev20261121b.csv`.
+- **73 AI Investment & Funding:**
+  - OpenAI $500B (Oct 2025) → $852B (31 Mar 2026, $122B round, HIGH). The reported $1.25T first close of 6 Nov 2026,
+    unconfirmed by OpenAI, is noted in the text.
+  - Anthropic $183B (Sep 2025) → $965B (May 2026 Series H, MEDIUM).
+  - Updated in the tile, takeaway, FAQ (visible and JSON-LD), Article description and excerpt, with two What-changed rows.
+    Stamps now read 22 Nov. The CSV holds no valuations, so it was unchanged.
+- **Corrections log (3229):**
+  - Two Superseded rows added, dated 22 Nov. "Last entry" now reads 22 Nov.
+  - `dateModified` is 2026-11-26 because the Last-entry edit landed on 26 Nov site-local. Container restarts delayed it,
+    and post_modified follows the edit.
+- **Other pages still showing ChatGPT 900M as current:** 43, 47, 317, 433, 969 and 970 (per `content-ops/state-of-ai/data/usage.json`).
