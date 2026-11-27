@@ -5,6 +5,7 @@
 // running), breakout tables that seat four, and the day plan with each half-day holding 180
 // minutes. Breakouts and agenda are kept per class.
 
+import { PlanMeter } from "@/components/plan-meter";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
@@ -71,6 +72,7 @@ export function ClassBoards() {
     <>
       {err ? <ErrorList title="Could not start the class" items={[{ message: err }]} /> : null}
       {me.data?.principal.anonymous ? <div className="notice warn">Sign up free to start a class board: classes are kept for signed-up trainers.</div> : null}
+      <PlanMeter key={boards.data?.boards.length ?? 0} only={["boards"]} />
       <ClassLibrary running={running} busy={busy} anonymous={!!me.data?.principal.anonymous} onStart={(c) => void start(c)} reload={() => void boards.reload()} />
       {saved.length ? (
         <section className="panel panel-body stack" aria-labelledby="cls-saved-head">

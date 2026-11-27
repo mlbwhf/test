@@ -1,5 +1,6 @@
 "use client";
 
+import { PlanMeter } from "@/components/plan-meter";
 import Link from "next/link";
 
 import { useRouter, useSearchParams } from "next/navigation";
@@ -89,6 +90,7 @@ export default function TemplatesPage() {
   return (
     <>
       <ThemeFor theme={theme} />
+      <PlanMeter only={["boards"]} />
       <PageHead
         title={selPkg ? selPkg.name : sel ? sel.name : "Start from a template"}
         sub={selPkg?.blurb ?? sel?.info?.blurb ?? "Built in, sized to your teams and iterations, and yours to fork. Boards you imported and saved as templates appear here too."}

@@ -2790,8 +2790,131 @@ export function AsHexBoard({ config, st, op, readOnly }: BoardProps) {
 }
 
 
-export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint", "as-lab", "as-hex"]);
-const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard, "as-lab": AsLabBoard, "as-hex": AsHexBoard };
+// Turn your transformation into a story (optional). The group names its audience, picks one of
+// the storytelling approaches, fills that approach's parts, and gets a draft to edit. Where the
+// transformation canvas is filled in, each part offers a suggestion drawn from it.
+type StoryFacts = Record<"org" | "purpose" | "serve" | "succeed" | "bobj" | "tobj" | "kbr" | "ktr" | "aud" | "wiifm", string>;
+const low = (t: string) => (t && !/^[A-Z]{2}/.test(t) ? t[0]!.toLowerCase() + t.slice(1) : t).replace(/[.\s]+$/, "");
+const say = (...xs: (string | false)[]) => (xs.every(Boolean) ? xs.join("") : "");
+const STORY_METHODS: { id: string; name: string; when: string; parts: [label: string, hint: string, draft: (f: StoryFacts) => string][] }[] = [
+  { id: "golden", name: "Why, How, What: The Golden Circle", when: "Start from the purpose, then the way, then the result.", parts: [
+    ["Why", "The purpose: why this transformation matters", (f) => say("We exist to ", low(f.purpose), f.serve && ` for ${low(f.serve)}`, ". To keep doing that, we need to ", low(f.bobj), ".")],
+    ["How", "The way we will get there", (f) => say("We get there by changing how we work: ", low(f.tobj), ".")],
+    ["What", "What people will see change", (f) => say("You will see it in ", low(f.ktr), f.kbr && `, and the business will see it in ${low(f.kbr)}`, ".")],
+  ] },
+  { id: "epl", name: "Ethos, pathos, logos", when: "Earn trust, connect emotionally, then give the evidence.", parts: [
+    ["Ethos", "Why this audience should trust us on this", (f) => say("As ", f.org, ", we ", low(f.purpose), " every day, and we have looked hard at what holds us back.")],
+    ["Pathos", "What it feels like today, and how it could feel", (f) => say(f.aud, ": ", low(f.wiifm), ".")],
+    ["Logos", "The facts and the logic", (f) => say("Our objective is to ", low(f.bobj), ". We will know we are getting there by ", low(f.kbr), ".")],
+  ] },
+  { id: "success", name: "SUCCESs Model", when: "Make one message stick: simple, unexpected, concrete, credible, emotional, a story.", parts: [
+    ["Simple", "The one core message", (f) => say("We are changing how we work so that we can ", low(f.bobj), ".")],
+    ["Unexpected", "What will surprise this audience", () => ""],
+    ["Concrete", "A picture people can see", (f) => say("In practice: ", low(f.ktr), ".")],
+    ["Credible", "Why it can be believed", (f) => say("We will measure it: ", low(f.kbr), ".")],
+    ["Emotional", "Why people will care", (f) => say("For ", low(f.aud), ", this means ", low(f.wiifm), ".")],
+    ["Stories", "One short story that carries it", () => ""],
+  ] },
+  { id: "hero", name: "Hero's journey", when: "The audience is the hero: their world, the call, the trials, the change.", parts: [
+    ["The world today", "Where the hero is now", (f) => say("Today, ", low(f.aud), " at ", f.org, " work hard to ", low(f.purpose), ".")],
+    ["The call to change", "What makes staying put impossible", (f) => say("But to ", low(f.succeed), ", we have to ", low(f.bobj), ".")],
+    ["The trials", "What will be hard on the way", () => ""],
+    ["The transformation", "What the hero becomes", (f) => say("Together we ", low(f.tobj), ".")],
+    ["The return", "What the hero brings back", (f) => say("And what comes of it: ", low(f.wiifm), ".")],
+  ] },
+  { id: "wsn", name: "What? So what? Now what?", when: "Short and direct: the facts, why they matter, the next step.", parts: [
+    ["What?", "What is happening", (f) => say(f.org, " is setting out to ", low(f.tobj), ".")],
+    ["So what?", "Why it matters to this audience", (f) => say("It matters because we need to ", low(f.bobj), f.wiifm && `, and for you it means ${low(f.wiifm)}`, ".")],
+    ["Now what?", "What we ask people to do next", () => ""],
+  ] },
+  { id: "pitch", name: "Elevator pitch", when: "Thirty seconds, one breath: who it is for, what it is, why it is different.", parts: [
+    ["For … who …", "The audience and their need", (f) => say("For ", low(f.aud), " who want ", low(f.wiifm), ",")],
+    ["Our transformation is …", "What it is and what it gives", (f) => say("our transformation is how we will ", low(f.tobj), ", so that we ", low(f.bobj), ".")],
+    ["Unlike …", "What makes it different from past change", () => ""],
+    ["We will …", "The promise and the ask", (f) => say("We will show progress through ", low(f.ktr), ".")],
+  ] },
+  { id: "five", name: "5 Ws and an H", when: "Cover everything a first announcement must answer.", parts: [
+    ["Who", "Who is involved and affected", (f) => say(f.org, f.serve && `, serving ${low(f.serve)}`, ".")],
+    ["What", "What is changing", (f) => say("We will ", low(f.tobj), ".")],
+    ["When", "The timing", () => ""],
+    ["Where", "Which parts of the organization", () => ""],
+    ["Why", "The reason", (f) => say("Because we need to ", low(f.bobj), ".")],
+    ["How", "The way it will happen", (f) => say("We will track it by ", low(f.ktr), ".")],
+  ] },
+];
+const STORY_CHECKS = ["Know the audience", "What's in it for me? (WIIFM)", "Use common language", "Be relatable", "Connect emotionally and rationally", "Convey tension and urgency", "Include a call to action", "Less is more"];
+
+export function AsStoryBoard({ config, st, op, readOnly }: BoardProps) {
+  const mid = str(st["story:m"]), method = STORY_METHODS.find((m) => m.id === mid) ?? null;
+  // A key result of the canvas reads "metric from A to B"; older notes carry plain text.
+  const texts = (k: string) => list(st, k).map((r) => str(r.text) || [str(r.metric) || str(r.outcome), str(r.from) && str(r.to) ? `from ${str(r.from)} to ${str(r.to)}` : str(r.to) && `to ${str(r.to)}`].filter(Boolean).join(" ")).filter(Boolean).slice(0, 3).join("; ");
+  const facts: StoryFacts = { org: str(st.who), purpose: str(st["ctx:1:bo"]), serve: str(st["ctx:2:bo"]), succeed: str(st["ctx:3:bo"]), bobj: str(st.bobj), tobj: str(st.tobj), kbr: texts("kbr"), ktr: texts("ktr"), aud: str(st["story:aud"]), wiifm: str(st["story:wiifm"]) };
+  const canvas = !!(facts.bobj || facts.tobj || facts.purpose);
+  const pk = (i: number) => `story:p:${mid}:${i}`;
+  const checks = (st["story:check"] && typeof st["story:check"] === "object" ? st["story:check"] : {}) as Record<string, boolean>;
+  const story = str(st["story:text"]), words = story.trim() ? story.trim().split(/\s+/).length : 0;
+  const filled = method ? method.parts.filter((_, i) => str(st[pk(i)])).length : 0;
+  const compose = () => method ? method.parts.map(([, , d], i) => str(st[pk(i)]) || d(facts)).filter(Boolean).join(method.id === "pitch" ? " " : "\n\n") : "";
+  const draft = () => { const t = compose(); if (t && (!story || window.confirm("Replace the story below with a new draft?"))) op({ key: "story:text", op: "set", value: t }); };
+  return (
+    <div className="ex-board po">
+      <div className="ex-intro">{str(config.prompt)}</div>
+      <section className="po-panel st-step">
+        <header><i>1</i><div><b>Know the audience</b><span>Every approach starts here.</span></div></header>
+        <div className="po-two wide">
+          <label className="st-field"><span className="ex-mono">Who is this story for?</span><Field k="story:aud" st={st} op={op} readOnly={readOnly} rows={2} placeholder="e.g. team members in the first ART" label="Audience" /></label>
+          <label className="st-field"><span className="ex-mono">What&apos;s in it for them? (WIIFM)</span><Field k="story:wiifm" st={st} op={op} readOnly={readOnly} rows={2} placeholder="e.g. fewer handoffs and a clear say in the plan" label="What's in it for them" /></label>
+        </div>
+      </section>
+      <section className="po-panel st-step">
+        <header><i>2</i><div><b>Pick one approach</b><span>There are many; these are some. The dots are the parts you will fill.</span></div></header>
+        <div className="st-methods" role="radiogroup" aria-label="Storytelling approach">
+          {STORY_METHODS.map((m, i) => (
+            <button key={m.id} role="radio" aria-checked={m.id === mid} disabled={readOnly} className={`st-method${m.id === mid ? " on" : ""}`} style={{ ["--c" as string]: WHEEL[i % WHEEL.length], animationDelay: `${i * 50}ms` }} onClick={() => op({ key: "story:m", op: "set", value: m.id === mid ? null : m.id })}>
+              <b>{m.name}</b>
+              <small>{m.when}</small>
+              <span className="st-dots" aria-hidden>{m.parts.map(([l]) => (<i key={l} title={l} />))}</span>
+            </button>
+          ))}
+        </div>
+      </section>
+      {method ? (
+        <section className="po-panel st-step" key={method.id}>
+          <header><i>3</i><div><b>{method.name}</b><span>{filled}/{method.parts.length} parts written{canvas ? " · suggestions come from your transformation canvas" : " · fill in the transformation canvas to get suggestions"}</span></div></header>
+          <div className="st-parts">
+            {method.parts.map(([label, hint, d], i) => {
+              const sug = d(facts), has = str(st[pk(i)]);
+              return (
+                <div key={label} className={`st-part${has ? " has" : ""}`} style={{ animationDelay: `${i * 70}ms` }}>
+                  <span className="st-label"><i>{i + 1}</i>{label}</span>
+                  <Field k={pk(i)} st={st} op={op} readOnly={readOnly} rows={3} placeholder={hint} label={label} />
+                  {!readOnly && !has && sug ? <button className="st-sug" onClick={() => op({ key: pk(i), op: "set", value: sug })}><em>Suggestion</em>{sug}<u>Use it</u></button> : null}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      ) : null}
+      {method ? (
+        <section className="po-panel st-step">
+          <header><i>4</i><div><b>Our story</b><span>A draft to start from, yours to rewrite.</span></div>{!readOnly ? <button className="po-btn" disabled={!compose()} onClick={draft}>{story ? "Draft it again" : "Offer a draft"}</button> : null}</header>
+          <Field k="story:text" st={st} op={op} readOnly={readOnly} rows={9} placeholder="Write the story here, or let the parts above offer a draft." label="Our story" />
+          <div className="st-foot">
+            <span className={`st-words${words > 150 ? " long" : ""}`}><b>{words}</b> words{words > 150 ? " · less is more: aim for about a minute, 150 words" : words ? " · about " + Math.max(1, Math.round(words / 2.5)) + " seconds to tell" : ""}</span>
+          </div>
+          <span className="ex-mono">Common elements · tick what the story does</span>
+          <div className="st-checks">
+            {STORY_CHECKS.map((c, i) => (<button key={c} disabled={readOnly} aria-pressed={!!checks[i]} onClick={() => op({ key: "story:check", op: "set", value: { ...checks, [i]: !checks[i] } })}><i>{checks[i] ? "✓" : ""}</i>{c}</button>))}
+          </div>
+        </section>
+      ) : <p className="po-empty">Pick an approach to see its parts.</p>}
+      <p className="po-note" style={{ margin: 0 }}>References: The Golden Circle, Sinek, “How Great Leaders Inspire Action”. SUCCESs, Heath and Heath, “Made to Stick”.</p>
+    </div>
+  );
+}
+
+export const POPM_KINDS = new Set(["po-intro", "po-mind", "po-ai", "po-msg", "po-rhythm", "po-feat", "po-refine", "po-cap", "po-vision", "po-deps", "po-map", "po-iter", "po-check", "as-ppf", "as-balance", "as-cars", "as-hard", "as-roadmap", "as-canvas", "as-backlog", "as-themes", "as-epic", "as-roleplay", "as-mix", "as-guard", "as-gq", "as-blueprint", "as-lab", "as-hex", "as-story"]);
+const BOARDS: Record<string, (p: BoardProps) => ReactNode> = { "po-intro": PoIntroBoard, "po-mind": PoMindsetBoard, "po-ai": PoAiBoard, "po-msg": PoMessageBoard, "po-rhythm": PoRhythmBoard, "po-feat": PoFeatureBoard, "po-refine": PoRefineBoard, "po-cap": PoCapacityBoard, "po-vision": PoVisionBoard, "po-deps": PoDepsBoard, "po-map": PoStoryMapBoard, "po-iter": PoIterationBoard, "po-check": PoChecklistBoard, "as-ppf": AsTimelineBoard, "as-balance": AsBalanceBoard, "as-cars": AsCarsBoard, "as-hard": AsHardBoard, "as-roadmap": AsRoadmapBoard, "as-canvas": AsCanvasBoard, "as-backlog": AsBacklogBoard, "as-themes": AsThemesBoard, "as-epic": AsEpicBoard, "as-roleplay": AsRoleplayBoard, "as-mix": AsMixBoard, "as-guard": AsGuardrailBoard, "as-gq": AsGuardQuestionsBoard, "as-blueprint": AsBlueprintBoard, "as-lab": AsLabBoard, "as-hex": AsHexBoard, "as-story": AsStoryBoard };
 export function PopmBoard(props: BoardProps & { kind: string }) {
   const B = BOARDS[props.kind] ?? PoMessageBoard;
   return <B {...props} />;

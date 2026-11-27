@@ -3,6 +3,7 @@
 // Every board in the workspace: created from a template, started as a class, or imported.
 // Each shows its method's theme swatch, so a Kanban board looks like Kanban before you open it.
 
+import { PlanMeter } from "@/components/plan-meter";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -42,6 +43,7 @@ export default function BoardsPage() {
   const boards = q.data.boards.filter((b) => !b.isTemplate && (show === "all" || kind(b) === show)).sort((a, b) => b.origin.importedAt.localeCompare(a.origin.importedAt));
   return (
     <>
+      <PlanMeter only={["boards"]} />
       <PageHead
         title="Your boards"
         sub="Boards you created from a template, blank whiteboards, classes you are running and boards you brought from Miro, Lucid, Mural, Trello, monday.com or iObeya. Any board can take more templates: open it and add one beside what is there."

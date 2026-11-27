@@ -653,6 +653,14 @@ const lesson4: ActivitySpec[] = [
     config: { shared: "aspc-backlog", llm: "You are an experienced SAFe Practice Consultant. Here is our transformation backlog. Apply WSJF (user-business value, time criticality, risk reduction and opportunity enablement, job size, on the scale 1, 2, 3, 5, 8, 13, 20), then suggest a sequence across PI 1 (committed), PI 2 and PI 3 (forecast), and say why.", step: "roadmap", range: [10, 15], prompt: "Use the prioritized backlog to fill in the transformation roadmap: PI 1 is committed, PI 2 and PI 3 are forecast." },
     ...BOARD,
   },
+  {
+    title: "Optional: Turn your transformation into a story",
+    kind: "Activity",
+    steps: "Storytelling connects people to the transformation.\n- Know the audience and what is in it for them\n- Pick one approach\n- Fill its parts and ask for a draft\n- Check the story against the common elements",
+    board: "as-story",
+    config: { shared: "aspc-canvas", prompt: "Optional. Storytelling connects people to the transformation: turn your transformation strategy into a story for one audience." },
+    ...BOARD,
+  },
 ];
 
 const lesson5: ActivitySpec[] = [
