@@ -7,6 +7,7 @@ import { KIND_LABEL, LinkPicker, type Ref, type RefKind, type RefSummary } from 
 import { useDoubleTap, usePanZoom } from "@/lib/touch";
 import { cardChoices, DOT, type CardType, type ConnectionType, stackCards, stackLaneAt, stackHeight } from "@trainyard/core";
 import { ActivityEditor } from "@/components/activity-editor";
+import { addComponent, ComponentOverlay, ComponentPicker, componentLabel, connectedTo, isComponent } from "@/components/board-components";
 
 const refKey = (r: Ref) => `${r.kind}:${r.boardId ? `${r.boardId}/` : ""}${r.id}`;
 type Backlink = { boardId: string; boardName: string; nodeId: string; frame?: string; as: "link" | "view" };
@@ -291,6 +292,10 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
     const p = pt.matrixTransform(m.inverse());
     return { x: p.x, y: p.y };
   };
+  // Interactive components: the picker, and the one that is open to work in.
+  const [cmpPick, setCmpPick] = useState(false);
+  const [cmpBusy, setCmpBusy] = useState(false);
+  const [cmpOpen, setCmpOpen] = useState<string | null>(null);
   const save = async (label: string, fn: () => Promise<unknown>) => {
     try {
       await fn();
@@ -663,6 +668,8 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
 
   return (
     <div className="stack">
+      {cmpPick ? <ComponentPicker busy={cmpBusy} onClose={() => setCmpPick(false)} onPick={(c) => { setCmpBusy(true); void save("Add component", () => addComponent(board, c)).then(() => (setCmpBusy(false), setCmpPick(false))); }} /> : null}
+      {cmpOpen && frames.find((f) => f.id === cmpOpen) ? <ComponentOverlay board={board} frame={board.frames.find((f) => f.id === cmpOpen) ?? frames.find((f) => f.id === cmpOpen)!} readOnly={readOnly} onOpen={setCmpOpen} onClose={() => setCmpOpen(null)} onChanged={onChanged} onError={onError} /> : null}
       <div className="row" style={{ justifyContent: "space-between" }}>
         <div className="row">
           {readOnly ? (
@@ -716,6 +723,11 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
               <button className="btn small" onClick={() => setPicker({ mode: "view" })} title="Bring a whole board or canvas in as a live view">
                 + Embed a view
               </button>
+              {!board.fields?.class ? (
+                <button className="btn small" onClick={() => setCmpPick(true)} title="A working board inside this one: hexagon canvas, story map, WSJF backlog, balanced metrics, a discussion board…">
+                  + Component
+                </button>
+              ) : null}
               {types.length ? (
                 <button className={`btn small ${tool === "dot" ? "primary" : ""}`} onClick={() => (setTool(tool === "dot" ? "select" : "dot"), setConnectFrom(null))} aria-pressed={tool === "dot"} title="Click a spot on the picture, then pick its type">
                   ● Plot a dot
@@ -828,6 +840,17 @@ export function CanvasEditor({ board, readOnly, onChanged, onError, refs = {}, c
                     {f.title}
                   </text>
                 )}
+                {isComponent(f) && !board.fields?.class ? (
+                  <g className="cmp-tile" onDoubleClick={() => setCmpOpen(f.id)}>
+                    <rect x={f.x + 14} y={f.y + 56} width={f.width - 28} height={f.height - 70} rx={14} fill="#06384a" />
+                    <text x={f.x + 36} y={f.y + 98} fontSize={15} fontWeight={700} fill="#8accce" style={{ textTransform: "uppercase", letterSpacing: "0.08em" }}>Interactive · {componentLabel(f)}</text>
+                    <text x={f.x + 36} y={f.y + 132} fontSize={17} fill="#fff">{Object.keys(f.state ?? {}).length || connectedTo(board, f).some((x) => Object.keys(x.state ?? {}).length) ? "Work in progress" : "Not started yet"}{connectedTo(board, f).length ? ` · connected to ${connectedTo(board, f).length} other board${connectedTo(board, f).length === 1 ? "" : "s"}` : ""}</text>
+                    <g role="button" tabIndex={0} aria-label={`Open ${f.title}`} style={{ cursor: "pointer" }} onPointerDown={(e) => e.stopPropagation()} onClick={() => setCmpOpen(f.id)} onKeyDown={(e) => e.key === "Enter" && setCmpOpen(f.id)}>
+                      <rect x={f.x + 36} y={f.y + f.height - 86} width={150} height={48} rx={24} fill="#ffd37a" stroke="#0d1815" strokeWidth={2} />
+                      <text x={f.x + 111} y={f.y + f.height - 55} textAnchor="middle" fontSize={18} fontWeight={800} fill="#0d1815">Open ▸</text>
+                    </g>
+                  </g>
+                ) : null}
               </g>
             ))}
             {rowLoad.map((b) => (
