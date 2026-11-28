@@ -2435,12 +2435,76 @@ function aa_reg_early_bird_open( $start, $now = '' ) {
 	return $days >= aa_reg_early_bird_days();
 }
 function aa_reg_at_cohort( $course, $start ) {
-	if ( ! is_array( $course ) || empty( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
-	if ( aa_reg_early_bird_open( $start ) ) { return $course; }
-	$course['price'] = (int) $course['price_was'];
-	unset( $course['price_was'] );
+	if ( ! is_array( $course ) ) { return $course; }
+	if ( empty( $course['price_early'] ) ) {
+		if ( empty( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
+		$course['price_early'] = (int) $course['price'];
+		$course['price_full']  = (int) $course['price_was'];
+	}
+	if ( aa_reg_early_bird_open( $start ) ) {
+		$course['price']     = (int) $course['price_early'];
+		$course['price_was'] = (int) $course['price_full'];
+	} else {
+		$course['price'] = (int) $course['price_full'];
+		unset( $course['price_was'] );
+	}
 	return $course;
 }
+
+/**
+ * ONE PRICE, EVERYWHERE (owner, 28 Nov 2026).
+ *
+ * "Fix the code so you have one price across rather than different prices
+ * that need changing in three places: calendar, homepage and class page."
+ *
+ * The figures live in ONE list (aa_reg_price_list(), or a course's own row)
+ * and the rule in ONE function (aa_reg_at_cohort()). aa_reg_course() now
+ * hands every caller the price of the NEXT class on sale -- so the homepage,
+ * the catalogue, the menus, the sticky bar and the class page all print the
+ * same figure without knowing the rule exists. Anything that shows one
+ * particular date asks aa_reg_at_cohort() for that date's price; the two
+ * figures it chooses between travel on the record as price_early and
+ * price_full. To change a price, change the list. Nothing else.
+ */
+function aa_reg_price_now( $slug, $course ) {
+	if ( ! is_array( $course ) || empty( $course['price_was'] ) || empty( $course['price'] ) ) { return $course; }
+	$course['price_early'] = (int) $course['price'];
+	$course['price_full']  = (int) $course['price_was'];
+	static $next = array();
+	static $busy = array();
+	$k = (string) $slug . '|' . aa_reg_lang();
+	if ( ! isset( $next[ $k ] ) ) {
+		if ( isset( $busy[ $k ] ) ) { return $course; }
+		$busy[ $k ] = true;
+		$up         = aa_reg_upcoming( $slug, $course );
+		unset( $busy[ $k ] );
+		$next[ $k ] = $up ? (string) $up[0]['start'] : '';
+	}
+	return $next[ $k ] !== '' ? aa_reg_at_cohort( $course, $next[ $k ] ) : $course;
+}
+
+/**
+ * The prices typed into an English class page follow the same record: the
+ * sticky bar, the hero line, the closing button and the page's own JSON-LD.
+ * Runs before blocks and shortcodes, so it only ever touches the typed text.
+ */
+function aa_reg_page_prices( $content ) {
+	if ( is_admin() || ! is_singular() || aa_reg_lang() !== 'en' ) { return $content; }
+	if ( strpos( (string) $content, 'aa-coursebar' ) === false ) { return $content; }
+	$slug = (string) get_post_field( 'post_name', get_the_ID() );
+	$all  = aa_reg_courses();
+	if ( $slug === '' || ! isset( $all[ $slug ] ) ) { return $content; }
+	$c = aa_reg_course( $slug );
+	if ( ! is_array( $c ) || empty( $c['price_full'] ) || empty( $c['price'] ) ) { return $content; }
+	$now  = '$' . number_format( (int) $c['price'] );
+	$html = ( ! empty( $c['price_was'] ) ? '<s>$' . number_format( (int) $c['price_was'] ) . '</s> ' : '' ) . $now;
+	$out  = preg_replace_callback( '~(?:<s>[^<]*</s>\s*)?\$[0-9][0-9,]*(?=\s*(?:<span class="mono"|</a>))~', function () use ( $html ) { return $html; }, $content );
+	if ( is_string( $out ) ) { $content = $out; }
+	$num = (string) (int) $c['price'];
+	$out = preg_replace_callback( '~"price":\s*"[0-9]+"~', function () use ( $num ) { return '"price": "' . $num . '"'; }, $content );
+	return is_string( $out ) ? $out : $content;
+}
+add_filter( 'the_content', 'aa_reg_page_prices', 8 );
 
 function aa_reg_price( $slug, $course ) {
 	if ( ! is_array( $course ) ) { return $course; }
@@ -2550,7 +2614,7 @@ function aa_reg_finish( $slug, $course ) {
 	$course = aa_reg_price( $slug, $course );
 	$course = aa_reg_sale_apply( $slug, $course );
 	/* Last, so it overrides the cadence the alias copied in. */
-	return aa_reg_apply_cadence( $slug, $course );
+	return aa_reg_price_now( $slug, aa_reg_apply_cadence( $slug, $course ) );
 }
 
 /** One cohort by id, with its course. Returns null for anything unrecognised. */
@@ -3603,8 +3667,8 @@ function aa_reg_track_calendar( $atts ) {
 			'blurb' => aa_reg_blurb( $course ),
 			'proof' => isset( $course['proof'] ) && is_array( $course['proof'] ) ? $course['proof'] : array(),
 			'incl'  => aa_reg_incl( $course ),
-			'price' => $course['price'],
-			'was'   => ! empty( $course['price_was'] ) ? (int) $course['price_was'] : 0,
+			'price' => ! empty( $course['price_early'] ) ? $course['price_early'] : $course['price'],
+			'was'   => ! empty( $course['price_full'] ) ? (int) $course['price_full'] : ( ! empty( $course['price_was'] ) ? (int) $course['price_was'] : 0 ),
 			'cur'   => $course['currency'],
 			'days'  => $days,
 			'short' => $days . 'd',
@@ -6172,7 +6236,7 @@ function aa_reg_course_by_amount( $cents, $currency = 'usd' ) {
 			$c = aa_reg_course( $slug );
 			if ( ! $c || empty( $c['price'] ) ) { continue; }
 			if ( strtolower( (string) $c['currency'] ) !== $cur ) { continue; }
-			if ( (int) round( $c['price'] * 100 ) === $cents ) { $hits[ $slug ] = true; }
+			foreach ( array( 'price', 'price_early', 'price_full' ) as $pk ) { if ( ! empty( $c[ $pk ] ) && (int) round( $c[ $pk ] * 100 ) === $cents ) { $hits[ $slug ] = true; } }
 		}
 		aa_reg_lang_override( '' );
 	}

@@ -423,7 +423,9 @@ function aa_mcal_reg_rows( $cats, $from, $to ) {
 				'id' => 0,          // generated: there is no wp_events post
 			);
 			if ( ! empty( $course['price'] ) ) {
-				$row['price'] = '$' . number_format( (float) $course['price'] );
+				/* Early bird only a month ahead (register snippet, 27 Nov 2026). */
+				$pc = function_exists( 'aa_reg_at_cohort' ) ? aa_reg_at_cohort( $course, $c['start'] ) : $course;
+				$row['price'] = '$' . number_format( (float) $pc['price'] );
 			}
 			$rows[] = $row;
 		}
